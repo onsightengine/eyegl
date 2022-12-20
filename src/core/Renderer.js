@@ -11,9 +11,10 @@ import { Vec3 } from '../math/Vec3.js';
 // gl.clearStencil( stencil );
 
 const tempVec3 = new Vec3();
-let ID = 1;
+let _ID = 1;
 
 export class Renderer {
+
     constructor({
         canvas = document.createElement('canvas'),
         width = 300,
@@ -29,6 +30,7 @@ export class Renderer {
         autoClear = true,
         webgl = 2,
     } = {}) {
+
         const attributes = { alpha, depth, stencil, antialias, premultipliedAlpha, preserveDrawingBuffer, powerPreference };
         this.dpr = dpr;
         this.alpha = alpha;
@@ -37,7 +39,7 @@ export class Renderer {
         this.stencil = stencil;
         this.premultipliedAlpha = premultipliedAlpha;
         this.autoClear = autoClear;
-        this.id = ID++;
+        this.id = _ID++;
 
         // Attempt WebGL2 unless forced to 1, if not supported fallback to WebGL1
         if (webgl === 2) this.gl = canvas.getContext('webgl2', attributes);
@@ -353,4 +355,5 @@ export class Renderer {
             node.draw({ camera });
         });
     }
+
 }

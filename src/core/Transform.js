@@ -4,6 +4,7 @@ import { Mat4 } from '../math/Mat4.js';
 import { Euler } from '../math/Euler.js';
 
 export class Transform {
+
     constructor() {
         this.parent = null;
         this.children = [];
@@ -30,12 +31,12 @@ export class Transform {
     }
 
     addChild(child, notifyChild = true) {
-        if (!~this.children.indexOf(child)) this.children.push(child);
+        if (this.children.indexOf(child) === -1) this.children.push(child);
         if (notifyChild) child.setParent(this, false);
     }
 
     removeChild(child, notifyChild = true) {
-        if (!!~this.children.indexOf(child)) this.children.splice(this.children.indexOf(child), 1);
+        if (this.children.indexOf(child) !== -1) this.children.splice(this.children.indexOf(child), 1);
         if (notifyChild) child.setParent(null, false);
     }
 
@@ -79,4 +80,5 @@ export class Transform {
         this.matrix.getRotation(this.quaternion);
         this.rotation.fromQuaternion(this.quaternion);
     }
+
 }

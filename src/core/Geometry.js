@@ -20,18 +20,21 @@ import { Vec3 } from '../math/Vec3.js';
 
 const tempVec3 = new Vec3();
 
-let ID = 1;
-let ATTR_ID = 1;
+let _ID = 1;
+let _ATTR_ID = 1;
 
 // To stop inifinite warnings
 let isBoundsWarned = false;
 
 export class Geometry {
+
     constructor(gl, attributes = {}) {
-        if (!gl.canvas) console.error('gl not passed as first argument to Geometry');
+        this.isGeometry = true;
+
+        if (! gl.canvas) console.error(`Geometry: 'gl' not passed as first argument`);
         this.gl = gl;
         this.attributes = attributes;
-        this.id = ID++;
+        this.id = _ID++;
 
         // Store one VAO per program attribute locations order
         this.VAOs = {};
@@ -56,7 +59,7 @@ export class Geometry {
         this.attributes[key] = attr;
 
         // Set options
-        attr.id = ATTR_ID++; // TODO: currently unused, remove?
+        attr.id = _ATTR_ID++; // TODO: currently unused, remove?
         attr.size = attr.size || 1;
         attr.type =
             attr.type ||

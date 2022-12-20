@@ -9,7 +9,7 @@ function isPowerOf2(value) {
     return (value & (value - 1)) === 0;
 }
 
-let ID = 1;
+let _ID = 1;
 
 export class Texture {
     constructor(
@@ -35,7 +35,7 @@ export class Texture {
         } = {}
     ) {
         this.gl = gl;
-        this.id = ID++;
+        this.id = _ID++;
 
         this.image = image;
         this.target = target;

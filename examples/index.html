@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <title>EyeGL • WebGL Graphics Library</title>
+
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <meta
-            name="viewport"
-            content="width=device-width, minimal-ui, viewport-fit=cover, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
-        />
-        <link rel="icon" type="image/png" href="assets/logo/eyegl256.png" />
-
-        <title>EyeGL - WebGL Graphics Library</title>
-        <link href="assets/main.css" rel="stylesheet" />
+        <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
+        <link rel="icon" type="image/png" href="../files/logo/favicon.png" />
+        <link rel="stylesheet" href="../files/main.css" />
     </head>
     <body>
+
         <div class="Side">
             <a class="Title" href="https://github.com/onsightengine/eyegl">EyeGL</a>
             <div class="SubTitle">Examples</div>
 
             <div class="Section">Geometry</div>
-            <a class="Example" href="triangles.html">Triangles</a>
-
+            <a class="Example" href="full-screen-triangle.html">Full Screen Triangle</a>
         </div>
 
         <iframe class="Iframe" allow="autoplay" src=""></iframe>
@@ -32,7 +29,8 @@
             const toggleLink = document.querySelector('.SideIcon');
             const exampleLinks = document.querySelectorAll('a.Example');
             const iFrame = document.querySelector('.Iframe');
-            const sourcePath = 'https://github.com/onsightengine/eyegl/tree/master/examples/';
+            // const sourcePath = 'https://github.com/onsightengine/eyegl/tree/master/examples/';
+            const sourcePath = './';
 
             toggleLink.addEventListener('click', (e) => {
                 e.preventDefault();

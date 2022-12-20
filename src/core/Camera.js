@@ -7,8 +7,10 @@ const tempVec3a = new Vec3();
 const tempVec3b = new Vec3();
 
 export class Camera extends Transform {
+
     constructor(gl, { near = 0.1, far = 100, fov = 45, aspect = 1, left, right, bottom, top, zoom = 1 } = {}) {
         super();
+        this.isCamera = true;
 
         Object.assign(this, { near, far, fov, aspect, left, right, bottom, top, zoom });
 
@@ -124,6 +126,8 @@ export class Camera extends Transform {
             const distance = normal.copy(plane).dot(center) + plane.constant;
             if (distance < -radius) return false;
         }
+
         return true;
     }
+
 }

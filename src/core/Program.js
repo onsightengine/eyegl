@@ -2,12 +2,13 @@
 // TODO: upload identity matrix if null ?
 // TODO: sampler Cube
 
-let ID = 1;
+let _ID = 1;
 
 // cache of typed arrays used to flatten uniform arrays
 const arrayCacheF32 = {};
 
 export class Program {
+
     constructor(
         gl,
         {
@@ -26,7 +27,7 @@ export class Program {
         if (!gl.canvas) console.error('gl not passed as first argument to Program');
         this.gl = gl;
         this.uniforms = uniforms;
-        this.id = ID++;
+        this.id = _ID++;
 
         if (!vertex) console.warn('vertex shader not supplied');
         if (!fragment) console.warn('fragment shader not supplied');

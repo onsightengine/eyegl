@@ -47,12 +47,12 @@ a {
 
 @font-face {
     font-family: 'Aileron';
-    src: url('../files/fonts/Aileron-Regular.ttf');
+    src: url('./fonts/Aileron-Regular.ttf');
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url('../files/fonts/Roboto-Regular.ttf');
+    src: url('./fonts/Roboto-Regular.ttf');
 }
 
 body {
