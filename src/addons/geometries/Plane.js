@@ -1,4 +1,4 @@
-import { Geometry } from '../core/Geometry.js';
+import { Geometry } from '../../core/Geometry.js';
 
 export class Plane extends Geometry {
 

@@ -18,18 +18,20 @@ export { Vec2 } from './math/Vec2.js';
 export { Vec3 } from './math/Vec3.js';
 export { Vec4 } from './math/Vec4.js';
 
-// Geometries
-export { Plane } from './geometries/Plane.js';
-export { Triangle } from './geometries/Triangle.js';
+// Addons - Controls
+export { Orbit } from './addons/controls/Orbit.js';
+
+// Addons - Geometries
+export { Plane } from './addons/geometries/Plane.js';
+export { Torus } from './addons/geometries/Torus.js';
+export { Triangle } from './addons/geometries/Triangle.js';
 
 // Objects
-export { InstancedMesh } from './objects/InstancedMesh.js';
+export { InstancedMesh } from './addons/objects/InstancedMesh.js';
 
 // export { Box } from './extras/Box.js';
 // export { Sphere } from './extras/Sphere.js';
 // export { Cylinder } from './extras/Cylinder.js';
-// export { Torus } from './extras/Torus.js';
-// export { Orbit } from './extras/Orbit.js';
 // export { Raycast } from './extras/Raycast.js';
 // export { Curve } from './extras/Curve.js';
 // export { Path } from './extras/Path/Path.js';

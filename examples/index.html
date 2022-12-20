@@ -13,10 +13,10 @@
 
         <div class="Side">
             <a class="Title" href="https://github.com/onsightengine/eyegl">EyeGL</a>
-            <div class="SubTitle">Examples</div>
-
             <div class="Section">Geometry</div>
-            <a class="Example" href="full-screen-triangle.html">Full Screen Triangle</a>
+            <a class="Example" href="geometry/torus.html">Torus</a>
+            <div class="Section">Postprocessing</div>
+            <a class="Example" href="postprocessing/full-screen-triangle.html">Full Screen Triangle</a>
         </div>
 
         <iframe class="Iframe" allow="autoplay" src=""></iframe>
@@ -25,12 +25,12 @@
         <a class="CodeIcon" href="" target="_blank">&lt;&#47;&gt;</a>
 
         <script>
+
             const sourceLink = document.querySelector('.CodeIcon');
             const toggleLink = document.querySelector('.SideIcon');
             const exampleLinks = document.querySelectorAll('a.Example');
             const iFrame = document.querySelector('.Iframe');
-            // const sourcePath = 'https://github.com/onsightengine/eyegl/tree/master/examples/';
-            const sourcePath = './';
+            const sourcePath = 'https://github.com/onsightengine/eyegl/tree/master/examples/';
 
             toggleLink.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -79,6 +79,7 @@
                     else link.classList.remove('active');
                 });
             }
+
         </script>
     </body>
 </html>
