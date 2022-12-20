@@ -1,0 +1,14 @@
+{
+    "name": "EyeGL",
+    "short_name": "EyeGL",
+    "start_url": ".",
+    "scope": ".",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "./files/logo/eyegl256.png",
+            "type": "image/png",
+            "sizes": "256x256"
+        }
+    ]
+}
