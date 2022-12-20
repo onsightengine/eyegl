@@ -1,15 +1,13 @@
 <div align="center">
 <img src="./files/logo/eyegl256.png" alt="EyeGL Library"/>
+</div>
 
-<br>
-
-<h1>EyeGL</h1>
+# EyeGL
 
 WebGL graphics library.
 
-<br><br>
+## Status
 
-<p style="font-style: italic; font-size: larger;">Under development, more info to come...</p>
+Under heavy development, more info to come...
 
-<br><br>
-</div>
+<br>
