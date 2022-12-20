@@ -5,7 +5,7 @@
 
 <h1>EyeGL</h1>
 
-WebGL graphics lirbary.
+WebGL graphics library.
 
 <br><br>
 
