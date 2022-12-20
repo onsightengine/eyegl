@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./files/logo/eyegl256.png" alt="EyeGL Library"/>
+<img src="./examples/assets/logo/eyegl256.png" alt="EyeGL Library"/>
 </div>
 
 # EyeGL
