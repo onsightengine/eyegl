@@ -21,12 +21,10 @@ import { Vec3 } from '../math/Vec3.js';
 const tempVec3 = new Vec3();
 
 let _ID = 1;
-let _ATTR_ID = 1;
+let _attributeID = 1;
+let _isBoundsWarned = false; /* to stop inifinite warnings */
 
-// To stop inifinite warnings
-let isBoundsWarned = false;
-
-export class Geometry {
+class Geometry {
 
     constructor(gl, attributes = {}) {
         this.isGeometry = true;
@@ -59,7 +57,7 @@ export class Geometry {
         this.attributes[key] = attr;
 
         // Set options
-        attr.id = _ATTR_ID++; // TODO: currently unused, remove?
+        attr.id = _attributeID++; // TODO: currently unused, remove?
         attr.size = attr.size || 1;
         attr.type =
             attr.type ||
@@ -171,7 +169,7 @@ export class Geometry {
 
     draw({ program, mode = this.gl.TRIANGLES }) {
         if (this.gl.renderer.currentGeometry !== `${this.id}_${program.attributeOrder}`) {
-            if (!this.VAOs[program.attributeOrder]) this.createVAO(program);
+            if (! this.VAOs[program.attributeOrder]) this.createVAO(program);
             this.gl.renderer.bindVertexArray(this.VAOs[program.attributeOrder]);
             this.gl.renderer.currentGeometry = `${this.id}_${program.attributeOrder}`;
         }
@@ -208,17 +206,17 @@ export class Geometry {
         const attr = this.attributes.position;
         // if (attr.min) return [...attr.min, ...attr.max];
         if (attr.data) return attr;
-        if (isBoundsWarned) return;
+        if (_isBoundsWarned) return;
         console.warn('No position buffer data found to compute bounds');
-        return (isBoundsWarned = true);
+        return (_isBoundsWarned = true);
     }
 
     computeBoundingBox(attr) {
-        if (!attr) attr = this.getPosition();
+        if (! attr) attr = this.getPosition();
         const array = attr.data;
         const stride = attr.stride ? attr.stride / array.BYTES_PER_ELEMENT : attr.size;
 
-        if (!this.bounds) {
+        if (! this.bounds) {
             this.bounds = {
                 min: new Vec3(),
                 max: new Vec3(),
@@ -256,11 +254,11 @@ export class Geometry {
     }
 
     computeBoundingSphere(attr) {
-        if (!attr) attr = this.getPosition();
+        if (! attr) attr = this.getPosition();
         const array = attr.data;
         const stride = attr.stride ? attr.stride / array.BYTES_PER_ELEMENT : attr.size;
 
-        if (!this.bounds) this.computeBoundingBox(attr);
+        if (! this.bounds) this.computeBoundingBox(attr);
 
         let maxRadiusSq = 0;
         for (let i = 0, l = array.length; i < l; i += stride) {
@@ -281,4 +279,7 @@ export class Geometry {
             delete this.attributes[key];
         }
     }
+
 }
+
+export { Geometry };

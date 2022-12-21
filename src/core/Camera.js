@@ -6,7 +6,7 @@ const tempMat4 = new Mat4();
 const tempVec3a = new Vec3();
 const tempVec3b = new Vec3();
 
-export class Camera extends Transform {
+class Camera extends Transform {
 
     constructor(gl, { near = 0.1, far = 100, fov = 45, aspect = 1, left, right, bottom, top, zoom = 1 } = {}) {
         super();
@@ -131,3 +131,5 @@ export class Camera extends Transform {
     }
 
 }
+
+export { Camera };

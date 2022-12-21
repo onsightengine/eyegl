@@ -1,3 +1,18 @@
+/** /////////////////////////////////////////////////////////////////////////////////
+//
+// @description Onsight Engine
+// @about       Easy to use 2D / 3D JavaScript game engine.
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
+// @source      https://github.com/onsightengine
+//
+///////////////////////////////////////////////////////////////////////////////////*/
+//
+//  Additional Source(s)
+//      UN      https://github.com/oframe/ogl/blob/master/src/core/Renderer.js
+//
+/////////////////////////////////////////////////////////////////////////////////////
+
 import { Vec3 } from '../math/Vec3.js';
 
 // TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
@@ -11,9 +26,10 @@ import { Vec3 } from '../math/Vec3.js';
 // gl.clearStencil( stencil );
 
 const tempVec3 = new Vec3();
+
 let _ID = 1;
 
-export class Renderer {
+class Renderer {
 
     constructor({
         canvas = document.createElement('canvas'),
@@ -30,6 +46,7 @@ export class Renderer {
         autoClear = true,
         webgl = 2,
     } = {}) {
+        this.isRenderer = true;
 
         const attributes = { alpha, depth, stencil, antialias, premultipliedAlpha, preserveDrawingBuffer, powerPreference };
         this.dpr = dpr;
@@ -158,14 +175,16 @@ export class Renderer {
             this.state.blendFunc.dst === dst &&
             this.state.blendFunc.srcAlpha === srcAlpha &&
             this.state.blendFunc.dstAlpha === dstAlpha
-        )
-            return;
+        ) { return; }
         this.state.blendFunc.src = src;
         this.state.blendFunc.dst = dst;
         this.state.blendFunc.srcAlpha = srcAlpha;
         this.state.blendFunc.dstAlpha = dstAlpha;
-        if (srcAlpha !== undefined) this.gl.blendFuncSeparate(src, dst, srcAlpha, dstAlpha);
-        else this.gl.blendFunc(src, dst);
+        if (srcAlpha !== undefined) {
+            this.gl.blendFuncSeparate(src, dst, srcAlpha, dstAlpha);
+        } else {
+            this.gl.blendFunc(src, dst);
+        }
     }
 
     setBlendEquation(modeRGB, modeAlpha) {
@@ -357,3 +376,5 @@ export class Renderer {
     }
 
 }
+
+export { Renderer };

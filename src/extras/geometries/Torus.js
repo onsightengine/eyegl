@@ -3,7 +3,7 @@
 import { Geometry } from '../../core/Geometry.js';
 import { Vec3 } from '../../math/Vec3.js';
 
-export class Torus extends Geometry {
+class Torus extends Geometry {
 
     constructor(gl, { radius = 0.5, tube = 0.2, radialSegments = 8, tubularSegments = 6, arc = Math.PI * 2, attributes = {} } = {}) {
         const num = (radialSegments + 1) * (tubularSegments + 1);
@@ -68,4 +68,7 @@ export class Torus extends Geometry {
 
         super(gl, attributes);
     }
+
 }
+
+export { Torus };

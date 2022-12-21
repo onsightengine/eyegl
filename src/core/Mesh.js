@@ -4,10 +4,12 @@ import { Mat4 } from '../math/Mat4.js';
 
 let _ID = 0;
 
-export class Mesh extends Transform {
+class Mesh extends Transform {
 
     constructor(gl, { geometry, program, mode = gl.TRIANGLES, frustumCulled = true, renderOrder = 0 } = {}) {
         super();
+        this.isMesh = true;
+
         if (!gl.canvas) console.error('gl not passed as first argument to Mesh');
         this.gl = gl;
         this.id = _ID++;
@@ -69,3 +71,5 @@ export class Mesh extends Transform {
         this.afterRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
     }
 }
+
+export { Mesh };

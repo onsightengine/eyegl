@@ -2,7 +2,8 @@ import { Transform } from '../../core/Transform.js';
 import { Mesh } from '../../core/Mesh.js';
 import { Vec4 } from '../../math/Vec4.js';
 
-export class InstancedMesh extends Mesh {
+class InstancedMesh extends Mesh {
+
     constructor(...args) {
         super(...args);
 
@@ -84,3 +85,5 @@ export class InstancedMesh extends Mesh {
         this.geometry.attributes.instanceMatrix.needsUpdate = true;
     }
 }
+
+export { InstancedMesh };

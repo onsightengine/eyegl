@@ -7,7 +7,7 @@ let _ID = 1;
 // cache of typed arrays used to flatten uniform arrays
 const arrayCacheF32 = {};
 
-export class Program {
+class Program {
 
     constructor(
         gl,
@@ -24,6 +24,8 @@ export class Program {
             depthFunc = gl.LESS,
         } = {}
     ) {
+        this.isProgram = true;
+
         if (!gl.canvas) console.error('gl not passed as first argument to Program');
         this.gl = gl;
         this.uniforms = uniforms;
@@ -211,7 +213,12 @@ export class Program {
     remove() {
         this.gl.deleteProgram(this.program);
     }
+
 }
+
+export { Program };
+
+////////////////////
 
 function setUniform(gl, type, location, value) {
     value = value.length ? flatten(value) : value;

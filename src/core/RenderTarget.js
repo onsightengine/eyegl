@@ -1,7 +1,8 @@
 // TODO: test stencil and depth
 import { Texture } from './Texture.js';
 
-export class RenderTarget {
+class RenderTarget {
+
     constructor(
         gl,
         {
@@ -23,6 +24,8 @@ export class RenderTarget {
             premultiplyAlpha,
         } = {}
     ) {
+        this.isRenderTarget = true;
+
         this.gl = gl;
         this.width = width;
         this.height = height;
@@ -145,3 +148,5 @@ export class RenderTarget {
         this.gl.renderer.bindFramebuffer({ target: this.target });
     }
 }
+
+export { RenderTarget };

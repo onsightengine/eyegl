@@ -18,24 +18,27 @@ export { Vec2 } from './math/Vec2.js';
 export { Vec3 } from './math/Vec3.js';
 export { Vec4 } from './math/Vec4.js';
 
-// Addons - Controls
-export { Orbit } from './addons/controls/Orbit.js';
+// Extras
+export { Raycast } from './extras/Raycast.js';
+export { Post } from './extras/Post.js';
 
-// Addons - Geometries
-export { Plane } from './addons/geometries/Plane.js';
-export { Torus } from './addons/geometries/Torus.js';
-export { Triangle } from './addons/geometries/Triangle.js';
+// Extras • Controls
+export { Orbit } from './extras/controls/Orbit.js';
 
-// Objects
-export { InstancedMesh } from './addons/objects/InstancedMesh.js';
+// Extras • Geometries
+export { Box } from './extras/geometries/Box.js';
+export { Cylinder } from './extras/geometries/Cylinder.js';
+export { Plane } from './extras/geometries/Plane.js';
+export { Sphere } from './extras/geometries/Sphere.js';
+export { Torus } from './extras/geometries/Torus.js';
+export { Triangle } from './extras/geometries/Triangle.js';
 
-// export { Box } from './extras/Box.js';
-// export { Sphere } from './extras/Sphere.js';
-// export { Cylinder } from './extras/Cylinder.js';
-// export { Raycast } from './extras/Raycast.js';
+// Extras • Objects
+export { InstancedMesh } from './extras/objects/InstancedMesh.js';
+export { WireMesh } from './extras/objects/WireMesh.js';
+
 // export { Curve } from './extras/Curve.js';
 // export { Path } from './extras/Path/Path.js';
-// export { Post } from './extras/Post.js';
 // export { Skin } from './extras/Skin.js';
 // export { Animation } from './extras/Animation.js';
 // export { Text } from './extras/Text.js';
@@ -49,7 +52,6 @@ export { InstancedMesh } from './addons/objects/InstancedMesh.js';
 // export { GLTFLoader } from './extras/GLTFLoader.js';
 // export { GLTFSkin } from './extras/GLTFSkin.js';
 // export { BasisManager } from './extras/BasisManager.js';
-// export { WireMesh } from './extras/WireMesh.js';
 // export { AxesHelper } from './extras/helpers/AxesHelper.js';
 // export { GridHelper } from './extras/helpers/GridHelper.js';
 // export { VertexNormalsHelper } from './extras/helpers/VertexNormalsHelper.js';

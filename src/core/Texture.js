@@ -11,7 +11,8 @@ function isPowerOf2(value) {
 
 let _ID = 1;
 
-export class Texture {
+class Texture {
+
     constructor(
         gl,
         {
@@ -34,6 +35,8 @@ export class Texture {
             height = width,
         } = {}
     ) {
+        this.isTexture = true;
+
         this.gl = gl;
         this.id = _ID++;
 
@@ -215,3 +218,5 @@ export class Texture {
         this.store.image = this.image;
     }
 }
+
+export { Texture };

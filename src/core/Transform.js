@@ -3,9 +3,11 @@ import { Quat } from '../math/Quat.js';
 import { Mat4 } from '../math/Mat4.js';
 import { Euler } from '../math/Euler.js';
 
-export class Transform {
+class Transform {
 
     constructor() {
+        this.isTransform = true;
+
         this.parent = null;
         this.children = [];
         this.visible = true;
@@ -82,3 +84,5 @@ export class Transform {
     }
 
 }
+
+export { Transform };
