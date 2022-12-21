@@ -1,4 +1,15 @@
-// Core
+/** /////////////////////////////////////////////////////////////////////////////////
+//
+// @description Onsight Engine
+// @about       Easy to use 2D / 3D JavaScript game engine.
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
+// @source      https://github.com/onsightengine
+//
+///////////////////////////////////////////////////////////////////////////////////*/
+
+///// Core
+
 export { Geometry } from './core/Geometry.js';
 export { Program } from './core/Program.js';
 export { Renderer } from './core/Renderer.js';
@@ -8,7 +19,8 @@ export { Mesh } from './core/Mesh.js';
 export { Texture } from './core/Texture.js';
 export { RenderTarget } from './core/RenderTarget.js';
 
-// Maths
+///// Math
+
 export { Color } from './math/Color.js';
 export { Euler } from './math/Euler.js';
 export { Mat3 } from './math/Mat3.js';
@@ -18,7 +30,8 @@ export { Vec2 } from './math/Vec2.js';
 export { Vec3 } from './math/Vec3.js';
 export { Vec4 } from './math/Vec4.js';
 
-// Extras
+///// Extras
+
 export { Raycast } from './extras/Raycast.js';
 export { Post } from './extras/Post.js';
 

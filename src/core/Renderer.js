@@ -47,6 +47,7 @@ class Renderer {
         autoClear = true,
         webgl = 2,
     } = {}) {
+
         this.isRenderer = true;
 
         const attributes = { alpha, depth, stencil, antialias, premultipliedAlpha, preserveDrawingBuffer, powerPreference };
@@ -62,8 +63,8 @@ class Renderer {
         // Attempt WebGL2 unless forced to 1, if not supported fallback to WebGL1
         if (webgl === 2) this.gl = canvas.getContext('webgl2', attributes);
         this.isWebgl2 = !!this.gl;
-        if (!this.gl) this.gl = canvas.getContext('webgl', attributes);
-        if (!this.gl) console.error('unable to create webgl context');
+        if (! this.gl) this.gl = canvas.getContext('webgl', attributes);
+        if (! this.gl) console.error('unable to create webgl context');
 
         // Attach renderer to gl so that all classes have access to internal state functions
         this.gl.renderer = this;

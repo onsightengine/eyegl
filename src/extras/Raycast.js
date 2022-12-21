@@ -79,6 +79,7 @@ class Raycast {
         hits.length = 0;
 
         meshes.forEach((mesh) => {
+
             // Create bounds
             if (!mesh.geometry.bounds || mesh.geometry.bounds.radius === Infinity) mesh.geometry.computeBoundingSphere();
             const bounds = mesh.geometry.bounds;
