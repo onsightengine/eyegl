@@ -17,7 +17,8 @@
 import { Geometry } from '../../core/Geometry.js';
 import { Plane } from './Plane.js';
 
-export class Box extends Geometry {
+class Box extends Geometry {
+
     constructor(gl, { width = 1, height = 1, depth = 1, widthSegments = 1, heightSegments = 1, depthSegments = 1, attributes = {} } = {}) {
         const wSegs = widthSegments;
         const hSegs = heightSegments;

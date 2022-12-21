@@ -1,6 +1,7 @@
 import * as Vec2Func from './functions/Vec2Func.js';
 
 export class Vec2 extends Array {
+
     constructor(x = 0, y = x) {
         super(x, y);
         return this;
@@ -139,4 +140,5 @@ export class Vec2 extends Array {
         a[o + 1] = this[1];
         return a;
     }
+
 }

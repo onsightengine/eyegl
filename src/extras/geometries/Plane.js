@@ -1,6 +1,16 @@
+/** /////////////////////////////////////////////////////////////////////////////////
+//
+// @description Onsight Engine
+// @about       Easy to use 2D / 3D JavaScript game engine.
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
+// @source      https://github.com/onsightengine
+//
+///////////////////////////////////////////////////////////////////////////////////*/
+
 import { Geometry } from '../../core/Geometry.js';
 
-export class Plane extends Geometry {
+class Plane extends Geometry {
 
     constructor(gl, { width = 1, height = 1, widthSegments = 1, heightSegments = 1, attributes = {} } = {}) {
         const wSegs = widthSegments;
@@ -67,3 +77,5 @@ export class Plane extends Geometry {
     }
 
 }
+
+export { Plane };

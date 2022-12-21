@@ -1,6 +1,17 @@
+/** /////////////////////////////////////////////////////////////////////////////////
+//
+// @description Onsight Engine
+// @about       Easy to use 2D / 3D JavaScript game engine.
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
+// @source      https://github.com/onsightengine
+//
+///////////////////////////////////////////////////////////////////////////////////*/
+//
 // TODO: upload empty texture if null ? maybe not
 // TODO: upload identity matrix if null ?
 // TODO: sampler Cube
+//
 
 let _ID = 1;
 
@@ -218,7 +229,7 @@ class Program {
 
 export { Program };
 
-////////////////////
+//////////////////// Internal
 
 function setUniform(gl, type, location, value) {
     value = value.length ? flatten(value) : value;

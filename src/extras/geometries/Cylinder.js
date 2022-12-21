@@ -1,7 +1,17 @@
+/** /////////////////////////////////////////////////////////////////////////////////
+//
+// @description Onsight Engine
+// @about       Easy to use 2D / 3D JavaScript game engine.
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
+// @source      https://github.com/onsightengine
+//
+///////////////////////////////////////////////////////////////////////////////////*/
+
 import { Geometry } from '../../core/Geometry.js';
 import { Vec3 } from '../../math/Vec3.js';
 
-export class Cylinder extends Geometry {
+class Cylinder extends Geometry {
     constructor(
         gl,
         {
@@ -122,3 +132,5 @@ export class Cylinder extends Geometry {
         super(gl, attributes);
     }
 }
+
+export { Cylinder };

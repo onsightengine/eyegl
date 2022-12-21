@@ -4,6 +4,7 @@ import { Mat4 } from './Mat4.js';
 const tmpMat4 = new Mat4();
 
 export class Euler extends Array {
+
     constructor(x = 0, y = x, z = x, order = 'YXZ') {
         super(x, y, z);
         this.order = order;
@@ -78,4 +79,5 @@ export class Euler extends Array {
         a[o + 2] = this[2];
         return a;
     }
+
 }

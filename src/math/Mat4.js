@@ -1,6 +1,7 @@
 import * as Mat4Func from './functions/Mat4Func.js';
 
 export class Mat4 extends Array {
+
     constructor(
         m00 = 1,
         m01 = 0,
@@ -194,4 +195,5 @@ export class Mat4 extends Array {
         a[o + 15] = this[15];
         return a;
     }
+
 }

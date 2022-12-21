@@ -1,3 +1,13 @@
+/** /////////////////////////////////////////////////////////////////////////////////
+//
+// @description Onsight Engine
+// @about       Easy to use 2D / 3D JavaScript game engine.
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
+// @source      https://github.com/onsightengine
+//
+///////////////////////////////////////////////////////////////////////////////////*/
+//
 // attribute params
 // {
 //     data - typed array eg UInt16Array for indices, Float32Array
@@ -13,8 +23,11 @@
 //     min - array - for when passing in buffer
 //     max - array - for when passing in buffer
 // }
-
+//
+//
 // TODO: fit in transform feedback
+//
+//
 
 import { Vec3 } from '../math/Vec3.js';
 

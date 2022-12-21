@@ -1,3 +1,13 @@
+/** /////////////////////////////////////////////////////////////////////////////////
+//
+// @description Onsight Engine
+// @about       Easy to use 2D / 3D JavaScript game engine.
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
+// @source      https://github.com/onsightengine
+//
+///////////////////////////////////////////////////////////////////////////////////*/
+
 import { Mesh } from '../../core/Mesh.js';
 import { Program } from '../../core/Program.js';
 import { Geometry } from '../../core/Geometry.js';
@@ -57,7 +67,7 @@ class WireMesh extends Mesh {
 
 export { WireMesh };
 
-////////////////////
+//////////////////// Internal
 
 // from https://github.com/mrdoob/three.js/blob/0c26bb4bb8220126447c8373154ac045588441de/src/geometries/WireframeGeometry.js#L116
 function isUniqueEdgePosition(start, end, pos, hashSet) {

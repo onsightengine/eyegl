@@ -1,4 +1,15 @@
+/** /////////////////////////////////////////////////////////////////////////////////
+//
+// @description Onsight Engine
+// @about       Easy to use 2D / 3D JavaScript game engine.
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
+// @source      https://github.com/onsightengine
+//
+///////////////////////////////////////////////////////////////////////////////////*/
+//
 // TODO: Destroy render targets if size changed and exists
+//
 
 import { Program } from '../core/Program.js';
 import { Mesh } from '../core/Mesh.js';
@@ -6,6 +17,7 @@ import { RenderTarget } from '../core/RenderTarget.js';
 import { Triangle } from './geometries/Triangle.js';
 
 class Post {
+
     constructor(
         gl,
         {
@@ -113,7 +125,7 @@ class Post {
 
 export { Post };
 
-////////////////////
+//////////////////// Internal
 
 const defaultVertex = /* glsl */ `
     attribute vec2 uv;

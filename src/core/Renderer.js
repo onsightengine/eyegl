@@ -12,18 +12,19 @@
 //      UN      https://github.com/oframe/ogl/blob/master/src/core/Renderer.js
 //
 /////////////////////////////////////////////////////////////////////////////////////
+//
+// TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
+//
+// Not automatic - devs to use these methods manually
+//  gl.colorMask( colorMask, colorMask, colorMask, colorMask );
+//  gl.clearColor( r, g, b, a );
+//  gl.stencilMask( stencilMask );
+//  gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
+//  gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
+//  gl.clearStencil( stencil );
+//
 
 import { Vec3 } from '../math/Vec3.js';
-
-// TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
-
-// Not automatic - devs to use these methods manually
-// gl.colorMask( colorMask, colorMask, colorMask, colorMask );
-// gl.clearColor( r, g, b, a );
-// gl.stencilMask( stencilMask );
-// gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
-// gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
-// gl.clearStencil( stencil );
 
 const tempVec3 = new Vec3();
 

@@ -11,6 +11,7 @@ import * as ColorFunc from './functions/ColorFunc.js';
 // new Color('red') - Color name string (short list in ColorFunc.js)
 
 export class Color extends Array {
+
     constructor(color) {
         if (Array.isArray(color)) return super(...color);
         return super(...ColorFunc.parseColor(...arguments));
@@ -51,4 +52,5 @@ export class Color extends Array {
         this[2] = v[2];
         return this;
     }
+
 }

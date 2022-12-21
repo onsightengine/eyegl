@@ -1,6 +1,7 @@
 import * as Vec4Func from './functions/Vec4Func.js';
 
 export class Vec4 extends Array {
+
     constructor(x = 0, y = x, z = x, w = x) {
         super(x, y, z, w);
         return this;
@@ -78,4 +79,5 @@ export class Vec4 extends Array {
         a[o + 3] = this[3];
         return a;
     }
+
 }
