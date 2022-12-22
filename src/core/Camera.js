@@ -18,7 +18,19 @@ const tempVec3b = new Vec3();
 
 class Camera extends Transform {
 
-    constructor(gl, { near = 0.1, far = 100, fov = 45, aspect = 1, left, right, bottom, top, zoom = 1 } = {}) {
+    constructor({
+        near = 0.1,
+        far = 100,
+        /* perspective */
+        fov = 45,
+        aspect = 1,
+        /* orthographic */
+        left,
+        right,
+        bottom,
+        top,
+        zoom = 1
+    } = {}) {
         super();
         this.isCamera = true;
 
@@ -30,13 +42,18 @@ class Camera extends Transform {
         this.worldPosition = new Vec3();
 
         // Use orthographic if left/right set, else default to perspective camera
-        this.type = left || right ? 'orthographic' : 'perspective';
+        this.type = (left || right) ? 'orthographic' : 'perspective';
 
         if (this.type === 'orthographic') this.orthographic();
         else this.perspective();
     }
 
-    perspective({ near = this.near, far = this.far, fov = this.fov, aspect = this.aspect } = {}) {
+    perspective({
+        near = this.near,
+        far = this.far,
+        fov = this.fov,
+        aspect = this.aspect
+    } = {}) {
         Object.assign(this, { near, far, fov, aspect });
         this.projectionMatrix.fromPerspective({ fov: fov * (Math.PI / 180), aspect, near, far });
         this.type = 'perspective';
@@ -67,7 +84,7 @@ class Camera extends Transform {
         this.viewMatrix.inverse(this.worldMatrix);
         this.worldMatrix.getTranslation(this.worldPosition);
 
-        // used for sorting
+        // Used for sorting
         this.projectionViewMatrix.multiply(this.projectionMatrix, this.viewMatrix);
         return this;
     }
@@ -92,8 +109,8 @@ class Camera extends Transform {
     }
 
     updateFrustum() {
-        if (!this.frustum) {
-            this.frustum = [new Vec3(), new Vec3(), new Vec3(), new Vec3(), new Vec3(), new Vec3()];
+        if (! this.frustum) {
+            this.frustum = [ new Vec3(), new Vec3(), new Vec3(), new Vec3(), new Vec3(), new Vec3() ];
         }
 
         const m = this.projectionViewMatrix;
@@ -113,11 +130,10 @@ class Camera extends Transform {
 
     frustumIntersectsMesh(node, worldMatrix = node.worldMatrix) {
         // If no position attribute, treat as frustumCulled false
-        if (!node.geometry.attributes.position) return true;
+        if (! node.geometry.attributes.position) return true;
 
-        if (!node.geometry.bounds || node.geometry.bounds.radius === Infinity) node.geometry.computeBoundingSphere();
-
-        if (!node.geometry.bounds) return true;
+        if (! node.geometry.bounds || node.geometry.bounds.radius === Infinity) node.geometry.computeBoundingSphere();
+        if (! node.geometry.bounds) return true;
 
         const center = tempVec3a;
         center.copy(node.geometry.bounds.center);
