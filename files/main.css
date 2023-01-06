@@ -13,6 +13,7 @@ html {
     overflow-x: hidden;
     height: 100%;
     overscroll-behavior-y: contain;
+    background: #202428;
 }
 
 body,
@@ -101,7 +102,7 @@ div {
 
 .Title {
     font-size: 18px;
-    padding: 5px;
+    padding: 5px 5px 5px 10px;
     display: block;
     color: #00b4af;
 }

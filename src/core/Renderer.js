@@ -36,29 +36,41 @@ class Renderer {
         canvas = document.createElement('canvas'),
         width = 300,
         height = 150,
-        dpr = 1,                            // window.devicePixelRatio
-        alpha = false,
-        depth = true,
-        stencil = false,
+        dpr = 1,                        // window.devicePixelRatio
+        alpha = true,
+        autoClear = true,               // clear unless specified render({ clear: false })?
+        color = true,                   // clear color?
+        depth = true,                   // clear depth?
+        stencil = false,                // clear stencil?
         antialias = false,
         premultipliedAlpha = false,
         preserveDrawingBuffer = false,
         powerPreference = 'default',
-        autoClear = true,
         webgl = 2,
     } = {}) {
-
         this.isRenderer = true;
 
-        const attributes = { alpha, depth, stencil, antialias, premultipliedAlpha, preserveDrawingBuffer, powerPreference };
+        const attributes = {
+            alpha,
+            depth,
+            stencil,
+            antialias,
+            premultipliedAlpha,
+            preserveDrawingBuffer,
+            powerPreference
+        };
+
         this.dpr = dpr;
         this.alpha = alpha;
-        this.color = true;
+        this.color = color;
         this.depth = depth;
         this.stencil = stencil;
         this.premultipliedAlpha = premultipliedAlpha;
         this.autoClear = autoClear;
         this.id = _ID++;
+
+        /** @type {WebGLRenderingContext | WebGL2RenderingContext} */
+        this.gl;
 
         // Attempt WebGL2 unless forced to 1, if not supported fallback to WebGL1
         if (webgl === 2) this.gl = canvas.getContext('webgl2', attributes);
@@ -69,10 +81,10 @@ class Renderer {
         // Attach renderer to gl so that all classes have access to internal state functions
         this.gl.renderer = this;
 
-        // initialise size values
+        // Initialise size values
         this.setSize(width, height);
 
-        // gl state stores to avoid redundant calls on methods used internally
+        // WebGL state stores to avoid redundant calls on methods used internally
         this.state = {};
         this.state.blendFunc = { src: this.gl.ONE, dst: this.gl.ZERO };
         this.state.blendEquation = { modeRGB: this.gl.FUNC_ADD };
@@ -91,7 +103,7 @@ class Renderer {
         this.state.uniformLocations = new Map();
         this.state.currentProgram = null;
 
-        // store requested extensions
+        // Store requested extensions
         this.extensions = {};
 
         // Initialise extra format types
@@ -133,7 +145,7 @@ class Renderer {
             : 0;
     }
 
-    // Usually (window.innerWidth, window.innerHeight, true)
+    // Usually (window.innerWidth, window.innerHeight)
     setSize(width, height, updateStyle = true) {
         this.width = width;
         this.height = height;
@@ -238,21 +250,21 @@ class Renderer {
     }
 
     getExtension(extension, webgl2Func, extFunc) {
-        // if webgl2 function supported, return func bound to gl context
+        // If webgl2 function supported, return func bound to gl context
         if (webgl2Func && this.gl[webgl2Func]) return this.gl[webgl2Func].bind(this.gl);
 
-        // fetch extension once only
+        // Fetch extension once only
         if (!this.extensions[extension]) {
             this.extensions[extension] = this.gl.getExtension(extension);
         }
 
-        // return extension if no function requested
+        // Return extension if no function requested
         if (!webgl2Func) return this.extensions[extension];
 
         // Return null if extension not supported
         if (!this.extensions[extension]) return null;
 
-        // return extension function, bound to extension
+        // Return extension function, bound to extension
         return this.extensions[extension][extFunc].bind(this.extensions[extension]);
     }
 
@@ -308,8 +320,8 @@ class Renderer {
 
         if (sort) {
             const opaque = [];
-            const transparent = []; // depthTest true
-            const ui = []; // depthTest false
+            const transparent = [];     // depthTest true
+            const ui = [];              // depthTest false
 
             renderList.forEach((node) => {
                 // Split into the 3 render groups
@@ -326,7 +338,7 @@ class Renderer {
                 // Only calculate z-depth if renderOrder unset and depthTest is true
                 if (node.renderOrder !== 0 || !node.program.depthTest || !camera) return;
 
-                // update z-depth
+                // Update z-depth
                 node.worldMatrix.getTranslation(tempVec3);
                 tempVec3.applyMatrix4(camera.projectionViewMatrix);
                 node.zDepth = tempVec3.z;
@@ -342,13 +354,22 @@ class Renderer {
         return renderList;
     }
 
-    render({ scene, camera, target = null, update = true, sort = true, frustumCull = true, clear }) {
-        // Draw to canvas
+    render({
+        scene,
+        camera,
+        target = null,
+        update = true,
+        sort = true,
+        frustumCull = true,
+        clear,
+    } = {}) {
+
         if (target === null) {
+            // Draw to canvas
             this.bindFramebuffer();
             this.setViewport(this.width * this.dpr, this.height * this.dpr);
-        // Draw to render target
         } else {
+            // Draw to render target
             this.bindFramebuffer(target);
             this.setViewport(target.width, target.height);
         }
@@ -372,7 +393,7 @@ class Renderer {
         // Update camera separately (in case not in scene graph)
         if (camera) camera.updateMatrixWorld();
 
-        // Get render list - entails culling and sorting
+        // Get render list (entails culling and sorting)
         const renderList = this.getRenderList({ scene, camera, frustumCull, sort });
 
         renderList.forEach((node) => {

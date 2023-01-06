@@ -15,7 +15,14 @@ import { Vec3 } from '../../math/Vec3.js';
 
 class Torus extends Geometry {
 
-    constructor(gl, { radius = 0.5, tube = 0.2, radialSegments = 8, tubularSegments = 6, arc = Math.PI * 2, attributes = {} } = {}) {
+    constructor(gl, {
+        radius = 0.5,
+        tube = 0.2,
+        radialSegments = 8,
+        tubularSegments = 6,
+        arc = Math.PI * 2,
+        attributes = {}
+    } = {}) {
         const num = (radialSegments + 1) * (tubularSegments + 1);
         const numIndices = radialSegments * tubularSegments * 6;
 

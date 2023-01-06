@@ -24,7 +24,6 @@ class Mesh extends Transform {
         renderOrder = 0
     } = {}) {
         super();
-
         this.isMesh = true;
 
         if (! gl.canvas) console.error('gl not passed as first argument to Mesh');
@@ -56,7 +55,10 @@ class Mesh extends Transform {
     }
 
     draw({ camera } = {}) {
+        // Before render
         this.beforeRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
+
+        // Set camera uniforms
         if (camera) {
             // Add empty matrix uniforms to program if unset
             if (! this.program.uniforms.modelMatrix) {
@@ -81,10 +83,12 @@ class Mesh extends Transform {
             this.program.uniforms.normalMatrix.value = this.normalMatrix;
         }
 
-        // determine if faces need to be flipped - when mesh scaled negatively
+        // Determine if faces need to be flipped (when mesh scaled negatively)
         let flipFaces = this.program.cullFace && this.worldMatrix.determinant() < 0;
         this.program.use({ flipFaces });
         this.geometry.draw({ mode: this.mode, program: this.program });
+
+        // After render
         this.afterRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
     }
 }

@@ -24,28 +24,25 @@ let _ID = 1;
 
 class Texture {
 
-    constructor(
-        gl,
-        {
-            image,
-            target = gl.TEXTURE_2D,
-            type = gl.UNSIGNED_BYTE,
-            format = gl.RGBA,
-            internalFormat = format,
-            wrapS = gl.CLAMP_TO_EDGE,
-            wrapT = gl.CLAMP_TO_EDGE,
-            generateMipmaps = true,
-            minFilter = generateMipmaps ? gl.NEAREST_MIPMAP_LINEAR : gl.LINEAR,
-            magFilter = gl.LINEAR,
-            premultiplyAlpha = false,
-            unpackAlignment = 4,
-            flipY = target == gl.TEXTURE_2D ? true : false,
-            anisotropy = 0,
-            level = 0,
-            width, // used for RenderTargets or Data Textures
-            height = width,
-        } = {}
-    ) {
+    constructor(gl, {
+        image,
+        target = gl.TEXTURE_2D,
+        type = gl.UNSIGNED_BYTE,
+        format = gl.RGBA,
+        internalFormat = format,
+        wrapS = gl.CLAMP_TO_EDGE,
+        wrapT = gl.CLAMP_TO_EDGE,
+        generateMipmaps = true,
+        minFilter = generateMipmaps ? gl.NEAREST_MIPMAP_LINEAR : gl.LINEAR,
+        magFilter = gl.LINEAR,
+        premultiplyAlpha = false,
+        unpackAlignment = 4,
+        flipY = target == gl.TEXTURE_2D ? true : false,
+        anisotropy = 0,
+        level = 0,
+        width, // used for RenderTargets or Data Textures
+        height = width,
+    } = {}) {
         this.isTexture = true;
 
         this.gl = gl;
@@ -98,7 +95,7 @@ class Texture {
 
         // Make sure that texture is bound to its texture unit
         if (needsUpdate || this.glState.textureUnits[textureUnit] !== this.id) {
-            // set active texture unit to perform texture functions
+            // Set active texture unit to perform texture functions
             this.gl.renderer.activeTexture(textureUnit);
             this.bind();
         }
@@ -219,7 +216,7 @@ class Texture {
                     );
                 }
             } else if (this.width) {
-                // image intentionally left null for RenderTarget
+                // Image intentionally left null for RenderTarget
                 this.gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
             } else {
                 // Upload empty pixel if no image to avoid errors while image or video loading

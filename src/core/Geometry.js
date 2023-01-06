@@ -60,7 +60,7 @@ class Geometry {
         // Alias for state store to avoid redundant calls for global state
         this.glState = this.gl.renderer.state;
 
-        // create the buffers
+        // Create the buffers
         for (let key in attributes) {
             this.addAttribute(key, attributes[key]);
         }

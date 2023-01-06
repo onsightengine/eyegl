@@ -21,10 +21,10 @@ class Camera extends Transform {
     constructor({
         near = 0.1,
         far = 100,
-        /* perspective */
+        // Perspective
         fov = 45,
         aspect = 1,
-        /* orthographic */
+        // Orthographic
         left,
         right,
         bottom,

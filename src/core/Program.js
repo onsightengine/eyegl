@@ -13,10 +13,9 @@
 // TODO: sampler Cube
 //
 
-let _ID = 1;
+const arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
 
-// cache of typed arrays used to flatten uniform arrays
-const arrayCacheF32 = {};
+let _ID = 1;
 
 class Program {
 
@@ -32,7 +31,6 @@ class Program {
         depthWrite = true,
         depthFunc = gl.LESS,
     } = {}) {
-
         this.isProgram = true;
 
         if (! gl.canvas) console.error('gl not passed as first argument to Program');
@@ -53,13 +51,13 @@ class Program {
         this.blendFunc = {};
         this.blendEquation = {};
 
-        // set default blendFunc if transparent flagged
+        // Set default blendFunc if transparent flagged
         if (this.transparent && ! this.blendFunc.src) {
             if (this.gl.renderer.premultipliedAlpha) this.setBlendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
             else this.setBlendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
         }
 
-        // compile vertex shader and log errors
+        // Compile vertex shader and log errors
         const vertexShader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vertexShader, vertex);
         gl.compileShader(vertexShader);
@@ -67,7 +65,7 @@ class Program {
             console.warn(`${gl.getShaderInfoLog(vertexShader)}\nVertex Shader\n${addLineNumbers(vertex)}`);
         }
 
-        // compile fragment shader and log errors
+        // Compile fragment shader and log errors
         const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(fragmentShader, fragment);
         gl.compileShader(fragmentShader);
@@ -75,7 +73,7 @@ class Program {
             console.warn(`${gl.getShaderInfoLog(fragmentShader)}\nFragment Shader\n${addLineNumbers(fragment)}`);
         }
 
-        // compile program and log errors
+        // Compile program and log errors
         this.program = gl.createProgram();
         gl.attachShader(this.program, vertexShader);
         gl.attachShader(this.program, fragmentShader);
@@ -171,7 +169,7 @@ class Program {
         this.uniformLocations.forEach((location, activeUniform) => {
             let name = activeUniform.uniformName;
 
-            // get supplied uniform
+            // Get supplied uniform
             let uniform = this.uniforms[name];
 
             // For structs, get the specific property instead of the entire object
@@ -236,7 +234,7 @@ function setUniform(gl, type, location, value) {
     // Avoid redundant uniform commands
     if (value.length) {
         if (setValue === undefined || setValue.length !== value.length) {
-            // clone array to store as cache
+            // Clone array to store as cache
             gl.renderer.state.uniformLocations.set(location, value.slice(0));
         } else {
             if (arraysEqual(setValue, value)) return;

@@ -12,20 +12,18 @@ import { Geometry } from '../../core/Geometry.js';
 import { Vec3 } from '../../math/Vec3.js';
 
 class Cylinder extends Geometry {
-    constructor(
-        gl,
-        {
-            radiusTop = 0.5,
-            radiusBottom = 0.5,
-            height = 1,
-            radialSegments = 8,
-            heightSegments = 1,
-            openEnded = false,
-            thetaStart = 0,
-            thetaLength = Math.PI * 2,
-            attributes = {},
-        } = {}
-    ) {
+
+    constructor(gl, {
+        radiusTop = 0.5,
+        radiusBottom = 0.5,
+        height = 1,
+        radialSegments = 8,
+        heightSegments = 1,
+        openEnded = false,
+        thetaStart = 0,
+        thetaLength = Math.PI * 2,
+        attributes = {},
+    } = {}) {
         const rSegs = radialSegments;
         const hSegs = heightSegments;
         const tStart = thetaStart;

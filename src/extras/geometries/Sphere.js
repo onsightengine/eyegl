@@ -13,19 +13,16 @@ import { Vec3 } from '../../math/Vec3.js';
 
 class Sphere extends Geometry {
 
-    constructor(
-        gl,
-        {
-            radius = 0.5,
-            widthSegments = 16,
-            heightSegments = Math.ceil(widthSegments * 0.5),
-            phiStart = 0,
-            phiLength = Math.PI * 2,
-            thetaStart = 0,
-            thetaLength = Math.PI,
-            attributes = {},
-        } = {}
-    ) {
+    constructor(gl, {
+        radius = 0.5,
+        widthSegments = 16,
+        heightSegments = Math.ceil(widthSegments * 0.5),
+        phiStart = 0,
+        phiLength = Math.PI * 2,
+        thetaStart = 0,
+        thetaLength = Math.PI,
+        attributes = {},
+    } = {}) {
         const wSegs = widthSegments;
         const hSegs = heightSegments;
         const pStart = phiStart;

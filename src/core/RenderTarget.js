@@ -15,27 +15,24 @@ import { Texture } from './Texture.js';
 
 class RenderTarget {
 
-    constructor(
-        gl,
-        {
-            width = gl.canvas.width,
-            height = gl.canvas.height,
-            target = gl.FRAMEBUFFER,
-            color = 1, // number of color attachments
-            depth = true,
-            stencil = false,
-            depthTexture = false, // note - stencil breaks
-            wrapS = gl.CLAMP_TO_EDGE,
-            wrapT = gl.CLAMP_TO_EDGE,
-            minFilter = gl.LINEAR,
-            magFilter = minFilter,
-            type = gl.UNSIGNED_BYTE,
-            format = gl.RGBA,
-            internalFormat = format,
-            unpackAlignment,
-            premultiplyAlpha,
-        } = {}
-    ) {
+    constructor(gl, {
+        width = gl.canvas.width,
+        height = gl.canvas.height,
+        target = gl.FRAMEBUFFER,
+        color = 1,                  // number of color attachments
+        depth = true,
+        stencil = false,
+        depthTexture = false,       // note - stencil breaks
+        wrapS = gl.CLAMP_TO_EDGE,
+        wrapT = gl.CLAMP_TO_EDGE,
+        minFilter = gl.LINEAR,
+        magFilter = minFilter,
+        type = gl.UNSIGNED_BYTE,
+        format = gl.RGBA,
+        internalFormat = format,
+        unpackAlignment,
+        premultiplyAlpha,
+    } = {}) {
         this.isRenderTarget = true;
 
         this.gl = gl;
