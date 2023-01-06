@@ -11,7 +11,7 @@
     <body>
         <div class="Info">Wireframe. Model by Google Poly</div>
         <script type="module">
-            import { Renderer, Camera, Transform, Texture, Program, Geometry, Mesh } from '../../src/EyeGL.js';
+            import { Renderer, Camera, Transform, Texture, Program, Geometry, Mesh, WireMesh } from '../../src/EyeGL.js';
 
             const vertex = /* glsl */ `
                 attribute vec2 uv;
@@ -54,6 +54,8 @@
             `;
 
             const renderer = new Renderer({ dpr: 2 });
+
+            /** @type {WebGLRenderingContext | WebGL2RenderingContext} */
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(1, 1, 1, 1);
@@ -89,36 +91,19 @@
             async function loadModel() {
                 const data = await (await fetch(`../../files/models/croissant.json`)).json();
 
-                // Regular geometry with no modifications to be used with gl.LINE_LOOP version
                 const geometry = new Geometry(gl, {
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
                 });
 
-                // Using gl.LINE_LOOP or gl.LINE_STRIP as the draw mode will give an approximate wireframe.
-                // This is a simpler, lighter option if accuracy is not important (i.e. debugging).
-                lineLoopMesh = new Mesh(gl, { mode: gl.LINE_LOOP, geometry, program });
+                // Using gl.LINE_STRIP
+                lineLoopMesh = new Mesh(gl, { mode: gl.LINE_STRIP, geometry: geometry, program: program });
                 lineLoopMesh.setParent(scene);
                 lineLoopMesh.position.y = 1;
 
-                // For an accurate wireframe, triangle vertices need to be duplicated to make line pairs.
-                // Here we do so by generating indices. If your geometry is already indexed, this needs to be adjusted.
-                let index = new Uint16Array((data.position.length / 3 / 3) * 6);
-                for (let i = 0; i < data.position.length / 3; i += 3) {
-                    // For every triangle, make three line pairs (start, end)
-                    index.set([i, i + 1, i + 1, i + 2, i + 2, i], i * 2);
-                }
-
-                const wireframeGeometry = new Geometry(gl, {
-                    position: { size: 3, data: new Float32Array(data.position) },
-                    uv: { size: 2, data: new Float32Array(data.uv) },
-                    normal: { size: 3, data: new Float32Array(data.normal) },
-                    index: { data: index },
-                });
-
-                // use the gl.LINES draw mode
-                wireframeMesh = new Mesh(gl, { mode: gl.LINES, geometry: wireframeGeometry, program });
+                // // Using WireMesh (gl.LINES)
+                wireframeMesh = new WireMesh(gl, { geometry: geometry });
                 wireframeMesh.setParent(scene);
                 wireframeMesh.position.y = -1;
             }

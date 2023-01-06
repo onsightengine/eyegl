@@ -16,11 +16,18 @@ let _ID = 0;
 
 class Mesh extends Transform {
 
-    constructor(gl, { geometry, program, mode = gl.TRIANGLES, frustumCulled = true, renderOrder = 0 } = {}) {
+    constructor(gl, {
+        geometry,
+        program,
+        mode = gl.TRIANGLES,
+        frustumCulled = true,
+        renderOrder = 0
+    } = {}) {
         super();
+
         this.isMesh = true;
 
-        if (!gl.canvas) console.error('gl not passed as first argument to Mesh');
+        if (! gl.canvas) console.error('gl not passed as first argument to Mesh');
         this.gl = gl;
         this.id = _ID++;
         this.geometry = geometry;
@@ -52,7 +59,7 @@ class Mesh extends Transform {
         this.beforeRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
         if (camera) {
             // Add empty matrix uniforms to program if unset
-            if (!this.program.uniforms.modelMatrix) {
+            if (! this.program.uniforms.modelMatrix) {
                 Object.assign(this.program.uniforms, {
                     modelMatrix: { value: null },
                     viewMatrix: { value: null },

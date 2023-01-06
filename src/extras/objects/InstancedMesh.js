@@ -59,7 +59,7 @@ class InstancedMesh extends Mesh {
             // frustum cull transforms each frame - pass world matrix
             this.instanceRenderList = [];
             this.instanceTransforms.forEach((transform) => {
-                if (!camera.frustumIntersectsMesh(this, transform.worldMatrix)) return;
+                if (! camera.frustumIntersectsMesh(this, transform.worldMatrix)) return;
                 this.instanceRenderList.push(transform);
             });
 

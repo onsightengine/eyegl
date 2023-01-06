@@ -36,7 +36,7 @@ class Renderer {
         canvas = document.createElement('canvas'),
         width = 300,
         height = 150,
-        dpr = 1,
+        dpr = 1,                            // window.devicePixelRatio
         alpha = false,
         depth = true,
         stencil = false,
@@ -133,17 +133,20 @@ class Renderer {
             : 0;
     }
 
-    setSize(width, height) {
+    // Usually (window.innerWidth, window.innerHeight, true)
+    setSize(width, height, updateStyle = true) {
         this.width = width;
         this.height = height;
 
-        this.gl.canvas.width = width * this.dpr;
-        this.gl.canvas.height = height * this.dpr;
+        if (this.gl.canvas.width !== width || this.gl.canvas.height !== height) {
+            this.gl.canvas.width = width * this.dpr;
+            this.gl.canvas.height = height * this.dpr;
 
-        Object.assign(this.gl.canvas.style, {
-            width: width + 'px',
-            height: height + 'px',
-        });
+            if (updateStyle) {
+                this.gl.canvas.style.width = width + 'px';
+                this.gl.canvas.style.height = height + 'px';
+            }
+        }
     }
 
     setViewport(width, height, x = 0, y = 0) {
@@ -293,11 +296,11 @@ class Renderer {
 
         // Get visible
         scene.traverse((node) => {
-            if (!node.visible) return true;
-            if (!node.draw) return;
+            if (! node.visible) return true;
+            if (! node.draw) return;
 
             if (frustumCull && node.frustumCulled && camera) {
-                if (!camera.frustumIntersectsMesh(node)) return;
+                if (! camera.frustumIntersectsMesh(node)) return;
             }
 
             renderList.push(node);
@@ -340,33 +343,33 @@ class Renderer {
     }
 
     render({ scene, camera, target = null, update = true, sort = true, frustumCull = true, clear }) {
+        // Draw to canvas
         if (target === null) {
-            // make sure no render target bound so draws to canvas
             this.bindFramebuffer();
             this.setViewport(this.width * this.dpr, this.height * this.dpr);
+        // Draw to render target
         } else {
-            // bind supplied render target and update viewport
             this.bindFramebuffer(target);
             this.setViewport(target.width, target.height);
         }
 
         if (clear || (this.autoClear && clear !== false)) {
             // Ensure depth buffer writing is enabled so it can be cleared
-            if (this.depth && (!target || target.depth)) {
+            if (this.depth && (! target || target.depth)) {
                 this.enable(this.gl.DEPTH_TEST);
                 this.setDepthMask(true);
             }
             this.gl.clear(
                 (this.color ? this.gl.COLOR_BUFFER_BIT : 0) |
-                    (this.depth ? this.gl.DEPTH_BUFFER_BIT : 0) |
-                    (this.stencil ? this.gl.STENCIL_BUFFER_BIT : 0)
+                (this.depth ? this.gl.DEPTH_BUFFER_BIT : 0) |
+                (this.stencil ? this.gl.STENCIL_BUFFER_BIT : 0)
             );
         }
 
-        // updates all scene graph matrices
+        // Update all scene graph matrices
         if (update) scene.updateMatrixWorld();
 
-        // Update camera separately, in case not in scene graph
+        // Update camera separately (in case not in scene graph)
         if (camera) camera.updateMatrixWorld();
 
         // Get render list - entails culling and sorting

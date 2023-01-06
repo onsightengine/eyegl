@@ -15,11 +15,14 @@ import { Vec3 } from '../../math/Vec3.js';
 
 class WireMesh extends Mesh {
 
-    constructor(gl, { geometry, wireColor = new Vec3(0, 0.75, 0.5), ...meshProps } = {}) {
+    constructor(gl, { geometry, wireColor = new Vec3(0, 0.75, 0.5), wireTint = 1.0, ...meshProps } = {}) {
         const wireProgram = new Program(gl, {
             vertex,
             fragment,
-            uniforms: { wireColor: { value: wireColor } },
+            uniforms: {
+                wireColor: { value: wireColor },
+                wireTint: { value: wireTint }
+            },
         });
 
         const positionArray = geometry.attributes.position.data;
@@ -71,14 +74,12 @@ export { WireMesh };
 
 // from https://github.com/mrdoob/three.js/blob/0c26bb4bb8220126447c8373154ac045588441de/src/geometries/WireframeGeometry.js#L116
 function isUniqueEdgePosition(start, end, pos, hashSet) {
-    // prettier-ignore
     const hash1 = [
         pos[start], pos[start + 1], pos[start + 2],
         pos[end], pos[end + 1], pos[end + 2]
     ].join('#');
 
     // coincident edge
-    // prettier-ignore
     const hash2 = [
         pos[end], pos[end + 1], pos[end + 2],
         pos[start], pos[start + 1], pos[start + 2]
@@ -91,20 +92,20 @@ function isUniqueEdgePosition(start, end, pos, hashSet) {
 }
 
 const vertex = /* glsl */ `
-attribute vec3 position;
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
+    attribute vec3 position;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
 
-void main() {
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-}
+    void main() {
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
 `;
 
 const fragment = /* glsl */ `
-precision highp float;
-uniform vec3 wireColor;
+    precision highp float;
+    uniform vec3 wireColor;
 
-void main() {
-    gl_FragColor = vec4(wireColor, 1.0);
-}
+    void main() {
+        gl_FragColor = vec4(wireColor, 1.0);
+    }
 `;

@@ -20,30 +20,28 @@ const arrayCacheF32 = {};
 
 class Program {
 
-    constructor(
-        gl,
-        {
-            vertex,
-            fragment,
-            uniforms = {},
+    constructor(gl, {
+        vertex,
+        fragment,
+        uniforms = {},
 
-            transparent = false,
-            cullFace = gl.BACK,
-            frontFace = gl.CCW,
-            depthTest = true,
-            depthWrite = true,
-            depthFunc = gl.LESS,
-        } = {}
-    ) {
+        transparent = false,
+        cullFace = gl.BACK,
+        frontFace = gl.CCW,
+        depthTest = true,
+        depthWrite = true,
+        depthFunc = gl.LESS,
+    } = {}) {
+
         this.isProgram = true;
 
-        if (!gl.canvas) console.error('gl not passed as first argument to Program');
+        if (! gl.canvas) console.error('gl not passed as first argument to Program');
         this.gl = gl;
         this.uniforms = uniforms;
         this.id = _ID++;
 
-        if (!vertex) console.warn('vertex shader not supplied');
-        if (!fragment) console.warn('fragment shader not supplied');
+        if (! vertex) console.warn('vertex shader not supplied');
+        if (! fragment) console.warn('fragment shader not supplied');
 
         // Store program state
         this.transparent = transparent;
@@ -56,7 +54,7 @@ class Program {
         this.blendEquation = {};
 
         // set default blendFunc if transparent flagged
-        if (this.transparent && !this.blendFunc.src) {
+        if (this.transparent && ! this.blendFunc.src) {
             if (this.gl.renderer.premultipliedAlpha) this.setBlendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
             else this.setBlendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
         }
@@ -82,7 +80,7 @@ class Program {
         gl.attachShader(this.program, vertexShader);
         gl.attachShader(this.program, fragmentShader);
         gl.linkProgram(this.program);
-        if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+        if (! gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
             return console.warn(gl.getProgramInfoLog(this.program));
         }
 

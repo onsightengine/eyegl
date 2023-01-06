@@ -129,7 +129,9 @@ class Camera extends Transform {
     }
 
     frustumIntersectsMesh(node, worldMatrix = node.worldMatrix) {
-        // If no position attribute, treat as frustumCulled false
+        // ??add?? if (! node.geometry) return true;
+
+        // If no geometry, or no position attribute, treat as frustumCulled false
         if (! node.geometry.attributes.position) return true;
 
         if (! node.geometry.bounds || node.geometry.bounds.radius === Infinity) node.geometry.computeBoundingSphere();
