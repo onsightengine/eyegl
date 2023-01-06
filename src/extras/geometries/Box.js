@@ -19,7 +19,7 @@ import { Plane } from './Plane.js';
 
 class Box extends Geometry {
 
-    constructor(gl, {
+    constructor({
         width = 1,
         height = 1,
         depth = 1,
@@ -75,7 +75,7 @@ class Box extends Geometry {
             index: { data: index },
         });
 
-        super(gl, attributes);
+        super(attributes);
     }
 
 }

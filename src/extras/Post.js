@@ -18,21 +18,17 @@ import { Triangle } from './geometries/Triangle.js';
 
 class Post {
 
-    constructor(
-        gl,
-        {
-            width,
-            height,
-            dpr,
-            wrapS = gl.CLAMP_TO_EDGE,
-            wrapT = gl.CLAMP_TO_EDGE,
-            minFilter = gl.LINEAR,
-            magFilter = gl.LINEAR,
-            geometry = new Triangle(gl),
-            targetOnly = null,
-        } = {}
-    ) {
-        this.gl = gl;
+    constructor({
+        width,
+        height,
+        dpr,
+        wrapS = renderer.gl.CLAMP_TO_EDGE,
+        wrapT = renderer.gl.CLAMP_TO_EDGE,
+        minFilter = renderer.gl.LINEAR,
+        magFilter = renderer.gl.LINEAR,
+        geometry = new Triangle(),
+        targetOnly = null,
+    } = {}) {
 
         this.options = { wrapS, wrapT, minFilter, magFilter };
 
@@ -59,8 +55,8 @@ class Post {
     addPass({ vertex = defaultVertex, fragment = defaultFragment, uniforms = {}, textureUniform = 'tMap', enabled = true } = {}) {
         uniforms[textureUniform] = { value: this.fbo.read.texture };
 
-        const program = new Program(this.gl, { vertex, fragment, uniforms });
-        const mesh = new Mesh(this.gl, { geometry: this.geometry, program });
+        const program = new Program({ vertex, fragment, uniforms });
+        const mesh = new Mesh({ geometry: this.geometry, program });
 
         const pass = {
             mesh,
@@ -81,15 +77,15 @@ class Post {
             this.height = height || width;
         }
 
-        dpr = this.dpr || this.gl.renderer.dpr;
-        width = Math.floor((this.width || this.gl.renderer.width) * dpr);
-        height = Math.floor((this.height || this.gl.renderer.height) * dpr);
+        dpr = this.dpr || renderer.dpr;
+        width = Math.floor((this.width || renderer.width) * dpr);
+        height = Math.floor((this.height || renderer.height) * dpr);
 
         this.options.width = width;
         this.options.height = height;
 
-        this.fbo.read = new RenderTarget(this.gl, this.options);
-        this.fbo.write = new RenderTarget(this.gl, this.options);
+        this.fbo.read = new RenderTarget(this.options);
+        this.fbo.write = new RenderTarget(this.options);
     }
 
     // Uses same arguments as renderer.render, with addition of optional texture passed in to avoid scene render
@@ -97,7 +93,7 @@ class Post {
         const enabledPasses = this.passes.filter((pass) => pass.enabled);
 
         if (!texture) {
-            this.gl.renderer.render({
+            renderer.render({
                 scene,
                 camera,
                 target: enabledPasses.length || (!target && this.targetOnly) ? this.fbo.write : target,
@@ -110,7 +106,7 @@ class Post {
 
         enabledPasses.forEach((pass, i) => {
             pass.mesh.program.uniforms[pass.textureUniform].value = !i && texture ? texture : this.fbo.read.texture;
-            this.gl.renderer.render({
+            renderer.render({
                 scene: pass.mesh,
                 target: i === enabledPasses.length - 1 && (target || !this.targetOnly) ? target : this.fbo.write,
                 clear: true,

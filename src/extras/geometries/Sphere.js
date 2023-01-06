@@ -13,7 +13,7 @@ import { Vec3 } from '../../math/Vec3.js';
 
 class Sphere extends Geometry {
 
-    constructor(gl, {
+    constructor({
         radius = 0.5,
         widthSegments = 16,
         heightSegments = Math.ceil(widthSegments * 0.5),
@@ -102,7 +102,7 @@ class Sphere extends Geometry {
             index: { data: index },
         });
 
-        super(gl, attributes);
+        super(attributes);
     }
 
 }

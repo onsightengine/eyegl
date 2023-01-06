@@ -49,8 +49,8 @@ export class Flowmap {
             if (!type) type = gl.HALF_FLOAT || gl.renderer.extensions['OES_texture_half_float'].HALF_FLOAT_OES;
 
             let minFilter = (() => {
-                if (gl.renderer.isWebgl2) return gl.LINEAR;
-                if (gl.renderer.extensions[`OES_texture_${type === gl.FLOAT ? '' : 'half_'}float_linear`]) return gl.LINEAR;
+                if (renderer.isWebgl2) return gl.LINEAR;
+                if (renderer.extensions[`OES_texture_${type === gl.FLOAT ? '' : 'half_'}float_linear`]) return gl.LINEAR;
                 return gl.NEAREST;
             })();
 
@@ -127,7 +127,7 @@ const fragment = /* glsl */ `
     uniform float uFalloff;
     uniform float uAlpha;
     uniform float uDissipation;
-    
+
     uniform float uAspect;
     uniform vec2 uMouse;
     uniform vec2 uVelocity;

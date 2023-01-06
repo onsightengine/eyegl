@@ -17,13 +17,13 @@
 //
 // Not automatic - devs to use these methods manually
 //  gl.colorMask( colorMask, colorMask, colorMask, colorMask );
-//  gl.clearColor( r, g, b, a );
 //  gl.stencilMask( stencilMask );
 //  gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
 //  gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
 //  gl.clearStencil( stencil );
 //
 
+import { Color } from '../math/Color.js';
 import { Vec3 } from '../math/Vec3.js';
 
 const tempVec3 = new Vec3();
@@ -36,38 +36,41 @@ class Renderer {
         canvas = document.createElement('canvas'),
         width = 300,
         height = 150,
-        dpr = 1,                        // window.devicePixelRatio
-        alpha = true,
-        autoClear = true,               // clear unless specified render({ clear: false })?
-        color = true,                   // clear color?
-        depth = true,                   // clear depth?
-        stencil = false,                // clear stencil?
-        antialias = false,
-        premultipliedAlpha = false,
-        preserveDrawingBuffer = false,
-        powerPreference = 'default',
-        webgl = 2,
+        dpr = 1,                            // window.devicePixelRatio
+        webgl = 2,                          // request webgl 1 or 2?
+        antialias = false,                  // turn on antialiasing?
+        powerPreference = 'default',        // 'default', 'low-power', 'high-performance'
+        preserveDrawingBuffer = false,      // true is slower, mostly not needed
+        premultipliedAlpha = true,
+        alpha = true,                       // canvas has alpha?
+        depth = true,                       // has depth buffer?
+        stencil = false,                    // has stencil buffer?
+        clearColor = new Color(),           // color to clear COLOR_BUFFER_BIT
+        clearAlpha = 0,                     // alpha to clear COLOR_BUFFER_BIT
     } = {}) {
         this.isRenderer = true;
 
+        this.id = _ID++;
+
+        this.dpr = dpr;
+        this.premultipliedAlpha = premultipliedAlpha;
+        this.alpha = alpha;
+        this.color = true;
+        this.depth = depth;
+        this.stencil = stencil;
+        this.clearColor = (clearColor && clearColor instanceof Color) ? clearColor : new Color(clearColor);
+        this.clearAlpha = clearAlpha;
+
+        // WebGL attributes
         const attributes = {
+            antialias,
+            powerPreference,
+            preserveDrawingBuffer,
+            premultipliedAlpha,
             alpha,
             depth,
             stencil,
-            antialias,
-            premultipliedAlpha,
-            preserveDrawingBuffer,
-            powerPreference
         };
-
-        this.dpr = dpr;
-        this.alpha = alpha;
-        this.color = color;
-        this.depth = depth;
-        this.stencil = stencil;
-        this.premultipliedAlpha = premultipliedAlpha;
-        this.autoClear = autoClear;
-        this.id = _ID++;
 
         /** @type {WebGLRenderingContext | WebGL2RenderingContext} */
         this.gl;
@@ -78,8 +81,8 @@ class Renderer {
         if (! this.gl) this.gl = canvas.getContext('webgl', attributes);
         if (! this.gl) console.error('unable to create webgl context');
 
-        // Attach renderer to gl so that all classes have access to internal state functions
-        this.gl.renderer = this;
+        // Attach renderer to window so that all classes have access to internal state functions
+        window.renderer = this;
 
         // Initialise size values
         this.setSize(width, height);
@@ -302,22 +305,18 @@ class Renderer {
     }
 
     getRenderList({ scene, camera, frustumCull, sort }) {
-        let renderList = [];
-
         if (camera && frustumCull) camera.updateFrustum();
 
-        // Get visible
+        // Get visible objects
+        let renderList = [];
         scene.traverse((node) => {
-            if (! node.visible) return true;
+            if (! node.visible) return true; /* stop traversing children (all children become invisible) */
             if (! node.draw) return;
-
-            if (frustumCull && node.frustumCulled && camera) {
-                if (! camera.frustumIntersectsMesh(node)) return;
-            }
-
+            if (frustumCull && node.frustumCulled && camera && ! camera.frustumIntersectsMesh(node)) return;
             renderList.push(node);
         });
 
+        // Sort? (sorting opaque objects is still desired to stop overdraw)
         if (sort) {
             const opaque = [];
             const transparent = [];     // depthTest true
@@ -325,7 +324,7 @@ class Renderer {
 
             renderList.forEach((node) => {
                 // Split into the 3 render groups
-                if (!node.program.transparent) {
+                if (! node.program.transparent) {
                     opaque.push(node);
                 } else if (node.program.depthTest) {
                     transparent.push(node);
@@ -336,7 +335,7 @@ class Renderer {
                 node.zDepth = 0;
 
                 // Only calculate z-depth if renderOrder unset and depthTest is true
-                if (node.renderOrder !== 0 || !node.program.depthTest || !camera) return;
+                if (node.renderOrder !== 0 || ! node.program.depthTest || ! camera) return;
 
                 // Update z-depth
                 node.worldMatrix.getTranslation(tempVec3);
@@ -361,9 +360,9 @@ class Renderer {
         update = true,
         sort = true,
         frustumCull = true,
-        clear,
+        clear = true,
     } = {}) {
-
+        // Render target
         if (target === null) {
             // Draw to canvas
             this.bindFramebuffer();
@@ -374,17 +373,18 @@ class Renderer {
             this.setViewport(target.width, target.height);
         }
 
-        if (clear || (this.autoClear && clear !== false)) {
+        // Perform clear
+        if (clear) {
             // Ensure depth buffer writing is enabled so it can be cleared
             if (this.depth && (! target || target.depth)) {
                 this.enable(this.gl.DEPTH_TEST);
                 this.setDepthMask(true);
             }
-            this.gl.clear(
-                (this.color ? this.gl.COLOR_BUFFER_BIT : 0) |
-                (this.depth ? this.gl.DEPTH_BUFFER_BIT : 0) |
-                (this.stencil ? this.gl.STENCIL_BUFFER_BIT : 0)
-            );
+            const clearColor = (this.color) ? this.gl.COLOR_BUFFER_BIT : 0;
+            const clearDepth = (this.depth) ? this.gl.DEPTH_BUFFER_BIT : 0;
+            const clearStencil = (this.stencil) ? this.gl.STENCIL_BUFFER_BIT : 0;
+            this.gl.clearColor(this.clearColor.r, this.clearColor.g, this.clearColor.b, this.clearAlpha);
+            this.gl.clear(clearColor | clearDepth | clearStencil);
         }
 
         // Update all scene graph matrices
@@ -396,6 +396,7 @@ class Renderer {
         // Get render list (entails culling and sorting)
         const renderList = this.getRenderList({ scene, camera, frustumCull, sort });
 
+        // Render objects
         renderList.forEach((node) => {
             node.draw({ camera });
         });

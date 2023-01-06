@@ -15,7 +15,7 @@ import { Vec3 } from '../../math/Vec3.js';
 
 class Torus extends Geometry {
 
-    constructor(gl, {
+    constructor({
         radius = 0.5,
         tube = 0.2,
         radialSegments = 8,
@@ -83,7 +83,7 @@ class Torus extends Geometry {
             index: { data: indices },
         });
 
-        super(gl, attributes);
+        super(attributes);
     }
 
 }

@@ -13,7 +13,7 @@ import { Vec3 } from '../../math/Vec3.js';
 
 class Cylinder extends Geometry {
 
-    constructor(gl, {
+    constructor({
         radiusTop = 0.5,
         radiusBottom = 0.5,
         height = 1,
@@ -127,7 +127,7 @@ class Cylinder extends Geometry {
             index: { data: index },
         });
 
-        super(gl, attributes);
+        super(attributes);
     }
 }
 

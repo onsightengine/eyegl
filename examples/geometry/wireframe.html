@@ -48,7 +48,7 @@
 
                     vec3 light = normalize(vec3(0.5, 1.0, -0.3));
                     float shading = dot(normal, light) * 0.15;
-                    gl_FragColor.rgb = tex + shading;
+                    gl_FragColor.rgb = tex;// + shading;
                     gl_FragColor.a = 1.0;
                 }
             `;
@@ -58,7 +58,6 @@
             /** @type {WebGLRenderingContext | WebGL2RenderingContext} */
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
-            gl.clearColor(1, 1, 1, 1);
 
             const camera = new Camera({ fov: 35 });
             camera.position.set(5, 3, 6);
@@ -73,12 +72,12 @@
 
             const scene = new Transform();
 
-            const texture = new Texture(gl);
+            const texture = new Texture();
             const img = new Image();
             img.onload = () => (texture.image = img);
             img.src = '../../files/textures/croissant.jpg';
 
-            const program = new Program(gl, {
+            const program = new Program({
                 vertex,
                 fragment,
                 uniforms: {
@@ -86,26 +85,31 @@
                 },
             });
 
-            let lineLoopMesh, wireframeMesh;
+            let lineLoopMesh, standardMesh, wireframeMesh;
             loadModel();
             async function loadModel() {
                 const data = await (await fetch(`../../files/models/croissant.json`)).json();
 
-                const geometry = new Geometry(gl, {
+                const geometry = new Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
                 });
 
                 // Using gl.LINE_STRIP
-                lineLoopMesh = new Mesh(gl, { mode: gl.LINE_STRIP, geometry: geometry, program: program });
+                lineLoopMesh = new Mesh({ mode: gl.LINE_STRIP, geometry: geometry, program: program });
                 lineLoopMesh.setParent(scene);
-                lineLoopMesh.position.y = 1;
+                lineLoopMesh.position.y = 1.5;
+
+                // Using gl.TRIANGLES
+                standardMesh = new Mesh({ mode: gl.TRIANGLES, geometry: geometry, program: program });
+                standardMesh.setParent(scene);
+                standardMesh.position.y = 0;
 
                 // // Using WireMesh (gl.LINES)
-                wireframeMesh = new WireMesh(gl, { geometry: geometry });
+                wireframeMesh = new WireMesh({ geometry: geometry });
                 wireframeMesh.setParent(scene);
-                wireframeMesh.position.y = -1;
+                wireframeMesh.position.y = -1.5;
             }
 
             requestAnimationFrame(update);
@@ -113,7 +117,8 @@
                 requestAnimationFrame(update);
 
                 if (lineLoopMesh) lineLoopMesh.rotation.y -= 0.005;
-                if (wireframeMesh) wireframeMesh.rotation.y += 0.005;
+                if (standardMesh) standardMesh.rotation.y -= 0.005;
+                if (wireframeMesh) wireframeMesh.rotation.y -= 0.005;
 
                 renderer.render({ scene, camera });
             }

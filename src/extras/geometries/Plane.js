@@ -12,7 +12,7 @@ import { Geometry } from '../../core/Geometry.js';
 
 class Plane extends Geometry {
 
-    constructor(gl, {
+    constructor({
         width = 1,
         height = 1,
         widthSegments = 1,
@@ -41,7 +41,7 @@ class Plane extends Geometry {
             index: { data: index },
         });
 
-        super(gl, attributes);
+        super(attributes);
     }
 
     static buildPlane(position, normal, uv, index, width, height, depth, wSegs, hSegs, u = 0, v = 1, w = 2, uDir = 1, vDir = -1, i = 0, ii = 0) {

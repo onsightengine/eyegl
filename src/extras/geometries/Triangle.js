@@ -12,7 +12,7 @@ import { Geometry } from '../../core/Geometry.js';
 
 class Triangle extends Geometry {
 
-    constructor(gl, {
+    constructor({
         attributes = {}
     } = {}) {
         Object.assign(attributes, {
@@ -20,7 +20,7 @@ class Triangle extends Geometry {
             uv: { size: 2, data: new Float32Array([ 0, 0, 2, 0, 0, 2 ]) },
         });
 
-        super(gl, attributes);
+        super(attributes);
     }
 
 }

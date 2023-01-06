@@ -15,8 +15,8 @@ import { Vec3 } from '../../math/Vec3.js';
 
 class WireMesh extends Mesh {
 
-    constructor(gl, { geometry, wireColor = new Vec3(0, 0.75, 0.5), wireTint = 1.0, ...meshProps } = {}) {
-        const wireProgram = new Program(gl, {
+    constructor({ geometry, wireColor = new Vec3(0, 0.75, 0.5), wireTint = 1.0, ...meshProps } = {}) {
+        const wireProgram = new Program({
             vertex,
             fragment,
             uniforms: {
@@ -58,12 +58,12 @@ class WireMesh extends Mesh {
         }
 
         const indicesTyped = indices.length > 65536 ? new Uint32Array(indices) : new Uint16Array(indices);
-        const wireGeometry = new Geometry(gl, {
+        const wireGeometry = new Geometry({
             position: { ...geometry.attributes.position },
             index: { data: indicesTyped },
         });
 
-        super(gl, { ...meshProps, mode: gl.LINES, geometry: wireGeometry, program: wireProgram });
+        super({ ...meshProps, mode: renderer.gl.LINES, geometry: wireGeometry, program: wireProgram });
     }
 
 }

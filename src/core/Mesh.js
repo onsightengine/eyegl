@@ -16,18 +16,17 @@ let _ID = 0;
 
 class Mesh extends Transform {
 
-    constructor(gl, {
+    constructor({
         geometry,
         program,
-        mode = gl.TRIANGLES,
+        mode = renderer.gl.TRIANGLES,
         frustumCulled = true,
         renderOrder = 0
     } = {}) {
         super();
         this.isMesh = true;
 
-        if (! gl.canvas) console.error('gl not passed as first argument to Mesh');
-        this.gl = gl;
+        if (! renderer) console.error(`Mesh.constructor: renderer not found`);
         this.id = _ID++;
         this.geometry = geometry;
         this.program = program;

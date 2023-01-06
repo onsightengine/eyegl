@@ -44,7 +44,6 @@
             const renderer = new Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
-            gl.clearColor(1, 1, 1, 1);
 
             const camera = new Camera({ fov: 35 });
             camera.position.set(5, 3, 6);
@@ -60,19 +59,19 @@
             const scene = new Transform();
             const controls = new Orbit(camera);
 
-            const program = new Program(gl, {
+            const program = new Program({
                 vertex,
                 fragment,
             });
 
-            const torusGeometry = new Torus(gl, {
+            const torusGeometry = new Torus({
                 radius: 1,
                 tube: 0.4,
                 radialSegments: 16,
                 tubularSegments: 32,
             });
 
-            const torus = new Mesh(gl, { geometry: torusGeometry, program });
+            const torus = new Mesh({ geometry: torusGeometry, program });
             torus.setParent(scene);
 
             requestAnimationFrame(update);

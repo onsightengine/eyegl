@@ -24,20 +24,20 @@ let _ID = 1;
 
 class Texture {
 
-    constructor(gl, {
+    constructor({
         image,
-        target = gl.TEXTURE_2D,
-        type = gl.UNSIGNED_BYTE,
-        format = gl.RGBA,
+        target = renderer.gl.TEXTURE_2D,
+        type = renderer.gl.UNSIGNED_BYTE,
+        format = renderer.gl.RGBA,
         internalFormat = format,
-        wrapS = gl.CLAMP_TO_EDGE,
-        wrapT = gl.CLAMP_TO_EDGE,
+        wrapS = renderer.gl.CLAMP_TO_EDGE,
+        wrapT = renderer.gl.CLAMP_TO_EDGE,
         generateMipmaps = true,
-        minFilter = generateMipmaps ? gl.NEAREST_MIPMAP_LINEAR : gl.LINEAR,
-        magFilter = gl.LINEAR,
+        minFilter = generateMipmaps ? renderer.gl.NEAREST_MIPMAP_LINEAR : renderer.gl.LINEAR,
+        magFilter = renderer.gl.LINEAR,
         premultiplyAlpha = false,
         unpackAlignment = 4,
-        flipY = target == gl.TEXTURE_2D ? true : false,
+        flipY = target == renderer.gl.TEXTURE_2D ? true : false,
         anisotropy = 0,
         level = 0,
         width, // used for RenderTargets or Data Textures
@@ -45,7 +45,6 @@ class Texture {
     } = {}) {
         this.isTexture = true;
 
-        this.gl = gl;
         this.id = _ID++;
 
         this.image = image;
@@ -61,87 +60,87 @@ class Texture {
         this.premultiplyAlpha = premultiplyAlpha;
         this.unpackAlignment = unpackAlignment;
         this.flipY = flipY;
-        this.anisotropy = Math.min(anisotropy, this.gl.renderer.parameters.maxAnisotropy);
+        this.anisotropy = Math.min(anisotropy, renderer.parameters.maxAnisotropy);
         this.level = level;
         this.width = width;
         this.height = height;
-        this.texture = this.gl.createTexture();
+        this.texture = renderer.gl.createTexture();
 
         this.store = {
             image: null,
         };
 
         // Alias for state store to avoid redundant calls for global state
-        this.glState = this.gl.renderer.state;
+        renderer.glState = renderer.state;
 
         // State store to avoid redundant calls for per-texture state
         this.state = {};
-        this.state.minFilter = this.gl.NEAREST_MIPMAP_LINEAR;
-        this.state.magFilter = this.gl.LINEAR;
-        this.state.wrapS = this.gl.REPEAT;
-        this.state.wrapT = this.gl.REPEAT;
+        this.state.minFilter = renderer.gl.NEAREST_MIPMAP_LINEAR;
+        this.state.magFilter = renderer.gl.LINEAR;
+        this.state.wrapS = renderer.gl.REPEAT;
+        this.state.wrapT = renderer.gl.REPEAT;
         this.state.anisotropy = 0;
     }
 
     bind() {
         // Already bound to active texture unit
-        if (this.glState.textureUnits[this.glState.activeTextureUnit] === this.id) return;
-        this.gl.bindTexture(this.target, this.texture);
-        this.glState.textureUnits[this.glState.activeTextureUnit] = this.id;
+        if (renderer.glState.textureUnits[renderer.glState.activeTextureUnit] === this.id) return;
+        renderer.gl.bindTexture(this.target, this.texture);
+        renderer.glState.textureUnits[renderer.glState.activeTextureUnit] = this.id;
     }
 
     update(textureUnit = 0) {
         const needsUpdate = !(this.image === this.store.image && !this.needsUpdate);
 
         // Make sure that texture is bound to its texture unit
-        if (needsUpdate || this.glState.textureUnits[textureUnit] !== this.id) {
+        if (needsUpdate || renderer.glState.textureUnits[textureUnit] !== this.id) {
             // Set active texture unit to perform texture functions
-            this.gl.renderer.activeTexture(textureUnit);
+            renderer.activeTexture(textureUnit);
             this.bind();
         }
 
         if (!needsUpdate) return;
         this.needsUpdate = false;
 
-        if (this.flipY !== this.glState.flipY) {
-            this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, this.flipY);
-            this.glState.flipY = this.flipY;
+        if (this.flipY !== renderer.glState.flipY) {
+            renderer.gl.pixelStorei(renderer.gl.UNPACK_FLIP_Y_WEBGL, this.flipY);
+            renderer.glState.flipY = this.flipY;
         }
 
-        if (this.premultiplyAlpha !== this.glState.premultiplyAlpha) {
-            this.gl.pixelStorei(this.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
-            this.glState.premultiplyAlpha = this.premultiplyAlpha;
+        if (this.premultiplyAlpha !== renderer.glState.premultiplyAlpha) {
+            renderer.gl.pixelStorei(renderer.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
+            renderer.glState.premultiplyAlpha = this.premultiplyAlpha;
         }
 
-        if (this.unpackAlignment !== this.glState.unpackAlignment) {
-            this.gl.pixelStorei(this.gl.UNPACK_ALIGNMENT, this.unpackAlignment);
-            this.glState.unpackAlignment = this.unpackAlignment;
+        if (this.unpackAlignment !== renderer.glState.unpackAlignment) {
+            renderer.gl.pixelStorei(renderer.gl.UNPACK_ALIGNMENT, this.unpackAlignment);
+            renderer.glState.unpackAlignment = this.unpackAlignment;
         }
 
         if (this.minFilter !== this.state.minFilter) {
-            this.gl.texParameteri(this.target, this.gl.TEXTURE_MIN_FILTER, this.minFilter);
+            renderer.gl.texParameteri(this.target, renderer.gl.TEXTURE_MIN_FILTER, this.minFilter);
             this.state.minFilter = this.minFilter;
         }
 
         if (this.magFilter !== this.state.magFilter) {
-            this.gl.texParameteri(this.target, this.gl.TEXTURE_MAG_FILTER, this.magFilter);
+            renderer.gl.texParameteri(this.target, renderer.gl.TEXTURE_MAG_FILTER, this.magFilter);
             this.state.magFilter = this.magFilter;
         }
 
         if (this.wrapS !== this.state.wrapS) {
-            this.gl.texParameteri(this.target, this.gl.TEXTURE_WRAP_S, this.wrapS);
+            renderer.gl.texParameteri(this.target, renderer.gl.TEXTURE_WRAP_S, this.wrapS);
             this.state.wrapS = this.wrapS;
         }
 
         if (this.wrapT !== this.state.wrapT) {
-            this.gl.texParameteri(this.target, this.gl.TEXTURE_WRAP_T, this.wrapT);
+            renderer.gl.texParameteri(this.target, renderer.gl.TEXTURE_WRAP_T, this.wrapT);
             this.state.wrapT = this.wrapT;
         }
 
         if (this.anisotropy && this.anisotropy !== this.state.anisotropy) {
-            this.gl.texParameterf(
+            renderer.gl.texParameterf(
                 this.target,
-                this.gl.renderer.getExtension('EXT_texture_filter_anisotropic').TEXTURE_MAX_ANISOTROPY_EXT,
+                renderer.getExtension('EXT_texture_filter_anisotropic').TEXTURE_MAX_ANISOTROPY_EXT,
                 this.anisotropy
             );
             this.state.anisotropy = this.anisotropy;
@@ -153,11 +152,11 @@ class Texture {
                 this.height = this.image.height;
             }
 
-            if (this.target === this.gl.TEXTURE_CUBE_MAP) {
+            if (this.target === renderer.gl.TEXTURE_CUBE_MAP) {
                 // For cube maps
                 for (let i = 0; i < 6; i++) {
-                    this.gl.texImage2D(
-                        this.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                    renderer.gl.texImage2D(
+                        renderer.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
                         this.level,
                         this.internalFormat,
                         this.format,
@@ -167,11 +166,11 @@ class Texture {
                 }
             } else if (ArrayBuffer.isView(this.image)) {
                 // Data texture
-                this.gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, this.image);
+                renderer.gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, this.image);
             } else if (this.image.isCompressedTexture) {
                 // Compressed texture
                 for (let level = 0; level < this.image.length; level++) {
-                    this.gl.compressedTexImage2D(
+                    renderer.gl.compressedTexImage2D(
                         this.target,
                         level,
                         this.internalFormat,
@@ -183,44 +182,44 @@ class Texture {
                 }
             } else {
                 // Regular texture
-                this.gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, this.image);
+                renderer.gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, this.image);
             }
 
             if (this.generateMipmaps) {
                 // For WebGL1, if not a power of 2, turn off mips, set wrapping to clamp to edge and minFilter to linear
-                if (!this.gl.renderer.isWebgl2 && (!isPowerOf2(this.image.width) || !isPowerOf2(this.image.height))) {
+                if (! renderer.isWebgl2 && (!isPowerOf2(this.image.width) || !isPowerOf2(this.image.height))) {
                     this.generateMipmaps = false;
-                    this.wrapS = this.wrapT = this.gl.CLAMP_TO_EDGE;
-                    this.minFilter = this.gl.LINEAR;
+                    this.wrapS = this.wrapT = renderer.gl.CLAMP_TO_EDGE;
+                    this.minFilter = renderer.gl.LINEAR;
                 } else {
-                    this.gl.generateMipmap(this.target);
+                    renderer.gl.generateMipmap(this.target);
                 }
             }
 
             // Callback for when data is pushed to GPU
             this.onUpdate && this.onUpdate();
         } else {
-            if (this.target === this.gl.TEXTURE_CUBE_MAP) {
+            if (this.target === renderer.gl.TEXTURE_CUBE_MAP) {
                 // Upload empty pixel for each side while no image to avoid errors while image or video loading
                 for (let i = 0; i < 6; i++) {
-                    this.gl.texImage2D(
-                        this.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                    renderer.gl.texImage2D(
+                        renderer.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
                         0,
-                        this.gl.RGBA,
+                        renderer.gl.RGBA,
                         1,
                         1,
                         0,
-                        this.gl.RGBA,
-                        this.gl.UNSIGNED_BYTE,
+                        renderer.gl.RGBA,
+                        renderer.gl.UNSIGNED_BYTE,
                         emptyPixel
                     );
                 }
             } else if (this.width) {
                 // Image intentionally left null for RenderTarget
-                this.gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
+                renderer.gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
             } else {
                 // Upload empty pixel if no image to avoid errors while image or video loading
-                this.gl.texImage2D(this.target, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, emptyPixel);
+                renderer.gl.texImage2D(this.target, 0, renderer.gl.RGBA, 1, 1, 0, renderer.gl.RGBA, renderer.gl.UNSIGNED_BYTE, emptyPixel);
             }
         }
         this.store.image = this.image;
