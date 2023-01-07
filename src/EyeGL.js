@@ -35,10 +35,10 @@ export { Vec4 } from './math/Vec4.js';
 export { Raycast } from './extras/Raycast.js';
 export { Post } from './extras/Post.js';
 
-// Extras • Controls
+// Extras - Controls
 export { Orbit } from './extras/controls/Orbit.js';
 
-// Extras • Geometries
+// Extras - Geometries
 export { Box } from './extras/geometries/Box.js';
 export { Cylinder } from './extras/geometries/Cylinder.js';
 export { Plane } from './extras/geometries/Plane.js';
@@ -46,7 +46,7 @@ export { Sphere } from './extras/geometries/Sphere.js';
 export { Torus } from './extras/geometries/Torus.js';
 export { Triangle } from './extras/geometries/Triangle.js';
 
-// Extras • Objects
+// Extras - Objects
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
 

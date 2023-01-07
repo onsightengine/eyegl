@@ -5,16 +5,12 @@ import { RenderTarget } from '../core/RenderTarget.js';
 import { Triangle } from './Triangle.js';
 
 export class GPGPU {
-    constructor(
-        gl,
-        {
-            // Always pass in array of vec4s (RGBA values within texture)
-            data = new Float32Array(16),
-            geometry = new Triangle(gl),
-            type, // Pass in gl.FLOAT to force it, defaults to gl.HALF_FLOAT
-        }
-    ) {
-        this.gl = gl;
+    constructor({
+        // Always pass in array of vec4s (RGBA values within texture)
+        data = new Float32Array(16),
+        geometry = new Triangle(),
+        type, // Pass in renderer.glFLOAT to force it, defaults to renderer.glHALF_FLOAT
+    } = {}) {
         const initialData = data;
         this.passes = [];
         this.geometry = geometry;
@@ -45,17 +41,17 @@ export class GPGPU {
 
         // Create output texture uniform using input float texture with initial data
         this.uniform = {
-            value: new Texture(gl, {
+            value: new Texture({
                 image: floatArray,
-                target: gl.TEXTURE_2D,
-                type: gl.FLOAT,
-                format: gl.RGBA,
-                internalFormat: gl.renderer.isWebgl2 ? gl.RGBA32F : gl.RGBA,
-                wrapS: gl.CLAMP_TO_EDGE,
-                wrapT: gl.CLAMP_TO_EDGE,
+                target: renderer.glTEXTURE_2D,
+                type: renderer.glFLOAT,
+                format: renderer.glRGBA,
+                internalFormat: renderer.isWebgl2 ? renderer.glRGBA32F : renderer.glRGBA,
+                wrapS: renderer.glCLAMP_TO_EDGE,
+                wrapT: renderer.glCLAMP_TO_EDGE,
                 generateMipmaps: false,
-                minFilter: gl.NEAREST,
-                magFilter: gl.NEAREST,
+                minFilter: renderer.glNEAREST,
+                magFilter: renderer.glNEAREST,
                 width: this.size,
                 flipY: false,
             }),
@@ -65,17 +61,17 @@ export class GPGPU {
         const options = {
             width: this.size,
             height: this.size,
-            type: type || gl.HALF_FLOAT || gl.renderer.extensions['OES_texture_half_float'].HALF_FLOAT_OES,
-            format: gl.RGBA,
-            internalFormat: gl.renderer.isWebgl2 ? (type === gl.FLOAT ? gl.RGBA32F : gl.RGBA16F) : gl.RGBA,
-            minFilter: gl.NEAREST,
+            type: type || renderer.glHALF_FLOAT || renderer.extensions['OES_texture_half_float'].HALF_FLOAT_OES,
+            format: renderer.glRGBA,
+            internalFormat: renderer.isWebgl2 ? (type === renderer.glFLOAT ? renderer.glRGBA32F : renderer.glRGBA16F) : renderer.glRGBA,
+            minFilter: renderer.glNEAREST,
             depth: false,
             unpackAlignment: 1,
         };
 
         this.fbo = {
-            read: new RenderTarget(gl, options),
-            write: new RenderTarget(gl, options),
+            read: new RenderTarget(options),
+            write: new RenderTarget(options),
             swap: () => {
                 let temp = this.fbo.read;
                 this.fbo.read = this.fbo.write;
@@ -106,7 +102,7 @@ export class GPGPU {
         const enabledPasses = this.passes.filter((pass) => pass.enabled);
 
         enabledPasses.forEach((pass, i) => {
-            this.gl.renderer.render({
+            renderer.render({
                 scene: pass.mesh,
                 target: this.fbo.write,
                 clear: false,

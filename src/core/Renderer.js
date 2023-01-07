@@ -50,6 +50,7 @@ class Renderer {
     } = {}) {
         this.isRenderer = true;
 
+        // Properties
         this.id = _ID++;
 
         this.dpr = dpr;
@@ -60,6 +61,9 @@ class Renderer {
         this.stencil = stencil;
         this.clearColor = (clearColor && clearColor instanceof Color) ? clearColor : new Color(clearColor);
         this.clearAlpha = clearAlpha;
+
+        // Private
+        this._contextLost = false;
 
         // WebGL attributes
         const attributes = {
@@ -146,6 +150,19 @@ class Renderer {
         this.parameters.maxAnisotropy = this.getExtension('EXT_texture_filter_anisotropic')
             ? this.gl.getParameter(this.getExtension('EXT_texture_filter_anisotropic').MAX_TEXTURE_MAX_ANISOTROPY_EXT)
             : 0;
+
+        // Context lost
+        this.loseContext = this.getExtension('WEBGL_lose_context');
+        this.gl.canvas.addEventListener('webglcontextlost', function(event) {
+            event.preventDefault();
+            console.log('EyeGL.Renderer: Context lost');
+            this._contextLost = true;
+        }.bind(this));
+
+        this.gl.canvas.addEventListener('webglcontextrestored', function(event) {
+            console.log('EyeGL.Renderer: Context restored');
+            this._contextLost = false;
+        }.bind(this));
     }
 
     // Usually (window.innerWidth, window.innerHeight)
@@ -195,16 +212,13 @@ class Renderer {
             this.state.blendFunc.dst === dst &&
             this.state.blendFunc.srcAlpha === srcAlpha &&
             this.state.blendFunc.dstAlpha === dstAlpha
-        ) { return; }
+        ) return;
         this.state.blendFunc.src = src;
         this.state.blendFunc.dst = dst;
         this.state.blendFunc.srcAlpha = srcAlpha;
         this.state.blendFunc.dstAlpha = dstAlpha;
-        if (srcAlpha !== undefined) {
-            this.gl.blendFuncSeparate(src, dst, srcAlpha, dstAlpha);
-        } else {
-            this.gl.blendFunc(src, dst);
-        }
+        if (srcAlpha !== undefined) this.gl.blendFuncSeparate(src, dst, srcAlpha, dstAlpha);
+        else this.gl.blendFunc(src, dst);
     }
 
     setBlendEquation(modeRGB, modeAlpha) {
@@ -257,15 +271,15 @@ class Renderer {
         if (webgl2Func && this.gl[webgl2Func]) return this.gl[webgl2Func].bind(this.gl);
 
         // Fetch extension once only
-        if (!this.extensions[extension]) {
+        if (! this.extensions[extension]) {
             this.extensions[extension] = this.gl.getExtension(extension);
         }
 
         // Return extension if no function requested
-        if (!webgl2Func) return this.extensions[extension];
+        if (! webgl2Func) return this.extensions[extension];
 
         // Return null if extension not supported
-        if (!this.extensions[extension]) return null;
+        if (! this.extensions[extension]) return null;
 
         // Return extension function, bound to extension
         return this.extensions[extension][extFunc].bind(this.extensions[extension]);
@@ -362,6 +376,9 @@ class Renderer {
         frustumCull = true,
         clear = true,
     } = {}) {
+        if (! camera || ! camera.isCamera) return;
+        if (this._contextLost) return;
+
         // Render target
         if (target === null) {
             // Draw to canvas

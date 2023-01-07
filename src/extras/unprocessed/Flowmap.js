@@ -5,18 +5,14 @@ import { Vec2 } from '../math/Vec2.js';
 import { Triangle } from './Triangle.js';
 
 export class Flowmap {
-    constructor(
-        gl,
-        {
-            size = 128, // default size of the render targets
-            falloff = 0.3, // size of the stamp, percentage of the size
-            alpha = 1, // opacity of the stamp
-            dissipation = 0.98, // affects the speed that the stamp fades. Closer to 1 is slower
-            type, // Pass in gl.FLOAT to force it, defaults to gl.HALF_FLOAT
-        } = {}
-    ) {
+    constructor({
+        size = 128, // default size of the render targets
+        falloff = 0.3, // size of the stamp, percentage of the size
+        alpha = 1, // opacity of the stamp
+        dissipation = 0.98, // affects the speed that the stamp fades. Closer to 1 is slower
+        type, // Pass in renderer.gl.FLOAT to force it, defaults to renderer.gl.HALF_FLOAT
+    } = {}) {
         const _this = this;
-        this.gl = gl;
 
         // output uniform containing render target textures
         this.uniform = { value: null };
@@ -46,35 +42,35 @@ export class Flowmap {
 
         function createFBOs() {
             // Requested type not supported, fall back to half float
-            if (!type) type = gl.HALF_FLOAT || gl.renderer.extensions['OES_texture_half_float'].HALF_FLOAT_OES;
+            if (! type) type = renderer.gl.HALF_FLOAT || renderer.extensions['OES_texture_half_float'].HALF_FLOAT_OES;
 
             let minFilter = (() => {
-                if (renderer.isWebgl2) return gl.LINEAR;
-                if (renderer.extensions[`OES_texture_${type === gl.FLOAT ? '' : 'half_'}float_linear`]) return gl.LINEAR;
-                return gl.NEAREST;
+                if (renderer.isWebgl2) return renderer.gl.LINEAR;
+                if (renderer.extensions[`OES_texture_${type === renderer.gl.FLOAT ? '' : 'half_'}float_linear`]) return renderer.gl.LINEAR;
+                return renderer.gl.NEAREST;
             })();
 
             const options = {
                 width: size,
                 height: size,
                 type,
-                format: gl.RGBA,
-                internalFormat: gl.renderer.isWebgl2 ? (type === gl.FLOAT ? gl.RGBA32F : gl.RGBA16F) : gl.RGBA,
+                format: renderer.gl.RGBA,
+                internalFormat: renderer.isWebgl2 ? (type === renderer.gl.FLOAT ? renderer.gl.RGBA32F : renderer.gl.RGBA16F) : renderer.gl.RGBA,
                 minFilter,
                 depth: false,
             };
 
-            _this.mask.read = new RenderTarget(gl, options);
-            _this.mask.write = new RenderTarget(gl, options);
+            _this.mask.read = new RenderTarget(options);
+            _this.mask.write = new RenderTarget(options);
             _this.mask.swap();
         }
 
         function initProgram() {
-            return new Mesh(gl, {
+            return new Mesh({
                 // Triangle that includes -1 to 1 range for 'position', and 0 to 1 range for 'uv'.
-                geometry: new Triangle(gl),
+                geometry: new Triangle(),
 
-                program: new Program(gl, {
+                program: new Program({
                     vertex,
                     fragment,
                     uniforms: {
@@ -98,7 +94,7 @@ export class Flowmap {
     update() {
         this.mesh.program.uniforms.uAspect.value = this.aspect;
 
-        this.gl.renderer.render({
+        renderer.render({
             scene: this.mesh,
             target: this.mask.write,
             clear: false,

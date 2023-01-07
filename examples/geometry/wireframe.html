@@ -70,6 +70,17 @@
             window.addEventListener('resize', resize, false);
             resize();
 
+            document.addEventListener('keyup', (event) => {
+                switch (event.code) {
+                    case 'KeyL':
+                        renderer.loseContext.loseContext();
+                        return;
+                    case 'KeyR':
+                        renderer.loseContext.restoreContext();
+                        return;
+                }
+            });
+
             const scene = new Transform();
 
             const texture = new Texture();
