@@ -1,7 +1,7 @@
 /** /////////////////////////////////////////////////////////////////////////////////
 //
-// @description Onsight Engine
-// @about       Easy to use 2D / 3D JavaScript game engine.
+// @description EyeGL
+// @about       WebGL graphics library.
 // @author      Stephens Nunnally <@stevinz>
 // @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
 // @source      https://github.com/onsightengine
@@ -25,6 +25,7 @@
 
 import { Color } from '../math/Color.js';
 import { Vec3 } from '../math/Vec3.js';
+import { Extensions } from './webgl/Extensions.js';
 
 const tempVec3 = new Vec3();
 
@@ -76,7 +77,7 @@ class Renderer {
             stencil,
         };
 
-        /** @type {WebGLRenderingContext | WebGL2RenderingContext} */
+        /** @type { WebGLRenderingContext | WebGL2RenderingContext } */
         this.gl;
 
         // Attempt WebGL2 unless forced to 1, if not supported fallback to WebGL1
@@ -110,39 +111,12 @@ class Renderer {
         this.state.uniformLocations = new Map();
         this.state.currentProgram = null;
 
-        // Store requested extensions
-        this.extensions = {};
+        function initContext(self) {
 
-        // Initialise extra format types
-        if (this.isWebgl2) {
-            this.getExtension('EXT_color_buffer_float');
-            this.getExtension('OES_texture_float_linear');
-        } else {
-            this.getExtension('OES_texture_float');
-            this.getExtension('OES_texture_float_linear');
-            this.getExtension('OES_texture_half_float');
-            this.getExtension('OES_texture_half_float_linear');
-            this.getExtension('OES_element_index_uint');
-            this.getExtension('OES_standard_derivatives');
-            this.getExtension('EXT_sRGB');
-            this.getExtension('WEBGL_depth_texture');
-            this.getExtension('WEBGL_draw_buffers');
-        }
-        this.getExtension('WEBGL_compressed_texture_astc');
-        this.getExtension('EXT_texture_compression_bptc');
-        this.getExtension('WEBGL_compressed_texture_s3tc');
-        this.getExtension('WEBGL_compressed_texture_etc1');
-        this.getExtension('WEBGL_compressed_texture_pvrtc');
-        this.getExtension('WEBKIT_WEBGL_compressed_texture_pvrtc');
+            self.extensions = new Extensions();
 
-        // Create method aliases using extension (WebGL1) or native if available (WebGL2)
-        this.vertexAttribDivisor = this.getExtension('ANGLE_instanced_arrays', 'vertexAttribDivisor', 'vertexAttribDivisorANGLE');
-        this.drawArraysInstanced = this.getExtension('ANGLE_instanced_arrays', 'drawArraysInstanced', 'drawArraysInstancedANGLE');
-        this.drawElementsInstanced = this.getExtension('ANGLE_instanced_arrays', 'drawElementsInstanced', 'drawElementsInstancedANGLE');
-        this.createVertexArray = this.getExtension('OES_vertex_array_object', 'createVertexArray', 'createVertexArrayOES');
-        this.bindVertexArray = this.getExtension('OES_vertex_array_object', 'bindVertexArray', 'bindVertexArrayOES');
-        this.deleteVertexArray = this.getExtension('OES_vertex_array_object', 'deleteVertexArray', 'deleteVertexArrayOES');
-        this.drawBuffers = this.getExtension('WEBGL_draw_buffers', 'drawBuffers', 'drawBuffersWEBGL');
+        };
+        initContext(this);
 
         // Store device parameters
         this.parameters = {};
@@ -161,8 +135,13 @@ class Renderer {
 
         this.gl.canvas.addEventListener('webglcontextrestored', function(event) {
             console.log('EyeGL.Renderer: Context restored');
+            initContext(this);
             this._contextLost = false;
         }.bind(this));
+    }
+
+    getExtension(extension) {
+        return this.extensions.getExtension(extension);
     }
 
     // Usually (window.innerWidth, window.innerHeight)
@@ -264,25 +243,6 @@ class Renderer {
         if (this.state.framebuffer === buffer) return;
         this.state.framebuffer = buffer;
         this.gl.bindFramebuffer(target, buffer);
-    }
-
-    getExtension(extension, webgl2Func, extFunc) {
-        // If webgl2 function supported, return func bound to gl context
-        if (webgl2Func && this.gl[webgl2Func]) return this.gl[webgl2Func].bind(this.gl);
-
-        // Fetch extension once only
-        if (! this.extensions[extension]) {
-            this.extensions[extension] = this.gl.getExtension(extension);
-        }
-
-        // Return extension if no function requested
-        if (! webgl2Func) return this.extensions[extension];
-
-        // Return null if extension not supported
-        if (! this.extensions[extension]) return null;
-
-        // Return extension function, bound to extension
-        return this.extensions[extension][extFunc].bind(this.extensions[extension]);
     }
 
     sortOpaque(a, b) {
