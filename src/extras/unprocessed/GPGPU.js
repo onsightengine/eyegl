@@ -9,7 +9,7 @@ export class GPGPU {
         // Always pass in array of vec4s (RGBA values within texture)
         data = new Float32Array(16),
         geometry = new Triangle(),
-        type, // Pass in renderer.glFLOAT to force it, defaults to renderer.glHALF_FLOAT
+        type, // Pass in renderer.gl.FLOAT to force it, defaults to renderer.gl.HALF_FLOAT
     } = {}) {
         const initialData = data;
         this.passes = [];
@@ -43,15 +43,15 @@ export class GPGPU {
         this.uniform = {
             value: new Texture({
                 image: floatArray,
-                target: renderer.glTEXTURE_2D,
-                type: renderer.glFLOAT,
-                format: renderer.glRGBA,
-                internalFormat: renderer.isWebgl2 ? renderer.glRGBA32F : renderer.glRGBA,
-                wrapS: renderer.glCLAMP_TO_EDGE,
-                wrapT: renderer.glCLAMP_TO_EDGE,
+                target: renderer.gl.TEXTURE_2D,
+                type: renderer.gl.FLOAT,
+                format: renderer.gl.RGBA,
+                internalFormat: renderer.isWebgl2 ? renderer.gl.RGBA32F : renderer.gl.RGBA,
+                wrapS: renderer.gl.CLAMP_TO_EDGE,
+                wrapT: renderer.gl.CLAMP_TO_EDGE,
                 generateMipmaps: false,
-                minFilter: renderer.glNEAREST,
-                magFilter: renderer.glNEAREST,
+                minFilter: renderer.gl.NEAREST,
+                magFilter: renderer.gl.NEAREST,
                 width: this.size,
                 flipY: false,
             }),
@@ -61,10 +61,10 @@ export class GPGPU {
         const options = {
             width: this.size,
             height: this.size,
-            type: type || renderer.glHALF_FLOAT || renderer.extensions['OES_texture_half_float'].HALF_FLOAT_OES,
-            format: renderer.glRGBA,
-            internalFormat: renderer.isWebgl2 ? (type === renderer.glFLOAT ? renderer.glRGBA32F : renderer.glRGBA16F) : renderer.glRGBA,
-            minFilter: renderer.glNEAREST,
+            type: type || renderer.gl.HALF_FLOAT || renderer.extensions['OES_texture_half_float'].HALF_FLOAT_OES,
+            format: renderer.gl.RGBA,
+            internalFormat: renderer.isWebgl2 ? (type === renderer.gl.FLOAT ? renderer.gl.RGBA32F : renderer.gl.RGBA16F) : renderer.gl.RGBA,
+            minFilter: renderer.gl.NEAREST,
             depth: false,
             unpackAlignment: 1,
         };

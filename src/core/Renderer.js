@@ -25,6 +25,7 @@
 
 import { Color } from '../math/Color.js';
 import { Vec3 } from '../math/Vec3.js';
+import { Capabilities } from './webgl/Capabilities.js';
 import { Extensions } from './webgl/Extensions.js';
 
 const tempVec3 = new Vec3();
@@ -34,32 +35,31 @@ let _ID = 1;
 class Renderer {
 
     constructor({
-        canvas = document.createElement('canvas'),
-        width = 300,
-        height = 150,
-        dpr = 1,                            // window.devicePixelRatio
-        webgl = 2,                          // request webgl 1 or 2?
-        antialias = false,                  // turn on antialiasing?
+        alpha = true,                       // canvas should have alpha buffer?
+        depth = true,                       // drawing buffer has depth buffer (at least 16 bits)?
+        stencil = false,                    // drawing buffer has stencil buffer (at least 8 bits)?
+        antialias = false,                  // perform anti-aliasing if possible?
         powerPreference = 'default',        // 'default', 'low-power', 'high-performance'
+        premultipliedAlpha = true,          // drawing buffer contains colors with pre-multiplied alpha
         preserveDrawingBuffer = false,      // true is slower, mostly not needed
-        premultipliedAlpha = true,
-        alpha = true,                       // canvas has alpha?
-        depth = true,                       // has depth buffer?
-        stencil = false,                    // has stencil buffer?
-        clearColor = new Color(),           // color to clear COLOR_BUFFER_BIT
-        clearAlpha = 0,                     // alpha to clear COLOR_BUFFER_BIT
+
+        webgl = 2,                                  // request webgl 1 or 2?
+        canvas = document.createElement('canvas'),  // canvas to use
+        dpr = 1,                                    // window.devicePixelRatio
+        clearColor = new Color(),                   // color to clear COLOR_BUFFER_BIT
+        clearAlpha = 0,                             // alpha to clear COLOR_BUFFER_BIT
     } = {}) {
         this.isRenderer = true;
 
         // Properties
         this.id = _ID++;
-
         this.dpr = dpr;
-        this.premultipliedAlpha = premultipliedAlpha;
+
         this.alpha = alpha;
         this.color = true;
         this.depth = depth;
         this.stencil = stencil;
+        this.premultipliedAlpha = premultipliedAlpha;
         this.clearColor = (clearColor && clearColor instanceof Color) ? clearColor : new Color(clearColor);
         this.clearAlpha = clearAlpha;
 
@@ -68,31 +68,35 @@ class Renderer {
 
         // WebGL attributes
         const attributes = {
-            antialias,
-            powerPreference,
-            preserveDrawingBuffer,
-            premultipliedAlpha,
             alpha,
             depth,
             stencil,
+            antialias,
+            failIfMajorPerformanceCaveat: true,
+            powerPreference,
+            premultipliedAlpha,
+            preserveDrawingBuffer,
         };
 
         /** @type { WebGLRenderingContext | WebGL2RenderingContext } */
         let gl;
 
-        // Attempt WebGL2 unless forced to 1, if not supported fallback to WebGL1
+        // Attempt WebGL2, if not supported fallback to WebGL1
         if (webgl === 2) gl = canvas.getContext('webgl2', attributes);
-        let isWebgl2 = !!gl;
         if (! gl) gl = canvas.getContext('webgl', attributes);
         if (! gl) console.error('Renderer.constructor: Unable to create webgl context');
         this.gl = gl;
-        this.isWebgl2 = isWebgl2;
+        let isWebgl2 = false;
+        isWebgl2 = isWebgl2 || (typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext);
+		isWebgl2 = isWebgl2 || (typeof WebGL2ComputeRenderingContext !== 'undefined' && gl instanceof WebGL2ComputeRenderingContext);
 
-        // Attach renderer to window so that all classes have access to internal state functions
+        // Renderer Capabilities
+        const parameters = {
+            isWebgl2,
+        };
+
+        // GLOBAL: So all classes have access to internal state functions
         window.renderer = this;
-
-        // Initialize size values
-        this.setSize(width, height);
 
         // WebGL state stores to avoid redundant calls on methods used internally
         this.state = {};
@@ -115,9 +119,8 @@ class Renderer {
 
         function initContext(self) {
 
-            let extensions = new Extensions(gl, isWebgl2);
-
-            // Create method aliases using extension (WebGL1) or native if available (WebGL2)
+            // Extensions, create method aliases using extension (WebGL1) or native if available (WebGL2)
+            let extensions = new Extensions(gl, parameters);
             self.vertexAttribDivisor = extensions.get('ANGLE_instanced_arrays', 'vertexAttribDivisor', 'vertexAttribDivisorANGLE');
             self.drawArraysInstanced = extensions.get('ANGLE_instanced_arrays', 'drawArraysInstanced', 'drawArraysInstancedANGLE');
             self.drawElementsInstanced = extensions.get('ANGLE_instanced_arrays', 'drawElementsInstanced', 'drawElementsInstancedANGLE');
@@ -125,18 +128,17 @@ class Renderer {
             self.bindVertexArray = extensions.get('OES_vertex_array_object', 'bindVertexArray', 'bindVertexArrayOES');
             self.deleteVertexArray = extensions.get('OES_vertex_array_object', 'deleteVertexArray', 'deleteVertexArrayOES');
             self.drawBuffers = extensions.get('WEBGL_draw_buffers', 'drawBuffers', 'drawBuffersWEBGL');
+
+            // Capabilities
+            let capabilities = new Capabilities(gl, extensions, parameters);
+
+            capabilities.log();
+
+            // Assign to this
             self.extensions = extensions;
-
-
+            self.capabilities = capabilities;
         };
         initContext(this);
-
-        // Store device parameters
-        this.parameters = {};
-        this.parameters.maxTextureUnits = gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
-        this.parameters.maxAnisotropy = this.getExtension('EXT_texture_filter_anisotropic')
-            ? gl.getParameter(this.getExtension('EXT_texture_filter_anisotropic').MAX_TEXTURE_MAX_ANISOTROPY_EXT)
-            : 0;
 
         // Context lost
         this.loseContext = this.getExtension('WEBGL_lose_context');

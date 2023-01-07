@@ -10,9 +10,10 @@
 
 class Extensions {
 
-    constructor(gl, isWebgl2) {
+    constructor(gl, parameters) {
         let extensions = {};
 
+        // Fetch extension
         function getExtension(name, webgl2Func, extFunc) {
             // If webgl2 function supported, return function bound to gl context
             if (webgl2Func && gl[webgl2Func]) return gl[webgl2Func].bind(gl);
@@ -31,7 +32,7 @@ class Extensions {
         }
 
         // Initialize extra format types
-        if (isWebgl2) {
+        if (parameters.isWebgl2) {
             getExtension('EXT_color_buffer_float');
         } else {
             getExtension('WEBGL_depth_texture');
@@ -54,11 +55,17 @@ class Extensions {
         getExtension('WEBGL_compressed_texture_pvrtc');
         getExtension('WEBKIT_WEBGL_compressed_texture_pvrtc');
 
+        // Public extension checker
+        this.has = function (name) {
+			return getExtension(name) !== null;
+		};
+
+        // Public extension getter
         this.get = function(name, webgl2Func, extFunc) {
 			const extension = getExtension(name, webgl2Func, extFunc);
 			if (extension === null) console.warn(`EyeGL.Renderer: ${name} extension not supported.`);
 			return extension;
-		}
+		};
     }
 
 }

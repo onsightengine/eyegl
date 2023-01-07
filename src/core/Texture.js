@@ -60,7 +60,7 @@ class Texture {
         this.premultiplyAlpha = premultiplyAlpha;
         this.unpackAlignment = unpackAlignment;
         this.flipY = flipY;
-        this.anisotropy = Math.min(anisotropy, renderer.parameters.maxAnisotropy);
+        this.anisotropy = Math.min(anisotropy, renderer.capabilities.maxAnisotropy);
         this.level = level;
         this.width = width;
         this.height = height;
@@ -187,7 +187,7 @@ class Texture {
 
             if (this.generateMipmaps) {
                 // For WebGL1, if not a power of 2, turn off mips, set wrapping to clamp to edge and minFilter to linear
-                if (! renderer.isWebgl2 && (!isPowerOf2(this.image.width) || !isPowerOf2(this.image.height))) {
+                if (! renderer.isWebgl2 && (! isPowerOf2(this.image.width) || ! isPowerOf2(this.image.height))) {
                     this.generateMipmaps = false;
                     this.wrapS = this.wrapT = renderer.gl.CLAMP_TO_EDGE;
                     this.minFilter = renderer.gl.LINEAR;
