@@ -1,0 +1,50 @@
+/////////////////////////////////////////////////////////////////////////////////////
+/////
+/////                           --- TO DO ---
+/////
+/////////////////////////////////////////////////////////////////////////////////////
+
+Context Lost:
+  	- Continue in Renderer.initContext()
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////
+/////                       ENGINE OPTIMIZATION IDEAS
+/////
+/////////////////////////////////////////////////////////////////////////////////////
+
+Reference:
+    - ogl, three, picogl, redgl, twgl, webglfundamentals
+
+Optimization:
+    The average gpu can render ~ 1 to 3 million triangles, < 200 draw calls per frame
+    - Scene Geometry Baking?
+		- Geometry merging
+	- Order Independent Transparency
+		- Weighted, Blended
+	- Reduce Draw Calls
+		https://stackoverflow.com/questions/42473044/how-to-reduce-draw-calls-in-opengl-webgl
+		https://webglfundamentals.org/webgl/lessons/webgl-qna-drawing-many-different-models-in-a-single-draw-call.html
+    - Instancing
+        https://threejs.org/examples/?q=instancing
+        https://threejs.org/docs/?q=instanced#api/en/objects/InstancedMesh
+        https://github.com/mrdoob/three.js/blob/master/src/objects/InstancedMesh.js
+        https://github.com/lume/three-instanced-mesh/blob/main/index.js
+    - Deferred or Forward+ Rendering
+      	https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+		https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342
+      	https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@6.5/manual/Forward-And-Deferred-Rendering.html
+        https://discourse.threejs.org/t/dr-strangelight-or-how-i-learned-to-stop-worrying-and-love-the-cluster/23104
+
+Textures:
+    - Bindless Textures: possible?
+    - Combines textures into atlas: Texture Atlas - https://github.com/oguzeroglu/TextureMerger
+
+Nanite:
+    - Nexus (js nanite):
+        http://vcg.isti.cnr.it/nexus/#nexus.js
+        https://github.com/cnr-isti-vclab/nexus
+    - Corto (compression):
+        http://vcg.isti.cnr.it/corto/index.html
+        https://github.com/cnr-isti-vclab/corto

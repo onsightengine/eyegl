@@ -10,7 +10,12 @@
 
 class Capabilities {
 
-    constructor(/** @type {WebGLRenderingContext | WebGL2RenderingContext} */ gl, extensions, parameters) {
+    /**
+     * @param {WebGLRenderingContext | WebGL2RenderingContext} gl
+     * @param {*} extensions
+     * @param {*} parameters
+     */
+    constructor(gl, extensions, parameters) {
 
         let maxAnisotropy = 0;
         if (extensions.has('EXT_texture_filter_anisotropic')) {
