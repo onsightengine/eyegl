@@ -281,6 +281,108 @@ class Geometry {
         this.bounds.radius = Math.sqrt(maxRadiusSq);
     }
 
+    toNonIndexed() {
+
+        function convertBufferAttribute( attribute, indices ) {
+
+			const array = attribute.array;
+			const itemSize = attribute.itemSize;
+			const normalized = attribute.normalized;
+
+			const array2 = new array.constructor( indices.length * itemSize );
+
+			let index = 0, index2 = 0;
+
+			for ( let i = 0, l = indices.length; i < l; i ++ ) {
+
+				if ( attribute.isInterleavedBufferAttribute ) {
+
+					index = indices[ i ] * attribute.data.stride + attribute.offset;
+
+				} else {
+
+					index = indices[ i ] * itemSize;
+
+				}
+
+				for ( let j = 0; j < itemSize; j ++ ) {
+
+					array2[ index2 ++ ] = array[ index ++ ];
+
+				}
+
+			}
+
+			return new BufferAttribute( array2, itemSize, normalized );
+
+		}
+
+		//
+
+		if ( this.index === null ) {
+
+			console.warn( 'THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.' );
+			return this;
+
+		}
+
+		const geometry2 = new BufferGeometry();
+
+		const indices = this.index.array;
+		const attributes = this.attributes;
+
+		// attributes
+
+		for ( const name in attributes ) {
+
+			const attribute = attributes[ name ];
+
+			const newAttribute = convertBufferAttribute( attribute, indices );
+
+			geometry2.setAttribute( name, newAttribute );
+
+		}
+
+		// morph attributes
+
+		const morphAttributes = this.morphAttributes;
+
+		for ( const name in morphAttributes ) {
+
+			const morphArray = [];
+			const morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+			for ( let i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+				const attribute = morphAttribute[ i ];
+
+				const newAttribute = convertBufferAttribute( attribute, indices );
+
+				morphArray.push( newAttribute );
+
+			}
+
+			geometry2.morphAttributes[ name ] = morphArray;
+
+		}
+
+		geometry2.morphTargetsRelative = this.morphTargetsRelative;
+
+		// groups
+
+		const groups = this.groups;
+
+		for ( let i = 0, l = groups.length; i < l; i ++ ) {
+
+			const group = groups[ i ];
+			geometry2.addGroup( group.start, group.count, group.materialIndex );
+
+		}
+
+		return geometry2;
+
+    }
+
     remove() {
         for (let key in this.VAOs) {
             renderer.deleteVertexArray(this.VAOs[key]);

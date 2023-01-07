@@ -4,9 +4,28 @@
 /////
 /////////////////////////////////////////////////////////////////////////////////////
 
+Flat / Smooth Shading:
+    - Use glsl v3?
+        https://stackoverflow.com/questions/40101023/flat-shading-in-webgl
+    - GeometryUtils
+        - Geometry.toNonIndexed()
+            - To use flat normals, must be non-indexed
+        - calculateNormals
+        - smoothNormals
+
+Geometries:
+    - Torus -> Selecatable
+        - Lil-Osui
+            - Export CSS
+                https://github.com/thgh/rollup-plugin-scss
+                https://github.com/egoist/rollup-plugin-postcss
+                - Use for Onsight
+
+TypeScript:
+    !! Convert library from js to ts!
+
 Context Lost:
   	- Continue in Renderer.initContext()
-
 
 /////////////////////////////////////////////////////////////////////////////////////
 /////
