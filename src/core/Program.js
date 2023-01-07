@@ -61,7 +61,7 @@ class Program {
         renderer.gl.shaderSource(vertexShader, vertex);
         renderer.gl.compileShader(vertexShader);
         if (renderer.gl.getShaderInfoLog(vertexShader) !== '') {
-            console.warn(`${gl.getShaderInfoLog(vertexShader)}\nVertex Shader\n${addLineNumbers(vertex)}`);
+            console.warn(`${renderer.gl.getShaderInfoLog(vertexShader)}\nVertex Shader\n${addLineNumbers(vertex)}`);
         }
 
         // Compile fragment shader and log errors
@@ -69,7 +69,7 @@ class Program {
         renderer.gl.shaderSource(fragmentShader, fragment);
         renderer.gl.compileShader(fragmentShader);
         if (renderer.gl.getShaderInfoLog(fragmentShader) !== '') {
-            console.warn(`${gl.getShaderInfoLog(fragmentShader)}\nFragment Shader\n${addLineNumbers(fragment)}`);
+            console.warn(`${renderer.gl.getShaderInfoLog(fragmentShader)}\nFragment Shader\n${addLineNumbers(fragment)}`);
         }
 
         // Compile program and log errors

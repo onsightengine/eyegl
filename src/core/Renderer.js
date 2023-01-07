@@ -349,7 +349,6 @@ class Renderer {
         frustumCull = true,
         clear = true,
     } = {}) {
-        if (! camera || ! camera.isCamera) return;
         if (this._contextLost) return;
 
         // Render target

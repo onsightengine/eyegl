@@ -12,7 +12,7 @@
         <div class="Info">Full Screen Triangle</div>
 
         <script type="module">
-            import { Renderer, Program, Color, Mesh, Triangle } from '../../src/EyeGL.js';
+            import { Renderer, Program, Color, Mesh, Triangle } from '../../js/EyeGL.js';
 
             const vertex = /* glsl */ `
                 attribute vec2 uv;
@@ -76,6 +76,7 @@
             const mesh = new Mesh({ geometry, program });
 
             requestAnimationFrame(update);
+
             function update(t) {
                 requestAnimationFrame(update);
 
