@@ -11,6 +11,7 @@
 .history/
 
 # Build Files
+js/
 node_modules/
 out/
 stats.html

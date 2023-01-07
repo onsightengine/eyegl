@@ -118,7 +118,6 @@ class Renderer {
         this.state.currentProgram = null;
 
         function initContext(self) {
-
             // Extensions, create method aliases using extension (WebGL1) or native if available (WebGL2)
             let extensions = new Extensions(gl, parameters);
             self.vertexAttribDivisor = extensions.get('ANGLE_instanced_arrays', 'vertexAttribDivisor', 'vertexAttribDivisorANGLE');
@@ -131,10 +130,9 @@ class Renderer {
 
             // Capabilities
             let capabilities = new Capabilities(gl, extensions, parameters);
+            // capabilities.log();
 
-            capabilities.log();
-
-            // Assign to this
+            // Reference
             self.extensions = extensions;
             self.capabilities = capabilities;
         };
