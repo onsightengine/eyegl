@@ -10,60 +10,55 @@
 
 class Extensions {
 
-    constructor(gl) {
-
+    constructor(gl, isWebgl2) {
         let extensions = {};
 
-        // Initialise extra format types
-        if (self.isWebgl2) {
-            self.getExtension('EXT_color_buffer_float');
-            self.getExtension('OES_texture_float_linear');
-        } else {
-            self.getExtension('OES_texture_float');
-            self.getExtension('OES_texture_float_linear');
-            self.getExtension('OES_texture_half_float');
-            self.getExtension('OES_texture_half_float_linear');
-            self.getExtension('OES_element_index_uint');
-            self.getExtension('OES_standard_derivatives');
-            self.getExtension('EXT_sRGB');
-            self.getExtension('WEBGL_depth_texture');
-            self.getExtension('WEBGL_draw_buffers');
-        }
-        self.getExtension('WEBGL_compressed_texture_astc');
-        self.getExtension('EXT_texture_compression_bptc');
-        self.getExtension('WEBGL_compressed_texture_s3tc');
-        self.getExtension('WEBGL_compressed_texture_etc1');
-        self.getExtension('WEBGL_compressed_texture_pvrtc');
-        self.getExtension('WEBKIT_WEBGL_compressed_texture_pvrtc');
-
-        // Create method aliases using extension (WebGL1) or native if available (WebGL2)
-        self.vertexAttribDivisor = self.getExtension('ANGLE_instanced_arrays', 'vertexAttribDivisor', 'vertexAttribDivisorANGLE');
-        self.drawArraysInstanced = self.getExtension('ANGLE_instanced_arrays', 'drawArraysInstanced', 'drawArraysInstancedANGLE');
-        self.drawElementsInstanced = self.getExtension('ANGLE_instanced_arrays', 'drawElementsInstanced', 'drawElementsInstancedANGLE');
-        self.createVertexArray = self.getExtension('OES_vertex_array_object', 'createVertexArray', 'createVertexArrayOES');
-        self.bindVertexArray = self.getExtension('OES_vertex_array_object', 'bindVertexArray', 'bindVertexArrayOES');
-        self.deleteVertexArray = self.getExtension('OES_vertex_array_object', 'deleteVertexArray', 'deleteVertexArrayOES');
-        self.drawBuffers = self.getExtension('WEBGL_draw_buffers', 'drawBuffers', 'drawBuffersWEBGL');
-
-        this.getExtension = function(extension, webgl2Func, extFunc) {
+        function getExtension(name, webgl2Func, extFunc) {
             // If webgl2 function supported, return function bound to gl context
             if (webgl2Func && gl[webgl2Func]) return gl[webgl2Func].bind(gl);
 
             // Fetch extension once only
-            if (! this.extensions[extension]) {
-                this.extensions[extension] = gl.getExtension(extension);
-            }
+            if (! extensions[name]) extensions[name] = gl.getExtension(name);
 
             // Return extension if no function requested
-            if (! webgl2Func) return this.extensions[extension];
+            if (! webgl2Func) return extensions[name];
 
             // Return null if extension not supported
-            if (! this.extensions[extension]) return null;
+            if (! extensions[name]) return null;
 
             // Return extension function, bound to extension
-            return this.extensions[extension][extFunc].bind(this.extensions[extension]);
+            return extensions[name][extFunc].bind(extensions[name]);
         }
 
+        // Initialize extra format types
+        if (isWebgl2) {
+            getExtension('EXT_color_buffer_float');
+        } else {
+            getExtension('WEBGL_depth_texture');
+            getExtension('WEBGL_draw_buffers');
+            getExtension('OES_texture_float');
+            getExtension('OES_texture_half_float');
+            getExtension('OES_texture_half_float_linear');
+            getExtension('OES_standard_derivatives');
+            getExtension('OES_element_index_uint');
+            getExtension('EXT_sRGB');
+        }
+        getExtension('OES_texture_float_linear');
+        getExtension('EXT_color_buffer_half_float' );
+		getExtension('WEBGL_multisampled_render_to_texture');
+
+        getExtension('WEBGL_compressed_texture_astc');
+        getExtension('EXT_texture_compression_bptc');
+        getExtension('WEBGL_compressed_texture_s3tc');
+        getExtension('WEBGL_compressed_texture_etc1');
+        getExtension('WEBGL_compressed_texture_pvrtc');
+        getExtension('WEBKIT_WEBGL_compressed_texture_pvrtc');
+
+        this.get = function(name, webgl2Func, extFunc) {
+			const extension = getExtension(name, webgl2Func, extFunc);
+			if (extension === null) console.warn(`EyeGL.Renderer: ${name} extension not supported.`);
+			return extension;
+		}
     }
 
 }

@@ -78,28 +78,30 @@ class Renderer {
         };
 
         /** @type { WebGLRenderingContext | WebGL2RenderingContext } */
-        this.gl;
+        let gl;
 
         // Attempt WebGL2 unless forced to 1, if not supported fallback to WebGL1
-        if (webgl === 2) this.gl = canvas.getContext('webgl2', attributes);
-        this.isWebgl2 = !!this.gl;
-        if (! this.gl) this.gl = canvas.getContext('webgl', attributes);
-        if (! this.gl) console.error('unable to create webgl context');
+        if (webgl === 2) gl = canvas.getContext('webgl2', attributes);
+        let isWebgl2 = !!gl;
+        if (! gl) gl = canvas.getContext('webgl', attributes);
+        if (! gl) console.error('Renderer.constructor: Unable to create webgl context');
+        this.gl = gl;
+        this.isWebgl2 = isWebgl2;
 
         // Attach renderer to window so that all classes have access to internal state functions
         window.renderer = this;
 
-        // Initialise size values
+        // Initialize size values
         this.setSize(width, height);
 
         // WebGL state stores to avoid redundant calls on methods used internally
         this.state = {};
-        this.state.blendFunc = { src: this.gl.ONE, dst: this.gl.ZERO };
-        this.state.blendEquation = { modeRGB: this.gl.FUNC_ADD };
+        this.state.blendFunc = { src: gl.ONE, dst: gl.ZERO };
+        this.state.blendEquation = { modeRGB: gl.FUNC_ADD };
         this.state.cullFace = null;
-        this.state.frontFace = this.gl.CCW;
+        this.state.frontFace = gl.CCW;
         this.state.depthMask = true;
-        this.state.depthFunc = this.gl.LESS;
+        this.state.depthFunc = gl.LESS;
         this.state.premultiplyAlpha = false;
         this.state.flipY = false;
         this.state.unpackAlignment = 4;
@@ -113,27 +115,38 @@ class Renderer {
 
         function initContext(self) {
 
-            self.extensions = new Extensions();
+            let extensions = new Extensions(gl, isWebgl2);
+
+            // Create method aliases using extension (WebGL1) or native if available (WebGL2)
+            self.vertexAttribDivisor = extensions.get('ANGLE_instanced_arrays', 'vertexAttribDivisor', 'vertexAttribDivisorANGLE');
+            self.drawArraysInstanced = extensions.get('ANGLE_instanced_arrays', 'drawArraysInstanced', 'drawArraysInstancedANGLE');
+            self.drawElementsInstanced = extensions.get('ANGLE_instanced_arrays', 'drawElementsInstanced', 'drawElementsInstancedANGLE');
+            self.createVertexArray = extensions.get('OES_vertex_array_object', 'createVertexArray', 'createVertexArrayOES');
+            self.bindVertexArray = extensions.get('OES_vertex_array_object', 'bindVertexArray', 'bindVertexArrayOES');
+            self.deleteVertexArray = extensions.get('OES_vertex_array_object', 'deleteVertexArray', 'deleteVertexArrayOES');
+            self.drawBuffers = extensions.get('WEBGL_draw_buffers', 'drawBuffers', 'drawBuffersWEBGL');
+            self.extensions = extensions;
+
 
         };
         initContext(this);
 
         // Store device parameters
         this.parameters = {};
-        this.parameters.maxTextureUnits = this.gl.getParameter(this.gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+        this.parameters.maxTextureUnits = gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
         this.parameters.maxAnisotropy = this.getExtension('EXT_texture_filter_anisotropic')
-            ? this.gl.getParameter(this.getExtension('EXT_texture_filter_anisotropic').MAX_TEXTURE_MAX_ANISOTROPY_EXT)
+            ? gl.getParameter(this.getExtension('EXT_texture_filter_anisotropic').MAX_TEXTURE_MAX_ANISOTROPY_EXT)
             : 0;
 
         // Context lost
         this.loseContext = this.getExtension('WEBGL_lose_context');
-        this.gl.canvas.addEventListener('webglcontextlost', function(event) {
+        gl.canvas.addEventListener('webglcontextlost', function(event) {
             event.preventDefault();
             console.log('EyeGL.Renderer: Context lost');
             this._contextLost = true;
         }.bind(this));
 
-        this.gl.canvas.addEventListener('webglcontextrestored', function(event) {
+        gl.canvas.addEventListener('webglcontextrestored', function(event) {
             console.log('EyeGL.Renderer: Context restored');
             initContext(this);
             this._contextLost = false;
@@ -141,7 +154,7 @@ class Renderer {
     }
 
     getExtension(extension) {
-        return this.extensions.getExtension(extension);
+        return this.extensions.get(extension);
     }
 
     // Usually (window.innerWidth, window.innerHeight)

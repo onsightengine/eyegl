@@ -170,7 +170,7 @@ class Geometry {
                 renderer.gl.enableVertexAttribArray(location + i);
 
                 // For instanced attributes, divisor needs to be set.
-                // For firefox, need to set back to 0 if non-instanced drawn after instanced. Else won't render
+                // For firefox, need to set back to 0 if non-instanced drawn after instanced, else won't render.
                 renderer.vertexAttribDivisor(location + i, attr.divisor);
             }
         });
