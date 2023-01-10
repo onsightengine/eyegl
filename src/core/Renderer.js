@@ -112,7 +112,9 @@ class Renderer {
 
             self.extensions = new Extensions(gl);
             self.capabilities = new Capabilities(gl, self.extensions);
-            self.capabilities.log();
+
+            // // DEBUG: Log WebGL 2 capabilities, max values
+            // self.capabilities.log();
 
         };
         initContext(this);
@@ -121,12 +123,12 @@ class Renderer {
         self.loseContext = this.getExtension('WEBGL_lose_context');
         gl.canvas.addEventListener('webglcontextlost', function(event) {
             event.preventDefault();
-            console.log('EyeGL.Renderer: Context lost');
+            console.log('Renderer: Context lost');
             this._contextLost = true;
         }.bind(this));
 
         gl.canvas.addEventListener('webglcontextrestored', function(event) {
-            console.log('EyeGL.Renderer: Context restored');
+            console.log('Renderer: Context restored');
             initContext(this);
             this._contextLost = false;
         }.bind(this));

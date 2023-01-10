@@ -8,8 +8,6 @@ Flat / Smooth Shading:
     - Use glsl v3?
         https://stackoverflow.com/questions/40101023/flat-shading-in-webgl
     - GeometryUtils
-        - Geometry.toNonIndexed()
-            - To use flat normals, must be non-indexed
         - calculateNormals
         - smoothNormals
 

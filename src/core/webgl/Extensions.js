@@ -38,7 +38,7 @@ class Extensions {
         // Public extension getter
         this.get = function(name) {
 			const extension = getExtension(name);
-			if (extension === null) console.warn(`EyeGL.Renderer: ${name} extension not supported.`);
+			if (extension === null) console.warn(`Renderer: ${name} extension not supported.`);
 			return extension;
 		};
     }

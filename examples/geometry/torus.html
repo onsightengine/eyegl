@@ -99,7 +99,10 @@
                 tubularSegments: 12, //32,
             });
 
-            const torus = new Mesh({ geometry: torusGeometry, program });
+            const nonIndexed = torusGeometry.toNonIndexed();
+            torusGeometry.remove();
+
+            const torus = new Mesh({ geometry: nonIndexed, program });
             torus.setParent(scene);
 
             requestAnimationFrame(update);

@@ -34,8 +34,6 @@ import { Vec3 } from '../math/Vec3.js';
 const tempVec3 = new Vec3();
 
 let _ID = 1;
-let _attributeID = 1;
-let _isBoundsWarned = false; /* to stop inifinite warnings */
 
 class Geometry {
 
@@ -65,11 +63,12 @@ class Geometry {
         }
     }
 
+    ////////// Attributes
+
     addAttribute(key, attr) {
         this.attributes[key] = attr;
 
         // Set options
-        attr.id = _attributeID++; // TODO: currently unused, remove?
         attr.size = attr.size || 1;
         attr.type =
             attr.type ||
@@ -78,16 +77,16 @@ class Geometry {
                 : attr.data.constructor === Uint16Array
                 ? renderer.gl.UNSIGNED_SHORT
                 : renderer.gl.UNSIGNED_INT); // Uint32Array
-        attr.target = key === 'index' ? renderer.gl.ELEMENT_ARRAY_BUFFER : renderer.gl.ARRAY_BUFFER;
+        attr.target = (key === 'index') ? renderer.gl.ELEMENT_ARRAY_BUFFER : renderer.gl.ARRAY_BUFFER;
         attr.normalized = attr.normalized || false;
         attr.stride = attr.stride || 0;
         attr.offset = attr.offset || 0;
-        attr.count = attr.count || (attr.stride ? attr.data.byteLength / attr.stride : attr.data.length / attr.size);
+        attr.count = attr.count || ((attr.stride) ? attr.data.byteLength / attr.stride : attr.data.length / attr.size);
         attr.divisor = attr.instanced || 0;
         attr.needsUpdate = false;
         attr.usage = attr.usage || renderer.gl.STATIC_DRAW;
 
-        if (!attr.buffer) {
+        if (! attr.buffer) {
             // Push data to buffer
             this.updateAttribute(attr);
         }
@@ -102,13 +101,13 @@ class Geometry {
             this.instancedCount = attr.count * attr.divisor;
         } else if (key === 'index') {
             this.drawRange.count = attr.count;
-        } else if (!this.attributes.index) {
+        } else if (! this.attributes.index) {
             this.drawRange.count = Math.max(this.drawRange.count, attr.count);
         }
     }
 
     updateAttribute(attr) {
-        const isNewBuffer = !attr.buffer;
+        const isNewBuffer = ! attr.buffer;
         if (isNewBuffer) attr.buffer = renderer.gl.createBuffer();
         if (this.glState.boundBuffer !== attr.buffer) {
             renderer.gl.bindBuffer(attr.target, attr.buffer);
@@ -122,19 +121,6 @@ class Geometry {
         attr.needsUpdate = false;
     }
 
-    setIndex(value) {
-        this.addAttribute('index', value);
-    }
-
-    setDrawRange(start, count) {
-        this.drawRange.start = start;
-        this.drawRange.count = count;
-    }
-
-    setInstancedCount(value) {
-        this.instancedCount = value;
-    }
-
     createVAO(program) {
         this.VAOs[program.attributeOrder] = renderer.gl.createVertexArray();
         renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
@@ -145,8 +131,8 @@ class Geometry {
         // Link all attributes to program using gl.vertexAttribPointer
         program.attributeLocations.forEach((location, { name, type }) => {
             // If geometry missing a required shader attribute
-            if (!this.attributes[name]) {
-                console.warn(`active attribute ${name} not being supplied`);
+            if (! this.attributes[name]) {
+                console.warn(`Geometry.bindAttributes: Active attribute ${name} not being supplied`);
                 return;
             }
 
@@ -177,6 +163,21 @@ class Geometry {
 
         // Bind indices if geometry indexed
         if (this.attributes.index) renderer.gl.bindBuffer(renderer.gl.ELEMENT_ARRAY_BUFFER, this.attributes.index.buffer);
+    }
+
+    calculateNormals() {
+
+    }
+
+    ////////// Draw
+
+    setDrawRange(start, count) {
+        this.drawRange.start = start;
+        this.drawRange.count = count;
+    }
+
+    setInstancedCount(value) {
+        this.instancedCount = value;
     }
 
     draw({ program, mode = renderer.gl.TRIANGLES }) {
@@ -213,18 +214,18 @@ class Geometry {
         }
     }
 
+    ////////// Bounding Box
+
     getPosition() {
-        // Use position buffer, or min/max if available
-        const attr = this.attributes.position;
-        // if (attr.min) return [...attr.min, ...attr.max];
-        if (attr.data) return attr;
-        if (_isBoundsWarned) return;
-        console.warn('No position buffer data found to compute bounds');
-        return (_isBoundsWarned = true);
+        const positionAttribute = this.attributes.position;
+        if (positionAttribute && positionAttribute.data) return positionAttribute;
+        console.warn('Geometry.getPosition: No position buffer data found to compute bounds');
+        return null;
     }
 
     computeBoundingBox(attr) {
         if (! attr) attr = this.getPosition();
+        if (! attr) return;
         const array = attr.data;
         const stride = attr.stride ? attr.stride / array.BYTES_PER_ELEMENT : attr.size;
 
@@ -246,7 +247,7 @@ class Geometry {
         min.set(+Infinity);
         max.set(-Infinity);
 
-        // TODO: check size of position (eg triangle with Vec2)
+        // TODO: check size of position (e.g. triangle with Vec2)
         for (let i = 0, l = array.length; i < l; i += stride) {
             const x = array[i];
             const y = array[i + 1];
@@ -267,6 +268,7 @@ class Geometry {
 
     computeBoundingSphere(attr) {
         if (! attr) attr = this.getPosition();
+        if (! attr) return;
         const array = attr.data;
         const stride = attr.stride ? attr.stride / array.BYTES_PER_ELEMENT : attr.size;
 
@@ -281,107 +283,45 @@ class Geometry {
         this.bounds.radius = Math.sqrt(maxRadiusSq);
     }
 
+    ////////// Utils
+
     toNonIndexed() {
-
-        function convertBufferAttribute( attribute, indices ) {
-
-			const array = attribute.array;
-			const itemSize = attribute.itemSize;
-			const normalized = attribute.normalized;
-
-			const array2 = new array.constructor( indices.length * itemSize );
-
-			let index = 0, index2 = 0;
-
-			for ( let i = 0, l = indices.length; i < l; i ++ ) {
-
-				if ( attribute.isInterleavedBufferAttribute ) {
-
-					index = indices[ i ] * attribute.data.stride + attribute.offset;
-
-				} else {
-
-					index = indices[ i ] * itemSize;
-
+        function convertBufferAttribute(attribute, indices) {
+			const itemSize = attribute.size;
+            const array = attribute.data;
+			const array2 = new array.constructor(indices.length * itemSize);
+			let index = 0;
+            let index2 = 0;
+			for (let i = 0; i < indices.length; i++) {
+                index = indices[i] * itemSize;
+				for (let j = 0; j < itemSize; j++) {
+					array2[index2++] = array[index++];
 				}
-
-				for ( let j = 0; j < itemSize; j ++ ) {
-
-					array2[ index2 ++ ] = array[ index ++ ];
-
-				}
-
 			}
-
-			return new BufferAttribute( array2, itemSize, normalized );
-
+			return array2;
 		}
 
-		//
-
-		if ( this.index === null ) {
-
-			console.warn( 'THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.' );
+		if (! this.attributes.index) {
+			console.warn('Geometry.toNonIndexed: Geometry is already non-indexed.');
 			return this;
-
 		}
 
-		const geometry2 = new BufferGeometry();
-
-		const indices = this.index.array;
+		const indices = this.attributes.index.data;
 		const attributes = this.attributes;
+        const nonIndexedGeometry = new Geometry();
 
-		// attributes
-
-		for ( const name in attributes ) {
-
-			const attribute = attributes[ name ];
-
-			const newAttribute = convertBufferAttribute( attribute, indices );
-
-			geometry2.setAttribute( name, newAttribute );
-
+		// Attributes
+		for (const attributeName in attributes) {
+            if (attributeName === 'index') continue;
+			const attribute = attributes[attributeName];
+            const newAttribute = { size: attribute.size, data: convertBufferAttribute(attribute, indices) };
+			nonIndexedGeometry.addAttribute(attributeName, newAttribute);
 		}
 
-		// morph attributes
-
-		const morphAttributes = this.morphAttributes;
-
-		for ( const name in morphAttributes ) {
-
-			const morphArray = [];
-			const morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
-
-			for ( let i = 0, il = morphAttribute.length; i < il; i ++ ) {
-
-				const attribute = morphAttribute[ i ];
-
-				const newAttribute = convertBufferAttribute( attribute, indices );
-
-				morphArray.push( newAttribute );
-
-			}
-
-			geometry2.morphAttributes[ name ] = morphArray;
-
-		}
-
-		geometry2.morphTargetsRelative = this.morphTargetsRelative;
-
-		// groups
-
-		const groups = this.groups;
-
-		for ( let i = 0, l = groups.length; i < l; i ++ ) {
-
-			const group = groups[ i ];
-			geometry2.addGroup( group.start, group.count, group.materialIndex );
-
-		}
-
-		return geometry2;
-
+		return nonIndexedGeometry;
     }
+
+    ////////// Cleanup
 
     remove() {
         for (let key in this.VAOs) {
