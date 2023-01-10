@@ -1,11 +1,15 @@
+import { Mat4 } from '../Mat4.js';
+import { Quat } from '../Quat.js';
+import { Vec3 } from '../Vec3.js';
+
 const EPSILON = 0.000001;
 
 /**
- * Copy the values from one mat4 to another
+ * Copy the values from one Mat4 to another
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the source matrix
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the source matrix
+ * @returns {Mat4} out
  */
 export function copy(out, a) {
     out[0] = a[0];
@@ -28,10 +32,10 @@ export function copy(out, a) {
 }
 
 /**
- * Set the components of a mat4 to the given values
+ * Set the components of a Mat4 to the given values
  *
- * @param {mat4} out the receiving matrix
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @returns {Mat4} out
  */
 export function set(out, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33) {
     out[0] = m00;
@@ -54,10 +58,10 @@ export function set(out, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, 
 }
 
 /**
- * Set a mat4 to the identity matrix
+ * Set a Mat4 to the identity matrix
  *
- * @param {mat4} out the receiving matrix
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @returns {Mat4} out
  */
 export function identity(out) {
     out[0] = 1;
@@ -80,11 +84,11 @@ export function identity(out) {
 }
 
 /**
- * Transpose the values of a mat4
+ * Transpose the values of a Mat4
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the source matrix
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the source matrix
+ * @returns {Mat4} out
  */
 export function transpose(out, a) {
     // If we are transposing ourselves we can skip a few steps but have to cache some values
@@ -131,11 +135,11 @@ export function transpose(out, a) {
 }
 
 /**
- * Inverts a mat4
+ * Inverts a Mat4
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the source matrix
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the source matrix
+ * @returns {Mat4} out
  */
 export function invert(out, a) {
     let a00 = a[0],
@@ -197,9 +201,9 @@ export function invert(out, a) {
 }
 
 /**
- * Calculates the determinant of a mat4
+ * Calculates the determinant of a Mat4
  *
- * @param {mat4} a the source matrix
+ * @param {Mat4} a the source matrix
  * @returns {Number} determinant of a
  */
 export function determinant(a) {
@@ -238,12 +242,12 @@ export function determinant(a) {
 }
 
 /**
- * Multiplies two mat4s
+ * Multiplies two Mat4s
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the first operand
- * @param {mat4} b the second operand
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the first operand
+ * @param {Mat4} b the second operand
+ * @returns {Mat4} out
  */
 export function multiply(out, a, b) {
     let a00 = a[0],
@@ -303,12 +307,12 @@ export function multiply(out, a, b) {
 }
 
 /**
- * Translate a mat4 by the given vector
+ * Translate a Mat4 by the given vector
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the matrix to translate
- * @param {vec3} v vector to translate by
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the matrix to translate
+ * @param {Vec3} v vector to translate by
+ * @returns {Mat4} out
  */
 export function translate(out, a, v) {
     let x = v[0],
@@ -360,12 +364,12 @@ export function translate(out, a, v) {
 }
 
 /**
- * Scales the mat4 by the dimensions in the given vec3 not using vectorization
+ * Scales the Mat4 by the dimensions in the given Vec3 not using vectorization
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the matrix to scale
- * @param {vec3} v the vec3 to scale the matrix by
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the matrix to scale
+ * @param {Vec3} v the Vec3 to scale the matrix by
+ * @returns {Mat4} out
  **/
 export function scale(out, a, v) {
     let x = v[0],
@@ -392,13 +396,13 @@ export function scale(out, a, v) {
 }
 
 /**
- * Rotates a mat4 by the given angle around the given axis
+ * Rotates a Mat4 by the given angle around the given axis
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the matrix to rotate
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the matrix to rotate
  * @param {Number} rad the angle to rotate the matrix by
- * @param {vec3} axis the axis to rotate around
- * @returns {mat4} out
+ * @param {Vec3} axis the axis to rotate around
+ * @returns {Mat4} out
  */
 export function rotate(out, a, rad, axis) {
     let x = axis[0],
@@ -479,9 +483,9 @@ export function rotate(out, a, rad, axis) {
  *  matrix. If a matrix is built with fromRotationTranslation,
  *  the returned vector will be the same as the translation vector
  *  originally supplied.
- * @param  {vec3} out Vector to receive translation component
- * @param  {mat4} mat Matrix to be decomposed (input)
- * @return {vec3} out
+ * @param {Vec3} out Vector to receive translation component
+ * @param {Mat4} mat Matrix to be decomposed (input)
+ * @return {Vec3} out
  */
 export function getTranslation(out, mat) {
     out[0] = mat[12];
@@ -497,9 +501,9 @@ export function getTranslation(out, mat) {
  *  with a normalized Quaternion paramter, the returned vector will be
  *  the same as the scaling vector
  *  originally supplied.
- * @param  {vec3} out Vector to receive scaling factor component
- * @param  {mat4} mat Matrix to be decomposed (input)
- * @return {vec3} out
+ * @param {Vec3} out Vector to receive scaling factor component
+ * @param {Mat4} mat Matrix to be decomposed (input)
+ * @return {Vec3} out
  */
 export function getScaling(out, mat) {
     let m11 = mat[0];
@@ -538,13 +542,13 @@ export function getMaxScaleOnAxis(mat) {
 }
 
 /**
- * Returns a quaternion representing the rotational component
- *  of a transformation matrix. If a matrix is built with
- *  fromRotationTranslation, the returned quaternion will be the
- *  same as the quaternion originally supplied.
- * @param {quat} out Quaternion to receive the rotation component
- * @param {mat4} mat Matrix to be decomposed (input)
- * @return {quat} out
+ * Returns a quaternion representing the rotational component of a transformation matrix.
+ * If a matrix is built with fromRotationTranslation, the returned quaternion will be the
+ * same as the quaternion originally supplied.
+ *
+ * @param {Quat} out Quaternion to receive the rotation component
+ * @param {Mat4} mat Matrix to be decomposed (input)
+ * @return {Quat} out
  */
 export const getRotation = (function () {
     const temp = [0, 0, 0];
@@ -604,18 +608,18 @@ export const getRotation = (function () {
  * Creates a matrix from a quaternion rotation, vector translation and vector scale
  * This is equivalent to (but much faster than):
  *
- *     mat4.identity(dest);
- *     mat4.translate(dest, vec);
- *     let quatMat = mat4.create();
- *     quat4.toMat4(quat, quatMat);
- *     mat4.multiply(dest, quatMat);
- *     mat4.scale(dest, scale)
+ *     Mat4.identity(dest);
+ *     Mat4.translate(dest, vec);
+ *     let quatMat = Mat4.create();
+ *     Quat.toMat4(Quat, quatMat);
+ *     Mat4.multiply(dest, quatMat);
+ *     Mat4.scale(dest, scale)
  *
- * @param {mat4} out mat4 receiving operation result
- * @param {quat4} q Rotation quaternion
- * @param {vec3} v Translation vector
- * @param {vec3} s Scaling vector
- * @returns {mat4} out
+ * @param {Mat4} out Mat4 receiving operation result
+ * @param {Quat} q Rotation quaternion
+ * @param {Vec3} v Translation vector
+ * @param {Vec3} s Scaling vector
+ * @returns {Mat4} out
  */
 export function fromRotationTranslationScale(out, q, v, s) {
     // Quaternion math
@@ -663,10 +667,9 @@ export function fromRotationTranslationScale(out, q, v, s) {
 /**
  * Calculates a 4x4 matrix from the given quaternion
  *
- * @param {mat4} out mat4 receiving operation result
- * @param {quat} q Quaternion to create matrix from
- *
- * @returns {mat4} out
+ * @param {Mat4} out Mat4 receiving operation result
+ * @param {Quat} q Quaternion to create matrix from
+ * @returns {Mat4} out
  */
 export function fromQuat(out, q) {
     let x = q[0],
@@ -713,12 +716,12 @@ export function fromQuat(out, q) {
 /**
  * Generates a perspective projection matrix with the given bounds
  *
- * @param {mat4} out mat4 frustum matrix will be written into
- * @param {number} fovy Vertical field of view in radians
- * @param {number} aspect Aspect ratio. typically viewport width/height
- * @param {number} near Near bound of the frustum
- * @param {number} far Far bound of the frustum
- * @returns {mat4} out
+ * @param {Mat4} out Mat4 frustum matrix will be written into
+ * @param {Number} fovy Vertical field of view in radians
+ * @param {Number} aspect Aspect ratio. typically viewport width/height
+ * @param {Number} near Near bound of the frustum
+ * @param {Number} far Far bound of the frustum
+ * @returns {Mat4} out
  */
 export function perspective(out, fovy, aspect, near, far) {
     let f = 1.0 / Math.tan(fovy / 2);
@@ -745,14 +748,14 @@ export function perspective(out, fovy, aspect, near, far) {
 /**
  * Generates a orthogonal projection matrix with the given bounds
  *
- * @param {mat4} out mat4 frustum matrix will be written into
- * @param {number} left Left bound of the frustum
- * @param {number} right Right bound of the frustum
- * @param {number} bottom Bottom bound of the frustum
- * @param {number} top Top bound of the frustum
- * @param {number} near Near bound of the frustum
- * @param {number} far Far bound of the frustum
- * @returns {mat4} out
+ * @param {Mat4} out Mat4 frustum matrix will be written into
+ * @param {Number} left Left bound of the frustum
+ * @param {Number} right Right bound of the frustum
+ * @param {Number} bottom Bottom bound of the frustum
+ * @param {Number} top Top bound of the frustum
+ * @param {Number} near Near bound of the frustum
+ * @param {Number} far Far bound of the frustum
+ * @returns {Mat4} out
  */
 export function ortho(out, left, right, bottom, top, near, far) {
     let lr = 1 / (left - right);
@@ -780,11 +783,11 @@ export function ortho(out, left, right, bottom, top, near, far) {
 /**
  * Generates a matrix that makes something look at something else.
  *
- * @param {mat4} out mat4 frustum matrix will be written into
- * @param {vec3} eye Position of the viewer
- * @param {vec3} target Point the viewer is looking at
- * @param {vec3} up vec3 pointing up
- * @returns {mat4} out
+ * @param {Mat4} out Mat4 frustum matrix will be written into
+ * @param {Vec3} eye Position of the viewer
+ * @param {Vec3} target Point the viewer is looking at
+ * @param {Vec3} up Vec3 pointing up
+ * @returns {Mat4} out
  */
 export function targetTo(out, eye, target, up) {
     let eyex = eye[0],
@@ -853,12 +856,12 @@ export function targetTo(out, eye, target, up) {
 }
 
 /**
- * Adds two mat4's
+ * Adds two Mat4's
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the first operand
- * @param {mat4} b the second operand
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the first operand
+ * @param {Mat4} b the second operand
+ * @returns {Mat4} out
  */
 export function add(out, a, b) {
     out[0] = a[0] + b[0];
@@ -883,10 +886,10 @@ export function add(out, a, b) {
 /**
  * Subtracts matrix b from matrix a
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the first operand
- * @param {mat4} b the second operand
- * @returns {mat4} out
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the first operand
+ * @param {Mat4} b the second operand
+ * @returns {Mat4} out
  */
 export function subtract(out, a, b) {
     out[0] = a[0] - b[0];
@@ -911,10 +914,10 @@ export function subtract(out, a, b) {
 /**
  * Multiply each element of the matrix by a scalar.
  *
- * @param {mat4} out the receiving matrix
- * @param {mat4} a the matrix to scale
+ * @param {Mat4} out the receiving matrix
+ * @param {Mat4} a the matrix to scale
  * @param {Number} b amount to scale the matrix's elements by
- * @returns {mat4} out
+ * @returns {Mat4} out
  */
 export function multiplyScalar(out, a, b) {
     out[0] = a[0] * b;

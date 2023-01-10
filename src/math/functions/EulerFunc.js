@@ -1,4 +1,14 @@
-// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+import { Euler } from '../Euler.js';
+import { Mat4 } from '../Mat4.js';
+
+/**
+ * Assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+ *
+ * @param {Euler} out
+ * @param {Mat4} m
+ * @param {String} order
+ * @returns
+ */
 export function fromRotationMatrix(out, m, order = 'YXZ') {
     if (order === 'XYZ') {
         out[1] = Math.asin(Math.min(Math.max(m[8], -1), 1));
@@ -55,6 +65,5 @@ export function fromRotationMatrix(out, m, order = 'YXZ') {
             out[1] = 0;
         }
     }
-
     return out;
 }

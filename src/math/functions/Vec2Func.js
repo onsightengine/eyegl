@@ -1,11 +1,15 @@
+import { Mat3 } from '../Mat3.js';
+import { Mat4 } from '../Mat4.js';
+import { Vec2 } from '../Vec2.js';
+
 const EPSILON = 0.000001;
 
 /**
- * Copy the values from one vec2 to another
+ * Copy the values from one Vec2 to another
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the source vector
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a the source vector
+ * @returns {Vec2} out
  */
 export function copy(out, a) {
     out[0] = a[0];
@@ -14,12 +18,12 @@ export function copy(out, a) {
 }
 
 /**
- * Set the components of a vec2 to the given values
+ * Set the components of a Vec2 to the given values
  *
- * @param {vec2} out the receiving vector
+ * @param {Vec2} out the receiving vector
  * @param {Number} x X component
  * @param {Number} y Y component
- * @returns {vec2} out
+ * @returns {Vec2} out
  */
 export function set(out, x, y) {
     out[0] = x;
@@ -28,12 +32,12 @@ export function set(out, x, y) {
 }
 
 /**
- * Adds two vec2's
+ * Adds two Vec2's
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the first operand
- * @param {vec2} b the second operand
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a the first operand
+ * @param {Vec2} b the second operand
+ * @returns {Vec2} out
  */
 export function add(out, a, b) {
     out[0] = a[0] + b[0];
@@ -44,10 +48,10 @@ export function add(out, a, b) {
 /**
  * Subtracts vector b from vector a
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the first operand
- * @param {vec2} b the second operand
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a the first operand
+ * @param {Vec2} b the second operand
+ * @returns {Vec2} out
  */
 export function subtract(out, a, b) {
     out[0] = a[0] - b[0];
@@ -56,12 +60,12 @@ export function subtract(out, a, b) {
 }
 
 /**
- * Multiplies two vec2's
+ * Multiplies two Vec2's
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the first operand
- * @param {vec2} b the second operand
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a the first operand
+ * @param {Vec2} b the second operand
+ * @returns {Vec2} out
  */
 export function multiply(out, a, b) {
     out[0] = a[0] * b[0];
@@ -70,12 +74,12 @@ export function multiply(out, a, b) {
 }
 
 /**
- * Divides two vec2's
+ * Divides two Vec2's
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the first operand
- * @param {vec2} b the second operand
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a the first operand
+ * @param {Vec2} b the second operand
+ * @returns {Vec2} out
  */
 export function divide(out, a, b) {
     out[0] = a[0] / b[0];
@@ -84,12 +88,12 @@ export function divide(out, a, b) {
 }
 
 /**
- * Scales a vec2 by a scalar number
+ * Scales a Vec2 by a scalar number
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the vector to scale
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a the vector to scale
  * @param {Number} b amount to scale the vector by
- * @returns {vec2} out
+ * @returns {Vec2} out
  */
 export function scale(out, a, b) {
     out[0] = a[0] * b;
@@ -98,10 +102,10 @@ export function scale(out, a, b) {
 }
 
 /**
- * Calculates the euclidian distance between two vec2's
+ * Calculates the euclidian distance between two Vec2's
  *
- * @param {vec2} a the first operand
- * @param {vec2} b the second operand
+ * @param {Vec2} a the first operand
+ * @param {Vec2} b the second operand
  * @returns {Number} distance between a and b
  */
 export function distance(a, b) {
@@ -111,10 +115,10 @@ export function distance(a, b) {
 }
 
 /**
- * Calculates the squared euclidian distance between two vec2's
+ * Calculates the squared euclidian distance between two Vec2's
  *
- * @param {vec2} a the first operand
- * @param {vec2} b the second operand
+ * @param {Vec2} a the first operand
+ * @param {Vec2} b the second operand
  * @returns {Number} squared distance between a and b
  */
 export function squaredDistance(a, b) {
@@ -124,9 +128,9 @@ export function squaredDistance(a, b) {
 }
 
 /**
- * Calculates the length of a vec2
+ * Calculates the length of a Vec2
  *
- * @param {vec2} a vector to calculate length of
+ * @param {Vec2} a vector to calculate length of
  * @returns {Number} length of a
  */
 export function length(a) {
@@ -136,9 +140,9 @@ export function length(a) {
 }
 
 /**
- * Calculates the squared length of a vec2
+ * Calculates the squared length of a Vec2
  *
- * @param {vec2} a vector to calculate squared length of
+ * @param {Vec2} a vector to calculate squared length of
  * @returns {Number} squared length of a
  */
 export function squaredLength(a) {
@@ -148,11 +152,11 @@ export function squaredLength(a) {
 }
 
 /**
- * Negates the components of a vec2
+ * Negates the components of a Vec2
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a vector to negate
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a vector to negate
+ * @returns {Vec2} out
  */
 export function negate(out, a) {
     out[0] = -a[0];
@@ -161,11 +165,11 @@ export function negate(out, a) {
 }
 
 /**
- * Returns the inverse of the components of a vec2
+ * Returns the inverse of the components of a Vec2
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a vector to invert
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a vector to invert
+ * @returns {Vec2} out
  */
 export function inverse(out, a) {
     out[0] = 1.0 / a[0];
@@ -174,11 +178,11 @@ export function inverse(out, a) {
 }
 
 /**
- * Normalize a vec2
+ * Normalize a Vec2
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a vector to normalize
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a vector to normalize
+ * @returns {Vec2} out
  */
 export function normalize(out, a) {
     var x = a[0],
@@ -194,10 +198,10 @@ export function normalize(out, a) {
 }
 
 /**
- * Calculates the dot product of two vec2's
+ * Calculates the dot product of two Vec2's
  *
- * @param {vec2} a the first operand
- * @param {vec2} b the second operand
+ * @param {Vec2} a the first operand
+ * @param {Vec2} b the second operand
  * @returns {Number} dot product of a and b
  */
 export function dot(a, b) {
@@ -205,11 +209,11 @@ export function dot(a, b) {
 }
 
 /**
- * Computes the cross product of two vec2's
+ * Computes the cross product of two Vec2's
  * Note that the cross product returns a scalar
  *
- * @param {vec2} a the first operand
- * @param {vec2} b the second operand
+ * @param {Vec2} a the first operand
+ * @param {Vec2} b the second operand
  * @returns {Number} cross product of a and b
  */
 export function cross(a, b) {
@@ -217,13 +221,13 @@ export function cross(a, b) {
 }
 
 /**
- * Performs a linear interpolation between two vec2's
+ * Performs a linear interpolation between two Vec2's
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the first operand
- * @param {vec2} b the second operand
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a the first operand
+ * @param {Vec2} b the second operand
  * @param {Number} t interpolation amount between the two inputs
- * @returns {vec2} out
+ * @returns {Vec2} out
  */
 export function lerp(out, a, b, t) {
     var ax = a[0],
@@ -234,45 +238,13 @@ export function lerp(out, a, b, t) {
 }
 
 /**
- * Transforms the vec2 with a mat2
- *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the vector to transform
- * @param {mat2} m matrix to transform with
- * @returns {vec2} out
- */
-export function transformMat2(out, a, m) {
-    var x = a[0],
-        y = a[1];
-    out[0] = m[0] * x + m[2] * y;
-    out[1] = m[1] * x + m[3] * y;
-    return out;
-}
-
-/**
- * Transforms the vec2 with a mat2d
- *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the vector to transform
- * @param {mat2d} m matrix to transform with
- * @returns {vec2} out
- */
-export function transformMat2d(out, a, m) {
-    var x = a[0],
-        y = a[1];
-    out[0] = m[0] * x + m[2] * y + m[4];
-    out[1] = m[1] * x + m[3] * y + m[5];
-    return out;
-}
-
-/**
- * Transforms the vec2 with a mat3
+ * Transforms the Vec2 with a Mat3
  * 3rd vector component is implicitly '1'
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the vector to transform
- * @param {mat3} m matrix to transform with
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a the vector to transform
+ * @param {Mat3} m matrix to transform with
+ * @returns {Vec2} out
  */
 export function transformMat3(out, a, m) {
     var x = a[0],
@@ -283,14 +255,14 @@ export function transformMat3(out, a, m) {
 }
 
 /**
- * Transforms the vec2 with a mat4
+ * Transforms the Vec2 with a Mat4
  * 3rd vector component is implicitly '0'
  * 4th vector component is implicitly '1'
  *
- * @param {vec2} out the receiving vector
- * @param {vec2} a the vector to transform
- * @param {mat4} m matrix to transform with
- * @returns {vec2} out
+ * @param {Vec2} out the receiving vector
+ * @param {Vec2} a the vector to transform
+ * @param {Mat4} m matrix to transform with
+ * @returns {Vec2} out
  */
 export function transformMat4(out, a, m) {
     let x = a[0];
@@ -303,8 +275,8 @@ export function transformMat4(out, a, m) {
 /**
  * Returns whether or not the vectors exactly have the same elements in the same position (when compared with ===)
  *
- * @param {vec2} a The first vector.
- * @param {vec2} b The second vector.
+ * @param {Vec2} a The first vector.
+ * @param {Vec2} b The second vector.
  * @returns {Boolean} True if the vectors are equal, false otherwise.
  */
 export function exactEquals(a, b) {

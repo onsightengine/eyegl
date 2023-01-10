@@ -1,11 +1,13 @@
+import { Vec4 } from '../Vec4.js';
+
 const EPSILON = 0.000001;
 
 /**
- * Copy the values from one vec4 to another
+ * Copy the values from one Vec4 to another
  *
- * @param {vec4} out the receiving vector
- * @param {vec4} a the source vector
- * @returns {vec4} out
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a the source vector
+ * @returns {Vec4} out
  */
 export function copy(out, a) {
     out[0] = a[0];
@@ -16,14 +18,14 @@ export function copy(out, a) {
 }
 
 /**
- * Set the components of a vec4 to the given values
+ * Set the components of a Vec4 to the given values
  *
- * @param {vec4} out the receiving vector
+ * @param {Vec4} out the receiving vector
  * @param {Number} x X component
  * @param {Number} y Y component
  * @param {Number} z Z component
  * @param {Number} w W component
- * @returns {vec4} out
+ * @returns {Vec4} out
  */
 export function set(out, x, y, z, w) {
     out[0] = x;
@@ -34,12 +36,12 @@ export function set(out, x, y, z, w) {
 }
 
 /**
- * Adds two vec4's
+ * Adds two Vec4's
  *
- * @param {vec4} out the receiving vector
- * @param {vec4} a the first operand
- * @param {vec4} b the second operand
- * @returns {vec4} out
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a the first operand
+ * @param {Vec4} b the second operand
+ * @returns {Vec4} out
  */
 export function add(out, a, b) {
     out[0] = a[0] + b[0];
@@ -50,12 +52,12 @@ export function add(out, a, b) {
 }
 
 /**
- * Scales a vec4 by a scalar number
+ * Scales a Vec4 by a scalar number
  *
- * @param {vec4} out the receiving vector
- * @param {vec4} a the vector to scale
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a the vector to scale
  * @param {Number} b amount to scale the vector by
- * @returns {vec4} out
+ * @returns {Vec4} out
  */
 export function scale(out, a, b) {
     out[0] = a[0] * b;
@@ -66,9 +68,9 @@ export function scale(out, a, b) {
 }
 
 /**
- * Calculates the length of a vec4
+ * Calculates the length of a Vec4
  *
- * @param {vec4} a vector to calculate length of
+ * @param {Vec4} a vector to calculate length of
  * @returns {Number} length of a
  */
 export function length(a) {
@@ -80,11 +82,11 @@ export function length(a) {
 }
 
 /**
- * Normalize a vec4
+ * Normalize a Vec4
  *
- * @param {vec4} out the receiving vector
- * @param {vec4} a vector to normalize
- * @returns {vec4} out
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a vector to normalize
+ * @returns {Vec4} out
  */
 export function normalize(out, a) {
     let x = a[0];
@@ -103,10 +105,10 @@ export function normalize(out, a) {
 }
 
 /**
- * Calculates the dot product of two vec4's
+ * Calculates the dot product of two Vec4's
  *
- * @param {vec4} a the first operand
- * @param {vec4} b the second operand
+ * @param {Vec4} a the first operand
+ * @param {Vec4} b the second operand
  * @returns {Number} dot product of a and b
  */
 export function dot(a, b) {
@@ -114,13 +116,13 @@ export function dot(a, b) {
 }
 
 /**
- * Performs a linear interpolation between two vec4's
+ * Performs a linear interpolation between two Vec4's
  *
- * @param {vec4} out the receiving vector
- * @param {vec4} a the first operand
- * @param {vec4} b the second operand
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a the first operand
+ * @param {Vec4} b the second operand
  * @param {Number} t interpolation amount between the two inputs
- * @returns {vec4} out
+ * @returns {Vec4} out
  */
 export function lerp(out, a, b, t) {
     let ax = a[0];

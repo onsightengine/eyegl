@@ -1,11 +1,16 @@
+import { Mat3 } from '../Mat3.js';
+import { Mat4 } from '../Mat4.js';
+import { Quat } from '../Quat.js';
+import { Vec2 } from '../Vec2.js';
+
 const EPSILON = 0.000001;
 
 /**
- * Copies the upper-left 3x3 values into the given mat3.
+ * Copies the upper-left 3x3 values into the given Mat3
  *
- * @param {mat3} out the receiving 3x3 matrix
- * @param {mat4} a   the source 4x4 matrix
- * @returns {mat3} out
+ * @param {Mat3} out the receiving 3x3 matrix
+ * @param {Mat4} a   the source 4x4 matrix
+ * @returns {Mat3} out
  */
 export function fromMat4(out, a) {
     out[0] = a[0];
@@ -23,10 +28,9 @@ export function fromMat4(out, a) {
 /**
  * Calculates a 3x3 matrix from the given quaternion
  *
- * @param {mat3} out mat3 receiving operation result
- * @param {quat} q Quaternion to create matrix from
- *
- * @returns {mat3} out
+ * @param {Mat3} out Mat3 receiving operation result
+ * @param {Quat} q Quaternion to create matrix from
+ * @returns {Mat3} out
  */
 export function fromQuat(out, q) {
     let x = q[0],
@@ -63,11 +67,11 @@ export function fromQuat(out, q) {
 }
 
 /**
- * Copy the values from one mat3 to another
+ * Copy the values from one Mat3 to another
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the source matrix
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the source matrix
+ * @returns {Mat3} out
  */
 export function copy(out, a) {
     out[0] = a[0];
@@ -83,10 +87,10 @@ export function copy(out, a) {
 }
 
 /**
- * Set the components of a mat3 to the given values
+ * Set the components of a Mat3 to the given values
  *
- * @param {mat3} out the receiving matrix
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @returns {Mat3} out
  */
 export function set(out, m00, m01, m02, m10, m11, m12, m20, m21, m22) {
     out[0] = m00;
@@ -102,10 +106,10 @@ export function set(out, m00, m01, m02, m10, m11, m12, m20, m21, m22) {
 }
 
 /**
- * Set a mat3 to the identity matrix
+ * Set a Mat3 to the identity matrix
  *
- * @param {mat3} out the receiving matrix
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @returns {Mat3} out
  */
 export function identity(out) {
     out[0] = 1;
@@ -121,11 +125,11 @@ export function identity(out) {
 }
 
 /**
- * Transpose the values of a mat3
+ * Transpose the values of a Mat3
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the source matrix
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the source matrix
+ * @returns {Mat3} out
  */
 export function transpose(out, a) {
     // If we are transposing ourselves we can skip a few steps but have to cache some values
@@ -155,11 +159,11 @@ export function transpose(out, a) {
 }
 
 /**
- * Inverts a mat3
+ * Inverts a Mat3
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the source matrix
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the source matrix
+ * @returns {Mat3} out
  */
 export function invert(out, a) {
     let a00 = a[0],
@@ -197,9 +201,9 @@ export function invert(out, a) {
 }
 
 /**
- * Calculates the determinant of a mat3
+ * Calculates the determinant of a Mat3
  *
- * @param {mat3} a the source matrix
+ * @param {Mat3} a the source matrix
  * @returns {Number} determinant of a
  */
 export function determinant(a) {
@@ -217,12 +221,12 @@ export function determinant(a) {
 }
 
 /**
- * Multiplies two mat3's
+ * Multiplies two Mat3's
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the first operand
- * @param {mat3} b the second operand
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the first operand
+ * @param {Mat3} b the second operand
+ * @returns {Mat3} out
  */
 export function multiply(out, a, b) {
     let a00 = a[0],
@@ -260,12 +264,12 @@ export function multiply(out, a, b) {
 }
 
 /**
- * Translate a mat3 by the given vector
+ * Translate a Mat3 by the given vector
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the matrix to translate
- * @param {vec2} v vector to translate by
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the matrix to translate
+ * @param {Vec2} v vector to translate by
+ * @returns {Mat3} out
  */
 export function translate(out, a, v) {
     let a00 = a[0],
@@ -295,12 +299,12 @@ export function translate(out, a, v) {
 }
 
 /**
- * Rotates a mat3 by the given angle
+ * Rotates a Mat3 by the given angle
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the matrix to rotate
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the matrix to rotate
  * @param {Number} rad the angle to rotate the matrix by
- * @returns {mat3} out
+ * @returns {Mat3} out
  */
 export function rotate(out, a, rad) {
     let a00 = a[0],
@@ -330,12 +334,12 @@ export function rotate(out, a, rad) {
 }
 
 /**
- * Scales the mat3 by the dimensions in the given vec2
+ * Scales the Mat3 by the dimensions in the given Vec2
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the matrix to rotate
- * @param {vec2} v the vec2 to scale the matrix by
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the matrix to rotate
+ * @param {Vec2} v the vector to scale the matrix by
+ * @returns {Mat3} out
  **/
 export function scale(out, a, v) {
     let x = v[0],
@@ -358,10 +362,9 @@ export function scale(out, a, v) {
 /**
  * Calculates a 3x3 normal matrix (transpose inverse) from the 4x4 matrix
  *
- * @param {mat3} out mat3 receiving operation result
- * @param {mat4} a Mat4 to derive the normal matrix from
- *
- * @returns {mat3} out
+ * @param {Mat3} out Mat3 receiving operation result
+ * @param {Mat4} a Mat4 to derive the normal matrix from
+ * @returns {Mat3} out
  */
 export function normalFromMat4(out, a) {
     let a00 = a[0],
@@ -420,10 +423,10 @@ export function normalFromMat4(out, a) {
 /**
  * Generates a 2D projection matrix with the given bounds
  *
- * @param {mat3} out mat3 frustum matrix will be written into
- * @param {number} width Width of your gl context
- * @param {number} height Height of gl context
- * @returns {mat3} out
+ * @param {Mat3} out Mat3 frustum matrix will be written into
+ * @param {Number} width Width of your gl context
+ * @param {Number} height Height of gl context
+ * @returns {Mat3} out
  */
 export function projection(out, width, height) {
     out[0] = 2 / width;
@@ -439,12 +442,12 @@ export function projection(out, width, height) {
 }
 
 /**
- * Adds two mat3's
+ * Adds two Mat3's
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the first operand
- * @param {mat3} b the second operand
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the first operand
+ * @param {Mat3} b the second operand
+ * @returns {Mat3} out
  */
 export function add(out, a, b) {
     out[0] = a[0] + b[0];
@@ -462,10 +465,10 @@ export function add(out, a, b) {
 /**
  * Subtracts matrix b from matrix a
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the first operand
- * @param {mat3} b the second operand
- * @returns {mat3} out
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the first operand
+ * @param {Mat3} b the second operand
+ * @returns {Mat3} out
  */
 export function subtract(out, a, b) {
     out[0] = a[0] - b[0];
@@ -483,10 +486,10 @@ export function subtract(out, a, b) {
 /**
  * Multiply each element of the matrix by a scalar.
  *
- * @param {mat3} out the receiving matrix
- * @param {mat3} a the matrix to scale
+ * @param {Mat3} out the receiving matrix
+ * @param {Mat3} a the matrix to scale
  * @param {Number} b amount to scale the matrix's elements by
- * @returns {mat3} out
+ * @returns {Mat3} out
  */
 export function multiplyScalar(out, a, b) {
     out[0] = a[0] * b;

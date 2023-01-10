@@ -161,6 +161,26 @@ class Geometry {
 
     calculateNormals() {
 
+        console.log(this.VAOs);
+        console.log(this.attributes);
+
+        if (this.VAOs['normal']) {
+            renderer.gl.deleteVertexArray(this.VAOs['normal']);
+            delete this.VAOs['normal'];
+        }
+
+        if (this.attributes['normal']) {
+            renderer.gl.deleteBuffer(this.attributes['normal'].buffer);
+            delete this.attributes['normal'];
+        }
+
+
+
+
+
+
+
+
     }
 
     ////////// Draw
@@ -221,7 +241,7 @@ class Geometry {
     getPosition() {
         const positionAttribute = this.attributes.position;
         if (positionAttribute && positionAttribute.data) return positionAttribute;
-        console.warn('Geometry.getPosition: No position buffer data found to compute bounds');
+        console.warn('Geometry.getPosition: No position attribute found');
         return null;
     }
 
