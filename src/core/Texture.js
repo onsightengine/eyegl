@@ -16,10 +16,6 @@
 
 const emptyPixel = new Uint8Array(4);
 
-function isPowerOf2(value) {
-    return (value & (value - 1)) === 0;
-}
-
 let _ID = 1;
 
 class Texture {
@@ -186,14 +182,7 @@ class Texture {
             }
 
             if (this.generateMipmaps) {
-                // For WebGL1, if not a power of 2, turn off mips, set wrapping to clamp to edge and minFilter to linear
-                if (! renderer.isWebgl2 && (! isPowerOf2(this.image.width) || ! isPowerOf2(this.image.height))) {
-                    this.generateMipmaps = false;
-                    this.wrapS = this.wrapT = renderer.gl.CLAMP_TO_EDGE;
-                    this.minFilter = renderer.gl.LINEAR;
-                } else {
-                    renderer.gl.generateMipmap(this.target);
-                }
+                renderer.gl.generateMipmap(this.target);
             }
 
             // Callback for when data is pushed to GPU

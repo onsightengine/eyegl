@@ -53,7 +53,7 @@ class Geometry {
         this.instancedCount = 0;
 
         // Unbind current VAO so that new buffers don't get added to active mesh
-        renderer.bindVertexArray(null);
+        renderer.gl.bindVertexArray(null);
         renderer.currentGeometry = null;
 
         // Alias for state store to avoid redundant calls for global state
@@ -136,8 +136,8 @@ class Geometry {
     }
 
     createVAO(program) {
-        this.VAOs[program.attributeOrder] = renderer.createVertexArray();
-        renderer.bindVertexArray(this.VAOs[program.attributeOrder]);
+        this.VAOs[program.attributeOrder] = renderer.gl.createVertexArray();
+        renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
         this.bindAttributes(program);
     }
 
@@ -171,7 +171,7 @@ class Geometry {
 
                 // For instanced attributes, divisor needs to be set.
                 // For firefox, need to set back to 0 if non-instanced drawn after instanced, else won't render.
-                renderer.vertexAttribDivisor(location + i, attr.divisor);
+                renderer.gl.vertexAttribDivisor(location + i, attr.divisor);
             }
         });
 
@@ -182,7 +182,7 @@ class Geometry {
     draw({ program, mode = renderer.gl.TRIANGLES }) {
         if (renderer.currentGeometry !== `${this.id}_${program.attributeOrder}`) {
             if (! this.VAOs[program.attributeOrder]) this.createVAO(program);
-            renderer.bindVertexArray(this.VAOs[program.attributeOrder]);
+            renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
             renderer.currentGeometry = `${this.id}_${program.attributeOrder}`;
         }
 
@@ -194,7 +194,7 @@ class Geometry {
 
         if (this.isInstanced) {
             if (this.attributes.index) {
-                renderer.drawElementsInstanced(
+                renderer.gl.drawElementsInstanced(
                     mode,
                     this.drawRange.count,
                     this.attributes.index.type,
@@ -202,7 +202,7 @@ class Geometry {
                     this.instancedCount
                 );
             } else {
-                renderer.drawArraysInstanced(mode, this.drawRange.start, this.drawRange.count, this.instancedCount);
+                renderer.gl.drawArraysInstanced(mode, this.drawRange.start, this.drawRange.count, this.instancedCount);
             }
         } else {
             if (this.attributes.index) {
@@ -385,7 +385,7 @@ class Geometry {
 
     remove() {
         for (let key in this.VAOs) {
-            renderer.deleteVertexArray(this.VAOs[key]);
+            renderer.gl.deleteVertexArray(this.VAOs[key]);
             delete this.VAOs[key];
         }
         for (let key in this.attributes) {

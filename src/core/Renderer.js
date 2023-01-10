@@ -78,22 +78,13 @@ class Renderer {
             preserveDrawingBuffer,
         };
 
-        /** @type { WebGLRenderingContext | WebGL2RenderingContext } */
+        /** @type {WebGL2RenderingContext} */
         let gl;
 
-        // Attempt WebGL2, if not supported fallback to WebGL1
+        // WebGL2 Context
         if (webgl === 2) gl = canvas.getContext('webgl2', attributes);
-        if (! gl) gl = canvas.getContext('webgl', attributes);
-        if (! gl) console.error('Renderer.constructor: Unable to create webgl context');
+        if (! gl) console.error('Renderer.constructor: Unable to create WebGL 2 context');
         this.gl = gl;
-        let isWebgl2 = false;
-        isWebgl2 = isWebgl2 || (typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext);
-		isWebgl2 = isWebgl2 || (typeof WebGL2ComputeRenderingContext !== 'undefined' && gl instanceof WebGL2ComputeRenderingContext);
-
-        // Renderer Capabilities
-        const parameters = {
-            isWebgl2,
-        };
 
         // GLOBAL: So all classes have access to internal state functions
         window.renderer = this;
@@ -118,28 +109,16 @@ class Renderer {
         this.state.currentProgram = null;
 
         function initContext(self) {
-            // Extensions, create method aliases using extension (WebGL1) or native if available (WebGL2)
-            let extensions = new Extensions(gl, parameters);
-            self.vertexAttribDivisor = extensions.get('ANGLE_instanced_arrays', 'vertexAttribDivisor', 'vertexAttribDivisorANGLE');
-            self.drawArraysInstanced = extensions.get('ANGLE_instanced_arrays', 'drawArraysInstanced', 'drawArraysInstancedANGLE');
-            self.drawElementsInstanced = extensions.get('ANGLE_instanced_arrays', 'drawElementsInstanced', 'drawElementsInstancedANGLE');
-            self.createVertexArray = extensions.get('OES_vertex_array_object', 'createVertexArray', 'createVertexArrayOES');
-            self.bindVertexArray = extensions.get('OES_vertex_array_object', 'bindVertexArray', 'bindVertexArrayOES');
-            self.deleteVertexArray = extensions.get('OES_vertex_array_object', 'deleteVertexArray', 'deleteVertexArrayOES');
-            self.drawBuffers = extensions.get('WEBGL_draw_buffers', 'drawBuffers', 'drawBuffersWEBGL');
 
-            // Capabilities
-            let capabilities = new Capabilities(gl, extensions, parameters);
-            // capabilities.log();
+            self.extensions = new Extensions(gl);
+            self.capabilities = new Capabilities(gl, self.extensions);
+            self.capabilities.log();
 
-            // Reference
-            self.extensions = extensions;
-            self.capabilities = capabilities;
         };
         initContext(this);
 
         // Context lost
-        this.loseContext = this.getExtension('WEBGL_lose_context');
+        self.loseContext = this.getExtension('WEBGL_lose_context');
         gl.canvas.addEventListener('webglcontextlost', function(event) {
             event.preventDefault();
             console.log('EyeGL.Renderer: Context lost');

@@ -11,33 +11,25 @@
 class Capabilities {
 
     /**
-     * @param {WebGLRenderingContext | WebGL2RenderingContext} gl
+     * @param {WebGL2RenderingContext} gl
      * @param {*} extensions
-     * @param {*} parameters
      */
-    constructor(gl, extensions, parameters) {
-
-        let maxAnisotropy = 0;
-        if (extensions.has('EXT_texture_filter_anisotropic')) {
-            const extension = extensions.get('EXT_texture_filter_anisotropic');
-			maxAnisotropy = gl.getParameter(extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
-        }
-
-	    let maxPrecision = 'lowp';
-		if (gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT).precision > 0 &&
-			gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision > 0
-        ) maxPrecision = 'highp';
-        else if (
-            gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.MEDIUM_FLOAT).precision > 0 &&
-			gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_FLOAT).precision > 0
-        ) maxPrecision = 'mediump';
+    constructor(gl, extensions) {
 
         // Shaders
-        this.maxPrecision = maxPrecision;
         this.maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
         this.maxVaryings = gl.getParameter(gl.MAX_VARYING_VECTORS);
         this.maxVertexUniforms = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
 	    this.maxFragmentUniforms = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
+
+	    this.maxPrecision = 'lowp';
+		if (gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT).precision > 0 &&
+			gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision > 0
+        ) this.maxPrecision = 'highp';
+        else if (
+            gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.MEDIUM_FLOAT).precision > 0 &&
+			gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_FLOAT).precision > 0
+        ) this.maxPrecision = 'mediump';
 
         // Textures
         this.maxFragmentTextures = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
@@ -45,33 +37,27 @@ class Capabilities {
         this.maxTextures = gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
         this.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
         this.maxCubemapSize = gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE);
-        this.maxAnisotropy = maxAnisotropy;
+
+        this.maxAnisotropy = 0;
+        if (extensions.has('EXT_texture_filter_anisotropic')) {
+            const extension = extensions.get('EXT_texture_filter_anisotropic');
+			this.maxAnisotropy = gl.getParameter(extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        }
 
         // Renderer
-        this.maxSamples = (parameters.isWebgl2) ? gl.getParameter(gl.MAX_SAMPLES) : 0;
+        this.maxSamples = gl.getParameter(gl.MAX_SAMPLES);
 
         // Framebuffers
-        this.drawBuffers = 0;
-        if (parameters.isWebgl2) {
-            this.drawBuffers = gl.getParameter(gl.MAX_DRAW_BUFFERS);
-        } else if (extensions.has('WEBGL_draw_buffers')) {
-            this.drawBuffers = gl.getParameter(extensions.get('WEBGL_draw_buffers').MAX_DRAW_BUFFERS_WEBGL);
-        }
+        this.drawBuffers = gl.getParameter(gl.MAX_DRAW_BUFFERS);
 
         // Render Target Types
-        this.byteTargets = checkRenderTargetSupport(gl, (parameters.isWebgl2) ? gl.RGBA: gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE);
-        this.floatTargets = checkRenderTargetSupport(gl, (parameters.isWebgl2) ? gl.RGBA32F : gl.RGBA, gl.RGBA, gl.FLOAT);
-        this.halfFloatTargets = false;
-        if (parameters.isWebgl2) {
-            this.halfFloatTargets = checkRenderTargetSupport(gl, gl.RGBA16F, gl.RGBA, gl.HALF_FLOAT);
-        } else if (extensions.has('OES_texture_half_float')) {
-            this.halfFloatTargets = checkRenderTargetSupport(gl, gl.RGBA, gl.RGBA, extensions.get('OES_texture_half_float').HALF_FLOAT_OES);
-        }
+        this.byteTargets = checkRenderTargetSupport(gl, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE);
+        this.floatTargets = checkRenderTargetSupport(gl, gl.RGBA32F, gl.RGBA, gl.FLOAT);
+        this.halfFloatTargets = checkRenderTargetSupport(gl, gl.RGBA16F, gl.RGBA, gl.HALF_FLOAT);
 
         // Console Logger
         this.log = function() {
-            console.group('WebGL Capabilites');
-            console.log(`WebGL Version: ${(parameters.isWebgl2) ? 2 : 1}`);
+            console.group('WebGL 2 Capabilites');
             console.groupCollapsed('Shaders');
             console.log(`Max Shader Precision: ${this.maxPrecision}`);
             console.log(`Max Vertex Attributes: ${this.maxAttributes}`);

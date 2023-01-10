@@ -4,8 +4,6 @@
 /////
 /////////////////////////////////////////////////////////////////////////////////////
 
-Remove WebGL v1 support:
-
 Flat / Smooth Shading:
     - Use glsl v3?
         https://stackoverflow.com/questions/40101023/flat-shading-in-webgl
@@ -23,11 +21,11 @@ Geometries:
                 https://github.com/egoist/rollup-plugin-postcss
                 - Use for Onsight
 
-TypeScript:
-    !! Convert library from js to ts!
-
 Context Lost:
   	- Continue in Renderer.initContext()
+
+TypeScript:
+    !! Convert library from js to ts!
 
 /////////////////////////////////////////////////////////////////////////////////////
 /////

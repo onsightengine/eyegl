@@ -49,7 +49,7 @@ class RenderTarget {
         // create and attach required num of color textures
         for (let i = 0; i < color; i++) {
             this.textures.push(
-                new Texture(gl, {
+                new Texture({
                     width,
                     height,
                     wrapS,
@@ -71,20 +71,20 @@ class RenderTarget {
         }
 
         // For multi-render targets shader access
-        if (drawBuffers.length > 1) renderer.drawBuffers(drawBuffers);
+        if (drawBuffers.length > 1) renderer.gl.drawBuffers(drawBuffers);
 
         // alias for majority of use cases
         this.texture = this.textures[0];
 
         // note depth textures break stencil - so can't use together
-        if (depthTexture && (renderer.isWebgl2 || renderer.getExtension('WEBGL_depth_texture'))) {
-            this.depthTexture = new Texture(gl, {
+        if (depthTexture) {
+            this.depthTexture = new Texture({
                 width,
                 height,
                 minFilter: renderer.gl.NEAREST,
                 magFilter: renderer.gl.NEAREST,
                 format: renderer.gl.DEPTH_COMPONENT,
-                internalFormat: renderer.isWebgl2 ? renderer.gl.DEPTH_COMPONENT16 : renderer.gl.DEPTH_COMPONENT,
+                internalFormat: renderer.gl.DEPTH_COMPONENT16,
                 type: renderer.gl.UNSIGNED_INT,
             });
             this.depthTexture.update();

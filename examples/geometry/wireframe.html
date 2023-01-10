@@ -11,7 +11,7 @@
     <body>
         <div class="Info">Wireframe. Model by Google Poly</div>
         <script type="module">
-            import { Renderer, Camera, Transform, Texture, Program, Geometry, Mesh, WireMesh } from '../../js/EyeGL.js';
+            import { Renderer, Camera, Transform, Texture, Program, Geometry, Mesh, WireMesh } from '../../src/EyeGL.js';
 
             const vertex = /* glsl */ `
                 attribute vec2 uv;
@@ -55,7 +55,7 @@
 
             const renderer = new Renderer({ dpr: 2 });
 
-            /** @type {WebGLRenderingContext | WebGL2RenderingContext} */
+            /** @type {WebGL2RenderingContext} */
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
