@@ -26,7 +26,7 @@ class Mesh extends Transform {
         super();
         this.isMesh = true;
 
-        if (! renderer) console.error(`Mesh.constructor: renderer not found`);
+        if (! renderer) console.error(`Mesh.constructor: Renderer not found`);
         this.id = _ID++;
         this.geometry = geometry;
         this.program = program;

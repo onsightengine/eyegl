@@ -33,12 +33,12 @@ class Program {
     } = {}) {
         this.isProgram = true;
 
-        if (! renderer) console.error(`Program.constructor: renderer not found`);
+        if (! renderer) console.error(`Program.constructor: Renderer not found`);
         this.uniforms = uniforms;
         this.id = _ID++;
 
-        if (! vertex) console.warn('vertex shader not supplied');
-        if (! fragment) console.warn('fragment shader not supplied');
+        if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
+        if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
 
         // Store program state
         this.transparent = transparent;
@@ -317,5 +317,5 @@ function warn(message) {
     if (warnCount > 100) return;
     console.warn(message);
     warnCount++;
-    if (warnCount > 100) console.warn('More than 100 program warnings - stopping logs.');
+    if (warnCount > 100) console.warn('Program: More than 100 program warnings - stopping logs');
 }

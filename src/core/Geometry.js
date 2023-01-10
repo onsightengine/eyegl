@@ -40,7 +40,7 @@ class Geometry {
     constructor(attributes = {}) {
         this.isGeometry = true;
 
-        if (! renderer) console.error(`Geometry.constructor: renderer not found`);
+        if (! renderer) console.error(`Geometry.constructor: Renderer not found`);
         this.attributes = attributes;
         this.id = _ID++;
 
@@ -95,7 +95,7 @@ class Geometry {
         if (attr.divisor) {
             this.isInstanced = true;
             if (this.instancedCount && this.instancedCount !== attr.count * attr.divisor) {
-                console.warn('geometry has multiple instanced buffers of different length');
+                console.warn('Geometry.addAttribute: Geometry has multiple instanced buffers of different length');
                 return (this.instancedCount = Math.min(this.instancedCount, attr.count * attr.divisor));
             }
             this.instancedCount = attr.count * attr.divisor;
@@ -119,12 +119,6 @@ class Geometry {
             renderer.gl.bufferSubData(attr.target, 0, attr.data);
         }
         attr.needsUpdate = false;
-    }
-
-    createVAO(program) {
-        this.VAOs[program.attributeOrder] = renderer.gl.createVertexArray();
-        renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
-        this.bindAttributes(program);
     }
 
     bindAttributes(program) {
@@ -180,9 +174,17 @@ class Geometry {
         this.instancedCount = value;
     }
 
+    createVAO(program) {
+        this.VAOs[program.attributeOrder] = renderer.gl.createVertexArray();
+        renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
+        this.bindAttributes(program);
+    }
+
     draw({ program, mode = renderer.gl.TRIANGLES }) {
         if (renderer.currentGeometry !== `${this.id}_${program.attributeOrder}`) {
-            if (! this.VAOs[program.attributeOrder]) this.createVAO(program);
+            if (! this.VAOs[program.attributeOrder]) {
+                this.createVAO(program);
+            }
             renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
             renderer.currentGeometry = `${this.id}_${program.attributeOrder}`;
         }

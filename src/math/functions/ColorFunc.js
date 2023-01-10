@@ -42,6 +42,6 @@ export function parseColor(color) {
     // Names
     if (NAMES[color.toLowerCase()]) return hexToRGB(NAMES[color.toLowerCase()]);
 
-    console.warn('ColorFunc.parseColor: Color format not recognised');
+    console.warn('ColorFunc.parseColor: Color format not recognized');
     return [ 0, 0, 0 ];
 }
