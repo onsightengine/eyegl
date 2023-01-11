@@ -8,14 +8,13 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////*/
 //
-// attribute params
-// {
-//     data - typed array eg UInt16Array for indices, Float32Array
-//     size - int default 1
-//     instanced - default null. Pass divisor amount
+// attribute params {
+//     data - typed array (e.g. UInt16Array for index, Float32Array for position, normal, uv)
+//     size - int default 1 (index: 1, uv: 2, position, normal: 3)
+//     instanced - default null, pass divisor amount
 //     type - gl enum default gl.UNSIGNED_SHORT for 'index', gl.FLOAT for others
 //     normalized - boolean default false
-
+//
 //     buffer - gl buffer, if buffer exists, don't need to provide data - although needs position data for bounds calculation
 //     stride - default 0 - for when passing in buffer
 //     offset - default 0 - for when passing in buffer
@@ -42,17 +41,14 @@ class Geometry {
         this.isGeometry = true;
 
         if (! renderer) console.error(`Geometry.constructor: Renderer not found`);
-        this.attributes = attributes;
+
         this.id = _ID++;
+        this.attributes = {};
 
-        // Store one VAO per program attribute locations order
-        this.VAOs = {};
-
+        this.VAOs = {}; /* store one VAO per program attribute locations order */
         this.drawRange = { start: 0, count: 0 };
         this.instancedCount = 0;
-
-        // Alias for state store to avoid redundant calls for global state
-        this.glState = renderer.state;
+        this.glState = renderer.state; /* alias for renderer.state to avoid redundant calls for global state */
 
         // Create the buffers
         for (let key in attributes) {
@@ -63,6 +59,11 @@ class Geometry {
     ////////// Attributes
 
     addAttribute(key, attr) {
+        if (! attr.data) {
+            console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
+            return;
+        }
+
         // Unbind current VAO so that new buffers don't get added to active mesh
         renderer.clearActiveGeometry();
 
@@ -74,26 +75,27 @@ class Geometry {
 
         // Set options
         attr.size = attr.size || 1;
-        attr.type =
-            attr.type ||
-            (attr.data.constructor === Float32Array
-                ? renderer.gl.FLOAT
-                : attr.data.constructor === Uint16Array
-                ? renderer.gl.UNSIGNED_SHORT
-                : renderer.gl.UNSIGNED_INT); // Uint32Array
+        if (! attr.type) {
+            switch (attr.data.constructor) {
+                case Float32Array: attr.type = renderer.gl.FLOAT; break;
+                case Uint16Array: attr.type = renderer.gl.UNSIGNED_SHORT; break;
+                case Uint32Array: default: attr.type = renderer.gl.UNSIGNED_INT;
+            }
+        }
         attr.target = (key === 'index') ? renderer.gl.ELEMENT_ARRAY_BUFFER : renderer.gl.ARRAY_BUFFER;
         attr.normalized = attr.normalized || false;
         attr.stride = attr.stride || 0;
         attr.offset = attr.offset || 0;
         attr.count = attr.count || ((attr.stride) ? attr.data.byteLength / attr.stride : attr.data.length / attr.size);
         attr.divisor = attr.instanced || 0;
+
         attr.needsUpdate = false;
         attr.usage = attr.usage || renderer.gl.STATIC_DRAW;
 
         // Push data to buffer
         if (! attr.buffer) this.updateAttribute(attr);
 
-        // Update geometry counts. If indexed, ignore regular attributes
+        // Update geometry counts - if indexed, ignore regular attributes
         if (attr.divisor) {
             this.isInstanced = true;
             if (this.instancedCount && this.instancedCount !== attr.count * attr.divisor) {
@@ -128,7 +130,7 @@ class Geometry {
         program.attributeLocations.forEach((location, { name, type }) => {
             // Missing a required shader attribute
             if (! this.attributes[name]) {
-                console.warn(`Geometry.bindAttributes: Active attribute ${name} not being supplied`);
+                console.warn(`Geometry.bindAttributes: Active attribute '${name}' not being supplied`);
                 return;
             }
 
@@ -174,7 +176,7 @@ class Geometry {
         if (! positionAttribute) return;
 
         const positions = positionAttribute.data;
-        const normals = (this.attributes.normal) ? this.attributes.normal.data : new Float32Array(positions.length);
+        const normals = new Float32Array(positions.length);
 
         // Reset normals
         for (let i = 0; i < normals.length; i++) normals[i] = 0;
@@ -204,30 +206,28 @@ class Geometry {
                 normals[i2 + 0] += cb[0]; normals[i2 + 1] += cb[1]; normals[i2 + 2] += cb[2];
             }
 
-            for (let i = 0; i < indices.length; i++) {
-                indexCount[indices[i]]++;
-            }
+            // for (let i = 0; i < indices.length; i++) {
+            //     indexCount[indices[i]]++;
+            // }
 
-            console.log(indexCount);
+            // for (let i = 0; i < normals.length; i += 3) {
+            //     let count = indexCount[i / 3];
+            //     normals[i + 0] /= count;
+            //     normals[i + 1] /= count;
+            //     normals[i + 2] /= count;
 
-            for (let i = 0; i < normals.length; i += 3) {
-                let count = indexCount[i / 3];
-                normals[i + 0] /= count;
-                normals[i + 1] /= count;
-                normals[i + 2] /= count;
+            //     if (count === 1) console.log(i);
 
-                if (count === 1) console.log(i);
+            //     cb[0] = normals[i + 0];
+            //     cb[1] = normals[i + 1];
+            //     cb[2] = normals[i + 2];
+            //     normalize(cb, cb);
+            //     normals[i + 0] = cb[0];
+            //     normals[i + 1] = cb[1];
+            //     normals[i + 2] = cb[2];
 
-                cb[0] = normals[i + 0];
-                cb[1] = normals[i + 1];
-                cb[2] = normals[i + 2];
-                normalize(cb, cb);
-                normals[i + 0] = cb[0];
-                normals[i + 1] = cb[1];
-                normals[i + 2] = cb[2];
-
-                // console.log(`${normals[0]}, ${normals[1]}, ${normals[2]}`);
-            }
+            //     // console.log(`${normals[0]}, ${normals[1]}, ${normals[2]}`);
+            // }
 
         // Non indexed, normal for each position
         } else {
@@ -247,6 +247,7 @@ class Geometry {
 
         // Update / add attribute
         if (this.attributes.normal) {
+            this.attributes.normal.data = normals;
             this.attributes.normal.needsUpdate = true;
         } else {
             this.addAttribute('normal', { size: 3, data: normals });
@@ -292,7 +293,7 @@ class Geometry {
                     this.drawRange.count,
                     this.attributes.index.type,
                     this.attributes.index.offset + this.drawRange.start * 2,
-                    this.instancedCount
+                    this.instancedCount,
                 );
             } else {
                 renderer.gl.drawArraysInstanced(mode, this.drawRange.start, this.drawRange.count, this.instancedCount);
@@ -366,44 +367,6 @@ class Geometry {
         }
 
         this.bounds.radius = Math.sqrt(maxRadiusSq);
-    }
-
-    ////////// Utils
-
-    toNonIndexed() {
-        function convertBufferAttribute(attribute, indices) {
-			const itemSize = attribute.size;
-            const array = attribute.data;
-			const array2 = new array.constructor(indices.length * itemSize);
-			let index = 0;
-            let index2 = 0;
-			for (let i = 0; i < indices.length; i++) {
-                index = indices[i] * itemSize;
-				for (let j = 0; j < itemSize; j++) {
-					array2[index2++] = array[index++];
-				}
-			}
-			return array2;
-		}
-
-		if (! this.attributes.index) {
-			console.warn('Geometry.toNonIndexed: Geometry is already non-indexed.');
-			return this;
-		}
-
-		const indices = this.attributes.index.data;
-		const attributes = this.attributes;
-        const nonIndexedGeometry = new Geometry();
-
-		// Attributes
-		for (const attributeName in attributes) {
-            if (attributeName === 'index') continue;
-			const attribute = attributes[attributeName];
-            const newAttribute = { size: attribute.size, data: convertBufferAttribute(attribute, indices) };
-			nonIndexedGeometry.addAttribute(attributeName, newAttribute);
-		}
-
-		return nonIndexedGeometry;
     }
 
     ////////// Cleanup

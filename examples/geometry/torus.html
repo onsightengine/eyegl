@@ -13,6 +13,7 @@
 
         <script type="module">
             import { Renderer, Camera, Orbit, Transform, Program, Torus, Mesh } from '../../src/EyeGL.js';
+            import { toNonIndexed } from '../../src/EyeGL.js';
 
             // const vertex = /* glsl */ `#version 300 es
             //     in vec3 position;
@@ -95,19 +96,23 @@
             const torusGeometry = new Torus({
                 radius: 1,
                 tube: 0.4,
-                radialSegments: 6, //16,
-                tubularSegments: 12, //32,
+                radialSegments: 16,
+                tubularSegments: 32,
             });
 
             /////
 
-            const nonIndexed = torusGeometry.toNonIndexed();
-
-            setTimeout(() => nonIndexed.computeVertexNormals(), 2000);
+            //const nonIndexed = toNonIndexed(torusGeometry);
+            // setTimeout(() => nonIndexed.computeVertexNormals(), 2000);
             setTimeout(() => torusGeometry.computeVertexNormals(), 2000);
 
             // const torus = new Mesh({ geometry: nonIndexed, program });
-            const torus = new Mesh({ geometry: torusGeometry, program });
+            const torus = new Mesh({
+                // mode: gl.LINE_STRIP,
+                geometry: torusGeometry,
+                program
+            });
+
             torus.setParent(scene);
 
             // torusGeometry.remove();
@@ -117,9 +122,10 @@
             requestAnimationFrame(update);
             function update() {
                 requestAnimationFrame(update);
-                torus.rotation.x += 0.001;
-                torus.rotation.y += 0.005;
-                torus.rotation.z += 0.003;
+
+                // torus.rotation.x += 0.001;
+                // torus.rotation.y += 0.005;
+                // torus.rotation.z += 0.003;
 
                 controls.update();
 

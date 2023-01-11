@@ -50,6 +50,15 @@ export { Triangle } from './extras/geometries/Triangle.js';
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
 
+///// Utils
+
+// Utils - Geometry
+export { cleanAttributes } from './utils/GeometryUtils.js';
+export { toNonIndexed } from './utils/GeometryUtils.js';
+
+
+export { }
+
 // export { Curve } from './extras/Curve.js';
 // export { Path } from './extras/Path/Path.js';
 // export { Skin } from './extras/Skin.js';
