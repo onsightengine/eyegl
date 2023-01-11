@@ -11,38 +11,33 @@ import { fuzzyFloat, triangleArea } from '../math/MathUtils.js';
 const EPSILON = 0.000001;
 
 /**
- * Need to:
- * - remove zero size triangles
- * - remove duplicate positions from
+ * Cleans up geometry attributes:
+ * - removes zero size triangles
+ *
+ * Stiil need:
+ * - remove duplicate positions
  *
  * @param {Geometry} geometry
  */
 export function cleanAttributes(geometry) {
-
     // Remove zero sized triangles
     if (geometry.attributes.position) {
         const positions = geometry.attributes.position.data;
-
         const pA = new Vec3();
         const pB = new Vec3();
         const pC = new Vec3();
         const removeIndices = [];
 
-        // Indexed
-        if (geometry.attributes.index) {
-
-        // Non Indexed
-        } else {
-            for (let i = 0; i < positions.length; i += 9) {
-                pA.fromArray(positions, i + 0);
-                pB.fromArray(positions, i + 3);
-                pC.fromArray(positions, i + 6);
-                const area = triangleArea(pA, pB, pC);
-                if (fuzzyFloat(area, 0.0, EPSILON)) {
-                    removeIndices.push(i + 0);
-                    removeIndices.push(i + 3);
-                    removeIndices.push(i + 6);
-                }
+        // Check for invalid triangles
+        for (let i = 0; i < positions.length; i += 9) {
+            pA.fromArray(positions, i + 0);
+            pB.fromArray(positions, i + 3);
+            pC.fromArray(positions, i + 6);
+            const area = triangleArea(pA, pB, pC);
+            if (fuzzyFloat(area, 0.0, EPSILON)) {
+                removeIndices.push(i + 0);
+                removeIndices.push(i + 3);
+                removeIndices.push(i + 6);
             }
         }
 
@@ -79,7 +74,6 @@ export function cleanAttributes(geometry) {
             }
         }
     }
-
 }
 
 /**
