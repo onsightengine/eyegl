@@ -5,6 +5,7 @@
 //
 
 import { Geometry } from '../core/Geometry.js';
+import { Vec3 } from '../math/Vec3.js';
 import { fuzzyFloat, triangleArea } from '../math/MathUtils.js';
 
 const EPSILON = 0.000001;
@@ -18,11 +19,14 @@ const EPSILON = 0.000001;
  */
 export function cleanAttributes(geometry) {
 
+    // Remove zero sized triangles
     if (geometry.attributes.position) {
         const positions = geometry.attributes.position.data;
 
-        const pA = [ 0, 0, 0 ], pB = [ 0, 0, 0 ], pC = [ 0, 0, 0 ];
-        const keepIndices = [];
+        const pA = new Vec3();
+        const pB = new Vec3();
+        const pC = new Vec3();
+        const removeIndices = [];
 
         // Indexed
         if (geometry.attributes.index) {
@@ -30,20 +34,50 @@ export function cleanAttributes(geometry) {
         // Non Indexed
         } else {
             for (let i = 0; i < positions.length; i += 9) {
-                pA[0] = positions[i + 0]; pA[1] = positions[i + 1]; pA[2] = positions[i + 2];
-                pB[0] = positions[i + 3]; pB[1] = positions[i + 4]; pB[2] = positions[i + 5];
-                pC[0] = positions[i + 6]; pC[1] = positions[i + 7]; pC[2] = positions[i + 8];
+                pA.fromArray(positions, i + 0);
+                pB.fromArray(positions, i + 3);
+                pC.fromArray(positions, i + 6);
                 const area = triangleArea(pA, pB, pC);
-                if (! fuzzyFloat(area, 0.0, EPSILON)) {
-                    keepIndices.push(i + 0);
-                    keepIndices.push(i + 3);
-                    keepIndices.push(i + 6);
+                if (fuzzyFloat(area, 0.0, EPSILON)) {
+                    removeIndices.push(i + 0);
+                    removeIndices.push(i + 3);
+                    removeIndices.push(i + 6);
                 }
             }
         }
 
-        // Remove zero sized triangles from geometry
+        // Rebuild attributes without zero sized triangles
+        if (removeIndices.length > 0) {
+            const attributes = geometry.attributes;
+            for (const attributeName in attributes) {
+                const attribute = attributes[attributeName];
+                const array2 = [];
 
+                // Create new arrays without invalid triangles
+                if (attributeName === 'index') {
+                    for (let i = 0; i < attribute.data.length; i++) {
+                        let index = attribute.data[i];
+                        if (! removeIndices.includes(index)) {
+                            array2.push(index);
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < attribute.data.length; i += attribute.size) {
+                        let index = i / attribute.size;
+                        if (! removeIndices.includes(index)) {
+                            for (let j = 0; j < attribute.size; j++) {
+                                array2.push(attribute.data[i + j]);
+                            }
+                        }
+                    }
+                }
+
+                // Update attribute arrays
+                const newData = new attribute.data.constructor(array2);
+                attribute.data = newData;
+                attribute.needsUpdate = true;
+            }
+        }
     }
 
 }
