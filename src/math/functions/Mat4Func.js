@@ -550,10 +550,10 @@ export function getMaxScaleOnAxis(mat) {
  * @param {Mat4} mat Matrix to be decomposed (input)
  * @return {Quat} out
  */
-export const getRotation = (function () {
-    const temp = [0, 0, 0];
+export const getRotation = (function() {
+    const temp = [ 0, 0, 0 ];
 
-    return function (out, mat) {
+    return function(out, mat) {
         let scaling = temp;
         getScaling(scaling, mat);
 

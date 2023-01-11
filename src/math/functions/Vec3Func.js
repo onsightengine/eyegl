@@ -2,6 +2,7 @@ import { Mat3 } from '../Mat3.js';
 import { Mat4 } from '../Mat4.js';
 import { Quat } from '../Quat.js';
 import { Vec3 } from '../Vec3.js';
+import { fuzzyFloat } from '../MathUtils.js';
 
 const EPSILON = 0.000001;
 
@@ -234,12 +235,8 @@ export function dot(a, b) {
  * @returns {Vec3} out
  */
 export function cross(out, a, b) {
-    let ax = a[0],
-        ay = a[1],
-        az = a[2];
-    let bx = b[0],
-        by = b[1],
-        bz = b[2];
+    let ax = a[0], ay = a[1], az = a[2];
+    let bx = b[0], by = b[1], bz = b[2];
 
     out[0] = ay * bz - az * by;
     out[1] = az * bx - ax * bz;
@@ -374,11 +371,11 @@ export function transformQuat(out, a, q) {
  * @param {Vec3} b The second operand
  * @returns {Number} The angle in radians
  */
-export const angle = (function () {
-    const tempA = [0, 0, 0];
-    const tempB = [0, 0, 0];
+export const angle = (function() {
+    const tempA = [ 0, 0, 0 ];
+    const tempB = [ 0, 0, 0 ];
 
-    return function (a, b) {
+    return function(a, b) {
         copy(tempA, a);
         copy(tempB, b);
 
@@ -409,6 +406,21 @@ export function exactEquals(a, b) {
 }
 
 /**
+ * Returns whether the vectors have approximately the same values
+ *
+ * @param {Vec3} a
+ * @param {Vec3} b
+ * @param {Number} tolerance
+ * @returns {Boolean} True is vectors are equal +/- tolerance
+ */
+export function fuzzyEquals(a, b, tolerance = 0.001) {
+    if (fuzzyFloat(a[0], b[0], tolerance) === false) return false;
+    if (fuzzyFloat(a[1], b[1], tolerance) === false) return false;
+    if (fuzzyFloat(a[2], b[2], tolerance) === false) return false;
+    return true;
+}
+
+/**
  * Calculates the normal of a triangle
  *
  * @param {Vec3} out Vector which will store the normal
@@ -416,8 +428,13 @@ export function exactEquals(a, b) {
  * @param {Vec3} b
  * @param {Vec3} c
  */
-function calculateNormal(out, a, b, c) {
-    _temp.subVectors(a, b);
-    out.subVectors(b, c);
-    out.cross(_temp).normalize();
-}
+export const calculateNormal = (function() {
+    const temp = [ 0, 0, 0 ];
+
+    return function(out, a, b, c) {
+        subtract(temp, a, b);
+        subtract(out, b, c);
+        cross(out, out, temp);
+        normalize(out, out);
+    };
+})();

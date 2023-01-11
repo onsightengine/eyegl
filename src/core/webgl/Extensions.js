@@ -31,7 +31,7 @@ class Extensions {
         getExtension('WEBGL_multisampled_render_to_texture');
 
         // Public extension checker
-        this.has = function (name) {
+        this.has = function(name) {
 			return (getExtension(name) !== null);
 		};
 

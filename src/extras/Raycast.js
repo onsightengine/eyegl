@@ -42,7 +42,7 @@ class Raycast {
     }
 
     // Set ray from mouse unprojection
-    castMouse(camera, mouse = [0, 0]) {
+    castMouse(camera, mouse = [ 0, 0 ]) {
         if (camera.type === 'orthographic') {
             // Set origin
             // Since camera is orthographic, origin is not the camera position
@@ -69,7 +69,7 @@ class Raycast {
     }
 
     intersectBounds(meshes, { maxDistance, output = [] } = {}) {
-        if (!Array.isArray(meshes)) meshes = [meshes];
+        if (! Array.isArray(meshes)) meshes = [ meshes ];
 
         const invWorldMat4 = tempMat4;
         const origin = tempVec3a;
