@@ -63,6 +63,9 @@ class Renderer {
         this.clearColor = (clearColor && clearColor instanceof Color) ? clearColor : new Color(clearColor);
         this.clearAlpha = clearAlpha;
 
+        // Active Geometry
+        this.currentGeometry = null;
+
         // Private
         this._contextLost = false;
 
@@ -237,6 +240,11 @@ class Renderer {
         if (this.state.framebuffer === buffer) return;
         this.state.framebuffer = buffer;
         this.gl.bindFramebuffer(target, buffer);
+    }
+
+    clearActiveGeometry() {
+        this.gl.bindVertexArray(null);
+        this.currentGeometry = null;
     }
 
     sortOpaque(a, b) {

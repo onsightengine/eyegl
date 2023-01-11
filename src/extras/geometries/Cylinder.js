@@ -64,10 +64,10 @@ class Cylinder extends Geometry {
                     const sinTheta = Math.sin(theta);
                     const cosTheta = Math.cos(theta);
 
-                    position.set([r * sinTheta, (0.5 - v) * height, r * cosTheta], i * 3);
+                    position.set([ r * sinTheta, (0.5 - v) * height, r * cosTheta ], i * 3);
                     n.set(sinTheta, slope, cosTheta).normalize();
-                    normal.set([n.x, n.y, n.z], i * 3);
-                    uv.set([u, 1 - v], i * 2);
+                    normal.set([ n.x, n.y, n.z ], i * 3);
+                    uv.set([ u, 1 - v ], i * 2);
                     indexRow.push(i++);
                 }
                 indexArray.push(indexRow);
@@ -80,7 +80,7 @@ class Cylinder extends Geometry {
                     const c = indexArray[y + 1][x + 1];
                     const d = indexArray[y][x + 1];
 
-                    index.set([a, b, d, b, c, d], ii * 3);
+                    index.set([ a, b, d, b, c, d ], ii * 3);
                     ii += 2;
                 }
             }
@@ -92,9 +92,9 @@ class Cylinder extends Geometry {
             const sign = isTop === true ? 1 : -1;
 
             const centerIndex = i;
-            position.set([0, 0.5 * height * sign, 0], i * 3);
-            normal.set([0, sign, 0], i * 3);
-            uv.set([0.5, 0.5], i * 2);
+            position.set([ 0, 0.5 * height * sign, 0 ], i * 3);
+            normal.set([ 0, sign, 0 ], i * 3);
+            uv.set([ 0.5, 0.5 ], i * 2);
             i++;
 
             for (x = 0; x <= rSegs; x++) {
@@ -103,18 +103,18 @@ class Cylinder extends Geometry {
                 const cosTheta = Math.cos(theta);
                 const sinTheta = Math.sin(theta);
 
-                position.set([r * sinTheta, 0.5 * height * sign, r * cosTheta], i * 3);
-                normal.set([0, sign, 0], i * 3);
-                uv.set([cosTheta * 0.5 + 0.5, sinTheta * 0.5 * sign + 0.5], i * 2);
+                position.set([ r * sinTheta, 0.5 * height * sign, r * cosTheta ], i * 3);
+                normal.set([ 0, sign, 0 ], i * 3);
+                uv.set([ cosTheta * 0.5 + 0.5, sinTheta * 0.5 * sign + 0.5 ], i * 2);
                 i++;
             }
 
             for (x = 0; x < rSegs; x++) {
                 const j = centerIndex + x + 1;
                 if (isTop) {
-                    index.set([j, j + 1, centerIndex], ii * 3);
+                    index.set([ j, j + 1, centerIndex ], ii * 3);
                 } else {
-                    index.set([j + 1, j, centerIndex], ii * 3);
+                    index.set([ j + 1, j, centerIndex ], ii * 3);
                 }
                 ii++;
             }

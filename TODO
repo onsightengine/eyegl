@@ -8,8 +8,8 @@ Flat / Smooth Shading:
     - Use glsl v3?
         https://stackoverflow.com/questions/40101023/flat-shading-in-webgl
     - GeometryUtils
-        - calculateNormals
-        - smoothNormals
+        - computeVertexNormals
+        - smoothNormals (for non indexed geometry)
 
 Geometries:
     - Torus -> Selecatable

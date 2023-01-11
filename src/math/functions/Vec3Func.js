@@ -434,7 +434,7 @@ export const calculateNormal = (function() {
     return function(out, a, b, c) {
         subtract(temp, a, b);
         subtract(out, b, c);
-        cross(out, out, temp);
+        cross(out, temp, out);
         normalize(out, out);
     };
 })();

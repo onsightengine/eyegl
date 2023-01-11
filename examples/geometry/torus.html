@@ -102,12 +102,15 @@
             /////
 
             const nonIndexed = torusGeometry.toNonIndexed();
-            torusGeometry.remove();
 
-            // setTimeout(() => nonIndexed.calculateNormals(), 2000);
+            setTimeout(() => nonIndexed.computeVertexNormals(), 2000);
+            setTimeout(() => torusGeometry.computeVertexNormals(), 2000);
 
-            const torus = new Mesh({ geometry: nonIndexed, program });
+            // const torus = new Mesh({ geometry: nonIndexed, program });
+            const torus = new Mesh({ geometry: torusGeometry, program });
             torus.setParent(scene);
+
+            // torusGeometry.remove();
 
             /////
 

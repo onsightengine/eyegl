@@ -35,7 +35,7 @@ class Torus extends Geometry {
         const vertex = new Vec3();
         const normal = new Vec3();
 
-        // generate vertices, normals and uvs
+        // Generate vertices, normals and uvs
         let idx = 0;
         for (let j = 0; j <= radialSegments; j++) {
             for (let i = 0; i <= tubularSegments; i++, idx++) {
@@ -47,21 +47,21 @@ class Torus extends Geometry {
                 vertex.y = (radius + tube * Math.cos(v)) * Math.sin(u);
                 vertex.z = tube * Math.sin(v);
 
-                vertices.set([vertex.x, vertex.y, vertex.z], idx * 3);
+                vertices.set([ vertex.x, vertex.y, vertex.z ], idx * 3);
 
                 // normal
                 center.x = radius * Math.cos(u);
                 center.y = radius * Math.sin(u);
                 normal.sub(vertex, center).normalize();
 
-                normals.set([normal.x, normal.y, normal.z], idx * 3);
+                normals.set([ normal.x, normal.y, normal.z ], idx * 3);
 
                 // uv
-                uvs.set([i / tubularSegments, j / radialSegments], idx * 2);
+                uvs.set([ i / tubularSegments, j / radialSegments ], idx * 2);
             }
         }
 
-        // generate indices
+        // Generate indices
         idx = 0;
         for (let j = 1; j <= radialSegments; j++) {
             for (let i = 1; i <= tubularSegments; i++, idx++) {
@@ -72,7 +72,7 @@ class Torus extends Geometry {
                 const d = (tubularSegments + 1) * j + i;
 
                 // faces
-                indices.set([a, b, d, b, c, d], idx * 6);
+                indices.set([ a, b, d, b, c, d ], idx * 6);
             }
         }
 

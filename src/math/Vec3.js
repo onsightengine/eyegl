@@ -119,6 +119,10 @@ export class Vec3 extends Array {
         return Vec3Func.exactEquals(this, v);
     }
 
+    fuzzyEquals(v, tolerance) {
+        return Vec3Func.fuzzyEquals(this, v, tolerance);
+    }
+
     applyMatrix3(mat3) {
         Vec3Func.transformMat3(this, this, mat3);
         return this;
