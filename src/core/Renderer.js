@@ -340,13 +340,13 @@ class Renderer {
     } = {}) {
         if (this._contextLost) return;
 
-        // Render target
+        // Framebuffer
         if (target === null) {
-            // Draw to canvas
+            // Bind html canvas
             this.bindFramebuffer();
             this.setViewport(this.width * this.dpr, this.height * this.dpr);
         } else {
-            // Draw to render target
+            // Bind render target
             this.bindFramebuffer(target);
             this.setViewport(target.width, target.height);
         }

@@ -8,7 +8,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////*/
 
-///// Core
+////////// Core
 
 export { Geometry } from './core/Geometry.js';
 export { Program } from './core/Program.js';
@@ -19,7 +19,7 @@ export { Mesh } from './core/Mesh.js';
 export { Texture } from './core/Texture.js';
 export { RenderTarget } from './core/RenderTarget.js';
 
-///// Math
+////////// Math
 
 export { Color } from './math/Color.js';
 export { Euler } from './math/Euler.js';
@@ -30,15 +30,20 @@ export { Vec2 } from './math/Vec2.js';
 export { Vec3 } from './math/Vec3.js';
 export { Vec4 } from './math/Vec4.js';
 
-///// Extras
+// MathUtils
+export { fuzzyFloat } from './math/MathUtils.js';
+export { isPowerOf2 } from './math/MathUtils.js';
+export { triangleArea } from './math/MathUtils.js';
+
+////////// Extras
 
 export { Raycast } from './extras/Raycast.js';
 export { Post } from './extras/Post.js';
 
-// Extras - Controls
+// Controls
 export { Orbit } from './extras/controls/Orbit.js';
 
-// Extras - Geometries
+// Geometries
 export { Box } from './extras/geometries/Box.js';
 export { Cylinder } from './extras/geometries/Cylinder.js';
 export { Plane } from './extras/geometries/Plane.js';
@@ -46,18 +51,17 @@ export { Sphere } from './extras/geometries/Sphere.js';
 export { Torus } from './extras/geometries/Torus.js';
 export { Triangle } from './extras/geometries/Triangle.js';
 
-// Extras - Objects
+// Objects
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
 
-///// Utils
+////////// Utils
 
-// Utils - Geometry
+// GeometryUtils
 export { cleanAttributes } from './utils/GeometryUtils.js';
 export { toNonIndexed } from './utils/GeometryUtils.js';
 
-
-export { }
+////////// Unused
 
 // export { Curve } from './extras/Curve.js';
 // export { Path } from './extras/Path/Path.js';

@@ -111,17 +111,17 @@ class Geometry {
     }
 
     updateAttribute(attr) {
-        const isNewBuffer = ! attr.buffer;
-        if (isNewBuffer) attr.buffer = renderer.gl.createBuffer();
-        if (this.glState.boundBuffer !== attr.buffer) {
+        // New Buffer
+        if (! attr.buffer) {
+            attr.buffer = renderer.gl.createBuffer();
             renderer.gl.bindBuffer(attr.target, attr.buffer);
-            this.glState.boundBuffer = attr.buffer;
-        }
-        if (isNewBuffer) {
             renderer.gl.bufferData(attr.target, attr.data, attr.usage);
+        // Existing Buffer
         } else {
+            if (this.glState.boundBuffer !== attr.buffer) renderer.gl.bindBuffer(attr.target, attr.buffer);
             renderer.gl.bufferSubData(attr.target, 0, attr.data);
         }
+        this.glState.boundBuffer = attr.buffer;
         attr.needsUpdate = false;
     }
 
@@ -186,8 +186,6 @@ class Geometry {
         const nA = [ 0, 0, 0 ], nB = [ 0, 0, 0 ], nC = [ 0, 0, 0 ];
         const cb = [ 0, 0, 0 ];
 
-        console.log(this.attributes);
-
         // Indexed, need to add normals
         if (this.attributes.index) {
             const indices = this.attributes.index.data;
@@ -245,10 +243,11 @@ class Geometry {
             }
         }
 
-        // Update / add attribute
+        // Update attribute
         if (this.attributes.normal) {
             this.attributes.normal.data = normals;
             this.attributes.normal.needsUpdate = true;
+        // Add attribute
         } else {
             this.addAttribute('normal', { size: 3, data: normals });
         }
@@ -268,13 +267,13 @@ class Geometry {
     draw({ program, mode = renderer.gl.TRIANGLES }) {
         // Make sure current geometry attributes are bound
         if (renderer.currentGeometry !== `${this.id}_${program.attributeOrder}`) {
+            // Need to create vertex array object, bind attribute buffers
             if (! this.VAOs[program.attributeOrder]) {
-                // Need to create Vertex Array Object
                 this.VAOs[program.attributeOrder] = renderer.gl.createVertexArray();
                 renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
                 this.bindAttributes(program);
+            // Rebind existing vertex array object
             } else {
-                // Rebind existing Vertex Array Object
                 renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
             }
             renderer.currentGeometry = `${this.id}_${program.attributeOrder}`;

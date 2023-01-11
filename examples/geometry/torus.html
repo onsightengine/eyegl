@@ -13,7 +13,7 @@
 
         <script type="module">
             import { Renderer, Camera, Orbit, Transform, Program, Torus, Mesh } from '../../src/EyeGL.js';
-            import { toNonIndexed } from '../../src/EyeGL.js';
+            import { cleanAttributes, toNonIndexed } from '../../src/EyeGL.js';
 
             // const vertex = /* glsl */ `#version 300 es
             //     in vec3 position;
@@ -100,11 +100,13 @@
                 tubularSegments: 32,
             });
 
-            /////
+            //////////
 
-            //const nonIndexed = toNonIndexed(torusGeometry);
-            // setTimeout(() => nonIndexed.computeVertexNormals(), 2000);
-            setTimeout(() => torusGeometry.computeVertexNormals(), 2000);
+            const nonIndexed = toNonIndexed(torusGeometry);
+            cleanAttributes(nonIndexed);
+
+            setTimeout(() => nonIndexed.computeVertexNormals(), 2000);
+            // setTimeout(() => torusGeometry.computeVertexNormals(), 2000);
 
             // const torus = new Mesh({ geometry: nonIndexed, program });
             const torus = new Mesh({
@@ -117,7 +119,7 @@
 
             // torusGeometry.remove();
 
-            /////
+            //////////
 
             requestAnimationFrame(update);
             function update() {

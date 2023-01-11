@@ -15,6 +15,21 @@ import { Geometry } from '../core/Geometry.js';
  */
 export function cleanAttributes(geometry) {
 
+    if (geometry.attributes.position) {
+
+        // Indexed
+        if (geometry.attributes.index) {
+
+
+        // Non Indexed
+        } else {
+
+            console.log(geometry);
+
+        }
+
+    }
+
 }
 
 /**
