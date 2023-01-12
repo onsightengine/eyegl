@@ -102,19 +102,20 @@
 
             //////////
 
-            const nonIndexed = toNonIndexed(torusGeometry);
-
-            setTimeout(() => nonIndexed.computeVertexNormals(), 2000);
-            setTimeout(() => torusGeometry.computeVertexNormals(), 2000);
-
-            cleanAttributes(nonIndexed);
-            cleanAttributes(torusGeometry);
-
+            // // NonIndexed
+            // const nonIndexed = toNonIndexed(torusGeometry);
+            // setTimeout(() => nonIndexed.computeVertexNormals(), 2000);
+            // cleanAttributes(nonIndexed);
             // const torus = new Mesh({ geometry: nonIndexed, program });
-            const torus = new Mesh({ /* mode: gl.LINE_STRIP, */ geometry: torusGeometry, program });
-
-            torus.setParent(scene);
             // torusGeometry.remove();
+
+            // Indexed
+            setTimeout(() => torusGeometry.computeVertexNormals(), 2000);
+            cleanAttributes(torusGeometry);
+            const torus = new Mesh({ geometry: torusGeometry, program });
+
+            // Add to scene
+            torus.setParent(scene);
 
             //////////
 

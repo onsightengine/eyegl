@@ -177,63 +177,65 @@ class Geometry {
 
         const positions = positionAttribute.data;
         const normals = new Float32Array(positions.length);
-
-        // Reset normals
-        for (let i = 0; i < normals.length; i++) normals[i] = 0;
+        const countIndices = [];
 
         // Temp Vec3s
-        const pA = [ 0, 0, 0 ], pB = [ 0, 0, 0 ], pC = [ 0, 0, 0 ];
-        const nA = [ 0, 0, 0 ], nB = [ 0, 0, 0 ], nC = [ 0, 0, 0 ];
-        const cb = [ 0, 0, 0 ];
+        const pA = new Vec3(), pB = new Vec3(), pC = new Vec3();
+        const nA = new Vec3(), nB = new Vec3(), nC = new Vec3();
+        const cb = new Vec3();
+
+        // Adds an index to the index counter
+        function addIndexCounts(indexArray) {
+            for (let i = 0; i < indexArray.length; i++) {
+                let index = indexArray[i];
+                if (! countIndices[index]) countIndices[index] = 0;
+                countIndices[index]++;
+            }
+        }
 
         // Indexed, need to add normals
         if (this.attributes.index) {
             const indices = this.attributes.index.data;
-            const indexCount = new Int32Array(normals.length / 3);
 
+            // Calculate normals for each triangle
             for (let i = 0; i < indices.length; i += 3) {
-                let i0 = indices[i + 0] * 3;
-                let i1 = indices[i + 1] * 3;
-                let i2 = indices[i + 2] * 3;
-                pA[0] = positions[i0 + 0]; pA[1] = positions[i0 + 1]; pA[2] = positions[i0 + 2];
-                pB[0] = positions[i1 + 0]; pB[1] = positions[i1 + 1]; pB[2] = positions[i1 + 2];
-                pC[0] = positions[i2 + 0]; pC[1] = positions[i2 + 1]; pC[2] = positions[i2 + 2];
+                let idx0 = indices[i + 0];
+                let idx1 = indices[i + 1];
+                let idx2 = indices[i + 2];
+                addIndexCounts([ idx0, idx1, idx2 ]);
+                idx0 *= 3;
+                idx1 *= 3;
+                idx2 *= 3;
+                pA.fromArray(positions, idx0);
+                pB.fromArray(positions, idx1);
+                pC.fromArray(positions, idx2);
                 calculateNormal(cb, pA, pB, pC);
-                normals[i0 + 0] += cb[0]; normals[i0 + 1] += cb[1]; normals[i0 + 2] += cb[2];
-                normals[i1 + 0] += cb[0]; normals[i1 + 1] += cb[1]; normals[i1 + 2] += cb[2];
-                normals[i2 + 0] += cb[0]; normals[i2 + 1] += cb[1]; normals[i2 + 2] += cb[2];
+                nA.fromArray(normals, idx0).add(cb);
+                nB.fromArray(normals, idx1).add(cb);
+                nC.fromArray(normals, idx2).add(cb);
+                normals.set(nA, idx0);
+                normals.set(nB, idx1);
+                normals.set(nC, idx2);
             }
 
-            // for (let i = 0; i < indices.length; i++) {
-            //     indexCount[indices[i]]++;
-            // }
-
-            // for (let i = 0; i < normals.length; i += 3) {
-            //     let count = indexCount[i / 3];
-            //     normals[i + 0] /= count;
-            //     normals[i + 1] /= count;
-            //     normals[i + 2] /= count;
-
-            //     if (count === 1) console.log(i);
-
-            //     cb[0] = normals[i + 0];
-            //     cb[1] = normals[i + 1];
-            //     cb[2] = normals[i + 2];
-            //     normalize(cb, cb);
-            //     normals[i + 0] = cb[0];
-            //     normals[i + 1] = cb[1];
-            //     normals[i + 2] = cb[2];
-
-            //     // console.log(`${normals[0]}, ${normals[1]}, ${normals[2]}`);
-            // }
+            // Divide normals by index counts
+            for (let i = 0; i < normals.length; i += 3) {
+                nA.fromArray(normals, i);
+                let index = i / 3;
+                let count = countIndices[index];
+                if (!!count) {
+                    nA.divide(count);
+                    normals.set(nA, i);
+                }
+            }
 
         // Non indexed, normal for each position
         } else {
-            // Calculate normals for each face
+            // Calculate normals for each triangle
             for (let i = 0; i < positions.length; i += 9) {
-                pA[0] = positions[i + 0]; pA[1] = positions[i + 1]; pA[2] = positions[i + 2];
-                pB[0] = positions[i + 3]; pB[1] = positions[i + 4]; pB[2] = positions[i + 5];
-                pC[0] = positions[i + 6]; pC[1] = positions[i + 7]; pC[2] = positions[i + 8];
+                pA.fromArray(positions, i + 0);
+                pB.fromArray(positions, i + 3);
+                pC.fromArray(positions, i + 6);
                 calculateNormal(cb, pA, pB, pC);
                 for (let j = 0; j < 3; j++) {
                     normals[i + (j * 3) + 0] = cb[0];
@@ -279,7 +281,12 @@ class Geometry {
             renderer.currentGeometry = `${this.id}_${program.attributeOrder}`;
         }
 
-        // Check if any attributes need updating
+        // Check if index needs updating
+        if (this.attributes.index && this.attributes.index.needsUpdate) {
+            this.updateAttribute(this.attributes.index);
+        }
+
+        // Check if program bound attributes need updating
         program.attributeLocations.forEach((location, { name }) => {
             const attr = this.attributes[name];
             if (attr && attr.needsUpdate) this.updateAttribute(attr);

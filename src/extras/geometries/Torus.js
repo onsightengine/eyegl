@@ -46,14 +46,12 @@ class Torus extends Geometry {
                 vertex.x = (radius + tube * Math.cos(v)) * Math.cos(u);
                 vertex.y = (radius + tube * Math.cos(v)) * Math.sin(u);
                 vertex.z = tube * Math.sin(v);
-
                 vertices.set([ vertex.x, vertex.y, vertex.z ], idx * 3);
 
                 // normal
                 center.x = radius * Math.cos(u);
                 center.y = radius * Math.sin(u);
                 normal.sub(vertex, center).normalize();
-
                 normals.set([ normal.x, normal.y, normal.z ], idx * 3);
 
                 // uv

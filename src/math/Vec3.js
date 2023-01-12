@@ -101,8 +101,8 @@ export class Vec3 extends Array {
         return this;
     }
 
-    scale(v) {
-        Vec3Func.scale(this, this, v);
+    scale(multiplier) {
+        Vec3Func.scale(this, this, multiplier);
         return this;
     }
 
@@ -180,6 +180,11 @@ export class Vec3 extends Array {
         this[2] = mat4[2] * x + mat4[6] * y + mat4[10] * z;
 
         return this.normalize();
+    }
+
+    log(description = '') {
+        if (description !== '') description += ' - '
+        console.log(`${description}X: ${this.x}, Y: ${this.y}, Z: ${this.z}`);
     }
 
 }

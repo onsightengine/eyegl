@@ -4,19 +4,21 @@
 /////
 /////////////////////////////////////////////////////////////////////////////////////
 
-
-- GeometryUtils
-    - clone
-    - computeVertexNormals
+GeometryUtils:
     - smoothNormals (for non indexed geometry)
+    - geometry.clone() function
 
 Flat / Smooth Shading:
+    - glsl v100
+        https://developer.mozilla.org/en-US/docs/Web/API/OES_standard_derivatives
+        https://github.com/mrdoob/three.js/blob/25a77e7661deb84159bdf78fb21928b1ed6234f7/src/renderers/shaders/ShaderChunk/normal_fragment_begin.glsl.js
     - Use glsl v3?
-        https://stackoverflow.com/questions/40101023/flat-shading-in-webgl
+        - see: https://stackoverflow.com/questions/40101023/flat-shading-in-webgl
+        - what does three do?
 
 Geometries:
     - Torus -> Selecatable
-        - Lil-Osui
+        - lil-osui
             - Export CSS
                 https://github.com/thgh/rollup-plugin-scss
                 https://github.com/egoist/rollup-plugin-postcss
@@ -26,7 +28,7 @@ Context Lost:
   	- Continue in Renderer.initContext()
 
 TypeScript:
-    !! Convert library from js to ts!
+    !! Convert to typescript?!?
 
 /////////////////////////////////////////////////////////////////////////////////////
 /////

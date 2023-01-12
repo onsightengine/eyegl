@@ -13,74 +13,95 @@ const EPSILON = 0.000001;
 /**
  * Cleans up geometry attributes:
  * - removes zero size triangles
- *
- * Stiil need:
- * - remove duplicate positions
+ * - remove duplicate positions from indexed geometry
  *
  * @param {Geometry} geometry
  */
 export function cleanAttributes(geometry) {
-    // Remove zero sized triangles
-    if (geometry.attributes.position) {
-        const positions = geometry.attributes.position.data;
-        const pA = new Vec3();
-        const pB = new Vec3();
-        const pC = new Vec3();
-        const removeIndices = [];
-
-        // Check for invalid triangles
-        for (let i = 0; i < positions.length; i += 9) {
-            pA.fromArray(positions, i + 0);
-            pB.fromArray(positions, i + 3);
-            pC.fromArray(positions, i + 6);
-            const area = triangleArea(pA, pB, pC);
-            if (fuzzyFloat(area, 0.0, EPSILON)) {
-                removeIndices.push(i + 0);
-                removeIndices.push(i + 3);
-                removeIndices.push(i + 6);
-            }
-        }
-
-        // Rebuild attributes without zero sized triangles
-        if (removeIndices.length > 0) {
-            const attributes = geometry.attributes;
-            for (const attributeName in attributes) {
-                const attribute = attributes[attributeName];
-                const array2 = [];
-
-                // Create new arrays without invalid triangles
-                if (attributeName === 'index') {
-                    for (let i = 0; i < attribute.data.length; i++) {
-                        let index = attribute.data[i];
-                        if (! removeIndices.includes(index)) {
-                            array2.push(index);
-                        }
-                    }
-                } else {
-                    for (let i = 0; i < attribute.data.length; i += attribute.size) {
-                        let index = i / attribute.size;
-                        if (! removeIndices.includes(index)) {
-                            for (let j = 0; j < attribute.size; j++) {
-                                array2.push(attribute.data[i + j]);
-                            }
-                        }
+    /**
+     * Remove values from geometry.attributes, values are from indices listed in 'removeIndices'
+     *
+     * @param {Geometry} geometry geometry to remove indices from
+     * @param {Array} removeIndices array of integer index values to remove
+     * @param {Boolean} shiftIndex should we shift index values? otherwise they will be removed
+     * @returns
+     */
+    function removeIndexValues(geometry, removeIndices = [], shiftIndex = false) {
+        if (removeIndices.length === 0) return;
+        for (const attributeName in geometry.attributes) {
+            const attribute = geometry.attributes[attributeName];
+            // Shift index values instead of remove
+            if (attributeName === 'index' && shiftIndex) {
+                for (let i = 0; i < removeIndices.length; i++) {
+                    const index = removeIndices[i];
+                    for (let j = 0; j < attribute.data.length; j++) {
+                        if (attribute.data[j] >= index) attribute.data[j] -= 1;
                     }
                 }
+            // Build new data array, only include un-skipped index values
+            } else {
+                const array2 = [];
+                for (let i = 0; i < attribute.data.length; i += attribute.size) {
+                    if (removeIndices.includes(i / attribute.size)) continue;
+                    for (let j = 0; j < attribute.size; j++) array2.push(attribute.data[i + j]);
+                }
+                attribute.data = new attribute.data.constructor(array2);
+            }
+            attribute.needsUpdate = true;
+        }
+    }
 
-                // Update attribute arrays
-                const newData = new attribute.data.constructor(array2);
-                attribute.data = newData;
-                attribute.needsUpdate = true;
+    // Temp Variables
+    const pA = new Vec3(), pB = new Vec3(), pC = new Vec3();
+    const vA = new Vec3(), vB = new Vec3(), vC = new Vec3();
+
+    // Remove zero sized triangles
+    if (geometry.attributes.position) {
+        const removeIndices = [];
+        const positions = geometry.attributes.position.data;
+        for (let i = 0; i < positions.length; i += 9) {
+            const index = i / 3;
+            pA.fromArray(positions, i);
+            pB.fromArray(positions, i + 3);
+            pC.fromArray(positions, i + 6);
+            if (fuzzyFloat(triangleArea(pA, pB, pC), 0.0, EPSILON)) {
+                removeIndices.push(index, index + 1, index + 2);
             }
         }
+        removeIndexValues(geometry, removeIndices, false /* shiftIndex */);
+    }
+
+    // Combine duplicate positions on indexed geometry
+    if (geometry.attributes.index && geometry.attributes.position) {
+        const removeIndices = [];
+        const indices = geometry.attributes.index.data;
+        const positions = geometry.attributes.position.data;
+        // Process all index values, look for an earlier duplicate positions
+        for (let i = 0; i < indices.length; i++) {
+            let currentIndex = indices[i];
+            pA.fromArray(positions, currentIndex * 3);
+            for (let j = 0; j < positions.length; j += 3) {
+                let newIndex = j / 3;
+                if (newIndex < currentIndex) {
+                    pB.fromArray(positions, newIndex * 3);
+                    if (pA.fuzzyEquals(pB, 0.0001)) {
+                        indices[i] = newIndex;
+                        if (! removeIndices.includes(currentIndex)) removeIndices.push(currentIndex);
+                        break;
+                    }
+                }
+            }
+        }
+        removeIndexValues(geometry, removeIndices, true /* shiftIndex */);
     }
 }
 
 /**
- *
+ * Creates a new Geometry that is an unindexed version of 'geometry'
+ * NOTE: Does not clean up / dispose (geometry.remove) original geometry
  *
  * @param {Geometry} geometry
- * @returns
+ * @returns non-indexed geometry
  */
 export function toNonIndexed(geometry) {
     function convertBufferAttribute(attribute, indices) {
@@ -100,20 +121,23 @@ export function toNonIndexed(geometry) {
 
     if (! geometry.attributes.index) {
         console.warn('GeometryUtils.toNonIndexed: Geometry is already non-indexed.');
+        //
+        // TODO: Need return geometry.clone();
+        //
         return geometry;
     }
 
     const indices = geometry.attributes.index.data;
     const attributes = geometry.attributes;
-    const nonIndexedGeometry = new Geometry();
+    const nonIndexed = new Geometry();
 
     // Attributes
     for (const attributeName in attributes) {
         if (attributeName === 'index') continue;
         const attribute = attributes[attributeName];
         const newAttribute = { size: attribute.size, data: convertBufferAttribute(attribute, indices) };
-        nonIndexedGeometry.addAttribute(attributeName, newAttribute);
+        nonIndexed.addAttribute(attributeName, newAttribute);
     }
 
-    return nonIndexedGeometry;
+    return nonIndexed;
 }
