@@ -4,6 +4,17 @@
 //
 // ----------------------------------------------------------------------------------
 
+Flat / Smooth Shading:
+    - ability to update shader code in programs / recompile
+    - program 'defines'
+        - look at https://github.com/mrdoob/three.js/blob/dev/src/renderers/webgl/WebGLProgram.js
+    - glsl v100
+        https://developer.mozilla.org/en-US/docs/Web/API/OES_standard_derivatives
+        https://github.com/mrdoob/three.js/blob/25a77e7661deb84159bdf78fb21928b1ed6234f7/src/renderers/shaders/ShaderChunk/normal_fragment_begin.glsl.js
+    - Use glsl v3?
+        - see: https://stackoverflow.com/questions/40101023/flat-shading-in-webgl
+        - what does three do?
+
 Geometry Utility Functions (GeomUtils):
     - fix uneven weights for indexed normal calculations
     - smoothNormals() (for non indexed geometry)
@@ -14,16 +25,8 @@ Geometry Utility Functions (GeomUtils):
     - mergeGeometries()
     - geometry.deleteAttribute
 
-Flat / Smooth Shading:
-    - glsl v100
-        https://developer.mozilla.org/en-US/docs/Web/API/OES_standard_derivatives
-        https://github.com/mrdoob/three.js/blob/25a77e7661deb84159bdf78fb21928b1ed6234f7/src/renderers/shaders/ShaderChunk/normal_fragment_begin.glsl.js
-    - Use glsl v3?
-        - see: https://stackoverflow.com/questions/40101023/flat-shading-in-webgl
-        - what does three do?
-
 Geometries:
-    - Torus -> Selecatable
+    - Torus -> Selecatable Geometry
         - lil-osui
             - Export CSS
                 https://github.com/thgh/rollup-plugin-scss
@@ -31,10 +34,11 @@ Geometries:
                 - Use for Onsight
 
 Context Lost:
+    - Do something about global 'window.renderer.gl', need to handle multiple renderers / gl contexts
   	- Continue in Renderer.initContext()
 
 TypeScript:
-    !! Convert to typescript?!?
+    !! Convert to typescript?
 
 // ----------------------------------------------------------------------------------
 //

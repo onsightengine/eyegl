@@ -19,12 +19,11 @@ let _ID = 1;
 class Renderer {
 
     constructor({
-        alpha = true,                       // canvas should have alpha buffer?
         depth = true,                       // drawing buffer has depth buffer (at least 16 bits)?
         stencil = false,                    // drawing buffer has stencil buffer (at least 8 bits)?
         antialias = false,                  // perform anti-aliasing if possible?
         powerPreference = 'default',        // 'default', 'low-power', 'high-performance'
-        premultipliedAlpha = true,          // drawing buffer contains colors with pre-multiplied alpha
+        premultipliedAlpha = false,         // drawing buffer contains colors with pre-multiplied alpha
         preserveDrawingBuffer = false,      // true is slower, mostly not needed
 
         webgl = 2,                                  // request webgl 1 or 2?
@@ -39,7 +38,6 @@ class Renderer {
         this.id = _ID++;
         this.dpr = dpr;
 
-        this.alpha = alpha;
         this.color = true;
         this.depth = depth;
         this.stencil = stencil;
@@ -55,7 +53,11 @@ class Renderer {
 
         // WebGL attributes
         const attributes = {
-            alpha,
+            // NOTE: About 'alpha', here we force canvas to have alpha buffer for performance reasons
+            // If using destination blending (such as with weighted, blended order independent transparency), will need
+            // to set alpha channel to 1.0 to avoid color errors.
+            // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#avoid_alphafalse_which_can_be_expensive
+            alpha: true,
             depth,
             stencil,
             antialias,

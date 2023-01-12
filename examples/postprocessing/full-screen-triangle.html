@@ -91,7 +91,7 @@
 
                 program.uniforms.uTime.value = t * 0.001;
 
-                // Don't need a camera if camera uniforms aren't required
+                // NOTE: Don't need a camera (camera uniforms aren't required for full screen triangle)
                 renderer.render({ scene: mesh });
             }
 

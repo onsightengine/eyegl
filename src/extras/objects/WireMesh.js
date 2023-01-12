@@ -5,7 +5,12 @@ import { Vec3 } from '../../math/Vec3.js';
 
 class WireMesh extends Mesh {
 
-    constructor({ geometry, wireColor = new Vec3(0, 0.75, 0.5), wireTint = 1.0, ...meshProps } = {}) {
+    constructor({
+        geometry,
+        wireColor = new Vec3(0, 0.75, 0.5),
+        wireTint = 1.0,
+        ...meshProps
+    } = {}) {
         const wireProgram = new Program({
             vertex,
             fragment,
@@ -52,7 +57,12 @@ class WireMesh extends Mesh {
             index: { data: indicesTyped },
         });
 
-        super({ ...meshProps, mode: renderer.gl.LINES, geometry: wireGeometry, program: wireProgram });
+        super({
+            ...meshProps,
+            mode: renderer.gl.LINES,
+            geometry: wireGeometry,
+            program: wireProgram
+        });
     }
 
 }

@@ -17,6 +17,14 @@ export { Mesh } from './core/Mesh.js';
 export { Texture } from './core/Texture.js';
 export { RenderTarget } from './core/RenderTarget.js';
 
+// Programs
+export { MeshBasicProgram } from './core/programs/MeshBasicProgram.js';
+export { MeshNormalProgram } from './core/programs/MeshNormalProgram.js';
+
+// WebGL
+export { Capabilities } from './core/webgl/Capabilities.js';
+export { Extensions } from './core/webgl/Extensions.js';
+
 /***** Extras *****/
 
 export { Raycast } from './extras/Raycast.js';

@@ -12,6 +12,7 @@ class Program {
         vertex,
         fragment,
         uniforms = {},
+        defines = {},
 
         transparent = false,
         cullFace = renderer.gl.BACK,
@@ -23,8 +24,10 @@ class Program {
         this.isProgram = true;
 
         if (! renderer) console.error(`Program.constructor: Renderer not found`);
-        this.uniforms = uniforms;
+
         this.id = _ID++;
+        this.uniforms = uniforms;
+        this.defines = defines;
 
         if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
         if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
@@ -44,6 +47,10 @@ class Program {
             if (renderer.premultipliedAlpha) this.setBlendFunc(renderer.gl.ONE, renderer.gl.ONE_MINUS_SRC_ALPHA);
             else this.setBlendFunc(renderer.gl.SRC_ALPHA, renderer.gl.ONE_MINUS_SRC_ALPHA);
         }
+
+        // Prepare shaders
+
+
 
         // Compile vertex shader and log errors
         const vertexShader = renderer.gl.createShader(renderer.gl.VERTEX_SHADER);
@@ -148,7 +155,7 @@ class Program {
         const programActive = renderer.state.currentProgram === this.id;
 
         // Avoid gl call if program already in use
-        if (!programActive) {
+        if (! programActive) {
             renderer.gl.useProgram(this.program);
             renderer.state.currentProgram = this.id;
         }
@@ -170,7 +177,7 @@ class Program {
                 name += `[${activeUniform.structIndex}].${activeUniform.structProperty}`;
             }
 
-            if (!uniform) {
+            if (! uniform) {
                 return warn(`Active uniform ${name} has not been supplied`);
             }
 
@@ -307,4 +314,19 @@ function warn(message) {
     console.warn(message);
     warnCount++;
     if (warnCount > 100) console.warn('Program: More than 100 program warnings - stopping logs');
+}
+
+/**
+ * Generates a string list of defines from an object ({ FLAT_SHADING: true, etc. });
+ * @param {Object} defines
+ * @returns {String}
+ */
+function generateDefines(defines) {
+	const chunks = [];
+	for (const name in defines) {
+		const value = defines[name];
+		if (value === false) continue;
+		chunks.push('#define ' + name + ' ' + value);
+	}
+	return chunks.join('\n');
 }
