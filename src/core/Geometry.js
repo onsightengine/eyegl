@@ -1,37 +1,9 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-//
-// attribute params {
-//     data - typed array (e.g. UInt16Array for index, Float32Array for position, normal, uv)
-//     size - int default 1 (index: 1, uv: 2, position, normal: 3)
-//     instanced - default null, pass divisor amount
-//     type - gl enum default gl.UNSIGNED_SHORT for 'index', gl.FLOAT for others
-//     normalized - boolean default false
-//
-//     buffer - gl buffer, if buffer exists, don't need to provide data - although needs position data for bounds calculation
-//     stride - default 0 - for when passing in buffer
-//     offset - default 0 - for when passing in buffer
-//     count - default null - for when passing in buffer
-//     min - array - for when passing in buffer
-//     max - array - for when passing in buffer
-// }
-//
-//
 // TODO: fit in transform feedback
-//
-//
 
 import { Vec3 } from '../math/Vec3.js';
 import { calculateNormal, normalize } from '../math/functions/Vec3Func.js';
 
-const tempVec3 = new Vec3();
+const _tempVec3 = new Vec3();
 
 let _ID = 1;
 
@@ -56,13 +28,25 @@ class Geometry {
         }
     }
 
-    ////////// Attributes
+    /***** Attributes *****/
+
+    // attribute params {
+    //      data - typed array (e.g. UInt16Array for index, Float32Array for position, normal, uv)
+    //      size - int, default 1 (e.g. index: 1, uv: 2, position, normal: 3)
+    //      instanced - default null, pass divisor amount
+    //      type - gl enum default gl.UNSIGNED_SHORT for 'index', gl.FLOAT for others
+    //      normalized - boolean default false
+    //
+    //      buffer - gl buffer, if buffer exists, don't need to provide data - although needs position data for bounds calculation
+    //      stride - default 0 - for when passing in buffer
+    //      offset - default 0 - for when passing in buffer
+    //      count - default null - for when passing in buffer
+    //      min - array - for when passing in buffer
+    //      max - array - for when passing in buffer
+    // }
 
     addAttribute(key, attr) {
-        if (! attr.data) {
-            console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
-            return;
-        }
+        if (! attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
 
         // Unbind current VAO so that new buffers don't get added to active mesh
         renderer.clearActiveGeometry();
@@ -196,13 +180,14 @@ class Geometry {
         // Indexed, need to add normals
         if (this.attributes.index) {
             const indices = this.attributes.index.data;
+            const indexHashes = [];
 
             // Calculate normals for each triangle
             for (let i = 0; i < indices.length; i += 3) {
                 let idx0 = indices[i + 0];
                 let idx1 = indices[i + 1];
                 let idx2 = indices[i + 2];
-                addIndexCounts([ idx0, idx1, idx2 ]);
+
                 idx0 *= 3;
                 idx1 *= 3;
                 idx2 *= 3;
@@ -210,9 +195,13 @@ class Geometry {
                 pB.fromArray(positions, idx1);
                 pC.fromArray(positions, idx2);
                 calculateNormal(cb, pA, pB, pC);
+
+                addIndexCounts([ idx0, idx1, idx2 ]);
+
                 nA.fromArray(normals, idx0).add(cb);
                 nB.fromArray(normals, idx1).add(cb);
                 nC.fromArray(normals, idx2).add(cb);
+
                 normals.set(nA, idx0);
                 normals.set(nB, idx1);
                 normals.set(nC, idx2);
@@ -255,7 +244,7 @@ class Geometry {
         }
     }
 
-    ////////// Draw
+    /***** Draw *****/
 
     setDrawRange(start, count) {
         this.drawRange.start = start;
@@ -313,7 +302,7 @@ class Geometry {
         }
     }
 
-    ////////// Bounding Box
+    /***** Bounding Box *****/
 
     computeBoundingBox(attr) {
         if (! attr) attr = this.getPosition();
@@ -368,14 +357,14 @@ class Geometry {
 
         let maxRadiusSq = 0;
         for (let i = 0, l = array.length; i < l; i += stride) {
-            tempVec3.fromArray(array, i);
-            maxRadiusSq = Math.max(maxRadiusSq, this.bounds.center.squaredDistance(tempVec3));
+            _tempVec3.fromArray(array, i);
+            maxRadiusSq = Math.max(maxRadiusSq, this.bounds.center.squaredDistance(_tempVec3));
         }
 
         this.bounds.radius = Math.sqrt(maxRadiusSq);
     }
 
-    ////////// Cleanup
+    /***** Cleanup *****/
 
     clearVertexArrayObjects() {
         for (let key in this.VAOs) {

@@ -1,26 +1,17 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-//
 // Based from ThreeJS' OrbitControls class, rewritten using es6 with some additions and subtractions.
+
 // TODO: abstract event handlers so can be fed from other sources
 // TODO: make scroll zoom more accurate than just >/< zero
 // TODO: be able to pass in new camera position
-//
 
 import { Vec3 } from '../../math/Vec3.js';
 import { Vec2 } from '../../math/Vec2.js';
 
 const STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, DOLLY_PAN: 3 };
-const tempVec3 = new Vec3();
-const tempVec2a = new Vec2();
-const tempVec2b = new Vec2();
+
+const _tempVec3 = new Vec3();
+const _tempVec2a = new Vec2();
+const _tempVec2b = new Vec2();
 
 class Orbit {
 
@@ -57,7 +48,7 @@ class Orbit {
         this.minDistance = minDistance;
         this.maxDistance = maxDistance;
 
-        // current position in sphericalTarget coordinates
+        // Current position in sphericalTarget coordinates
         const sphericalDelta = { radius: 1, phi: 0, theta: 0 };
         const sphericalTarget = { radius: 1, phi: 0, theta: 0 };
         const spherical = { radius: 1, phi: 0, theta: 0 };
@@ -138,21 +129,21 @@ class Orbit {
         }
 
         function panLeft(distance, m) {
-            tempVec3.set(m[0], m[1], m[2]);
-            tempVec3.multiply(-distance);
-            panDelta.add(tempVec3);
+            _tempVec3.set(m[0], m[1], m[2]);
+            _tempVec3.multiply(-distance);
+            panDelta.add(_tempVec3);
         }
 
         function panUp(distance, m) {
-            tempVec3.set(m[4], m[5], m[6]);
-            tempVec3.multiply(distance);
-            panDelta.add(tempVec3);
+            _tempVec3.set(m[4], m[5], m[6]);
+            _tempVec3.multiply(distance);
+            panDelta.add(_tempVec3);
         }
 
         const pan = (deltaX, deltaY) => {
             let el = element === document ? document.body : element;
-            tempVec3.copy(object.position).sub(this.target);
-            let targetDistance = tempVec3.distance();
+            _tempVec3.copy(object.position).sub(this.target);
+            let targetDistance = _tempVec3.distance();
             targetDistance *= Math.tan((((object.fov || 45) / 2) * Math.PI) / 180.0);
             panLeft((2 * deltaX * targetDistance) / el.clientHeight, object.matrix);
             panUp((2 * deltaY * targetDistance) / el.clientHeight, object.matrix);
@@ -173,30 +164,30 @@ class Orbit {
         }
 
         function handleMoveRotate(x, y) {
-            tempVec2a.set(x, y);
-            tempVec2b.sub(tempVec2a, rotateStart).multiply(rotateSpeed);
+            _tempVec2a.set(x, y);
+            _tempVec2b.sub(_tempVec2a, rotateStart).multiply(rotateSpeed);
             let el = element === document ? document.body : element;
-            sphericalDelta.theta -= (2 * Math.PI * tempVec2b.x) / el.clientHeight;
-            sphericalDelta.phi -= (2 * Math.PI * tempVec2b.y) / el.clientHeight;
-            rotateStart.copy(tempVec2a);
+            sphericalDelta.theta -= (2 * Math.PI * _tempVec2b.x) / el.clientHeight;
+            sphericalDelta.phi -= (2 * Math.PI * _tempVec2b.y) / el.clientHeight;
+            rotateStart.copy(_tempVec2a);
         }
 
         function handleMouseMoveDolly(e) {
-            tempVec2a.set(e.clientX, e.clientY);
-            tempVec2b.sub(tempVec2a, dollyStart);
-            if (tempVec2b.y > 0) {
+            _tempVec2a.set(e.clientX, e.clientY);
+            _tempVec2b.sub(_tempVec2a, dollyStart);
+            if (_tempVec2b.y > 0) {
                 dolly(getZoomScale());
-            } else if (tempVec2b.y < 0) {
+            } else if (_tempVec2b.y < 0) {
                 dolly(1 / getZoomScale());
             }
-            dollyStart.copy(tempVec2a);
+            dollyStart.copy(_tempVec2a);
         }
 
         function handleMovePan(x, y) {
-            tempVec2a.set(x, y);
-            tempVec2b.sub(tempVec2a, panStart).multiply(panSpeed);
-            pan(tempVec2b.x, tempVec2b.y);
-            panStart.copy(tempVec2a);
+            _tempVec2a.set(x, y);
+            _tempVec2b.sub(_tempVec2a, panStart).multiply(panSpeed);
+            pan(_tempVec2b.x, _tempVec2b.y);
+            panStart.copy(_tempVec2a);
         }
 
         function handleTouchStartDollyPan(e) {
@@ -219,10 +210,10 @@ class Orbit {
                 let dx = e.touches[0].pageX - e.touches[1].pageX;
                 let dy = e.touches[0].pageY - e.touches[1].pageY;
                 let distance = Math.sqrt(dx * dx + dy * dy);
-                tempVec2a.set(0, distance);
-                tempVec2b.set(0, Math.pow(tempVec2a.y / dollyStart.y, zoomSpeed));
-                dolly(tempVec2b.y);
-                dollyStart.copy(tempVec2a);
+                _tempVec2a.set(0, distance);
+                _tempVec2b.set(0, Math.pow(_tempVec2a.y / dollyStart.y, zoomSpeed));
+                dolly(_tempVec2b.y);
+                dollyStart.copy(_tempVec2a);
             }
 
             if (enablePan) {

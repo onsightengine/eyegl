@@ -1,16 +1,5 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-//
 // TODO: barycentric code shouldn't be here, but where?
 // TODO: SphereCast?
-//
 
 import { Vec2 } from '../math/Vec2.js';
 import { Vec3 } from '../math/Vec3.js';
@@ -337,7 +326,7 @@ class Raycast {
 
     getBarycoord(point, a, b, c, target = tempVec3h) {
         // From https://github.com/mrdoob/three.js/blob/master/src/math/Triangle.js
-        // static/instance method to calculate barycentric coordinates
+        // static / instance method to calculate barycentric coordinates
         // based on: http://www.blackpawn.com/texts/pointinpoly/default.html
         const v0 = tempVec3i;
         const v1 = tempVec3j;

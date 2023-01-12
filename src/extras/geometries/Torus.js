@@ -1,13 +1,3 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-
 // https://github.com/mrdoob/three.js/blob/master/src/geometries/TorusGeometry.js
 
 import { Geometry } from '../../core/Geometry.js';

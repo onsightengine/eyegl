@@ -1,12 +1,18 @@
-/////////////////////////////////////////////////////////////////////////////////////
-/////
-/////                           --- TO DO ---
-/////
-/////////////////////////////////////////////////////////////////////////////////////
+-------------------------------------------------------------------------------------
+//
+//                                --- TO DO ---
+//
+-------------------------------------------------------------------------------------
 
 GeometryUtils:
-    - smoothNormals (for non indexed geometry)
+    - fix uneven weights for indexed normal calculations
+    - smoothNormals() (for non indexed geometry)
+        - convert to indexed, calculate normals, convert back to non indexed
+    - flatNormals() (for indexed geometry)
     - geometry.clone() function
+    - improve toNonIndexed(), add toIndexed()
+    - mergeGeometries()
+    - geometry.deleteAttribute
 
 Flat / Smooth Shading:
     - glsl v100
@@ -30,11 +36,11 @@ Context Lost:
 TypeScript:
     !! Convert to typescript?!?
 
-/////////////////////////////////////////////////////////////////////////////////////
-/////
-/////                       ENGINE OPTIMIZATION IDEAS
-/////
-/////////////////////////////////////////////////////////////////////////////////////
+-------------------------------------------------------------------------------------
+//
+//                          ENGINE OPTIMIZATION IDEAS
+//
+-------------------------------------------------------------------------------------
 
 Reference:
     - ogl, three, picogl, redgl, twgl, webglfundamentals

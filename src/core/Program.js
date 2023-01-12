@@ -1,17 +1,6 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-//
 // TODO: upload empty texture if null ? maybe not
 // TODO: upload identity matrix if null ?
 // TODO: sampler Cube
-//
 
 const arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
 
@@ -224,7 +213,7 @@ class Program {
 
 export { Program };
 
-//////////////////// Internal
+/***** Internal *****/
 
 function setUniform(gl, type, location, value) {
     value = value.length ? flatten(value) : value;

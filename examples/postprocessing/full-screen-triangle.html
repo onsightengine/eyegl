@@ -50,7 +50,7 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            ///// Quad Overdraw, see: https://wallisc.github.io/rendering/2021/04/18/Fullscreen-Pass.html
+            // Quad Overdraw, see: https://wallisc.github.io/rendering/2021/04/18/Fullscreen-Pass.html
             // Rather than using a plane (two triangles) to cover the viewport here is a
             // triangle that includes -1 to 1 range for 'position', and 0 to 1 range for 'uv'.
             // Excess will be out of the viewport.

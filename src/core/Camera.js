@@ -1,20 +1,10 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-
 import { Transform } from './Transform.js';
 import { Mat4 } from '../math/Mat4.js';
 import { Vec3 } from '../math/Vec3.js';
 
-const tempMat4 = new Mat4();
-const tempVec3a = new Vec3();
-const tempVec3b = new Vec3();
+const _tempMat4 = new Mat4();
+const _tempVec3a = new Vec3();
+const _tempVec3b = new Vec3();
 
 class Camera extends Transform {
 
@@ -43,7 +33,6 @@ class Camera extends Transform {
 
         // Use orthographic if left/right set, else default to perspective camera
         this.type = (left || right) ? 'orthographic' : 'perspective';
-
         if (this.type === 'orthographic') this.orthographic();
         else this.perspective();
     }
@@ -103,7 +92,7 @@ class Camera extends Transform {
 
     // Unproject 2D point to 3D coordinate
     unproject(v) {
-        v.applyMatrix4(tempMat4.inverse(this.projectionMatrix));
+        v.applyMatrix4(_tempMat4.inverse(this.projectionMatrix));
         v.applyMatrix4(this.worldMatrix);
         return this;
     }
@@ -137,7 +126,7 @@ class Camera extends Transform {
         if (! node.geometry.bounds || node.geometry.bounds.radius === Infinity) node.geometry.computeBoundingSphere();
         if (! node.geometry.bounds) return true;
 
-        const center = tempVec3a;
+        const center = _tempVec3a;
         center.copy(node.geometry.bounds.center);
         center.applyMatrix4(worldMatrix);
 
@@ -147,7 +136,7 @@ class Camera extends Transform {
     }
 
     frustumIntersectsSphere(center, radius) {
-        const normal = tempVec3b;
+        const normal = _tempVec3b;
 
         for (let i = 0; i < 6; i++) {
             const plane = this.frustum[i];

@@ -1,15 +1,4 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-//
 // TODO: Destroy render targets if size changed and exists
-//
 
 import { Program } from '../core/Program.js';
 import { Mesh } from '../core/Mesh.js';
@@ -96,7 +85,7 @@ class Post {
             renderer.render({
                 scene,
                 camera,
-                target: enabledPasses.length || (!target && this.targetOnly) ? this.fbo.write : target,
+                target: enabledPasses.length || (! target && this.targetOnly) ? this.fbo.write : target,
                 update,
                 sort,
                 frustumCull,
@@ -105,10 +94,10 @@ class Post {
         }
 
         enabledPasses.forEach((pass, i) => {
-            pass.mesh.program.uniforms[pass.textureUniform].value = !i && texture ? texture : this.fbo.read.texture;
+            pass.mesh.program.uniforms[pass.textureUniform].value = ! i && texture ? texture : this.fbo.read.texture;
             renderer.render({
                 scene: pass.mesh,
-                target: i === enabledPasses.length - 1 && (target || !this.targetOnly) ? target : this.fbo.write,
+                target: i === enabledPasses.length - 1 && (target || ! this.targetOnly) ? target : this.fbo.write,
                 clear: true,
             });
             this.fbo.swap();
@@ -121,7 +110,7 @@ class Post {
 
 export { Post };
 
-//////////////////// Internal
+/***** Internal *****/
 
 const defaultVertex = /* glsl */ `
     attribute vec2 uv;

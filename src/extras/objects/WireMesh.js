@@ -1,13 +1,3 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-
 import { Mesh } from '../../core/Mesh.js';
 import { Program } from '../../core/Program.js';
 import { Geometry } from '../../core/Geometry.js';
@@ -42,7 +32,6 @@ class WireMesh extends Mesh {
 
             for (let i = 0; i < idata.length; i += 3) {
                 // For every triangle, make three line pairs (start, end)
-                // prettier-ignore
                 addUniqueIndices([
                     idata[i], idata[i + 1],
                     idata[i + 1], idata[i + 2],
@@ -70,9 +59,9 @@ class WireMesh extends Mesh {
 
 export { WireMesh };
 
-//////////////////// Internal
+/***** Internal *****/
 
-// from https://github.com/mrdoob/three.js/blob/0c26bb4bb8220126447c8373154ac045588441de/src/geometries/WireframeGeometry.js#L116
+// https://github.com/mrdoob/three.js/blob/0c26bb4bb8220126447c8373154ac045588441de/src/geometries/WireframeGeometry.js#L116
 function isUniqueEdgePosition(start, end, pos, hashSet) {
     const hash1 = [
         pos[start], pos[start + 1], pos[start + 2],

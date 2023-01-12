@@ -1,19 +1,3 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-//
-//  Additional Source(s)
-//      MIT     https://github.com/mrdoob/three.js/blob/dev/src/geometries/BoxGeometry.js
-//      UN      https://github.com/oframe/ogl/blob/master/src/extras/Box.js
-//
-/////////////////////////////////////////////////////////////////////////////////////
-
 import { Geometry } from '../../core/Geometry.js';
 import { Plane } from './Plane.js';
 

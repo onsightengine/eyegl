@@ -1,13 +1,3 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-
 class Capabilities {
 
     /**
@@ -116,12 +106,12 @@ class Capabilities {
 
 export { Capabilities };
 
-//////////////////// Internal
+/***** Internal *****/
 
 function checkRenderTargetSupport(gl, internalFormat, format, type) {
 	// Create temp frame buffer and texture
-	let framebuffer = gl.createFramebuffer();
-	let texture = gl.createTexture();
+	const framebuffer = gl.createFramebuffer();
+	const texture = gl.createTexture();
 
 	gl.bindTexture(gl.TEXTURE_2D, texture);
 	gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 2, 2, 0, format, type, null);
@@ -129,7 +119,7 @@ function checkRenderTargetSupport(gl, internalFormat, format, type) {
 	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
 
 	// Check frame buffer status
-	let status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+	const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
 
 	// Clean up
 	gl.bindFramebuffer(gl.FRAMEBUFFER, null);

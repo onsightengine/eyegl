@@ -1,16 +1,15 @@
-//
-//  MathUtils
-//      General
-//          fuzzyFloat
-//          isPowerOf2
-//      2D Geometry
-//          triangleArea
-//
+/**
+ * General
+ *      fuzzyFloat
+ *      isPowerOf2
+ * 2D Geometry
+ *      triangleArea
+ */
 
 import { Vec3 } from './Vec3.js';
 import * as Vec3Func from './functions/Vec3Func.js';
 
-//////////////////// General
+/***** General *****/
 
 /**
  * Compares two decimal numbers to see if they're almost the same
@@ -34,7 +33,7 @@ export function isPowerOf2(value) {
     return (value & (value - 1)) === 0;
 }
 
-//////////////////// 2D Geometry
+/***** 2D Geometry *****/
 
 /**
  * Computes the area of a triangle defined by 3 points (points as arrays [x, y, z])

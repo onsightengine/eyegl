@@ -1,27 +1,11 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-//
-//  Additional Source(s)
-//      UN      https://github.com/oframe/ogl/blob/master/src/core/Renderer.js
-//
-/////////////////////////////////////////////////////////////////////////////////////
-//
 // TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
-//
-// Not automatic - devs to use these methods manually
+
+// Not automatic, devs to use these methods manually:
 //  gl.colorMask( colorMask, colorMask, colorMask, colorMask );
 //  gl.stencilMask( stencilMask );
 //  gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
 //  gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
 //  gl.clearStencil( stencil );
-//
 
 import { Color } from '../math/Color.js';
 import { Vec3 } from '../math/Vec3.js';

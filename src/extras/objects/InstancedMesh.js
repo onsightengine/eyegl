@@ -1,13 +1,3 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-
 import { Transform } from '../../core/Transform.js';
 import { Mesh } from '../../core/Mesh.js';
 import { Vec4 } from '../../math/Vec4.js';
@@ -58,14 +48,14 @@ class InstancedMesh extends Mesh {
         }
 
         this.frustumCullFunction = ({ camera }) => {
-            // frustum cull transforms each frame - pass world matrix
+            // Frustum cull transforms each frame - pass world matrix
             this.instanceRenderList = [];
             this.instanceTransforms.forEach((transform) => {
                 if (! camera.frustumIntersectsMesh(this, transform.worldMatrix)) return;
                 this.instanceRenderList.push(transform);
             });
 
-            // update instanceMatrix and instancedCount with visible
+            // Update instanceMatrix and instancedCount with visible
             this.instanceRenderList.forEach((transform, i) => {
                 transform.matrix.toArray(this.geometry.attributes.instanceMatrix.data, i * 16);
 
@@ -88,7 +78,7 @@ class InstancedMesh extends Mesh {
         this.instanceTransforms.forEach((transform, i) => {
             transform.matrix.toArray(this.geometry.attributes.instanceMatrix.data, i * 16);
 
-            // Update lightmap attr
+            // Update lightmap attribute
             if (transform.lightmapData) {
                 transform.lightmapData.toArray(this.geometry.attributes.lightmapScaleOffset.data, i * 4);
                 this.geometry.attributes.lightmapScaleOffset.needsUpdate = true;

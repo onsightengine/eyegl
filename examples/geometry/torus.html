@@ -100,8 +100,6 @@
                 tubularSegments: 32,
             });
 
-            //////////
-
             // // NonIndexed
             // const nonIndexed = toNonIndexed(torusGeometry);
             // setTimeout(() => nonIndexed.computeVertexNormals(), 2000);
@@ -117,8 +115,7 @@
             // Add to scene
             torus.setParent(scene);
 
-            //////////
-
+            // Animate
             requestAnimationFrame(update);
             function update() {
                 requestAnimationFrame(update);

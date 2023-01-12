@@ -1,15 +1,4 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-//
 // TODO: test stencil and depth
-//
 
 import { Texture } from './Texture.js';
 
@@ -46,7 +35,7 @@ class RenderTarget {
         this.textures = [];
         const drawBuffers = [];
 
-        // create and attach required num of color textures
+        // Create and attach required num of color textures
         for (let i = 0; i < color; i++) {
             this.textures.push(
                 new Texture({
@@ -73,10 +62,10 @@ class RenderTarget {
         // For multi-render targets shader access
         if (drawBuffers.length > 1) renderer.gl.drawBuffers(drawBuffers);
 
-        // alias for majority of use cases
+        // Alias for majority of use cases
         this.texture = this.textures[0];
 
-        // note depth textures break stencil - so can't use together
+        // Note depth textures break stencil - so can't use together
         if (depthTexture) {
             this.depthTexture = new Texture({
                 width,

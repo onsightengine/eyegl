@@ -1,7 +1,7 @@
 import * as EulerFunc from './functions/EulerFunc.js';
 import { Mat4 } from './Mat4.js';
 
-const tmpMat4 = new Mat4();
+const tempMat4 = new Mat4();
 
 export class Euler extends Array {
 
@@ -69,8 +69,8 @@ export class Euler extends Array {
     }
 
     fromQuaternion(q, order = this.order) {
-        tmpMat4.fromQuaternion(q);
-        return this.fromRotationMatrix(tmpMat4, order);
+        tempMat4.fromQuaternion(q);
+        return this.fromRotationMatrix(tempMat4, order);
     }
 
     toArray(a = [], o = 0) {

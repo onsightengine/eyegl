@@ -1,13 +1,3 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
-
 import { Vec3 } from '../math/Vec3.js';
 import { Quat } from '../math/Quat.js';
 import { Mat4 } from '../math/Mat4.js';
@@ -74,6 +64,7 @@ class Transform {
     traverse(callback) {
         // Return true in callback to stop traversing children
         if (callback(this)) return;
+        // Traverse children
         for (let i = 0, l = this.children.length; i < l; i++) {
             this.children[i].traverse(callback);
         }

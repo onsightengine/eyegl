@@ -1,14 +1,12 @@
-/** /////////////////////////////////////////////////////////////////////////////////
-//
-// @description EyeGL
-// @about       WebGL graphics library.
-// @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021-2022 Stephens Nunnally and Scidian Studios
-// @source      https://github.com/onsightengine
-//
-///////////////////////////////////////////////////////////////////////////////////*/
+/**
+ * @description EyeGL
+ * @about       Fast WebGL 2 graphics library built for games.
+ * @author      Stephens Nunnally <@stevinz>
+ * @license     MIT - Copyright (c) 2022-2023 Stephens Nunnally and Scidian Studios
+ * @source      https://github.com/onsightengine/eyegl
+ */
 
-////////// Core
+/***** Core *****/
 
 export { Geometry } from './core/Geometry.js';
 export { Program } from './core/Program.js';
@@ -19,7 +17,7 @@ export { Mesh } from './core/Mesh.js';
 export { Texture } from './core/Texture.js';
 export { RenderTarget } from './core/RenderTarget.js';
 
-////////// Math
+/***** Math *****/
 
 export { Color } from './math/Color.js';
 export { Euler } from './math/Euler.js';
@@ -35,7 +33,7 @@ export { fuzzyFloat } from './math/MathUtils.js';
 export { isPowerOf2 } from './math/MathUtils.js';
 export { triangleArea } from './math/MathUtils.js';
 
-////////// Extras
+/***** Extras *****/
 
 export { Raycast } from './extras/Raycast.js';
 export { Post } from './extras/Post.js';
@@ -55,13 +53,13 @@ export { Triangle } from './extras/geometries/Triangle.js';
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
 
-////////// Utils
+/***** Utils *****/
 
 // GeometryUtils
 export { cleanAttributes } from './utils/GeometryUtils.js';
 export { toNonIndexed } from './utils/GeometryUtils.js';
 
-////////// Unused
+/***** Unused *****/
 
 // export { Curve } from './extras/Curve.js';
 // export { Path } from './extras/Path/Path.js';
