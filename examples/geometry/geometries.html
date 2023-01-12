@@ -15,7 +15,8 @@
 		<script type='importmap'>
             {
                 "imports": {
-                    "eyegl": "../../src/EyeGL.js"
+                    "eyegl": "../../src/EyeGL.js",
+                    "osui": "../../../osui/build/osui.module.js"
                 }
             }
         </script>
@@ -24,6 +25,19 @@
             import { Renderer, Transform, MeshNormalProgram } from 'eyegl';
             import { Camera, Orbit, Torus, Mesh } from 'eyegl';
             import { GeomUtils } from 'eyegl';
+
+
+
+
+            import { Gooey } from 'osui';
+
+            const gui = new Gooey('Geometries');
+
+            const folder1 = gui.addFolder('Geometry');
+
+
+
+
 
             const renderer = new Renderer({ dpr: 2 });
             const gl = renderer.gl;
