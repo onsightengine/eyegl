@@ -24,13 +24,11 @@ class Program {
         this.isProgram = true;
 
         if (! renderer) console.error(`Program.constructor: Renderer not found`);
+        if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
+        if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
 
         this.id = _ID++;
         this.uniforms = uniforms;
-        this.defines = defines;
-
-        if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
-        if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
 
         // Store program state
         this.transparent = transparent;
@@ -48,13 +46,35 @@ class Program {
             else this.setBlendFunc(renderer.gl.SRC_ALPHA, renderer.gl.ONE_MINUS_SRC_ALPHA);
         }
 
-        // Prepare shaders
+        // Compile shaders, build program
+        this.buildProgram({ vertex, fragment, defines });
+    }
 
+    buildProgram({ vertex, fragment, defines } = {}) {
+        // Add defines to shaders
+        const customDefines = generateDefines(defines);
 
+        let prefixVertex = [
+			customDefines
+		].filter(filterEmptyLine).join('\n');
+        if (prefixVertex.length > 0) prefixVertex += '\n';
+
+		let prefixFragment = [
+			customDefines
+		].filter(filterEmptyLine).join('\n');
+		if (prefixFragment.length > 0) prefixFragment += '\n';
+
+        let vertexGlsl, fragmentGlsl;
+        if (vertex.includes('#version 300 es')) {
+            vertexGlsl = '#version 300 es\n' + prefixVertex + vertex.replace('#version 300 es', '');
+        } else vertexGlsl = prefixVertex + vertex;
+        if (fragment.includes('#version 300 es')) {
+            fragmentGlsl = '#version 300 es\n' + prefixFragment + fragment.replace('#version 300 es', '');
+        } else fragmentGlsl = prefixFragment + fragment;
 
         // Compile vertex shader and log errors
         const vertexShader = renderer.gl.createShader(renderer.gl.VERTEX_SHADER);
-        renderer.gl.shaderSource(vertexShader, vertex);
+        renderer.gl.shaderSource(vertexShader, vertexGlsl);
         renderer.gl.compileShader(vertexShader);
         if (renderer.gl.getShaderInfoLog(vertexShader) !== '') {
             console.warn(`${renderer.gl.getShaderInfoLog(vertexShader)}\nVertex Shader\n${addLineNumbers(vertex)}`);
@@ -62,10 +82,16 @@ class Program {
 
         // Compile fragment shader and log errors
         const fragmentShader = renderer.gl.createShader(renderer.gl.FRAGMENT_SHADER);
-        renderer.gl.shaderSource(fragmentShader, fragment);
+        renderer.gl.shaderSource(fragmentShader, fragmentGlsl);
         renderer.gl.compileShader(fragmentShader);
         if (renderer.gl.getShaderInfoLog(fragmentShader) !== '') {
             console.warn(`${renderer.gl.getShaderInfoLog(fragmentShader)}\nFragment Shader\n${addLineNumbers(fragment)}`);
+        }
+
+        // Check if was built before, if so delete
+        if (this.program) {
+            renderer.gl.deleteProgram(this.program);
+            renderer.state.currentProgram = -1; // force gl program update 'this.use()'
         }
 
         // Compile program and log errors
@@ -110,8 +136,7 @@ class Program {
         for (let aIndex = 0; aIndex < numAttribs; aIndex++) {
             const attribute = renderer.gl.getActiveAttrib(this.program, aIndex);
             const location = renderer.gl.getAttribLocation(this.program, attribute.name);
-            // Ignore special built-in inputs. eg gl_VertexID, gl_InstanceID
-            if (location === -1) continue;
+            if (location === -1) continue; // Ignore special built-in inputs. eg gl_VertexID, gl_InstanceID
             locations[location] = attribute.name;
             this.attributeLocations.set(attribute, location);
         }
@@ -214,6 +239,7 @@ class Program {
 
     remove() {
         renderer.gl.deleteProgram(this.program);
+        this.program = undefined;
     }
 
 }
@@ -329,4 +355,8 @@ function generateDefines(defines) {
 		chunks.push('#define ' + name + ' ' + value);
 	}
 	return chunks.join('\n');
+}
+
+function filterEmptyLine(string) {
+	return string !== '';
 }

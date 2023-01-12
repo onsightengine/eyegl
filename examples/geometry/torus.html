@@ -64,6 +64,8 @@
             GeomUtils.cleanAttributes(torusGeometry);
             const torus = new Mesh({ geometry: torusGeometry, program });
 
+            setTimeout(() => program.flatShading = true, 4000);
+
             // Add to scene
             torus.setParent(scene);
 

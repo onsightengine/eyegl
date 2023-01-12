@@ -10,7 +10,11 @@ class MeshNormalProgram extends Program {
         uniform mat4 modelViewMatrix;
         uniform mat4 projectionMatrix;
 
-        flat out vec3 vNormal;
+        #ifdef FLAT_SHADED
+            flat out vec3 vNormal;
+        #else
+            out vec3 vNormal;
+        #endif
 
         void main() {
             vNormal = normalize(normalMatrix * normal);
@@ -21,7 +25,11 @@ class MeshNormalProgram extends Program {
     static fragment = /* glsl */ `#version 300 es
         precision highp float;
 
-        flat in vec3 vNormal;
+        #ifdef FLAT_SHADED
+            flat in vec3 vNormal;
+        #else
+            in vec3 vNormal;
+        #endif
 
         layout(location = 0) out highp vec4 pc_fragColor;
 
@@ -29,6 +37,8 @@ class MeshNormalProgram extends Program {
             pc_fragColor = vec4(normalize(vNormal), 1.0);
         }
     `;
+
+    #flatShading = false;
 
     constructor({
         flatShading = false,
@@ -40,7 +50,23 @@ class MeshNormalProgram extends Program {
             vertex: MeshNormalProgram.vertex,
             fragment: MeshNormalProgram.fragment,
             defines: {
-                FLAT_SHADING: flatShading,
+                FLAT_SHADED: flatShading,
+            }
+        });
+
+        this.#flatShading = flatShading;
+    }
+
+    get flatShading() { return this.#flatShading; }
+
+    set flatShading(flatShading) {
+        if (this.#flatShading === flatShading) return;
+        this.#flatShading = flatShading;
+        this.buildProgram({
+            vertex: MeshNormalProgram.vertex,
+            fragment: MeshNormalProgram.fragment,
+            defines: {
+                FLAT_SHADED: flatShading,
             }
         });
     }
