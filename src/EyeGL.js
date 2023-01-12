@@ -17,22 +17,6 @@ export { Mesh } from './core/Mesh.js';
 export { Texture } from './core/Texture.js';
 export { RenderTarget } from './core/RenderTarget.js';
 
-/***** Math *****/
-
-export { Color } from './math/Color.js';
-export { Euler } from './math/Euler.js';
-export { Mat3 } from './math/Mat3.js';
-export { Mat4 } from './math/Mat4.js';
-export { Quat } from './math/Quat.js';
-export { Vec2 } from './math/Vec2.js';
-export { Vec3 } from './math/Vec3.js';
-export { Vec4 } from './math/Vec4.js';
-
-// MathUtils
-export { fuzzyFloat } from './math/MathUtils.js';
-export { isPowerOf2 } from './math/MathUtils.js';
-export { triangleArea } from './math/MathUtils.js';
-
 /***** Extras *****/
 
 export { Raycast } from './extras/Raycast.js';
@@ -53,11 +37,30 @@ export { Triangle } from './extras/geometries/Triangle.js';
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
 
+/***** Math *****/
+
+export { Color } from './math/Color.js';
+export { Euler } from './math/Euler.js';
+export { Mat3 } from './math/Mat3.js';
+export { Mat4 } from './math/Mat4.js';
+export { Quat } from './math/Quat.js';
+export { Vec2 } from './math/Vec2.js';
+export { Vec3 } from './math/Vec3.js';
+export { Vec4 } from './math/Vec4.js';
+
+export * as ColorFunc from './math/functions/ColorFunc.js';
+export * as EulerFunc from './math/functions/EulerFunc.js';
+export * as Mat3Func from './math/functions/Mat3Func.js';
+export * as Mat4Func from './math/functions/Mat4Func.js';
+export * as QuatFunc from './math/functions/QuatFunc.js';
+export * as Vec2Func from './math/functions/Vec2Func.js';
+export * as Vec3Func from './math/functions/Vec3Func.js';
+export * as Vec4Func from './math/functions/Vec4Func.js';
+
 /***** Utils *****/
 
-// GeometryUtils
-export { cleanAttributes } from './utils/GeometryUtils.js';
-export { toNonIndexed } from './utils/GeometryUtils.js';
+export * as GeomUtils from './utils/GeomUtils.js';
+export * as MathUtils from './utils/MathUtils.js';
 
 /***** Unused *****/
 

@@ -1,7 +1,7 @@
 // TODO: fit in transform feedback
 
 import { Vec3 } from '../math/Vec3.js';
-import { calculateNormal, normalize } from '../math/functions/Vec3Func.js';
+import { normalize } from '../math/functions/Vec3Func.js';
 
 const _tempVec3 = new Vec3();
 
@@ -153,95 +153,6 @@ class Geometry {
         if (positionAttribute && positionAttribute.data) return positionAttribute;
         console.warn('Geometry.getPosition: No position attribute found');
         return null;
-    }
-
-    computeVertexNormals() {
-        const positionAttribute = this.getPosition();
-        if (! positionAttribute) return;
-
-        const positions = positionAttribute.data;
-        const normals = new Float32Array(positions.length);
-        const countIndices = [];
-
-        // Temp Vec3s
-        const pA = new Vec3(), pB = new Vec3(), pC = new Vec3();
-        const nA = new Vec3(), nB = new Vec3(), nC = new Vec3();
-        const cb = new Vec3();
-
-        // Adds an index to the index counter
-        function addIndexCounts(indexArray) {
-            for (let i = 0; i < indexArray.length; i++) {
-                let index = indexArray[i];
-                if (! countIndices[index]) countIndices[index] = 0;
-                countIndices[index]++;
-            }
-        }
-
-        // Indexed, need to add normals
-        if (this.attributes.index) {
-            const indices = this.attributes.index.data;
-            const indexHashes = [];
-
-            // Calculate normals for each triangle
-            for (let i = 0; i < indices.length; i += 3) {
-                let idx0 = indices[i + 0];
-                let idx1 = indices[i + 1];
-                let idx2 = indices[i + 2];
-
-                idx0 *= 3;
-                idx1 *= 3;
-                idx2 *= 3;
-                pA.fromArray(positions, idx0);
-                pB.fromArray(positions, idx1);
-                pC.fromArray(positions, idx2);
-                calculateNormal(cb, pA, pB, pC);
-
-                addIndexCounts([ idx0, idx1, idx2 ]);
-
-                nA.fromArray(normals, idx0).add(cb);
-                nB.fromArray(normals, idx1).add(cb);
-                nC.fromArray(normals, idx2).add(cb);
-
-                normals.set(nA, idx0);
-                normals.set(nB, idx1);
-                normals.set(nC, idx2);
-            }
-
-            // Divide normals by index counts
-            for (let i = 0; i < normals.length; i += 3) {
-                nA.fromArray(normals, i);
-                let index = i / 3;
-                let count = countIndices[index];
-                if (!!count) {
-                    nA.divide(count);
-                    normals.set(nA, i);
-                }
-            }
-
-        // Non indexed, normal for each position
-        } else {
-            // Calculate normals for each triangle
-            for (let i = 0; i < positions.length; i += 9) {
-                pA.fromArray(positions, i + 0);
-                pB.fromArray(positions, i + 3);
-                pC.fromArray(positions, i + 6);
-                calculateNormal(cb, pA, pB, pC);
-                for (let j = 0; j < 3; j++) {
-                    normals[i + (j * 3) + 0] = cb[0];
-                    normals[i + (j * 3) + 1] = cb[1];
-                    normals[i + (j * 3) + 2] = cb[2];
-                }
-            }
-        }
-
-        // Update attribute
-        if (this.attributes.normal) {
-            this.attributes.normal.data = normals;
-            this.attributes.normal.needsUpdate = true;
-        // Add attribute
-        } else {
-            this.addAttribute('normal', { size: 3, data: normals });
-        }
     }
 
     /***** Draw *****/

@@ -80,4 +80,9 @@ export class Vec4 extends Array {
         return a;
     }
 
+    log(description = '') {
+        if (description !== '') description += ' - '
+        console.log(`${description}X: ${this.x}, Y: ${this.y}, Z: ${this.z}, W: ${this.w}`);
+    }
+
 }

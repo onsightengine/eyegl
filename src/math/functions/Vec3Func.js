@@ -2,7 +2,7 @@ import { Mat3 } from '../Mat3.js';
 import { Mat4 } from '../Mat4.js';
 import { Quat } from '../Quat.js';
 import { Vec3 } from '../Vec3.js';
-import { fuzzyFloat } from '../MathUtils.js';
+import { fuzzyFloat } from '../../utils/MathUtils.js';
 
 const EPSILON = 0.000001;
 
