@@ -134,10 +134,12 @@ div {
     margin: 30px;
     width: 50px;
     height: 50px;
-    line-height: 50px;
+    line-height: 46px;
     text-align: center;
-    background: #fff;
+    color: #202020;
+    background: #00b4af;
     border-radius: 100%;
+    border: solid 2px #005a57;
     font-size: 19px;
     letter-spacing: -0.1em;
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);

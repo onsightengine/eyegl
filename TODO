@@ -4,6 +4,15 @@
 //
 // ----------------------------------------------------------------------------------
 
+Gooey:
+    - more properties
+        - addList (dropdown)
+        - addVec3 (three numbers)
+        - addColor (color box) --- need special gui.addColor
+        - addFunction (button)
+        - addString (text field)
+    - update functions (controllers)
+
 Geometry Utility Functions (GeomUtils):
     - fix uneven weights for indexed normal calculations
     - smoothNormals() (for non indexed geometry)

@@ -32,9 +32,9 @@
             import { Gooey } from 'osui';
 
             const params = {
-                testBool1: true,
-                testBool2: true,
-                testBool3: true,
+                flatShading: false,
+                testBool: true,
+                testNumber: 1.4,
             }
 
             const gui = new Gooey('Geometries');
@@ -42,9 +42,11 @@
             const folder1 = gui.addFolder('Geometry');
             const folder2 = gui.addFolder('Material');
 
-            folder1.add(params, 'testBool1');
-            folder1.add(params, 'testBool2').onChange(() => console.log('Hero'));
-            folder1.add(params, 'testBool3').name('Blaster');
+            folder1.add(params, 'testBool').name('Blaster');
+            folder1.add(params, 'testNumber', 0, 10, 1).name('Julie');
+
+            folder2.add(params, 'flatShading').onChange(() => program.flatShading = params.flatShading);
+
 
 
 
@@ -87,8 +89,6 @@
             setTimeout(() => GeomUtils.computeVertexNormals(torusGeometry), 2000);
             GeomUtils.cleanAttributes(torusGeometry);
             const torus = new Mesh({ geometry: torusGeometry, program });
-
-            setTimeout(() => program.flatShading = true, 4000);
 
             // Add to scene
             torus.setParent(scene);

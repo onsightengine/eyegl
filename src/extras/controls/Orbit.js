@@ -172,8 +172,8 @@ class Orbit {
             rotateStart.copy(_tempVec2a);
         }
 
-        function handleMouseMoveDolly(e) {
-            _tempVec2a.set(e.clientX, e.clientY);
+        function handleMouseMoveDolly(event) {
+            _tempVec2a.set(event.clientX, event.clientY);
             _tempVec2b.sub(_tempVec2a, dollyStart);
             if (_tempVec2b.y > 0) {
                 dolly(getZoomScale());
@@ -190,25 +190,25 @@ class Orbit {
             panStart.copy(_tempVec2a);
         }
 
-        function handleTouchStartDollyPan(e) {
+        function handleTouchStartDollyPan(event) {
             if (enableZoom) {
-                let dx = e.touches[0].pageX - e.touches[1].pageX;
-                let dy = e.touches[0].pageY - e.touches[1].pageY;
+                let dx = event.touches[0].pageX - event.touches[1].pageX;
+                let dy = event.touches[0].pageY - event.touches[1].pageY;
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 dollyStart.set(0, distance);
             }
 
             if (enablePan) {
-                let x = 0.5 * (e.touches[0].pageX + e.touches[1].pageX);
-                let y = 0.5 * (e.touches[0].pageY + e.touches[1].pageY);
+                let x = 0.5 * (event.touches[0].pageX + event.touches[1].pageX);
+                let y = 0.5 * (event.touches[0].pageY + event.touches[1].pageY);
                 panStart.set(x, y);
             }
         }
 
-        function handleTouchMoveDollyPan(e) {
+        function handleTouchMoveDollyPan(event) {
             if (enableZoom) {
-                let dx = e.touches[0].pageX - e.touches[1].pageX;
-                let dy = e.touches[0].pageY - e.touches[1].pageY;
+                let dx = event.touches[0].pageX - event.touches[1].pageX;
+                let dy = event.touches[0].pageY - event.touches[1].pageY;
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 _tempVec2a.set(0, distance);
                 _tempVec2b.set(0, Math.pow(_tempVec2a.y / dollyStart.y, zoomSpeed));
@@ -217,89 +217,89 @@ class Orbit {
             }
 
             if (enablePan) {
-                let x = 0.5 * (e.touches[0].pageX + e.touches[1].pageX);
-                let y = 0.5 * (e.touches[0].pageY + e.touches[1].pageY);
+                let x = 0.5 * (event.touches[0].pageX + event.touches[1].pageX);
+                let y = 0.5 * (event.touches[0].pageY + event.touches[1].pageY);
                 handleMovePan(x, y);
             }
         }
 
-        const onMouseDown = (e) => {
-            if (!this.enabled) return;
+        const onMouseDown = (event) => {
+            if (! this.enabled) return;
 
-            switch (e.button) {
+            switch (event.button) {
                 case this.mouseButtons.ORBIT:
                     if (enableRotate === false) return;
-                    rotateStart.set(e.clientX, e.clientY);
+                    rotateStart.set(event.clientX, event.clientY);
                     state = STATE.ROTATE;
                     break;
                 case this.mouseButtons.ZOOM:
                     if (enableZoom === false) return;
-                    dollyStart.set(e.clientX, e.clientY);
+                    dollyStart.set(event.clientX, event.clientY);
                     state = STATE.DOLLY;
                     break;
                 case this.mouseButtons.PAN:
                     if (enablePan === false) return;
-                    panStart.set(e.clientX, e.clientY);
+                    panStart.set(event.clientX, event.clientY);
                     state = STATE.PAN;
                     break;
             }
 
             if (state !== STATE.NONE) {
-                window.addEventListener('mousemove', onMouseMove, false);
-                window.addEventListener('mouseup', onMouseUp, false);
+                window.addEventListener('pointermove', onMouseMove, false);
+                window.addEventListener('pointerup', onMouseUp, false);
             }
         };
 
-        const onMouseMove = (e) => {
-            if (!this.enabled) return;
+        const onMouseMove = (event) => {
+            if (! this.enabled) return;
 
             switch (state) {
                 case STATE.ROTATE:
                     if (enableRotate === false) return;
-                    handleMoveRotate(e.clientX, e.clientY);
+                    handleMoveRotate(event.clientX, event.clientY);
                     break;
                 case STATE.DOLLY:
                     if (enableZoom === false) return;
-                    handleMouseMoveDolly(e);
+                    handleMouseMoveDolly(event);
                     break;
                 case STATE.PAN:
                     if (enablePan === false) return;
-                    handleMovePan(e.clientX, e.clientY);
+                    handleMovePan(event.clientX, event.clientY);
                     break;
             }
         };
 
         const onMouseUp = () => {
-            window.removeEventListener('mousemove', onMouseMove, false);
-            window.removeEventListener('mouseup', onMouseUp, false);
+            window.removeEventListener('pointermove', onMouseMove, false);
+            window.removeEventListener('pointerup', onMouseUp, false);
             state = STATE.NONE;
         };
 
-        const onMouseWheel = (e) => {
+        const onMouseWheel = (event) => {
             if (!this.enabled || !enableZoom || (state !== STATE.NONE && state !== STATE.ROTATE)) return;
-            e.stopPropagation();
-            e.preventDefault();
+            event.stopPropagation();
+            event.preventDefault();
 
-            if (e.deltaY < 0) {
+            if (event.deltaY < 0) {
                 dolly(1 / getZoomScale());
-            } else if (e.deltaY > 0) {
+            } else if (event.deltaY > 0) {
                 dolly(getZoomScale());
             }
         };
 
-        const onTouchStart = (e) => {
+        const onTouchStart = (event) => {
             if (!this.enabled) return;
-            e.preventDefault();
+            event.preventDefault();
 
-            switch (e.touches.length) {
+            switch (event.touches.length) {
                 case 1:
                     if (enableRotate === false) return;
-                    rotateStart.set(e.touches[0].pageX, e.touches[0].pageY);
+                    rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
                     state = STATE.ROTATE;
                     break;
                 case 2:
                     if (enableZoom === false && enablePan === false) return;
-                    handleTouchStartDollyPan(e);
+                    handleTouchStartDollyPan(event);
                     state = STATE.DOLLY_PAN;
                     break;
                 default:
@@ -307,19 +307,19 @@ class Orbit {
             }
         };
 
-        const onTouchMove = (e) => {
+        const onTouchMove = (event) => {
             if (!this.enabled) return;
-            e.preventDefault();
-            e.stopPropagation();
+            event.preventDefault();
+            event.stopPropagation();
 
-            switch (e.touches.length) {
+            switch (event.touches.length) {
                 case 1:
                     if (enableRotate === false) return;
-                    handleMoveRotate(e.touches[0].pageX, e.touches[0].pageY);
+                    handleMoveRotate(event.touches[0].pageX, event.touches[0].pageY);
                     break;
                 case 2:
                     if (enableZoom === false && enablePan === false) return;
-                    handleTouchMoveDollyPan(e);
+                    handleTouchMoveDollyPan(event);
                     break;
                 default:
                     state = STATE.NONE;
@@ -331,14 +331,14 @@ class Orbit {
             state = STATE.NONE;
         };
 
-        const onContextMenu = (e) => {
+        const onContextMenu = (event) => {
             if (!this.enabled) return;
-            e.preventDefault();
+            event.preventDefault();
         };
 
         function addHandlers() {
             element.addEventListener('contextmenu', onContextMenu, false);
-            element.addEventListener('mousedown', onMouseDown, false);
+            element.addEventListener('pointerdown', onMouseDown, false);
             element.addEventListener('wheel', onMouseWheel, { passive: false });
             element.addEventListener('touchstart', onTouchStart, { passive: false });
             element.addEventListener('touchend', onTouchEnd, false);
@@ -347,13 +347,13 @@ class Orbit {
 
         this.remove = function() {
             element.removeEventListener('contextmenu', onContextMenu);
-            element.removeEventListener('mousedown', onMouseDown);
+            element.removeEventListener('pointerdown', onMouseDown);
             element.removeEventListener('wheel', onMouseWheel);
             element.removeEventListener('touchstart', onTouchStart);
             element.removeEventListener('touchend', onTouchEnd);
             element.removeEventListener('touchmove', onTouchMove);
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
+            window.removeEventListener('pointermove', onMouseMove);
+            window.removeEventListener('pointerup', onMouseUp);
         };
 
         addHandlers();
