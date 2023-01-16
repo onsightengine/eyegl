@@ -35,9 +35,12 @@ export function cleanAttributes(geometry) {
             if (attributeName === 'index' && shiftIndex) {
                 for (let i = 0; i < removeIndices.length; i++) {
                     const index = removeIndices[i];
+                    // Shift indices
                     for (let j = 0; j < attribute.data.length; j++) {
                         if (attribute.data[j] >= index) attribute.data[j] -= 1;
                     }
+                    // Shift removal indices
+                    for (let j = i + 1; j < removeIndices.length; j++) removeIndices[j] -= 1;
                 }
             // Build new data array, only include un-skipped index values
             } else {
@@ -79,10 +82,10 @@ export function cleanAttributes(geometry) {
         const positions = geometry.attributes.position.data;
         // Process all index values, look for an earlier duplicate positions
         for (let i = 0; i < indices.length; i++) {
-            let currentIndex = indices[i];
+            const currentIndex = indices[i];
             pA.fromArray(positions, currentIndex * 3);
             for (let j = 0; j < positions.length; j += 3) {
-                let newIndex = j / 3;
+                const newIndex = j / 3;
                 if (newIndex < currentIndex) {
                     pB.fromArray(positions, newIndex * 3);
                     if (pA.fuzzyEquals(pB, 0.0001)) {
@@ -93,6 +96,7 @@ export function cleanAttributes(geometry) {
                 }
             }
         }
+        removeIndices.sort((a, b) => { return a - b; });
         removeIndexValues(geometry, removeIndices, true /* shiftIndex */);
     }
 }

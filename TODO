@@ -6,11 +6,7 @@
 
 Gooey:
     - more properties
-        - addList (dropdown)
         - addVec3 (three numbers)
-        - addColor (color box) --- need special gui.addColor
-        - addFunction (button)
-        - addString (text field)
     - update functions (controllers)
 
 Geometry Utility Functions (GeomUtils):
@@ -21,15 +17,10 @@ Geometry Utility Functions (GeomUtils):
     - geometry.clone() function
     - improve toNonIndexed(), add toIndexed()
     - mergeGeometries()
-    - geometry.deleteAttribute
+    - geometry.deleteAttribute()
 
 Geometries:
     - Torus -> Selecatable Geometry
-        - lil-osui
-            - Export CSS
-                https://github.com/thgh/rollup-plugin-scss
-                https://github.com/egoist/rollup-plugin-postcss
-                - Use for Onsight
 
 Context Lost:
     - Do something about global 'window.renderer.gl', need to handle multiple renderers / gl contexts

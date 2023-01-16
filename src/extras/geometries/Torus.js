@@ -52,7 +52,7 @@ class Torus extends Geometry {
         // Generate indices
         idx = 0;
         for (let j = 1; j <= radialSegments; j++) {
-            for (let i = 1; i <= tubularSegments; i++, idx++) {
+            for (let i = 1; i <= tubularSegments; i++) {
                 // indices
                 const a = (tubularSegments + 1) * j + i - 1;
                 const b = (tubularSegments + 1) * (j - 1) + i - 1;
@@ -60,7 +60,10 @@ class Torus extends Geometry {
                 const d = (tubularSegments + 1) * j + i;
 
                 // faces
-                indices.set([ a, b, d, b, c, d ], idx * 6);
+                indices.set([ a, b, d ], (idx * 6));
+                indices.set([ b, c, d ], (idx * 6) + 3);
+
+                idx++;
             }
         }
 
