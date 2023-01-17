@@ -74,7 +74,7 @@
                     normal: { size: 3, data: new Float32Array(data.normal) },
                 });
 
-                // Using gl.LINE_STRIP
+                // Using gl.LINE_STRIP, LINES, LINE_LOOP
                 lineLoopMesh = new Mesh({ mode: gl.LINE_STRIP, geometry: geometry, program: program });
                 lineLoopMesh.setParent(scene);
                 lineLoopMesh.position.y = 1.5;

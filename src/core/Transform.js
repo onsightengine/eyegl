@@ -26,20 +26,39 @@ class Transform {
         this.quaternion.onChange = () => this.rotation.fromQuaternion(this.quaternion);
     }
 
-    setParent(parent, notifyParent = true) {
-        if (this.parent && parent !== this.parent) this.parent.removeChild(this, false);
-        this.parent = parent;
-        if (notifyParent && parent) parent.addChild(this, false);
+    setParent(parent) {
+        if (this.parent && parent === this.parent) return this;
+        parent.addChild(this);
+        return this;
     }
 
-    addChild(child, notifyChild = true) {
-        if (this.children.indexOf(child) === -1) this.children.push(child);
-        if (notifyChild) child.setParent(this, false);
+    addChild(child, /* child, child, ... */) {
+        if (arguments.length > 1) {
+			for (let i = 0; i < arguments.length; i++) this.addChild(arguments[i]);
+			return this;
+		}
+        if (! child || child === this) return this;
+		if (child.parent) {
+            if (child.parent === this) return this;
+            child.parent.removeChild(child);
+        }
+        child.parent = this;
+        this.children.push(child);
+        return this;
     }
 
-    removeChild(child, notifyChild = true) {
-        if (this.children.indexOf(child) !== -1) this.children.splice(this.children.indexOf(child), 1);
-        if (notifyChild) child.setParent(null, false);
+    removeChild(child) {
+        if (arguments.length > 1) {
+			for (let i = 0; i < arguments.length; i++) this.removeChild(arguments[i]);
+			return this;
+		}
+        if (! child || child === this) return this;
+        const index = this.children.indexOf(child);
+        if (index !== -1) {
+            child.parent = null;
+            this.children.splice(index, 1);
+        }
+        return this;
     }
 
     updateMatrixWorld(force) {

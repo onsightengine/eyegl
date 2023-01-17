@@ -15,7 +15,7 @@ class Program {
         defines = {},
 
         transparent = false,
-        cullFace = renderer.gl.BACK,
+        cullFace = renderer.gl.BACK, // FRONT, BACK, FRONT_AND_BACK
         frontFace = renderer.gl.CCW,
         depthTest = true,
         depthWrite = true,
