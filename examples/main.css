@@ -180,14 +180,26 @@ div {
 /***** Frame *****/
 
 .Info {
-    padding: 20px;
+    font-size: 16px;
+    padding: 2px;
+    padding-top: 20px;
+    padding-left: 20px;
     position: relative;
     z-index: 1;
     color: #00b4af;
 }
 
-.Info a {
-    color: #ff7100;
+.Credits {
+    font-size: 12px;
+    padding: 2px;
+    padding-left: 20px;
+    position: relative;
+    z-index: 1;
+    color: #a05100;
+}
+
+.Credits a {
+    color: #75b300;
 }
 
 canvas {

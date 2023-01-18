@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Geometries</title>
+        <title>EyeGL • Base Geometries</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -9,7 +9,7 @@
         <link href="../main.css" rel="stylesheet" />
     </head>
     <body>
-        <div class="Info">Geometries</div>
+        <div class="Info">Base Geometries</div>
 
         <script async src='https://unpkg.com/es-module-shims@1.5.0/dist/es-module-shims.js'></script>
 		<script type='importmap'>
@@ -26,7 +26,9 @@
             import { Mesh, GeomUtils, Box, Cylinder, Plane, Sphere, Torus } from 'eyegl';
             import { Gooey } from 'osui';
 
-            const geoms = [ 'Box', 'Cylinder', 'Plane', 'Sphere', 'Torus' ];
+            const geomTypes = [ 'Box', 'Cylinder', 'Plane', 'Sphere', 'Torus' ];
+            const geoms = {};
+            const meshes = {};
 
             const params = {
                 type: 'Sphere',
@@ -41,8 +43,8 @@
             const folder1 = gui.addFolder('Geometry');
             const folder2 = gui.addFolder('Material');
 
-            folder1.add(params, 'type', geoms).onChange(() => setVisibleGeometry());
-            folder1.add(params, 'logToConsole');
+            folder1.add(params, 'type', geomTypes).onChange(() => setVisibleGeometry());
+            folder1.add(params, 'logToConsole').name('Debug');
 
             folder2.add(params, 'flatShading').onChange(() => program.flatShading = params.flatShading);
             folder2.add(params, 'normalIntensity', 0.0, 1.0).onChange(() => program.normalIntensity = params.normalIntensity);
@@ -82,87 +84,67 @@
 
             /***** Geometries *****/
 
-            // Box
-            const boxGeometry = new Box({
+            const clean = false;
+            const compute = false;
+
+            geoms['Box'] = new Box({
                 width: 1.5,
                 height: 1.5,
                 depth: 1.5,
             });
-            // GeomUtils.cleanAttributes(boxGeometry);
-            // GeomUtils.computeVertexNormals(boxGeometry);
-            // GeomUtils.toNonIndexed(boxGeometry);
-            // GeomUtils.toIndexed(boxGeometry, [ 'normal' ]);
-            // GeomUtils.computeVertexNormals(boxGeometry);
-            // GeomUtils.toNonIndexed(boxGeometry);
 
-            // Cylinder
-            const cylinderGeometry = new Cylinder({
+            geoms['Cylinder'] = new Cylinder({
                 radiusTop: 1.0,
                 radiusBottom: 1.0,
                 height: 2
             });
 
-            //  Plane
-            const planeGeometry = new Plane({ width: 1.5, height: 1.5 });
+            geoms['Plane'] = new Plane({ width: 1.5, height: 1.5 });
 
             //  Sphere
-            const sphereGeometry = new Sphere({ radius: 1.25 });
-            GeomUtils.computeVertexNormals(sphereGeometry);
-            GeomUtils.toNonIndexed(sphereGeometry);
-            GeomUtils.cleanAttributes(sphereGeometry);
-            // GeomUtils.toIndexed(sphereGeometry, [ 'normal' ]);
+            geoms['Sphere'] = new Sphere({ radius: 1.25 });
 
             // Torus
-            const torusGeometry = new Torus({
+            geoms['Torus'] = new Torus({
                 radius: 1,
                 tube: 0.4,
                 radialSegments: 16,
                 tubularSegments: 32,
             });
-            // GeomUtils.cleanAttributes(torusGeometry);
-            // GeomUtils.computeVertexNormals(torusGeometry);
 
-            /***** End *****/
+            for (const key in geoms) {
+                const geometry = geoms[key];
+                if (clean) GeomUtils.cleanAttributes(geometry);
+                if (compute) GeomUtils.computeVertexNormals(geometry);
+                // GeomUtils.toNonIndexed(boxGeometry);
+                // GeomUtils.toIndexed(boxGeometry, [ 'normal' ]);
+                // GeomUtils.computeVertexNormals(boxGeometry);
+                // GeomUtils.toNonIndexed(boxGeometry);
 
-            const box = new Mesh({ geometry: boxGeometry, program });
-            const cylinder = new Mesh({ geometry: cylinderGeometry, program });
-            const plane = new Mesh({ geometry: planeGeometry, program });
-            const sphere = new Mesh({ geometry: sphereGeometry, program });
-            const torus = new Mesh({ geometry: torusGeometry, program });
-            scene.addChild(box);
-            scene.addChild(cylinder);
-            scene.addChild(plane);
-            scene.addChild(sphere);
-            scene.addChild(torus);
-
-            function logVisibleGeometry() {
-                if (box.visible) console.log(boxGeometry);
-                if (cylinder.visible) console.log(cylinderGeometry);
-                if (plane.visible) console.log(planeGeometry);
-                if (sphere.visible) console.log(sphereGeometry);
-                if (torus.visible) console.log(torusGeometry);
+                meshes[key] = new Mesh({ geometry: geometry, program });
+                scene.addChild(meshes[key]);
             }
 
-            // Set Visible
+            function logVisibleGeometry() {
+                for (const key in meshes) {
+                    if (meshes[key].visible) console.log(meshes[key]);
+                }
+            }
+
             function setVisibleGeometry() {
-                box.visible = (params.type === 'Box');
-                cylinder.visible = (params.type === 'Cylinder');
-                plane.visible = (params.type === 'Plane');
-                sphere.visible = (params.type === 'Sphere');
-                torus.visible = (params.type === 'Torus');
+                for (const key in meshes) {
+                    meshes[key].visible = (params.type === key);
+                }
             }
             setVisibleGeometry();
 
-            // Wireframe, LINES, LINE_STRIP, LINE_LOOP
+            // normal: TRIANGLES, wireframe options: LINES, LINE_STRIP, LINE_LOOP, etc.
             function toggleWireframe() {
-                box.mode = (box.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
-                cylinder.mode = (cylinder.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
-                plane.mode = (plane.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
-                sphere.mode = (sphere.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
-                torus.mode = (torus.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
+                for (const key in meshes) {
+                    meshes[key].mode = (meshes[key].mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
+                }
             }
 
-            // Animate
             requestAnimationFrame(update);
             function update() {
                 requestAnimationFrame(update);
