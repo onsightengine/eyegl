@@ -1,6 +1,3 @@
-import { Euler } from '../Euler.js';
-import { Mat4 } from '../Mat4.js';
-
 /**
  * Assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
  *

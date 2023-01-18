@@ -1,6 +1,3 @@
-import { Mat3 } from '../Mat3.js';
-import { Quat } from '../Quat.js';
-import { Vec3 } from '../Vec3.js';
 import * as Vec4Func from './Vec4Func.js';
 
 /**

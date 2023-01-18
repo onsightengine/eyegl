@@ -1,5 +1,3 @@
-import { Vec4 } from '../Vec4.js';
-
 const EPSILON = 0.000001;
 
 /**

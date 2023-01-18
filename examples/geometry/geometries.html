@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Torus</title>
+        <title>EyeGL • Geometries</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -22,14 +22,14 @@
         </script>
 
         <script type="module">
-            import { Renderer, Transform, MeshProgram, Camera, Orbit, Texture } from 'eyegl';
-            import { Mesh, GeomUtils, Box, Cylinder, Torus } from 'eyegl';
+            import { Renderer, Transform, MeshProgram, Camera, Orbit, Texture, Vec3 } from 'eyegl';
+            import { Mesh, GeomUtils, Box, Cylinder, Plane, Sphere, Torus } from 'eyegl';
             import { Gooey } from 'osui';
 
-            const geoms = [ 'Box', 'Cylinder', 'Torus' ];
+            const geoms = [ 'Box', 'Cylinder', 'Plane', 'Sphere', 'Torus' ];
 
             const params = {
-                type: 'Box',
+                type: 'Sphere',
                 logToConsole: () => logVisibleGeometry(),
                 flatShading: false,
                 normalIntensity: 0.5,
@@ -88,14 +88,12 @@
                 height: 1.5,
                 depth: 1.5,
             });
-            GeomUtils.cleanAttributes(boxGeometry);
-            GeomUtils.computeVertexNormals(boxGeometry);
-            GeomUtils.toNonIndexed(boxGeometry);
-            GeomUtils.toIndexed(boxGeometry, [ 'normal' ]);
-            GeomUtils.computeVertexNormals(boxGeometry);
+            // GeomUtils.cleanAttributes(boxGeometry);
+            // GeomUtils.computeVertexNormals(boxGeometry);
             // GeomUtils.toNonIndexed(boxGeometry);
-            const box = new Mesh({ geometry: boxGeometry, program });
-            scene.addChild(box);
+            // GeomUtils.toIndexed(boxGeometry, [ 'normal' ]);
+            // GeomUtils.computeVertexNormals(boxGeometry);
+            // GeomUtils.toNonIndexed(boxGeometry);
 
             // Cylinder
             const cylinderGeometry = new Cylinder({
@@ -103,10 +101,16 @@
                 radiusBottom: 1.0,
                 height: 2
             });
-            // GeomUtils.cleanAttributes(cylinderGeometry);
-            // GeomUtils.computeVertexNormals(cylinderGeometry);
-            const cylinder = new Mesh({ geometry: cylinderGeometry, program });
-            scene.addChild(cylinder);
+
+            //  Plane
+            const planeGeometry = new Plane({ width: 1.5, height: 1.5 });
+
+            //  Sphere
+            const sphereGeometry = new Sphere({ radius: 1.25 });
+            GeomUtils.computeVertexNormals(sphereGeometry);
+            GeomUtils.toNonIndexed(sphereGeometry);
+            GeomUtils.cleanAttributes(sphereGeometry);
+            // GeomUtils.toIndexed(sphereGeometry, [ 'normal' ]);
 
             // Torus
             const torusGeometry = new Torus({
@@ -117,14 +121,25 @@
             });
             // GeomUtils.cleanAttributes(torusGeometry);
             // GeomUtils.computeVertexNormals(torusGeometry);
-            const torus = new Mesh({ geometry: torusGeometry, program });
-            scene.addChild(torus);
 
             /***** End *****/
+
+            const box = new Mesh({ geometry: boxGeometry, program });
+            const cylinder = new Mesh({ geometry: cylinderGeometry, program });
+            const plane = new Mesh({ geometry: planeGeometry, program });
+            const sphere = new Mesh({ geometry: sphereGeometry, program });
+            const torus = new Mesh({ geometry: torusGeometry, program });
+            scene.addChild(box);
+            scene.addChild(cylinder);
+            scene.addChild(plane);
+            scene.addChild(sphere);
+            scene.addChild(torus);
 
             function logVisibleGeometry() {
                 if (box.visible) console.log(boxGeometry);
                 if (cylinder.visible) console.log(cylinderGeometry);
+                if (plane.visible) console.log(planeGeometry);
+                if (sphere.visible) console.log(sphereGeometry);
                 if (torus.visible) console.log(torusGeometry);
             }
 
@@ -132,6 +147,8 @@
             function setVisibleGeometry() {
                 box.visible = (params.type === 'Box');
                 cylinder.visible = (params.type === 'Cylinder');
+                plane.visible = (params.type === 'Plane');
+                sphere.visible = (params.type === 'Sphere');
                 torus.visible = (params.type === 'Torus');
             }
             setVisibleGeometry();
@@ -140,6 +157,8 @@
             function toggleWireframe() {
                 box.mode = (box.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
                 cylinder.mode = (cylinder.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
+                plane.mode = (plane.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
+                sphere.mode = (sphere.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
                 torus.mode = (torus.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
             }
 

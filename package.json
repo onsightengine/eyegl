@@ -1,0 +1,38 @@
+{
+  "name": "eyegl",
+  "version": "0.0.1",
+  "description": "Fast WebGL 2 graphics library built for games.",
+  "module": "src/EyeGL.js",
+  "main": "build/eyegl.module.js",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "build/*",
+    "src/*"
+  ],
+  "keywords": [
+    "eyegl",
+    "onsight",
+    "engine",
+    "webgl",
+    "webgl2",
+    "module",
+    "javascript",
+    "es6",
+    "games"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onsightengine/eyegl.git"
+  },
+  "author": "Stephens Nunnally <stephens@scidian.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/onsightengine/eyegl/issues"
+  },
+  "homepage": "https://github.com/onsightengine/eyegl",
+  "private": false
+}

@@ -1,9 +1,3 @@
-import { Mat3 } from '../Mat3.js';
-import { Mat4 } from '../Mat4.js';
-import { Quat } from '../Quat.js';
-import { Vec3 } from '../Vec3.js';
-import { fuzzyFloat } from '../../utils/MathUtils.js';
-
 const EPSILON = 0.000001;
 
 /**
@@ -438,3 +432,17 @@ export const calculateNormal = (function() {
         normalize(out, out);
     };
 })();
+
+/***** Internal *****/
+
+/**
+ * Compares two decimal numbers to see if they're almost the same
+ *
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} tolerance
+ * @returns {Boolean}
+ */
+function fuzzyFloat(a, b, tolerance = 0.001) {
+    return ((a < (b + tolerance)) && (a > (b - tolerance)));
+}

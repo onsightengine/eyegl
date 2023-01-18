@@ -123,8 +123,8 @@ class Renderer {
         }.bind(this));
     }
 
-    getExtension(extension) {
-        return this.extensions.get(extension);
+    getExtension(extension, logWarning = true) {
+        return this.extensions.get(extension, logWarning);
     }
 
     // Usually (window.innerWidth, window.innerHeight)

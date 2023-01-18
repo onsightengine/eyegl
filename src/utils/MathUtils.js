@@ -4,7 +4,6 @@
  * triangleArea()
  */
 
-import { Vec3 } from '../math/Vec3.js';
 import * as Vec3Func from '../math/functions/Vec3Func.js';
 
 /**

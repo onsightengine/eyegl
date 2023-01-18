@@ -1,5 +1,3 @@
-import { Color } from '../Color.js';
-
 const NAMES = {
     black: '#000000',
     gray: '#808080',

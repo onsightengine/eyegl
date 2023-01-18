@@ -26,9 +26,9 @@ class Extensions {
 		};
 
         // Public extension getter
-        this.get = function(name) {
+        this.get = function(name, logWarning = true) {
 			const extension = getExtension(name);
-			if (extension === null) console.warn(`Extensions: ${name} extension not supported.`);
+			if (! extension && logWarning) console.warn(`Extensions: ${name} extension not supported.`);
 			return extension;
 		};
     }

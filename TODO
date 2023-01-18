@@ -4,11 +4,8 @@
 //
 // ----------------------------------------------------------------------------------
 
-Gooey:
-    - addVec3 (three numbers)
-
 Geometry Utility Functions (GeomUtils):
-    - geometry.clone() function
+    - geometry.clone()
     - mergeGeometries()
 
 Context Lost:

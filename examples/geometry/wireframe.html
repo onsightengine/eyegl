@@ -59,7 +59,7 @@
             const texture = new Texture();
             const img = new Image();
             img.onload = () => (texture.image = img);
-            img.src = '../../files/textures/croissant.jpg';
+            img.src = '../../files/models/json/croissant.jpg';
 
             const program = new MeshProgram({
                 texture: texture,
@@ -70,7 +70,7 @@
             let lineLoopMesh, standardMesh, wireframeMesh;
             loadModel();
             async function loadModel() {
-                const data = await (await fetch(`../../files/models/croissant.json`)).json();
+                const data = await (await fetch(`../../files/models/json/croissant.json`)).json();
 
                 const geometry = new Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },

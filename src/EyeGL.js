@@ -40,6 +40,13 @@ export { Sphere } from './extras/geometries/Sphere.js';
 export { Torus } from './extras/geometries/Torus.js';
 export { Triangle } from './extras/geometries/Triangle.js';
 
+// Loaders
+export { GLTFAnimation } from './extras/loaders/GLTFAnimation.js';
+export { GLTFLoader } from './extras/loaders/GLTFLoader.js';
+export { GLTFSkin } from './extras/loaders/GLTFSkin.js';
+export { KTXTexture } from './extras/loaders/KTXTexture.js';
+export { TextureLoader } from './extras/loaders/TextureLoader.js'
+
 // Objects
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
 export { WireMesh } from './extras/objects/WireMesh.js';

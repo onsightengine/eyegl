@@ -1,7 +1,3 @@
-import { Mat4 } from '../Mat4.js';
-import { Quat } from '../Quat.js';
-import { Vec3 } from '../Vec3.js';
-
 const EPSILON = 0.000001;
 
 /**
