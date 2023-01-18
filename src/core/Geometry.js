@@ -46,6 +46,7 @@ class Geometry {
     // }
 
     addAttribute(key, attr) {
+        if (! attr) return console.warn(`Geometry.addAttribute: Attribute for '${key}' missing`);
         if (! attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
 
         // Unbind current VAO so that new buffers don't get added to active mesh
@@ -58,6 +59,7 @@ class Geometry {
         this.attributes[key] = attr;
 
         // Set options
+        attr.key = key;
         attr.size = attr.size || 1;
         if (! attr.type) {
             switch (attr.data.constructor) {
@@ -91,6 +93,13 @@ class Geometry {
             this.drawRange.count = attr.count;
         } else if (! this.attributes.index) {
             this.drawRange.count = Math.max(this.drawRange.count, attr.count);
+        }
+    }
+
+    deleteAttribute(attr) {
+        if (this.attributes[attr.key]) {
+            renderer.gl.deleteBuffer(attr.buffer);
+            delete this.attributes[attr.key];
         }
     }
 
@@ -287,8 +296,7 @@ class Geometry {
     remove() {
         this.clearVertexArrayObjects();
         for (let key in this.attributes) {
-            renderer.gl.deleteBuffer(this.attributes[key].buffer);
-            delete this.attributes[key];
+            this.deleteAttribute(this.attributes[key]);
         }
     }
 

@@ -73,11 +73,13 @@ class Transform {
         for (let i = 0, l = this.children.length; i < l; i++) {
             this.children[i].updateMatrixWorld(force);
         }
+        return this;
     }
 
     updateMatrix() {
         this.matrix.compose(this.quaternion, this.position, this.scale);
         this.worldMatrixNeedsUpdate = true;
+        return this;
     }
 
     traverse(callback) {
@@ -94,6 +96,7 @@ class Transform {
         this.matrix.getRotation(this.quaternion);
         this.matrix.getScaling(this.scale);
         this.rotation.fromQuaternion(this.quaternion);
+        return this;
     }
 
     lookAt(target, invert = false) {
@@ -101,6 +104,7 @@ class Transform {
         else this.matrix.lookAt(target, this.position, this.up);
         this.matrix.getRotation(this.quaternion);
         this.rotation.fromQuaternion(this.quaternion);
+        return this;
     }
 
 }

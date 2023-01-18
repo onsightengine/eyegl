@@ -22,15 +22,18 @@
         </script>
 
         <script type="module">
-            import { Renderer, Transform, MeshNormalProgram, Camera, Orbit } from 'eyegl';
+            import { Renderer, Transform, MeshProgram, Camera, Orbit, Texture } from 'eyegl';
             import { Mesh, GeomUtils, Box, Cylinder, Torus } from 'eyegl';
             import { Gooey } from 'osui';
 
             const geoms = [ 'Box', 'Cylinder', 'Torus' ];
 
             const params = {
-                type: 'Torus',
+                type: 'Box',
+                logToConsole: () => logVisibleGeometry(),
                 flatShading: false,
+                normalIntensity: 0.5,
+                opacity: 1.0,
                 wireframe: false,
             }
 
@@ -39,7 +42,11 @@
             const folder2 = gui.addFolder('Material');
 
             folder1.add(params, 'type', geoms).onChange(() => setVisibleGeometry());
+            folder1.add(params, 'logToConsole');
+
             folder2.add(params, 'flatShading').onChange(() => program.flatShading = params.flatShading);
+            folder2.add(params, 'normalIntensity', 0.0, 1.0).onChange(() => program.normalIntensity = params.normalIntensity);
+            folder2.add(params, 'opacity', 0.0, 1.0).onChange(() => program.opacity = params.opacity);
             folder2.add(params, 'wireframe').onChange(() => toggleWireframe());
 
             const renderer = new Renderer({ dpr: 2 });
@@ -57,9 +64,23 @@
             window.addEventListener('resize', resize, false);
             resize();
 
+            const texture = new Texture();
+            const img = new Image();
+            img.onload = () => (texture.image = img);
+            img.src = '../../files/textures/uv-test-col.png';
+
             const scene = new Transform();
             const controls = new Orbit(camera);
-            const program = new MeshNormalProgram({ transparent: true });
+
+            const program = new MeshProgram({
+                // cullFace: null,
+                normalIntensity: params.normalIntensity,
+                opacity: params.opacity,
+                texture: texture,
+                transparent: true
+            });
+
+            /***** Geometries *****/
 
             // Box
             const boxGeometry = new Box({
@@ -69,6 +90,10 @@
             });
             GeomUtils.cleanAttributes(boxGeometry);
             GeomUtils.computeVertexNormals(boxGeometry);
+            GeomUtils.toNonIndexed(boxGeometry);
+            GeomUtils.toIndexed(boxGeometry, [ 'normal' ]);
+            GeomUtils.computeVertexNormals(boxGeometry);
+            // GeomUtils.toNonIndexed(boxGeometry);
             const box = new Mesh({ geometry: boxGeometry, program });
             scene.addChild(box);
 
@@ -78,8 +103,8 @@
                 radiusBottom: 1.0,
                 height: 2
             });
-            GeomUtils.cleanAttributes(cylinderGeometry);
-            GeomUtils.computeVertexNormals(cylinderGeometry);
+            // GeomUtils.cleanAttributes(cylinderGeometry);
+            // GeomUtils.computeVertexNormals(cylinderGeometry);
             const cylinder = new Mesh({ geometry: cylinderGeometry, program });
             scene.addChild(cylinder);
 
@@ -90,18 +115,18 @@
                 radialSegments: 16,
                 tubularSegments: 32,
             });
-            // // NonIndexed
-            // const nonIndexed = GeomUtils.toNonIndexed(torusGeometry);
-            // GeomUtils.cleanAttributes(nonIndexed);
-            // setTimeout(() => GeomUtils.computeVertexNormals(nonIndexed), 2000);
-            // const torus = new Mesh({ geometry: nonIndexed, program });
-            // scene.addChild(torus);
-            // torusGeometry.remove();
-            // Indexed
-            GeomUtils.cleanAttributes(torusGeometry);
-            setTimeout(() => GeomUtils.computeVertexNormals(torusGeometry), 2000);
+            // GeomUtils.cleanAttributes(torusGeometry);
+            // GeomUtils.computeVertexNormals(torusGeometry);
             const torus = new Mesh({ geometry: torusGeometry, program });
             scene.addChild(torus);
+
+            /***** End *****/
+
+            function logVisibleGeometry() {
+                if (box.visible) console.log(boxGeometry);
+                if (cylinder.visible) console.log(cylinderGeometry);
+                if (torus.visible) console.log(torusGeometry);
+            }
 
             // Set Visible
             function setVisibleGeometry() {
@@ -111,9 +136,8 @@
             }
             setVisibleGeometry();
 
-            // Wireframe
+            // Wireframe, LINES, LINE_STRIP, LINE_LOOP
             function toggleWireframe() {
-                // LINES, LINE_STRIP, LINE_LOOP
                 box.mode = (box.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
                 cylinder.mode = (cylinder.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
                 torus.mode = (torus.mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
@@ -123,13 +147,7 @@
             requestAnimationFrame(update);
             function update() {
                 requestAnimationFrame(update);
-
-                // torus.rotation.x += 0.001;
-                // torus.rotation.y += 0.005;
-                // torus.rotation.z += 0.003;
-
                 controls.update();
-
                 renderer.render({ scene, camera });
             }
 

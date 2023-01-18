@@ -5,22 +5,11 @@
 // ----------------------------------------------------------------------------------
 
 Gooey:
-    - more properties
-        - addVec3 (three numbers)
-    - update functions (controllers)
+    - addVec3 (three numbers)
 
 Geometry Utility Functions (GeomUtils):
-    - fix uneven weights for indexed normal calculations
-    - smoothNormals() (for non indexed geometry)
-        - convert to indexed, calculate normals, convert back to non indexed
-    - flatNormals() (for indexed geometry)
     - geometry.clone() function
-    - improve toNonIndexed(), add toIndexed()
     - mergeGeometries()
-    - geometry.deleteAttribute()
-
-Geometries:
-    - Torus -> Selecatable Geometry
 
 Context Lost:
     - Do something about global 'window.renderer.gl', need to handle multiple renderers / gl contexts

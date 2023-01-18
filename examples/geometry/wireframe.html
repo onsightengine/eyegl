@@ -21,7 +21,7 @@
         </script>
 
         <script type="module">
-            import { Renderer, Transform, Texture, MeshBasicProgram } from 'eyegl';
+            import { Renderer, Transform, Texture, MeshProgram } from 'eyegl';
             import { Camera, Geometry, Mesh, WireMesh } from 'eyegl';
 
             const renderer = new Renderer({ dpr: 2 });
@@ -61,7 +61,11 @@
             img.onload = () => (texture.image = img);
             img.src = '../../files/textures/croissant.jpg';
 
-            const program = new MeshBasicProgram({ texture: texture, opacity: 0.95, transparent: true });
+            const program = new MeshProgram({
+                texture: texture,
+                opacity: 0.95,
+                transparent: true
+            });
 
             let lineLoopMesh, standardMesh, wireframeMesh;
             loadModel();
