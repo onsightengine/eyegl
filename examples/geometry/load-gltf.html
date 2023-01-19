@@ -23,8 +23,17 @@
         </script>
 
         <script type="module">
-            import { Renderer, Camera, Transform, Orbit, Program } from 'eyegl';
-            import { GLTFLoader, GLTFSkin, Vec3, Color, TextureLoader } from 'eyegl';
+            import {
+                Camera, Orbit,
+                Color,
+                GLTFLoader,
+                GLTFSkin,
+                Program,
+                Renderer,
+                TextureLoader,
+                Transform,
+                Vec3,
+            } from 'eyegl';
 
             const shader = {
                 vertex: /* glsl */ `

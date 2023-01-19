@@ -18,7 +18,7 @@ export { Texture } from './core/Texture.js';
 export { RenderTarget } from './core/RenderTarget.js';
 
 // Programs
-export { MeshProgram } from './core/programs/MeshProgram.js';
+export { Standard } from './core/programs/Standard.js';
 
 // WebGL
 export { Capabilities } from './core/webgl/Capabilities.js';

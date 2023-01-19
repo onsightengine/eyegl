@@ -22,8 +22,18 @@
         </script>
 
         <script type="module">
-            import { Renderer, Camera, RenderTarget, Vec3, Transform } from 'eyegl';
-            import { Texture, Program, Box, Mesh, MeshProgram } from 'eyegl';
+            import {
+                Box,
+                Camera,
+                Mesh,
+                Program,
+                Renderer,
+                RenderTarget,
+                Standard,
+                Texture,
+                Transform,
+                Vec3,
+            } from 'eyegl';
 
             const vertex = /* glsl */ `
                 attribute vec2 uv;
@@ -164,7 +174,7 @@
             mesh.setParent(scene);
 
             // Create a single non-instanced copy
-            highlight = new Mesh({ geometry, program: new MeshProgram({ normalIntensity: 1.0 }) });
+            highlight = new Mesh({ geometry, program: new Standard({ normalIntensity: 1.0 }) });
             highlight.setParent(scene);
             highlight.visible = false;
 

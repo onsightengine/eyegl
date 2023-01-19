@@ -1,6 +1,6 @@
 import { Program } from '../Program.js';
 
-class MeshProgram extends Program {
+class Standard extends Program {
 
     static vertex = /* glsl */ `#version 300 es
         in vec2 uv;
@@ -87,7 +87,7 @@ class MeshProgram extends Program {
 
             diffuse = mix(diffuse, baryDiffuse, uWireIntensity);
             alpha = mix(alpha, baryAlpha, uWireIntensity);
-            if (alpha < 0.05) discard;
+            if (alpha < 0.01) discard;
 
             // ----- Output -----
             pc_fragColor = vec4(diffuse, alpha);
@@ -117,11 +117,10 @@ class MeshProgram extends Program {
 
         super({
             ...programProps,
-            vertex: MeshProgram.vertex,
-            fragment: MeshProgram.fragment,
+            vertex: Standard.vertex,
+            fragment: Standard.fragment,
             uniforms: {
                 tMap: { value: texture },
-
                 uNormalIntensity: { value: normalIntensity },
                 uOpacity: { value: opacity },
                 uTint: { value: tint },
@@ -144,8 +143,8 @@ class MeshProgram extends Program {
 
     rebuildProgram() {
         this.buildProgram({
-            vertex: MeshProgram.vertex,
-            fragment: MeshProgram.fragment,
+            vertex: Standard.vertex,
+            fragment: Standard.fragment,
             uniforms: {
                 tMap: { value: this.#mapDiffuse },
                 uNormalIntensity: { value: this.#normalIntensity },
@@ -200,4 +199,4 @@ class MeshProgram extends Program {
 
 }
 
-export { MeshProgram };
+export { Standard };

@@ -4,7 +4,7 @@ import { Geometry } from '../../core/Geometry.js';
 import { Vec3 } from '../../math/Vec3.js';
 
 import * as GeomUtils from '../../utils/GeomUtils.js';
-import { MeshProgram } from '../../core/programs/MeshProgram.js';
+import { Standard } from '../../core/programs/Standard.js';
 
 class WireMesh extends Mesh {
 
@@ -17,7 +17,7 @@ class WireMesh extends Mesh {
 
         GeomUtils.toNonIndexed(geometry);
 
-        const program = new MeshProgram({
+        const program = new Standard({
             tint: wireColor,
             tintIntensity: wireTint,
         });

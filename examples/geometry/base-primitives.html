@@ -23,8 +23,18 @@
         </script>
 
         <script type="module">
-            import { Renderer, Transform, MeshProgram, Camera, Orbit, Texture, Vec3 } from 'eyegl';
-            import { Mesh, GeomUtils, Box, Cylinder, Plane, Sphere, Torus } from 'eyegl';
+            import {
+                Box, Cylinder, Plane, Sphere, Torus,
+                Camera, Orbit,
+                GeomUtils,
+                Mesh,
+                Renderer,
+                Standard,
+                Texture,
+                Transform,
+                Vec3,
+            } from 'eyegl';
+
             import { Gooey } from 'osui';
 
             const debug = document.getElementById('debugInfo');
@@ -85,7 +95,7 @@
             const scene = new Transform();
             const controls = new Orbit(camera);
 
-            const program = new MeshProgram({
+            const program = new Standard({
                 // cullFace: null,
                 normalIntensity: params.normalIntensity,
                 opacity: params.opacity,

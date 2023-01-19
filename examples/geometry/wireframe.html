@@ -23,8 +23,15 @@
         </script>
 
         <script type="module">
-            import { Renderer, Transform, Texture, MeshProgram } from 'eyegl';
-            import { Camera, Geometry, Mesh } from 'eyegl';
+            import {
+                Camera,
+                Geometry,
+                Mesh,
+                Renderer,
+                Standard,
+                Texture,
+                Transform,
+            } from 'eyegl';
             import { Gooey } from 'osui';
 
             const params = {
@@ -70,7 +77,10 @@
             img.onload = () => (texture.image = img);
             img.src = '../../files/models/json/croissant.jpg';
 
-            const program = new MeshProgram({
+            const program = new Standard({
+                cullFace: false,
+                depthWrite: false,
+                depthTest: false,
                 texture: texture,
                 opacity: 1.0,
                 transparent: true,
