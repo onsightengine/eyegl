@@ -1,10 +1,8 @@
 class Capabilities {
 
-    /**
-     * @param {WebGL2RenderingContext} gl
-     * @param {*} extensions
-     */
-    constructor(gl, extensions) {
+    constructor(renderer) {
+        const gl = renderer.gl;
+        const extensions = renderer.extensions;
 
         // Shaders
         this.maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
@@ -29,8 +27,8 @@ class Capabilities {
         this.maxCubemapSize = gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE);
 
         this.maxAnisotropy = 0;
-        if (extensions.has('EXT_texture_filter_anisotropic')) {
-            const extension = extensions.get('EXT_texture_filter_anisotropic');
+        if (extensions['EXT_texture_filter_anisotropic']) {
+            const extension = extensions['EXT_texture_filter_anisotropic'];
 			this.maxAnisotropy = gl.getParameter(extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         }
 
@@ -88,9 +86,9 @@ class Capabilities {
             &emsp;WebGL Version: ${gl.getParameter(gl.VERSION)} <br />
             &emsp;Shading Language: ${gl.getParameter(gl.SHADING_LANGUAGE_VERSION)} <br />
             `;
-            if (extensions.has('WEBGL_debug_renderer_info')) {
-                out += `&emsp;Unmasked Renderer: ${gl.getParameter(extensions.get('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL)} <br />`;
-                out += `&emsp;Unmasked Vendor: ${gl.getParameter(extensions.get('WEBGL_debug_renderer_info').UNMASKED_VENDOR_WEBGL)} <br />`;
+            if (extensions['WEBGL_debug_renderer_info']) {
+                out += `&emsp;Unmasked Renderer: ${gl.getParameter(extensions['WEBGL_debug_renderer_info'].UNMASKED_RENDERER_WEBGL)} <br />`;
+                out += `&emsp;Unmasked Vendor: ${gl.getParameter(extensions['WEBGL_debug_renderer_info'].UNMASKED_VENDOR_WEBGL)} <br />`;
             }
             return out;
         }

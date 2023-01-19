@@ -7,29 +7,6 @@ import { Triangle } from '../geometries/Triangle.js';
 
 class Post {
 
-    static defaultVertex = /* glsl */ `
-        attribute vec2 uv;
-        attribute vec2 position;
-
-        varying vec2 vUv;
-
-        void main() {
-            vUv = uv;
-            gl_Position = vec4(position, 0, 1);
-        }
-    `;
-
-    static defaultFragment = /* glsl */ `
-        precision highp float;
-
-        uniform sampler2D tDiffuse;
-        varying vec2 vUv;
-
-        void main() {
-            gl_FragColor = texture2D(tDiffuse, vUv);
-        }
-    `;
-
     constructor({
         width,
         height,
@@ -65,8 +42,8 @@ class Post {
     }
 
     addPass({
-        vertex = Post.defaultVertex,
-        fragment = Post.defaultFragment,
+        vertex = defaultVertex,
+        fragment = defaultFragment,
         uniforms = {},
         textureUniform = 'tDiffuse',
         enabled = true
@@ -138,3 +115,28 @@ class Post {
 }
 
 export { Post };
+
+/***** Internal *****/
+
+const defaultVertex = /* glsl */ `
+    attribute vec2 uv;
+    attribute vec2 position;
+
+    varying vec2 vUv;
+
+    void main() {
+        vUv = uv;
+        gl_Position = vec4(position, 0, 1);
+    }
+`;
+
+const defaultFragment = /* glsl */ `
+    precision highp float;
+
+    uniform sampler2D tDiffuse;
+    varying vec2 vUv;
+
+    void main() {
+        gl_FragColor = texture2D(tDiffuse, vUv);
+    }
+`;

@@ -9,8 +9,6 @@
 
 import { Color } from '../math/Color.js';
 import { Vec3 } from '../math/Vec3.js';
-import { Capabilities } from './webgl/Capabilities.js';
-import { Extensions } from './webgl/Extensions.js';
 
 const _tempVec3 = new Vec3();
 
@@ -23,10 +21,7 @@ class Renderer {
         stencil = false,                            // drawing buffer has stencil buffer (at least 8 bits)?
         antialias = false,                          // perform anti-aliasing if possible?
         powerPreference = 'default',                // 'default', 'low-power', 'high-performance'
-        premultipliedAlpha = false,                 // drawing buffer contains colors with pre-multiplied alpha
         preserveDrawingBuffer = false,              // true is slower, mostly not needed
-
-        webgl = 2,                                  // request webgl 1 or 2?
         canvas = document.createElement('canvas'),  // canvas to use
         dpr = 1,                                    // window.devicePixelRatio
         clearColor = new Color(),                   // color to clear COLOR_BUFFER_BIT
@@ -41,7 +36,6 @@ class Renderer {
         this.color = true;
         this.depth = depth;
         this.stencil = stencil;
-        this.premultipliedAlpha = premultipliedAlpha;
         this.clearColor = (clearColor && clearColor instanceof Color) ? clearColor : new Color(clearColor);
         this.clearAlpha = clearAlpha;
 
@@ -63,7 +57,6 @@ class Renderer {
             antialias,
             failIfMajorPerformanceCaveat: true,
             powerPreference,
-            premultipliedAlpha,
             preserveDrawingBuffer,
         };
 
@@ -71,7 +64,7 @@ class Renderer {
         let gl;
 
         // WebGL2 Context
-        if (webgl === 2) gl = canvas.getContext('webgl2', attributes);
+        gl = canvas.getContext('webgl2', attributes);
         if (! gl) console.error('Renderer.constructor: Unable to create WebGL 2 context');
         this.gl = gl;
 
@@ -102,8 +95,23 @@ class Renderer {
 
         // Context
         function initContext(self) {
-            self.extensions = new Extensions(gl);
-            self.capabilities = new Capabilities(gl, self.extensions);
+            self.extensions = {};
+            self.getExtension('EXT_color_buffer_float');
+            self.getExtension('EXT_color_buffer_half_float');
+            self.getExtension('EXT_texture_compression_bptc');
+            self.getExtension('OES_texture_float_linear');
+            self.getExtension('WEBGL_compressed_texture_astc');
+            self.getExtension('WEBGL_compressed_texture_etc1');
+            self.getExtension('WEBGL_compressed_texture_s3tc');
+            self.getExtension('WEBGL_compressed_texture_pvrtc');
+            self.getExtension('WEBGL_multisampled_render_to_texture');
+
+
+            self.maxAnisotropy = 0;
+            if (self.extensions['EXT_texture_filter_anisotropic']) {
+                const extension = self.extensions['EXT_texture_filter_anisotropic'];
+			    this.maxAnisotropy = gl.getParameter(extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+            }
         };
         initContext(this);
 
@@ -122,8 +130,12 @@ class Renderer {
         }.bind(this));
     }
 
-    getExtension(extension, logWarning = true) {
-        return this.extensions.get(extension, logWarning);
+    getExtension(name, logWarning = false) {
+        if (! this.extensions[name]) this.extensions[name] = this.gl.getExtension(name);
+        if (! this.extensions[name] && logWarning) {
+            console.warn(`Renderer.getExtension: ${name} extension not supported.`);
+        }
+        return this.extensions[name];
     }
 
     // Usually (window.innerWidth, window.innerHeight)

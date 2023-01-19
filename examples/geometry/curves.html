@@ -11,15 +11,7 @@
     <body>
         <div class="Info">Curves</div>
 
-        <script async src='https://unpkg.com/es-module-shims@1.5.0/dist/es-module-shims.js'></script>
-		<script type='importmap'>
-            {
-                "imports": {
-                    "eyegl": "../../src/EyeGL.js",
-                    "osui": "../../../osui/build/osui.module.js"
-                }
-            }
-        </script>
+        <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
             import {
@@ -45,7 +37,7 @@
                 thickness3: 2.0,
             }
 
-            const gui = new Gooey('Curves');
+            const gui = new Gooey();
             const folder1 = gui.addFolder('Parameters');
 
             folder1.add(params, 'miter', 0, 1, 0.1, 2).onChange(() => {

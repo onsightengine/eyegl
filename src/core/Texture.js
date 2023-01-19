@@ -48,7 +48,7 @@ class Texture {
         this.premultiplyAlpha = premultiplyAlpha;
         this.unpackAlignment = unpackAlignment;
         this.flipY = flipY;
-        this.anisotropy = Math.min(anisotropy, renderer.capabilities.maxAnisotropy);
+        this.anisotropy = Math.min(anisotropy, renderer.maxAnisotropy);
         this.level = level;
         this.width = width;
         this.height = height;

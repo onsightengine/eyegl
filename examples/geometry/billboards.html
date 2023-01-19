@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Sprite Test</title>
+        <title>EyeGL • Billboards</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -9,18 +9,10 @@
         <link href="../main.css" rel="stylesheet" />
     </head>
     <body>
-        <div class="Info">Sprite Test</div>
+        <div class="Info">Billboards</div>
         <div class="Credits"></div>
 
-        <script async src='https://unpkg.com/es-module-shims@1.5.0/dist/es-module-shims.js'></script>
-		<script type='importmap'>
-            {
-                "imports": {
-                    "eyegl": "../../src/EyeGL.js",
-                    "osui": "../../../osui/build/osui.module.js"
-                }
-            }
-        </script>
+        <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
             import {
@@ -37,12 +29,12 @@
 
             import { Gooey } from 'osui';
 
-            const renderer = new Renderer({ clearColor: new Color('#ff0000') });
+            const renderer = new Renderer({});
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
             const camera = new Camera({ fov: 35 });
-            camera.position.set(0, 0, -12);
+            camera.position.set(20, 20, -40);
             camera.lookAt([0, 0, 0]);
 
             const controls = new Orbit(camera);
@@ -54,50 +46,49 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            //
-
             const params = {
                 count: 1000,
             };
 
             const gui = new Gooey();
-            const folder1 = gui.addFolder();
-
-            folder1.add(params, 'count', 0, 1000);
-
-            //
+            const folder1 = gui.addFolder('Parameters');
+            folder1.add(params, 'count', 0, 10000, 100, 0).onChange(() => buildScene(params.count));
 
             const dragon = new Texture({ src: '../../files/sprites/dragon.png' });
             const unicorn = new Texture({ src: '../../files/sprites/unicorn.png' });
             const kraken = new Texture({ src: '../../files/sprites/kraken.png' });
 
-            const scene = new Transform();
+            let scene;
 
-            const num = 1000;
-            for (let i = 0; i < num; i++) {
+            function buildScene(count) {
+                scene = new Transform();
 
-                let texture;
-                const img = Math.floor(Math.random() * 3);
-                switch (img) {
-                    case 0: texture = dragon; break;
-                    case 1: texture = unicorn; break;
-                    case 2: texture = kraken; break;
+                // add new meshes
+                for (let i = 0; i < count; i++) {
+                    let texture;
+                    const img = Math.floor(Math.random() * 3);
+                    switch (img) {
+                        case 0: texture = dragon; break;
+                        case 1: texture = unicorn; break;
+                        case 2: texture = kraken; break;
+                    }
+
+                    const sprite = new Sprite({ texture });
+                    sprite.position.set(
+                        (Math.random() * 20) - 10,
+                        (Math.random() * 20) - 10,
+                        (Math.random() * 20) - 10,
+                    );
+
+                    scene.addChild(sprite);
                 }
-
-                const sprite = new Sprite({ texture });
-
-                sprite.position.set(
-                    (Math.random() * 4) - 2,
-                    (Math.random() * 4) - 2,
-                    (Math.random() * 4) - 2
-                );
-
-                scene.addChild(sprite);
             }
 
+            buildScene(params.count);
+
+            //
 
             console.log(renderer.programs);
-
 
             //
 

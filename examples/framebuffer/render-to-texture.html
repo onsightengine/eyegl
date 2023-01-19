@@ -12,15 +12,7 @@
         <div class="Info">Render to Texture</div>
         <div class="Credits"></div>
 
-        <script async src='https://unpkg.com/es-module-shims@1.5.0/dist/es-module-shims.js'></script>
-		<script type='importmap'>
-            {
-                "imports": {
-                    "eyegl": "../../src/EyeGL.js",
-                    "osui": "../../../osui/build/osui.module.js"
-                }
-            }
-        </script>
+        <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
             import {
@@ -83,7 +75,6 @@
 
             // Set background for first render to target
             renderer.clearColor.set([ 0.25, 0.25, 0.2 ]);
-            renderer.clearAlpha = 0;
 
             requestAnimationFrame(update);
             function update() {
@@ -93,8 +84,12 @@
                 targetMesh.rotation.y -= 0.005;
                 targetMesh.rotation.x -= 0.01;
 
+                renderer.clearAlpha = 1;
+
                 // Add target property to render call
                 renderer.render({ scene: mesh, camera, target });
+
+                renderer.clearAlpha = 0;
 
                 // Omit target to render to canvas
                 renderer.render({ scene: targetMesh, camera: targetCamera });

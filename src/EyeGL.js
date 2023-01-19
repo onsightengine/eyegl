@@ -17,18 +17,7 @@ export { RenderTarget } from './core/RenderTarget.js';
 export { Texture } from './core/Texture.js';
 export { Transform } from './core/Transform.js';
 
-// Programs
-export { Billboard } from './core/programs/Billboard.js';
-export { Standard } from './core/programs/Standard.js';
-
-// WebGL
-export { Capabilities } from './core/webgl/Capabilities.js';
-export { Extensions } from './core/webgl/Extensions.js';
-
 /***** Extras *****/
-
-// 2D
-export { Sprite } from './extras/2d/Sprite.js';
 
 // Controls
 export { Orbit } from './extras/controls/Orbit.js';
@@ -52,12 +41,18 @@ export { TextureLoader } from './extras/loaders/TextureLoader.js'
 export { Curve } from './extras/objects/Curve.js';
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
 export { Polyline } from './extras/objects/Polyline.js';
+export { Sprite } from './extras/objects/Sprite.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
 
 // Postprocessing
 export { Post } from './extras/post/Post.js';
 
+// Programs
+export { Billboard } from './extras/programs/Billboard.js';
+export { Standard } from './extras/programs/Standard.js';
+
 // Tools
+export { Capabilities } from './extras/tools/Capabilities.js';
 export { Raycast } from './extras/tools/Raycast.js';
 
 /***** Math *****/

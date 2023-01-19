@@ -1,4 +1,4 @@
-import { Billboard } from '../../core/programs/Billboard.js';
+import { Billboard } from '../programs/Billboard.js';
 import { Mesh } from '../../core/Mesh.js';
 import { Plane } from '../geometries/Plane.js';
 

@@ -40,11 +40,9 @@ class Program {
         this.blendFunc = {};
         this.blendEquation = {};
 
-        // Set default blendFunc if transparent flagged
-        if (this.transparent && ! this.blendFunc.src) {
-            if (renderer.premultipliedAlpha) this.setBlendFunc(renderer.gl.ONE, renderer.gl.ONE_MINUS_SRC_ALPHA);
-            else this.setBlendFunc(renderer.gl.SRC_ALPHA, renderer.gl.ONE_MINUS_SRC_ALPHA);
-        }
+        // Default blendFunc
+        this.setBlendFunc(renderer.gl.ONE, renderer.gl.ONE_MINUS_SRC_ALPHA);
+        // this.setBlendFunc(renderer.gl.SRC_ALPHA, renderer.gl.ONE_MINUS_SRC_ALPHA);
 
         // Compile shaders, build program
         this.buildProgram({ vertex, fragment, defines });
@@ -172,8 +170,7 @@ class Program {
         renderer.setFrontFace(this.frontFace);
         renderer.setDepthMask(this.depthWrite);
         renderer.setDepthFunc(this.depthFunc);
-        if (this.blendFunc.src)
-            renderer.setBlendFunc(this.blendFunc.src, this.blendFunc.dst, this.blendFunc.srcAlpha, this.blendFunc.dstAlpha);
+        if (this.blendFunc.src) renderer.setBlendFunc(this.blendFunc.src, this.blendFunc.dst, this.blendFunc.srcAlpha, this.blendFunc.dstAlpha);
         renderer.setBlendEquation(this.blendEquation.modeRGB, this.blendEquation.modeAlpha);
     }
 
