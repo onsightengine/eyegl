@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Base Geometries</title>
+        <title>EyeGL • Base Primitives</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -9,7 +9,8 @@
         <link href="../main.css" rel="stylesheet" />
     </head>
     <body>
-        <div class="Info">Base Geometries</div>
+        <div class="Info">Base Primitives</div>
+        <div class="Credits" id="debugInfo" style="line-height: 150%;"></div>
 
         <script async src='https://unpkg.com/es-module-shims@1.5.0/dist/es-module-shims.js'></script>
 		<script type='importmap'>
@@ -26,30 +27,40 @@
             import { Mesh, GeomUtils, Box, Cylinder, Plane, Sphere, Torus } from 'eyegl';
             import { Gooey } from 'osui';
 
+            const debug = document.getElementById('debugInfo');
+
             const geomTypes = [ 'Box', 'Cylinder', 'Plane', 'Sphere', 'Torus' ];
-            const geoms = {};
-            const meshes = {};
+            const geoms = {}, nonIndexed = {};
+            const meshes = {}, meshesNon = {};
 
             const params = {
                 type: 'Sphere',
                 logToConsole: () => logVisibleGeometry(),
+                indexed: true,
                 flatShading: false,
                 normalIntensity: 0.5,
                 opacity: 1.0,
+                tint: new Vec3(1, 1, 1),
+                tintIntensity: 0.0,
                 wireframe: false,
+                wireIntensity: 0.0,
             }
 
             const gui = new Gooey('Geometries');
             const folder1 = gui.addFolder('Geometry');
             const folder2 = gui.addFolder('Material');
 
-            folder1.add(params, 'type', geomTypes).onChange(() => setVisibleGeometry());
+            folder1.add(params, 'type', geomTypes).onChange(setVisibleGeometry);
             folder1.add(params, 'logToConsole').name('Debug');
+            folder1.add(params, 'indexed').onChange(setVisibleGeometry);
 
             folder2.add(params, 'flatShading').onChange(() => program.flatShading = params.flatShading);
             folder2.add(params, 'normalIntensity', 0.0, 1.0).onChange(() => program.normalIntensity = params.normalIntensity);
             folder2.add(params, 'opacity', 0.0, 1.0).onChange(() => program.opacity = params.opacity);
-            folder2.add(params, 'wireframe').onChange(() => toggleWireframe());
+            folder2.addColor(params, 'tint').onChange(() => program.tint = params.tint);
+            folder2.add(params, 'tintIntensity', 0.0, 1.0).onChange(() => program.tintIntensity = params.tintIntensity);
+            folder2.add(params, 'wireframe').onChange(toggleWireframe);
+            folder2.add(params, 'wireIntensity', 0, 1).onChange(() => program.wireIntensity = params.wireIntensity);
 
             const renderer = new Renderer({ dpr: 2 });
             const gl = renderer.gl;
@@ -84,9 +95,6 @@
 
             /***** Geometries *****/
 
-            const clean = false;
-            const compute = false;
-
             geoms['Box'] = new Box({
                 width: 1.5,
                 height: 1.5,
@@ -112,28 +120,46 @@
                 tubularSegments: 32,
             });
 
+            const CLEAN = true;
+            const COMPUTE = true;
+
             for (const key in geoms) {
                 const geometry = geoms[key];
-                if (clean) GeomUtils.cleanAttributes(geometry);
-                if (compute) GeomUtils.computeVertexNormals(geometry);
-                // GeomUtils.toNonIndexed(boxGeometry);
+                if (CLEAN) GeomUtils.cleanAttributes(geometry);
+                if (COMPUTE) GeomUtils.computeVertexNormals(geometry);
+                meshes[key] = new Mesh({ geometry: geometry, program });
+                scene.addChild(meshes[key]);
+
+                const clone = geometry.clone();
+                GeomUtils.toNonIndexed(clone);
                 // GeomUtils.toIndexed(boxGeometry, [ 'normal' ]);
                 // GeomUtils.computeVertexNormals(boxGeometry);
                 // GeomUtils.toNonIndexed(boxGeometry);
-
-                meshes[key] = new Mesh({ geometry: geometry, program });
-                scene.addChild(meshes[key]);
+                meshesNon[key] = new Mesh({ geometry: clone, program });
+                scene.addChild(meshesNon[key]);
             }
 
             function logVisibleGeometry() {
                 for (const key in meshes) {
-                    if (meshes[key].visible) console.log(meshes[key]);
+                    if (params.indexed && meshes[key].visible) console.log(meshes[key]);
+                    if (! params.indexed && meshesNon[key].visible) console.log(meshesNon[key]);
                 }
             }
 
             function setVisibleGeometry() {
+                let mesh = undefined;
                 for (const key in meshes) {
-                    meshes[key].visible = (params.type === key);
+                    meshes[key].visible = (params.indexed && params.type === key);
+                    meshesNon[key].visible = (! params.indexed && params.type === key);
+                    if (meshes[key].visible) mesh = meshes[key];
+                    if (meshesNon[key].visible) mesh = meshesNon[key];
+                }
+                if (mesh) {
+                    let info = `Mesh: ${params.type} - Indexed: ${params.indexed ? 'Yes' : 'No'}<br />`;
+                    if (params.indexed) info += `Indices: ${mesh.geometry.attributes.index.data.length}<br />`;
+                    info += `Positions: ${mesh.geometry.attributes.position.data.length}<br />`;
+                    info += `Normals: ${mesh.geometry.attributes.normal.data.length}<br />`;
+                    debug.innerHTML = info;
                 }
             }
             setVisibleGeometry();
@@ -141,7 +167,8 @@
             // normal: TRIANGLES, wireframe options: LINES, LINE_STRIP, LINE_LOOP, etc.
             function toggleWireframe() {
                 for (const key in meshes) {
-                    meshes[key].mode = (meshes[key].mode === gl.TRIANGLES) ? gl.LINE_STRIP : gl.TRIANGLES;
+                    meshes[key].mode = (params.wireframe) ? gl.LINE_STRIP : gl.TRIANGLES;
+                    meshesNon[key].mode = (params.wireframe) ? gl.LINE_STRIP : gl.TRIANGLES;
                 }
             }
 

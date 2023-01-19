@@ -300,6 +300,22 @@ class Geometry {
         }
     }
 
+    /***** Copy / Clone *****/
+
+    clone() {
+        const newAttributes = {};
+        for (const attributeName in this.attributes) {
+            const attr = this.attributes[attributeName];
+            const array2 = new attr.data.constructor(attr.data);
+            newAttributes[attributeName] = {
+                size: attr.size,
+                data: array2
+            };
+        }
+        const geometry = new Geometry(newAttributes);
+        return geometry;
+    }
+
 }
 
 export { Geometry };

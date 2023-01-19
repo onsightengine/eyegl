@@ -35,6 +35,10 @@ class MeshProgram extends Program {
 
         uniform float uNormalIntensity;
         uniform float uOpacity;
+        uniform vec3 uTint;
+        uniform float uTintIntensity;
+        uniform float uWireIntensity;
+
         uniform sampler2D tMap;
 
         #ifdef FLAT_SHADED
@@ -49,40 +53,45 @@ class MeshProgram extends Program {
         layout(location = 0) out highp vec4 pc_fragColor;
 
         void main() {
+            float alpha = uOpacity;
 
-
-            vec3 bary = vBary;
-
-            // vec3 color = normalize(vNormal); // vec3(0);
-            // float alpha = 1.0;
-
-            // // Line thickness - in pixels
-            // float width = 5.0 * 0.5;
-            // vec3 d = fwidth(bary);
-            // vec3 s = smoothstep(d * (width + 0.5), d * (width - 0.5), bary);
-            // alpha *= max(max(s.x, s.y), s.z);
-
-            // // Dashes
-            // alpha *= step(0.0, sin(max(bary.x, bary.y) * 3.14 * 5.0));
-
-            // // Back face shading
-            // color = mix(vec3(1, 0, 0), color, vec3(gl_FrontFacing));
-            // alpha = mix(alpha * 0.1 + 0.02, alpha, float(gl_FrontFacing));
-
-            // pc_fragColor.rgb = color;
-            // pc_fragColor.a = alpha;
-
-
+            // ----- Normal Tint -----
             vec3 normal = normalize(vNormal);
-
             vec3 tex = texture(tMap, vUv).rgb;
             vec3 light = normalize(vec3(0.5, 1.0, -0.3));
             float shading = dot(normal, light) * 0.15;
-            vec3 diffuse = mix(tex + shading, normal, uNormalIntensity);
+            vec3 diffuse = tex + shading;
 
-            pc_fragColor = vec4(diffuse, uOpacity);
+            // ----- Color Tint -----
+            diffuse = mix(diffuse, uTint, uTintIntensity);
 
-            // pc_fragColor = vec4(normalize(vNormal), 1.0);
+            // ----- Normal Tint -----
+            diffuse = mix(diffuse, normal, uNormalIntensity);
+
+            // ----- Barycentric -----
+            vec3 baryDiffuse = diffuse;
+            float baryAlpha = 1.0;
+
+            float lineWidth = 1.0; // line thickness - in pixels
+            float lineHalf = lineWidth / 2.0;
+            vec3 d = fwidth(vBary);
+            vec3 s = smoothstep(d * (lineWidth + lineHalf), d * (lineWidth - lineHalf), vBary);
+            baryAlpha *= max(max(s.x, s.y), s.z);
+
+            // // Dashes
+            // baryAlpha *= step(0.0, sin(max(vBary.x, vBary.y) * 3.14 * 5.0));
+
+            // Back face shading
+            baryDiffuse = mix(vec3(0, 0, 0), baryDiffuse, vec3(gl_FrontFacing));
+            baryAlpha = mix(baryAlpha * 0.1 + 0.02, baryAlpha, float(gl_FrontFacing));
+
+            diffuse = mix(diffuse, baryDiffuse, uWireIntensity);
+            alpha = mix(alpha, baryAlpha, uWireIntensity);
+            if (alpha < 0.05) discard;
+
+            // ----- Output -----
+            pc_fragColor = vec4(diffuse, alpha);
+
         }
     `;
 
@@ -91,12 +100,18 @@ class MeshProgram extends Program {
     #mapDiffuse = 0;
     #normalIntensity = 0.0;
     #opacity = 1.0;
+    #tint = [ 1, 1, 1];
+    #tintIntensity = 0.0;
+    #wireIntensity = 0.0;
 
     constructor({
         flatShading = false,
         normalIntensity = 0.0,
         opacity = 1.0,
         texture = 0,
+        tint = [ 1, 1, 1 ],
+        tintIntensity = 0.0,
+        wireIntensity = 0.0,
         ...programProps
     } = {}) {
 
@@ -105,9 +120,13 @@ class MeshProgram extends Program {
             vertex: MeshProgram.vertex,
             fragment: MeshProgram.fragment,
             uniforms: {
+                tMap: { value: texture },
+
                 uNormalIntensity: { value: normalIntensity },
                 uOpacity: { value: opacity },
-                tMap: { value: texture },
+                uTint: { value: tint },
+                uTintIntensity: { value: tintIntensity },
+                uWireIntensity: { value: wireIntensity },
             },
             defines: {
                 FLAT_SHADED: flatShading,
@@ -116,7 +135,11 @@ class MeshProgram extends Program {
 
         this.#flatShading = flatShading;
         this.#mapDiffuse = texture;
+        this.#normalIntensity = normalIntensity
         this.#opacity = opacity
+        this.#tint = tint
+        this.#tintIntensity = tintIntensity
+        this.#wireIntensity = wireIntensity
     }
 
     rebuildProgram() {
@@ -124,9 +147,12 @@ class MeshProgram extends Program {
             vertex: MeshProgram.vertex,
             fragment: MeshProgram.fragment,
             uniforms: {
+                tMap: { value: this.#mapDiffuse },
                 uNormalIntensity: { value: this.#normalIntensity },
                 uOpacity: { value: this.#opacity },
-                tMap: { value: this.#mapDiffuse },
+                uTint: { value: this.#tint },
+                uTintIntensity: { value: this.#tintIntensity },
+                uWireIntensity: { value: this.#wireIntensity },
             },
             defines: {
                 FLAT_SHADED: this.#flatShading,
@@ -152,6 +178,24 @@ class MeshProgram extends Program {
 
     set opacity(opacity) {
         this.uniforms.uOpacity.value = opacity;
+    }
+
+    get tint() { return this.#tint; }
+
+    set tint(tint) {
+        this.uniforms.uTint.value = tint;
+    }
+
+    get tintIntensity() { return this.#tintIntensity; }
+
+    set tintIntensity(tintIntensity) {
+        this.uniforms.uTintIntensity.value = tintIntensity;
+    }
+
+    get wireIntensity() { return this.#wireIntensity; }
+
+    set wireIntensity(wireIntensity) {
+        this.uniforms.uWireIntensity.value = wireIntensity;
     }
 
 }

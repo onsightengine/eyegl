@@ -16,18 +16,26 @@
 		<script type='importmap'>
             {
                 "imports": {
-                    "eyegl": "../../src/EyeGL.js"
+                    "eyegl": "../../src/EyeGL.js",
+                    "osui": "../../../osui/build/osui.module.js"
                 }
             }
         </script>
 
         <script type="module">
             import { Renderer, Transform, Texture, MeshProgram } from 'eyegl';
-            import { Camera, Geometry, Mesh, WireMesh } from 'eyegl';
+            import { Camera, Geometry, Mesh } from 'eyegl';
+            import { Gooey } from 'osui';
+
+            const params = {
+                wireframe: 0.5,
+            }
+
+            const gui = new Gooey('Wireframe');
+            const folder1 = gui.addFolder('Material');
+            folder1.add(params, 'wireframe', 0, 1).onChange(() => program.wireIntensity = params.wireframe);
 
             const renderer = new Renderer({ dpr: 2 });
-
-            /** @type {WebGL2RenderingContext} */
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
@@ -64,11 +72,12 @@
 
             const program = new MeshProgram({
                 texture: texture,
-                opacity: 0.95,
-                transparent: true
+                opacity: 1.0,
+                transparent: true,
+                wireIntensity: params.wireframe,
             });
 
-            let lineLoopMesh, standardMesh, wireframeMesh;
+            let lineLoopMesh, standardMesh;
             loadModel();
             async function loadModel() {
                 const data = await (await fetch(`../../files/models/json/croissant.json`)).json();
@@ -82,17 +91,12 @@
                 // Using gl.LINE_STRIP, LINES, LINE_LOOP
                 lineLoopMesh = new Mesh({ mode: gl.LINE_STRIP, geometry: geometry, program: program });
                 lineLoopMesh.setParent(scene);
-                lineLoopMesh.position.y = 1.5;
+                lineLoopMesh.position.y = 0.75;
 
                 // Using gl.TRIANGLES
                 standardMesh = new Mesh({ mode: gl.TRIANGLES, geometry: geometry, program: program });
                 standardMesh.setParent(scene);
-                standardMesh.position.y = 0;
-
-                // // Using WireMesh (gl.LINES)
-                wireframeMesh = new WireMesh({ geometry: geometry });
-                wireframeMesh.setParent(scene);
-                wireframeMesh.position.y = -1.5;
+                standardMesh.position.y = -0.75;
             }
 
             requestAnimationFrame(update);
@@ -101,7 +105,6 @@
 
                 if (lineLoopMesh) lineLoopMesh.rotation.y -= 0.005;
                 if (standardMesh) standardMesh.rotation.y -= 0.005;
-                if (wireframeMesh) wireframeMesh.rotation.y -= 0.005;
 
                 renderer.render({ scene, camera });
             }

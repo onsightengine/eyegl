@@ -177,9 +177,9 @@ class Program {
 
     use({ flipFaces = false } = {}) {
         let textureUnit = -1;
-        const programActive = renderer.state.currentProgram === this.id;
 
         // Avoid gl call if program already in use
+        const programActive = (renderer.state.currentProgram === this.id);
         if (! programActive) {
             renderer.gl.useProgram(this.program);
             renderer.state.currentProgram = this.id;
