@@ -6,9 +6,13 @@
 
 Fast WebGL 2 graphics library built for games.
 
+<br />
+
 ## Status
 
 Under heavy development, more info to come...
+
+<br />
 
 ## Credits
 
@@ -19,4 +23,4 @@ Thanks to these libraries / repos:
 - [redg](https://github.com/redcamel/RedGL2)
 - [twgl](https://github.com/greggman/twgl.js/)
 
-<br>
+<br />
