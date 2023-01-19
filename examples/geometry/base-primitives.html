@@ -87,10 +87,7 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const texture = new Texture();
-            const img = new Image();
-            img.onload = () => (texture.image = img);
-            img.src = '../../files/textures/uv-test-col.png';
+            const texture = new Texture({ src: '../../files/textures/uv-test-col.png' });
 
             const scene = new Transform();
             const controls = new Orbit(camera);

@@ -1,7 +1,7 @@
 import { Program } from '../Program.js';
 import { Texture } from '../Texture.js';
 
-class Sprite extends Program {
+class Billboard extends Program {
 
     static vertex = /* glsl */ `#version 300 es
         in vec2 uv;
@@ -13,12 +13,21 @@ class Sprite extends Program {
         uniform mat4 modelViewMatrix;
         uniform mat4 projectionMatrix;
 
+        out vec3 vNormal;
         out vec2 vUv;
 
         void main() {
             vUv = uv;
             vNormal = normalize(normalMatrix * normal);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+
+
+            vec4 mvPosition = modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
+            mvPosition.xy += position.xy;
+            gl_Position = projectionMatrix * mvPosition;
+
+            // vec3 pos = position;
+            // gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
         }
     `;
 
@@ -34,11 +43,14 @@ class Sprite extends Program {
         void main() {
 
             // ----- Diffuse -----
-            vec3 tex = texture(tDiffuse, vUv).rgb;
+            vec4 tex = texture(tDiffuse, vUv);
+
+            vec3 diffuse = tex.rgb;
+            float alpha = tex.a;
 
             // ----- Output -----
+            if (alpha < 0.01) discard;
             pc_fragColor = vec4(diffuse, alpha);
-
         }
     `;
 
@@ -48,8 +60,8 @@ class Sprite extends Program {
     } = {}) {
         super({
             ...programProps,
-            vertex: Standard.vertex,
-            fragment: Standard.fragment,
+            vertex: Billboard.vertex,
+            fragment: Billboard.fragment,
             uniforms: {
                 tDiffuse: { value: texture },
             },
@@ -59,4 +71,4 @@ class Sprite extends Program {
 
 }
 
-export { Sprite };
+export { Billboard };

@@ -7,6 +7,29 @@ import { Triangle } from '../geometries/Triangle.js';
 
 class Post {
 
+    static defaultVertex = /* glsl */ `
+        attribute vec2 uv;
+        attribute vec2 position;
+
+        varying vec2 vUv;
+
+        void main() {
+            vUv = uv;
+            gl_Position = vec4(position, 0, 1);
+        }
+    `;
+
+    static defaultFragment = /* glsl */ `
+        precision highp float;
+
+        uniform sampler2D tDiffuse;
+        varying vec2 vUv;
+
+        void main() {
+            gl_FragColor = texture2D(tDiffuse, vUv);
+        }
+    `;
+
     constructor({
         width,
         height,
@@ -41,7 +64,13 @@ class Post {
         this.resize({ width, height, dpr });
     }
 
-    addPass({ vertex = defaultVertex, fragment = defaultFragment, uniforms = {}, textureUniform = 'tDiffuse', enabled = true } = {}) {
+    addPass({
+        vertex = Post.defaultVertex,
+        fragment = Post.defaultFragment,
+        uniforms = {},
+        textureUniform = 'tDiffuse',
+        enabled = true
+    } = {}) {
         uniforms[textureUniform] = { value: this.fbo.read.texture };
 
         const program = new Program({ vertex, fragment, uniforms });
@@ -81,7 +110,7 @@ class Post {
     render({ scene, camera, texture, target = null, update = true, sort = true, frustumCull = true }) {
         const enabledPasses = this.passes.filter((pass) => pass.enabled);
 
-        if (!texture) {
+        if (! texture) {
             renderer.render({
                 scene,
                 camera,
@@ -109,28 +138,3 @@ class Post {
 }
 
 export { Post };
-
-/***** Internal *****/
-
-const defaultVertex = /* glsl */ `
-    attribute vec2 uv;
-    attribute vec2 position;
-
-    varying vec2 vUv;
-
-    void main() {
-        vUv = uv;
-        gl_Position = vec4(position, 0, 1);
-    }
-`;
-
-const defaultFragment = /* glsl */ `
-    precision highp float;
-
-    uniform sampler2D tDiffuse;
-    varying vec2 vUv;
-
-    void main() {
-        gl_FragColor = texture2D(tDiffuse, vUv);
-    }
-`;

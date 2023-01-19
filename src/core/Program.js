@@ -103,15 +103,17 @@ class Program {
             return console.warn(renderer.gl.getProgramInfoLog(this.program));
         }
 
+        renderer.programs[this.id] = this.program;
+
         // Remove shader once linked
         renderer.gl.deleteShader(vertexShader);
         renderer.gl.deleteShader(fragmentShader);
 
         // Get active uniform locations
         this.uniformLocations = new Map();
-        let numUniforms = renderer.gl.getProgramParameter(this.program, renderer.gl.ACTIVE_UNIFORMS);
+        const numUniforms = renderer.gl.getProgramParameter(this.program, renderer.gl.ACTIVE_UNIFORMS);
         for (let uIndex = 0; uIndex < numUniforms; uIndex++) {
-            let uniform = renderer.gl.getActiveUniform(this.program, uIndex);
+            const uniform = renderer.gl.getActiveUniform(this.program, uIndex);
             this.uniformLocations.set(uniform, renderer.gl.getUniformLocation(this.program, uniform.name));
 
             // split uniforms' names to separate array and struct declarations

@@ -55,15 +55,9 @@
 
             const scene = new Transform();
 
-            const textureDiffuse = new Texture();
-            const imgDiffuse = new Image();
-            imgDiffuse.onload = () => (textureDiffuse.image = imgDiffuse);
-            imgDiffuse.src = '../../files/textures/granite-diffuse.jpg';
-
+            const textureDiffuse = new Texture({ src: '../../files/textures/granite-diffuse.jpg' });
             const textureNormal = new Texture();
-            const imgNormal = new Image();
-            imgNormal.onload = () => (textureNormal.image = imgNormal);
-            imgNormal.src = '../../files/textures/granite-normal.jpg';
+            const imgNormal = new Image({ src: '../../files/textures/granite-normal.jpg' });
 
             // const program = new Program({
             //     vertex: vertex300,

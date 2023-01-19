@@ -91,10 +91,7 @@
 
             const scene = new Transform();
 
-            const texture = new Texture();
-            const img = new Image();
-            img.onload = () => (texture.image = img);
-            img.src = '../../files/models/json/fox.jpg';
+            const texture = new Texture({ src: '../../files/models/json/fox.jpg' });
 
             const program = new Program({
                 vertex,

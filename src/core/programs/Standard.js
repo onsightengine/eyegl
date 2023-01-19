@@ -72,12 +72,13 @@ class Standard extends Program {
             vec3 normal = normalize(plainNormal * textNormal);
 
             // ----- Diffuse -----
-            vec3 tex = texture(tDiffuse, vUv).rgb;
+            vec4 tex = texture(tDiffuse, vUv);
+            alpha *= tex.a;
 
             vec3 light = normalize(vec3(sin(uTime), 1.0, cos(uTime)));
             float shading = dot(normal, light) * 0.25;
 
-            vec3 diffuse = tex + shading;
+            vec3 diffuse = tex.rgb + shading;
 
             // ----- Color Tint -----
             diffuse = mix(diffuse, uTint, uTintIntensity);

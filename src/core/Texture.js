@@ -11,6 +11,7 @@ class Texture {
 
     constructor({
         image,
+        src,
         target = renderer.gl.TEXTURE_2D,
         type = renderer.gl.UNSIGNED_BYTE,
         format = renderer.gl.RGBA,
@@ -28,6 +29,8 @@ class Texture {
         width, // used for RenderTargets or Data Textures
         height = width,
     } = {}) {
+        const self = this;
+
         this.isTexture = true;
 
         this.id = Texture.#ID++;
@@ -55,6 +58,12 @@ class Texture {
             image: null,
         };
 
+        if (! image && src) {
+            const img = new Image();
+            img.onload = () => (self.image = img);
+            img.src = src;
+        }
+
         // Alias for state store to avoid redundant calls for global state
         renderer.glState = renderer.state;
 
@@ -70,12 +79,14 @@ class Texture {
     bind() {
         // Already bound to active texture unit
         if (renderer.glState.textureUnits[renderer.glState.activeTextureUnit] === this.id) return;
+
+        // Bind
         renderer.gl.bindTexture(this.target, this.texture);
         renderer.glState.textureUnits[renderer.glState.activeTextureUnit] = this.id;
     }
 
     update(textureUnit = 0) {
-        const needsUpdate = !(this.image === this.store.image && !this.needsUpdate);
+        const needsUpdate = ! (this.image === this.store.image && ! this.needsUpdate);
 
         // Make sure that texture is bound to its texture unit
         if (needsUpdate || renderer.glState.textureUnits[textureUnit] !== this.id) {
@@ -84,7 +95,7 @@ class Texture {
             this.bind();
         }
 
-        if (!needsUpdate) return;
+        if (! needsUpdate) return;
         this.needsUpdate = false;
 
         if (this.flipY !== renderer.glState.flipY) {
@@ -200,6 +211,7 @@ class Texture {
                 renderer.gl.texImage2D(this.target, 0, renderer.gl.RGBA, 1, 1, 0, renderer.gl.RGBA, renderer.gl.UNSIGNED_BYTE, emptyPixel);
             }
         }
+
         this.store.image = this.image;
     }
 }

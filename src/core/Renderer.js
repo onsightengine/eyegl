@@ -97,6 +97,10 @@ class Renderer {
         this.state.uniformLocations = new Map();
         this.state.currentProgram = null;
 
+        // Programs
+        this.programs = {};
+
+        // Context
         function initContext(self) {
             self.extensions = new Extensions(gl);
             self.capabilities = new Capabilities(gl, self.extensions);
@@ -261,7 +265,12 @@ class Renderer {
         }
     }
 
-    getRenderList({ scene, camera, frustumCull, sort } = {}) {
+    getRenderList({
+        scene,
+        camera,
+        frustumCull,
+        sort
+    } = {}) {
         if (camera && frustumCull) camera.updateFrustum();
 
         // Get visible objects
@@ -318,6 +327,7 @@ class Renderer {
         sort = true,
         frustumCull = true,
         clear = true,
+        draw = true,
     } = {}) {
         if (this._contextLost) return;
 
@@ -356,9 +366,13 @@ class Renderer {
         const renderList = this.getRenderList({ scene, camera, frustumCull, sort });
 
         // Render objects
-        renderList.forEach((node) => {
-            node.draw({ camera });
-        });
+        if (draw) {
+            renderList.forEach((node) => {
+                node.draw({ camera });
+            });
+        }
+
+        return renderList;
     }
 
 }

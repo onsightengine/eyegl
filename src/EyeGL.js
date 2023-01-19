@@ -18,6 +18,7 @@ export { Texture } from './core/Texture.js';
 export { Transform } from './core/Transform.js';
 
 // Programs
+export { Billboard } from './core/programs/Billboard.js';
 export { Standard } from './core/programs/Standard.js';
 
 // WebGL
@@ -25,6 +26,9 @@ export { Capabilities } from './core/webgl/Capabilities.js';
 export { Extensions } from './core/webgl/Extensions.js';
 
 /***** Extras *****/
+
+// 2D
+export { Sprite } from './extras/2d/Sprite.js';
 
 // Controls
 export { Orbit } from './extras/controls/Orbit.js';

@@ -1,46 +1,30 @@
-import { Transform } from './Transform.js';
-import { Mat3 } from '../math/Mat3.js';
-import { Mat4 } from '../math/Mat4.js';
+import { Billboard } from '../../core/programs/Billboard.js';
+import { Mesh } from '../../core/Mesh.js';
+import { Plane } from '../geometries/Plane.js';
 
-class Mesh extends Transform {
+class Sprite extends Mesh {
 
-    static #ID = 1;
+    static #geometry;
+    static #program;
 
     constructor({
-        geometry,
-        program,
-        mode = renderer.gl.TRIANGLES,
-        frustumCulled = true,
-        renderOrder = 0
+        texture,
     } = {}) {
-        super();
-        this.isMesh = true;
+        if (! Sprite.#geometry) Sprite.#geometry = new Plane();
+        if (! Sprite.#program) {
+            Sprite.#program = new Billboard({
+                cullFace: null,
+                transparent: true,
+            });
+        }
 
-        if (! renderer) console.error(`Mesh.constructor: Renderer not found`);
-        this.id = Mesh.#ID++;
-        this.geometry = geometry;
-        this.program = program;
-        this.mode = mode;
+        super({
+            geometry: Sprite.#geometry,
+            program: Sprite.#program,
+        });
+        this.isSprite = true;
 
-        // Used to skip frustum culling
-        this.frustumCulled = frustumCulled;
-
-        // Override sorting to force an order
-        this.renderOrder = renderOrder;
-        this.modelViewMatrix = new Mat4();
-        this.normalMatrix = new Mat3();
-        this.beforeRenderCallbacks = [];
-        this.afterRenderCallbacks = [];
-    }
-
-    onBeforeRender(f) {
-        this.beforeRenderCallbacks.push(f);
-        return this;
-    }
-
-    onAfterRender(f) {
-        this.afterRenderCallbacks.push(f);
-        return this;
+        this.texture = texture;
     }
 
     draw({ camera } = {}) {
@@ -72,16 +56,14 @@ class Mesh extends Transform {
             this.program.uniforms.normalMatrix.value = this.normalMatrix;
         }
 
-        // Determine if faces need to be flipped (when mesh scaled negatively)
-        const flipFaces = this.program.cullFace && this.worldMatrix.determinant() < 0;
-
-        // Set program and render
-        this.program.use({ flipFaces });
+        this.program.uniforms.tDiffuse.value = this.texture;
+        this.program.use();
         this.geometry.draw({ mode: this.mode, program: this.program });
 
         // After render
         this.afterRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
     }
+
 }
 
-export { Mesh };
+export { Sprite };
