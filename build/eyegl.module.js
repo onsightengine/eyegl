@@ -971,6 +971,22 @@ class Geometry {
         }
     }
 
+    /***** Copy / Clone *****/
+
+    clone() {
+        const newAttributes = {};
+        for (const attributeName in this.attributes) {
+            const attr = this.attributes[attributeName];
+            const array2 = new attr.data.constructor(attr.data);
+            newAttributes[attributeName] = {
+                size: attr.size,
+                data: array2
+            };
+        }
+        const geometry = new Geometry(newAttributes);
+        return geometry;
+    }
+
 }
 
 // TODO: upload empty texture if null ? maybe not
@@ -1152,9 +1168,9 @@ class Program {
 
     use({ flipFaces = false } = {}) {
         let textureUnit = -1;
-        const programActive = renderer.state.currentProgram === this.id;
 
         // Avoid gl call if program already in use
+        const programActive = (renderer.state.currentProgram === this.id);
         if (! programActive) {
             renderer.gl.useProgram(this.program);
             renderer.state.currentProgram = this.id;
@@ -1625,9 +1641,9 @@ class Extensions {
 		};
 
         // Public extension getter
-        this.get = function(name) {
+        this.get = function(name, logWarning = true) {
 			const extension = getExtension(name);
-			if (extension === null) console.warn(`Extensions: ${name} extension not supported.`);
+			if (! extension && logWarning) console.warn(`Extensions: ${name} extension not supported.`);
 			return extension;
 		};
     }
@@ -1747,8 +1763,8 @@ class Renderer {
         }.bind(this));
     }
 
-    getExtension(extension) {
-        return this.extensions.get(extension);
+    getExtension(extension, logWarning = true) {
+        return this.extensions.get(extension, logWarning);
     }
 
     // Usually (window.innerWidth, window.innerHeight)
@@ -2146,7 +2162,7 @@ var Vec4Func$1 = /*#__PURE__*/Object.freeze({
  * @param {Quat} out the receiving quaternion
  * @returns {Quat} out
  */
-function identity$2(out) {
+function identity$3(out) {
     out[0] = 0;
     out[1] = 0;
     out[2] = 0;
@@ -2549,7 +2565,7 @@ const normalize$1 = normalize$2;
 
 var QuatFunc$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    identity: identity$2,
+    identity: identity$3,
     setAxisAngle: setAxisAngle,
     multiply: multiply$3,
     rotateX: rotateX,
@@ -2615,7 +2631,7 @@ class Quat extends Array {
     }
 
     identity() {
-        identity$2(this);
+        identity$3(this);
         this.onChange();
         return this;
     }
@@ -2786,7 +2802,7 @@ function set$2(out, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, 
  * @param {Mat4} out the receiving matrix
  * @returns {Mat4} out
  */
-function identity$1(out) {
+function identity$2(out) {
     out[0] = 1;
     out[1] = 0;
     out[2] = 0;
@@ -3666,7 +3682,7 @@ var Mat4Func$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
     copy: copy$2,
     set: set$2,
-    identity: identity$1,
+    identity: identity$2,
     transpose: transpose$1,
     invert: invert$1,
     determinant: determinant$1,
@@ -3775,7 +3791,7 @@ class Mat4 extends Array {
     }
 
     identity() {
-        identity$1(this);
+        identity$2(this);
         return this;
     }
 
@@ -3958,7 +3974,7 @@ var EulerFunc$1 = /*#__PURE__*/Object.freeze({
     fromRotationMatrix: fromRotationMatrix
 });
 
-const tempMat4$1 = new Mat4();
+const tempMat4$2 = new Mat4();
 
 class Euler extends Array {
 
@@ -4026,8 +4042,8 @@ class Euler extends Array {
     }
 
     fromQuaternion(q, order = this.order) {
-        tempMat4$1.fromQuaternion(q);
-        return this.fromRotationMatrix(tempMat4$1, order);
+        tempMat4$2.fromQuaternion(q);
+        return this.fromRotationMatrix(tempMat4$2, order);
     }
 
     toArray(a = [], o = 0) {
@@ -4400,7 +4416,7 @@ function set$1(out, m00, m01, m02, m10, m11, m12, m20, m21, m22) {
  * @param {Mat3} out the receiving matrix
  * @returns {Mat3} out
  */
-function identity(out) {
+function identity$1(out) {
     out[0] = 1;
     out[1] = 0;
     out[2] = 0;
@@ -4799,7 +4815,7 @@ var Mat3Func$1 = /*#__PURE__*/Object.freeze({
     fromQuat: fromQuat,
     copy: copy$1,
     set: set$1,
-    identity: identity,
+    identity: identity$1,
     transpose: transpose,
     invert: invert,
     determinant: determinant,
@@ -4852,7 +4868,7 @@ class Mat3 extends Array {
     }
 
     identity() {
-        identity(this);
+        identity$1(this);
         return this;
     }
 
@@ -5321,7 +5337,7 @@ class RenderTarget {
     }
 }
 
-class MeshProgram extends Program {
+class Standard extends Program {
 
     static vertex = /* glsl */ `#version 300 es
         in vec2 uv;
@@ -5356,6 +5372,10 @@ class MeshProgram extends Program {
 
         uniform float uNormalIntensity;
         uniform float uOpacity;
+        uniform vec3 uTint;
+        uniform float uTintIntensity;
+        uniform float uWireIntensity;
+
         uniform sampler2D tMap;
 
         #ifdef FLAT_SHADED
@@ -5370,40 +5390,45 @@ class MeshProgram extends Program {
         layout(location = 0) out highp vec4 pc_fragColor;
 
         void main() {
+            float alpha = uOpacity;
 
-
-            vec3 bary = vBary;
-
-            // vec3 color = normalize(vNormal); // vec3(0);
-            // float alpha = 1.0;
-
-            // // Line thickness - in pixels
-            // float width = 5.0 * 0.5;
-            // vec3 d = fwidth(bary);
-            // vec3 s = smoothstep(d * (width + 0.5), d * (width - 0.5), bary);
-            // alpha *= max(max(s.x, s.y), s.z);
-
-            // // Dashes
-            // alpha *= step(0.0, sin(max(bary.x, bary.y) * 3.14 * 5.0));
-
-            // // Back face shading
-            // color = mix(vec3(1, 0, 0), color, vec3(gl_FrontFacing));
-            // alpha = mix(alpha * 0.1 + 0.02, alpha, float(gl_FrontFacing));
-
-            // pc_fragColor.rgb = color;
-            // pc_fragColor.a = alpha;
-
-
+            // ----- Normal Tint -----
             vec3 normal = normalize(vNormal);
-
             vec3 tex = texture(tMap, vUv).rgb;
             vec3 light = normalize(vec3(0.5, 1.0, -0.3));
             float shading = dot(normal, light) * 0.15;
-            vec3 diffuse = mix(tex + shading, normal, uNormalIntensity);
+            vec3 diffuse = tex + shading;
 
-            pc_fragColor = vec4(diffuse, uOpacity);
+            // ----- Color Tint -----
+            diffuse = mix(diffuse, uTint, uTintIntensity);
 
-            // pc_fragColor = vec4(normalize(vNormal), 1.0);
+            // ----- Normal Tint -----
+            diffuse = mix(diffuse, normal, uNormalIntensity);
+
+            // ----- Barycentric -----
+            vec3 baryDiffuse = diffuse;
+            float baryAlpha = 1.0;
+
+            float lineWidth = 1.0; // line thickness - in pixels
+            float lineHalf = lineWidth / 2.0;
+            vec3 d = fwidth(vBary);
+            vec3 s = smoothstep(d * (lineWidth + lineHalf), d * (lineWidth - lineHalf), vBary);
+            baryAlpha *= max(max(s.x, s.y), s.z);
+
+            // // Dashes
+            // baryAlpha *= step(0.0, sin(max(vBary.x, vBary.y) * 3.14 * 5.0));
+
+            // Back face shading
+            baryDiffuse = mix(vec3(0, 0, 0), baryDiffuse, vec3(gl_FrontFacing));
+            baryAlpha = mix(baryAlpha * 0.1 + 0.02, baryAlpha, float(gl_FrontFacing));
+
+            diffuse = mix(diffuse, baryDiffuse, uWireIntensity);
+            alpha = mix(alpha, baryAlpha, uWireIntensity);
+            if (alpha < 0.01) discard;
+
+            // ----- Output -----
+            pc_fragColor = vec4(diffuse, alpha);
+
         }
     `;
 
@@ -5412,23 +5437,32 @@ class MeshProgram extends Program {
     #mapDiffuse = 0;
     #normalIntensity = 0.0;
     #opacity = 1.0;
+    #tint = [ 1, 1, 1];
+    #tintIntensity = 0.0;
+    #wireIntensity = 0.0;
 
     constructor({
         flatShading = false,
         normalIntensity = 0.0,
         opacity = 1.0,
         texture = 0,
+        tint = [ 1, 1, 1 ],
+        tintIntensity = 0.0,
+        wireIntensity = 0.0,
         ...programProps
     } = {}) {
 
         super({
             ...programProps,
-            vertex: MeshProgram.vertex,
-            fragment: MeshProgram.fragment,
+            vertex: Standard.vertex,
+            fragment: Standard.fragment,
             uniforms: {
+                tMap: { value: texture },
                 uNormalIntensity: { value: normalIntensity },
                 uOpacity: { value: opacity },
-                tMap: { value: texture },
+                uTint: { value: tint },
+                uTintIntensity: { value: tintIntensity },
+                uWireIntensity: { value: wireIntensity },
             },
             defines: {
                 FLAT_SHADED: flatShading,
@@ -5437,17 +5471,24 @@ class MeshProgram extends Program {
 
         this.#flatShading = flatShading;
         this.#mapDiffuse = texture;
+        this.#normalIntensity = normalIntensity;
         this.#opacity = opacity;
+        this.#tint = tint;
+        this.#tintIntensity = tintIntensity;
+        this.#wireIntensity = wireIntensity;
     }
 
     rebuildProgram() {
         this.buildProgram({
-            vertex: MeshProgram.vertex,
-            fragment: MeshProgram.fragment,
+            vertex: Standard.vertex,
+            fragment: Standard.fragment,
             uniforms: {
+                tMap: { value: this.#mapDiffuse },
                 uNormalIntensity: { value: this.#normalIntensity },
                 uOpacity: { value: this.#opacity },
-                tMap: { value: this.#mapDiffuse },
+                uTint: { value: this.#tint },
+                uTintIntensity: { value: this.#tintIntensity },
+                uWireIntensity: { value: this.#wireIntensity },
             },
             defines: {
                 FLAT_SHADED: this.#flatShading,
@@ -5473,6 +5514,24 @@ class MeshProgram extends Program {
 
     set opacity(opacity) {
         this.uniforms.uOpacity.value = opacity;
+    }
+
+    get tint() { return this.#tint; }
+
+    set tint(tint) {
+        this.uniforms.uTint.value = tint;
+    }
+
+    get tintIntensity() { return this.#tintIntensity; }
+
+    set tintIntensity(tintIntensity) {
+        this.uniforms.uTintIntensity.value = tintIntensity;
+    }
+
+    get wireIntensity() { return this.#wireIntensity; }
+
+    set wireIntensity(wireIntensity) {
+        this.uniforms.uWireIntensity.value = wireIntensity;
     }
 
 }
@@ -5948,7 +6007,7 @@ const tempVec3i = new Vec3();
 const tempVec3j = new Vec3();
 const tempVec3k = new Vec3();
 
-const tempMat4 = new Mat4();
+const tempMat4$1 = new Mat4();
 
 class Raycast {
 
@@ -5987,7 +6046,7 @@ class Raycast {
     intersectBounds(meshes, { maxDistance, output = [] } = {}) {
         if (! Array.isArray(meshes)) meshes = [ meshes ];
 
-        const invWorldMat4 = tempMat4;
+        const invWorldMat4 = tempMat4$1;
         const origin = tempVec3a;
         const direction = tempVec3b;
 
@@ -6060,7 +6119,7 @@ class Raycast {
         const hits = this.intersectBounds(meshes, { maxDistance, output });
         if (!hits.length) return hits;
 
-        const invWorldMat4 = tempMat4;
+        const invWorldMat4 = tempMat4$1;
         const origin = tempVec3a;
         const direction = tempVec3b;
         const a = tempVec3c;
@@ -6329,7 +6388,7 @@ class Post {
         this.resize({ width, height, dpr });
     }
 
-    addPass({ vertex = defaultVertex, fragment = defaultFragment, uniforms = {}, textureUniform = 'tMap', enabled = true } = {}) {
+    addPass({ vertex = defaultVertex$1, fragment = defaultFragment$1, uniforms = {}, textureUniform = 'tMap', enabled = true } = {}) {
         uniforms[textureUniform] = { value: this.fbo.read.texture };
 
         const program = new Program({ vertex, fragment, uniforms });
@@ -6398,7 +6457,7 @@ class Post {
 
 /***** Internal *****/
 
-const defaultVertex = /* glsl */ `
+const defaultVertex$1 = /* glsl */ `
     attribute vec2 uv;
     attribute vec2 position;
 
@@ -6410,7 +6469,7 @@ const defaultVertex = /* glsl */ `
     }
 `;
 
-const defaultFragment = /* glsl */ `
+const defaultFragment$1 = /* glsl */ `
     precision highp float;
 
     uniform sampler2D tMap;
@@ -7206,6 +7265,121 @@ class Torus extends Geometry {
 
 }
 
+const tmpVec3A = new Vec3();
+const tmpVec3B = new Vec3();
+const tmpVec3C = new Vec3();
+const tmpVec3D = new Vec3();
+
+const tmpQuatA = new Quat();
+const tmpQuatB = new Quat();
+const tmpQuatC = new Quat();
+const tmpQuatD = new Quat();
+
+class GLTFAnimation {
+    constructor(data, weight = 1) {
+        this.data = data;
+        this.elapsed = 0;
+        this.weight = weight;
+
+        // Set to false to not apply modulo to elapsed against duration
+        this.loop = true;
+
+        // Find starting time as exports from blender (perhaps others too) don't always start from 0
+        this.startTime = data.reduce((a, { times }) => Math.min(a, times[0]), Infinity);
+        // Get largest final time in all channels to calculate duration
+        this.endTime = data.reduce((a, { times }) => Math.max(a, times[times.length - 1]), 0);
+        this.duration = this.endTime - this.startTime;
+    }
+
+    update(totalWeight = 1, isSet) {
+        const weight = isSet ? 1 : this.weight / totalWeight;
+        const elapsed = !this.duration
+            ? 0
+            : (this.loop ? this.elapsed % this.duration : Math.min(this.elapsed, this.duration - 0.001)) + this.startTime;
+
+        this.data.forEach(({ node, transform, interpolation, times, values }) => {
+            if (!this.duration) {
+                let val = tmpVec3A;
+                let size = 3;
+                if (transform === 'quaternion') {
+                    val = tmpQuatA;
+                    size = 4;
+                }
+                val.fromArray(values, 0);
+                if (size === 4) node[transform].slerp(val, weight);
+                else node[transform].lerp(val, weight);
+                return;
+            }
+
+            // Get index of two time values elapsed is between
+            const prevIndex =
+                Math.max(
+                    1,
+                    times.findIndex((t) => t > elapsed)
+                ) - 1;
+            const nextIndex = prevIndex + 1;
+
+            // Get linear blend/alpha between the two
+            let alpha = (elapsed - times[prevIndex]) / (times[nextIndex] - times[prevIndex]);
+            if (interpolation === 'STEP') alpha = 0;
+
+            let prevVal = tmpVec3A;
+            let prevTan = tmpVec3B;
+            let nextTan = tmpVec3C;
+            let nextVal = tmpVec3D;
+            let size = 3;
+
+            if (transform === 'quaternion') {
+                prevVal = tmpQuatA;
+                prevTan = tmpQuatB;
+                nextTan = tmpQuatC;
+                nextVal = tmpQuatD;
+                size = 4;
+            }
+
+            if (interpolation === 'CUBICSPLINE') {
+                // Get the prev and next values from the indices
+                prevVal.fromArray(values, prevIndex * size * 3 + size * 1);
+                prevTan.fromArray(values, prevIndex * size * 3 + size * 2);
+                nextTan.fromArray(values, nextIndex * size * 3 + size * 0);
+                nextVal.fromArray(values, nextIndex * size * 3 + size * 1);
+
+                // interpolate for final value
+                prevVal = this.cubicSplineInterpolate(alpha, prevVal, prevTan, nextTan, nextVal);
+                if (size === 4) prevVal.normalize();
+            } else {
+                // Get the prev and next values from the indices
+                prevVal.fromArray(values, prevIndex * size);
+                nextVal.fromArray(values, nextIndex * size);
+
+                // interpolate for final value
+                if (size === 4) prevVal.slerp(nextVal, alpha);
+                else prevVal.lerp(nextVal, alpha);
+            }
+
+            // interpolate between multiple possible animations
+            if (size === 4) node[transform].slerp(prevVal, weight);
+            else node[transform].lerp(prevVal, weight);
+        });
+    }
+
+    cubicSplineInterpolate(t, prevVal, prevTan, nextTan, nextVal) {
+        const t2 = t * t;
+        const t3 = t2 * t;
+
+        const s2 = 3 * t2 - 2 * t3;
+        const s3 = t3 - t2;
+        const s0 = 1 - s2;
+        const s1 = s3 - t2 + t;
+
+        for (let i = 0; i < prevVal.length; i++) {
+            prevVal[i] = s0 * prevVal[i] + s1 * (1 - t) * prevTan[i] + s2 * nextVal[i] + s3 * t * nextTan[i];
+        }
+
+        return prevVal;
+    }
+}
+
 class Vec4 extends Array {
 
     constructor(x = 0, y = x, z = x, w = x) {
@@ -7379,107 +7553,1634 @@ class InstancedMesh extends Mesh {
     }
 }
 
-class WireMesh extends Mesh {
+const tempMat4 = new Mat4();
+const identity = new Mat4();
 
+class GLTFSkin extends Mesh {
     constructor({
+        skeleton,
         geometry,
-        wireColor = new Vec3(0, 0.75, 0.5),
-        wireTint = 1.0,
-        ...meshProps
+        program,
+        mode
     } = {}) {
-        const wireProgram = new Program({
-            vertex,
-            fragment,
-            uniforms: {
-                wireColor: { value: wireColor },
-                wireTint: { value: wireTint }
-            },
+        mode = mode ?? renderer.gl.TRIANGLES;
+
+        super({ geometry, program, mode });
+
+        this.skeleton = skeleton;
+        this.program = program;
+        this.createBoneTexture();
+        this.animations = [];
+    }
+
+    createBoneTexture() {
+        const gl = renderer.gl;
+
+        if (! this.skeleton.joints.length) return;
+        const size = Math.max(4, Math.pow(2, Math.ceil(Math.log(Math.sqrt(this.skeleton.joints.length * 4)) / Math.LN2)));
+        this.boneMatrices = new Float32Array(size * size * 4);
+        this.boneTextureSize = size;
+        this.boneTexture = new Texture({
+            image: this.boneMatrices,
+            generateMipmaps: false,
+            type: gl.FLOAT,
+            internalFormat: gl.RGBA32F,
+            minFilter: gl.NEAREST,
+            magFilter: gl.NEAREST,
+            flipY: false,
+            width: size,
+        });
+    }
+
+    // addAnimation(data) {
+    //     const animation = new Animation({ objects: this.bones, data });
+    //     this.animations.push(animation);
+    //     return animation;
+    // }
+
+    // updateAnimations() {
+    //     // Calculate combined animation weight
+    //     let total = 0;
+    //     this.animations.forEach((animation) => (total += animation.weight));
+
+    //     this.animations.forEach((animation, i) => {
+    //         // force first animation to set in order to reset frame
+    //         animation.update(total, i === 0);
+    //     });
+    // }
+
+    updateUniforms() {
+        // Update bone texture
+        this.skeleton.joints.forEach((bone, i) => {
+            // Find difference between current and bind pose
+            tempMat4.multiply(bone.worldMatrix, bone.bindInverse);
+            this.boneMatrices.set(tempMat4, i * 16);
+        });
+        if (this.boneTexture) this.boneTexture.needsUpdate = true;
+    }
+
+    draw({ camera } = {}) {
+        if (! this.program.uniforms.boneTexture) {
+            Object.assign(this.program.uniforms, {
+                boneTexture: { value: this.boneTexture },
+                boneTextureSize: { value: this.boneTextureSize },
+            });
+        }
+
+        this.updateUniforms();
+
+        // Switch the world matrix with identity to ignore any transforms
+        // on the mesh itself - only use skeleton's transforms
+        const _worldMatrix = this.worldMatrix;
+        this.worldMatrix = identity;
+
+        super.draw({ camera });
+
+        // Switch back to leave identity untouched
+        this.worldMatrix = _worldMatrix;
+    }
+}
+
+// Supports
+// [x] glb
+// [x] Geometry
+// [x] Nodes and Hierarchy
+// [x] Instancing
+// [x] Skins
+// [x] Textures
+// [x] Animation
+// [x] GLB support
+// [x] Basis/ktx2
+// [x] KHR_lights_punctual lights
+// [ ] Morph Targets
+// [ ] Materials
+// [ ] Cameras
+
+// TODO: Sparse accessor packing? For morph targets basically
+// TODO: init accessor missing bufferView with 0s
+// TODO: morph target animations
+// TODO: option to turn off GPU instancing
+
+const TYPE_ARRAY = {
+    5121: Uint8Array,
+    5122: Int16Array,
+    5123: Uint16Array,
+    5125: Uint32Array,
+    5126: Float32Array,
+    'image/jpeg': Uint8Array,
+    'image/png': Uint8Array,
+};
+
+const TYPE_SIZE = {
+    SCALAR: 1,
+    VEC2: 2,
+    VEC3: 3,
+    VEC4: 4,
+    MAT2: 4,
+    MAT3: 9,
+    MAT4: 16,
+};
+
+const ATTRIBUTES = {
+    POSITION: 'position',
+    NORMAL: 'normal',
+    TANGENT: 'tangent',
+    TEXCOORD_0: 'uv',
+    TEXCOORD_1: 'uv2',
+    COLOR_0: 'color',
+    WEIGHTS_0: 'skinWeight',
+    JOINTS_0: 'skinIndex',
+};
+
+const TRANSFORMS = {
+    translation: 'position',
+    rotation: 'quaternion',
+    scale: 'scale',
+};
+
+class GLTFLoader {
+    static setBasisManager(manager) {
+        this.basisManager = manager;
+    }
+
+    static async load(src) {
+        const dir = src.split('/').slice(0, -1).join('/') + '/';
+
+        // load main description json
+        const desc = await this.parseDesc(src);
+
+        return await this.parse(desc, dir);
+    }
+
+    static async parse(desc, dir) {
+        if (desc.asset === undefined || desc.asset.version[0] < 2) {
+            console.warn('GLTFLoader.parse: Only GLTF >=2.0 supported. Attempting to parse.');
+        }
+
+        if (desc.extensionsRequired?.includes('KHR_texture_basisu') && ! this.basisManager)
+            console.warn('GLTFLoader.parse:  KHR_texture_basisu extension required but no manager supplied. Use .setBasisManager()');
+
+        // Load buffers async
+        const buffers = await this.loadBuffers(desc, dir);
+
+        // Unbind current VAO so that new buffers don't get added to active mesh
+        renderer.gl.bindVertexArray(null);
+
+        // Create gl buffers from bufferViews
+        const bufferViews = this.parseBufferViews(desc, buffers);
+
+        // Create images from either bufferViews or separate image files
+        const images = await this.parseImages(desc, dir, bufferViews);
+
+        const textures = this.parseTextures(desc, images);
+
+        // Just pass through material data for now
+        const materials = this.parseMaterials(desc, textures);
+
+        // Fetch the inverse bind matrices for skeleton joints
+        const skins = this.parseSkins(desc, bufferViews);
+
+        // Create geometries for each mesh primitive
+        const meshes = this.parseMeshes(desc, bufferViews, materials, skins);
+
+        // Create transforms, meshes and hierarchy
+        const nodes = this.parseNodes(desc, meshes, skins, images);
+
+        // Place nodes in skeletons
+        this.populateSkins(skins, nodes);
+
+        // Create animation handlers
+        const animations = this.parseAnimations(desc, nodes, bufferViews);
+
+        // Get top level nodes for each scene
+        const scenes = this.parseScenes(desc, nodes);
+        const scene = scenes[desc.scene];
+
+        // Create uniforms for scene lights (TODO: light linking?)
+        const lights = this.parseLights(desc, nodes, scenes);
+
+        // Remove null nodes (instanced transforms)
+        for (let i = nodes.length; i >= 0; i--) if (!nodes[i]) nodes.splice(i, 1);
+
+        return {
+            json: desc,
+            buffers,
+            bufferViews,
+            images,
+            textures,
+            materials,
+            meshes,
+            nodes,
+            lights,
+            animations,
+            scenes,
+            scene,
+        };
+    }
+
+    static async parseDesc(src) {
+        if (!src.match(/\.glb/)) {
+            return await fetch(src).then((res) => res.json());
+        } else {
+            return await fetch(src)
+                .then((res) => res.arrayBuffer())
+                .then((glb) => this.unpackGLB(glb));
+        }
+    }
+
+    // From https://github.com/donmccurdy/glTF-Transform/blob/e4108cc/packages/core/src/io/io.ts#L32
+    static unpackGLB(glb) {
+        // Decode and verify GLB header.
+        const header = new Uint32Array(glb, 0, 3);
+        if (header[0] !== 0x46546c67) {
+            throw new Error('Invalid glTF asset.');
+        } else if (header[1] !== 2) {
+            throw new Error(`Unsupported glTF binary version, "${header[1]}".`);
+        }
+        // Decode and verify chunk headers.
+        const jsonChunkHeader = new Uint32Array(glb, 12, 2);
+        const jsonByteOffset = 20;
+        const jsonByteLength = jsonChunkHeader[0];
+        if (jsonChunkHeader[1] !== 0x4e4f534a) {
+            throw new Error('Unexpected GLB layout.');
+        }
+
+        // Decode JSON.
+        const jsonText = new TextDecoder().decode(glb.slice(jsonByteOffset, jsonByteOffset + jsonByteLength));
+        const json = JSON.parse(jsonText);
+        // JSON only
+        if (jsonByteOffset + jsonByteLength === glb.byteLength) return json;
+
+        const binaryChunkHeader = new Uint32Array(glb, jsonByteOffset + jsonByteLength, 2);
+        if (binaryChunkHeader[1] !== 0x004e4942) {
+            throw new Error('Unexpected GLB layout.');
+        }
+        // Decode content.
+        const binaryByteOffset = jsonByteOffset + jsonByteLength + 8;
+        const binaryByteLength = binaryChunkHeader[0];
+        const binary = glb.slice(binaryByteOffset, binaryByteOffset + binaryByteLength);
+        // Attach binary to buffer
+        json.buffers[0].binary = binary;
+        return json;
+    }
+
+    // Threejs GLTF Loader https://github.com/mrdoob/three.js/blob/master/examples/js/loaders/GLTFLoader.js#L1085
+    static resolveURI(uri, dir) {
+        // Invalid URI
+        if (typeof uri !== 'string' || uri === '') return '';
+
+        // Host Relative URI
+        if (/^https?:\/\//i.test(dir) && /^\//.test(uri)) {
+            dir = dir.replace(/(^https?:\/\/[^\/]+).*/i, '$1');
+        }
+
+        // Absolute URI http://, https://, //
+        if (/^(https?:)?\/\//i.test(uri)) return uri;
+
+        // Data URI
+        if (/^data:.*,.*$/i.test(uri)) return uri;
+
+        // Blob URI
+        if (/^blob:.*$/i.test(uri)) return uri;
+
+        // Relative URI
+        return dir + uri;
+    }
+
+    static async loadBuffers(desc, dir) {
+        if (!desc.buffers) return null;
+        return await Promise.all(
+            desc.buffers.map((buffer) => {
+                // For GLB, binary buffer ready to go
+                if (buffer.binary) return buffer.binary;
+                const uri = this.resolveURI(buffer.uri, dir);
+                return fetch(uri).then((res) => res.arrayBuffer());
+            })
+        );
+    }
+
+    static parseBufferViews(desc, buffers) {
+        const gl = renderer.gl;
+
+        if (!desc.bufferViews) return null;
+        // Clone to leave description pure
+        const bufferViews = desc.bufferViews.map((o) => Object.assign({}, o));
+
+        desc.meshes &&
+            desc.meshes.forEach(({ primitives }) => {
+                primitives.forEach(({ attributes, indices }) => {
+                    // Flag bufferView as an attribute, so it knows to create a gl buffer
+                    for (let attr in attributes) bufferViews[desc.accessors[attributes[attr]].bufferView].isAttribute = true;
+
+                    if (indices === undefined) return;
+                    bufferViews[desc.accessors[indices].bufferView].isAttribute = true;
+
+                    // Make sure indices bufferView have a target property for gl buffer binding
+                    bufferViews[desc.accessors[indices].bufferView].target = gl.ELEMENT_ARRAY_BUFFER;
+                });
+            });
+
+        // Get componentType of each bufferView from the accessors
+        desc.accessors.forEach(({ bufferView: i, componentType }) => {
+            bufferViews[i].componentType = componentType;
         });
 
-        const positionArray = geometry.attributes.position.data;
-        const indices = [];
-        const hashSet = new Set();
+        // Get mimetype of bufferView from images
+        desc.images &&
+            desc.images.forEach(({ uri, bufferView: i, mimeType }) => {
+                if (i === undefined) return;
+                bufferViews[i].mimeType = mimeType;
+            });
 
-        function addUniqueIndices(idx) {
-            for (let i = 0; i < idx.length; i += 2) {
-                if (isUniqueEdgePosition(idx[i] * 3, idx[i + 1] * 3, positionArray, hashSet)) {
-                    indices.push(idx[i], idx[i + 1]);
+        // Push each bufferView to the GPU as a separate buffer
+        bufferViews.forEach(
+            (
+                {
+                    buffer: bufferIndex, // required
+                    byteOffset = 0, // optional
+                    byteLength, // required
+                    byteStride, // optional
+                    target = gl.ARRAY_BUFFER, // optional, added above for elements
+                    name, // optional
+                    extensions, // optional
+                    extras, // optional
+
+                    componentType, // optional, added from accessor above
+                    mimeType, // optional, added from images above
+                    isAttribute,
+                },
+                i
+            ) => {
+                bufferViews[i].data = buffers[bufferIndex].slice(byteOffset, byteOffset + byteLength);
+
+                if (!isAttribute) return;
+                // Create gl buffers for the bufferView, pushing it to the GPU
+                const buffer = gl.createBuffer();
+                gl.bindBuffer(target, buffer);
+                renderer.state.boundBuffer = buffer;
+                gl.bufferData(target, bufferViews[i].data, gl.STATIC_DRAW);
+                bufferViews[i].buffer = buffer;
+            }
+        );
+
+        return bufferViews;
+    }
+
+    static async parseImages(desc, dir, bufferViews) {
+        if (!desc.images) return null;
+        return await Promise.all(
+            desc.images.map(async ({ uri, bufferView: bufferViewIndex, mimeType, name }) => {
+                if (mimeType === 'image/ktx2') {
+                    const { data } = bufferViews[bufferViewIndex];
+                    const image = await this.basisManager.parseTexture(data);
+                    return image;
+                }
+
+                // jpg / png
+                const image = new Image();
+                image.name = name;
+                if (uri) {
+                    image.src = this.resolveURI(uri, dir);
+                } else if (bufferViewIndex !== undefined) {
+                    const { data } = bufferViews[bufferViewIndex];
+                    const blob = new Blob([data], { type: mimeType });
+                    image.src = URL.createObjectURL(blob);
+                }
+                image.ready = new Promise((res) => {
+                    image.onload = () => res();
+                });
+                return image;
+            })
+        );
+    }
+
+    static parseTextures(desc, images) {
+        if (!desc.textures) return null;
+        return desc.textures.map((textureInfo) => this.createTexture(desc, images, textureInfo));
+    }
+
+    static createTexture(desc, images, { sampler: samplerIndex, source: sourceIndex, name, extensions, extras }) {
+        const gl = renderer.gl;
+
+        if (sourceIndex === undefined && !!extensions) {
+            // Basis extension source index
+            if (extensions.KHR_texture_basisu) sourceIndex = extensions.KHR_texture_basisu.source;
+        }
+
+        const image = images[sourceIndex];
+        if (image.texture) return image.texture;
+
+        const options = {
+            flipY: false,
+            wrapS: gl.REPEAT, // Repeat by default, opposed to OGL's clamp by default
+            wrapT: gl.REPEAT,
+        };
+        const sampler = samplerIndex !== undefined ? desc.samplers[samplerIndex] : null;
+        if (sampler) {
+            ['magFilter', 'minFilter', 'wrapS', 'wrapT'].forEach((prop) => {
+                if (sampler[prop]) options[prop] = sampler[prop];
+            });
+        }
+
+        // For compressed textures
+        if (image.isBasis) {
+            options.image = image;
+            options.internalFormat = image.internalFormat;
+            if (image.isCompressedTexture) {
+                options.generateMipmaps = false;
+                if (image.length > 1) this.minFilter = gl.NEAREST_MIPMAP_LINEAR;
+            }
+            const texture = new Texture(options);
+            texture.name = name;
+            image.texture = texture;
+            return texture;
+        }
+
+        const texture = new Texture(options);
+        texture.name = name;
+        image.texture = texture;
+        image.ready.then(() => {
+            texture.image = image;
+        });
+
+        return texture;
+    }
+
+    static parseMaterials(desc, textures) {
+        if (!desc.materials) return null;
+        return desc.materials.map(
+            ({
+                name,
+                extensions,
+                extras,
+                pbrMetallicRoughness = {},
+                normalTexture,
+                occlusionTexture,
+                emissiveTexture,
+                emissiveFactor = [0, 0, 0],
+                alphaMode = 'OPAQUE',
+                alphaCutoff = 0.5,
+                doubleSided = false,
+            }) => {
+                const {
+                    baseColorFactor = [1, 1, 1, 1],
+                    baseColorTexture,
+                    metallicFactor = 1,
+                    roughnessFactor = 1,
+                    metallicRoughnessTexture,
+                    //   extensions,
+                    //   extras,
+                } = pbrMetallicRoughness;
+
+                if (baseColorTexture) {
+                    baseColorTexture.texture = textures[baseColorTexture.index];
+                    // texCoord
+                }
+                if (normalTexture) {
+                    normalTexture.texture = textures[normalTexture.index];
+                    // scale: 1
+                    // texCoord
+                }
+                if (metallicRoughnessTexture) {
+                    metallicRoughnessTexture.texture = textures[metallicRoughnessTexture.index];
+                    // texCoord
+                }
+                if (occlusionTexture) {
+                    occlusionTexture.texture = textures[occlusionTexture.index];
+                    // strength 1
+                    // texCoord
+                }
+                if (emissiveTexture) {
+                    emissiveTexture.texture = textures[emissiveTexture.index];
+                    // texCoord
+                }
+
+                return {
+                    name,
+                    extensions,
+                    extras,
+                    baseColorFactor,
+                    baseColorTexture,
+                    metallicFactor,
+                    roughnessFactor,
+                    metallicRoughnessTexture,
+                    normalTexture,
+                    occlusionTexture,
+                    emissiveTexture,
+                    emissiveFactor,
+                    alphaMode,
+                    alphaCutoff,
+                    doubleSided,
+                };
+            }
+        );
+    }
+
+    static parseSkins(desc, bufferViews) {
+        if (!desc.skins) return null;
+        return desc.skins.map(
+            ({
+                inverseBindMatrices, // optional
+                skeleton, // optional
+                joints, // required
+                // name,
+                // extensions,
+                // extras,
+            }) => {
+                return {
+                    inverseBindMatrices: this.parseAccessor(inverseBindMatrices, desc, bufferViews),
+                    skeleton,
+                    joints,
+                };
+            }
+        );
+    }
+
+    static parseMeshes(desc, bufferViews, materials, skins) {
+        if (!desc.meshes) return null;
+        return desc.meshes.map(
+            (
+                {
+                    primitives, // required
+                    weights, // optional
+                    name, // optional
+                    extensions, // optional
+                    extras, // optional
+                },
+                meshIndex
+            ) => {
+                // TODO: weights stuff ?
+                // Parse through nodes to see how many instances there are
+                // and if there is a skin attached
+                // If multiple instances of a skin, need to create each
+                let numInstances = 0;
+                let skinIndices = [];
+                let isLightmap = false;
+                desc.nodes &&
+                    desc.nodes.forEach(({ mesh, skin, extras }) => {
+                        if (mesh === meshIndex) {
+                            numInstances++;
+                            if (skin !== undefined) skinIndices.push(skin);
+                            if (extras && extras.lightmap_scale_offset) isLightmap = true;
+                        }
+                    });
+                let isSkin = !!skinIndices.length;
+
+                // For skins, return array of skin meshes to account for multiple instances
+                if (isSkin) {
+                    primitives = skinIndices.map((skinIndex) => {
+                        return this.parsePrimitives(primitives, desc, bufferViews, materials, 1, isLightmap).map(
+                            ({ geometry, program, mode }) => {
+                                const mesh = new GLTFSkin({ skeleton: skins[skinIndex], geometry, program, mode });
+                                mesh.name = name;
+                                // TODO: support skin frustum culling
+                                mesh.frustumCulled = false;
+                                return mesh;
+                            }
+                        );
+                    });
+                    // For retrieval to add to node
+                    primitives.instanceCount = 0;
+                    primitives.numInstances = numInstances;
+                } else {
+                    primitives = this.parsePrimitives(primitives, desc, bufferViews, materials, numInstances, isLightmap).map(
+                        ({ geometry, program, mode }) => {
+                            // InstancedMesh class has custom frustum culling for instances
+                            const meshConstructor = geometry.attributes.instanceMatrix ? InstancedMesh : Mesh;
+                            const mesh = new meshConstructor({ geometry, program, mode });
+                            mesh.name = name;
+                            // Tag mesh so that nodes can add their transforms to the instance attribute
+                            mesh.numInstances = numInstances;
+                            return mesh;
+                        }
+                    );
+                }
+
+                return {
+                    primitives,
+                    weights,
+                    name,
+                };
+            }
+        );
+    }
+
+    static parsePrimitives(primitives, desc, bufferViews, materials, numInstances, isLightmap) {
+        return primitives.map(
+            ({
+                attributes, // required
+                indices, // optional
+                material: materialIndex, // optional
+                mode = 4, // optional
+                targets, // optional
+                extensions, // optional
+                extras, // optional
+            }) => {
+                // TODO: materials
+                const program = new Standard();
+                if (materialIndex !== undefined) {
+                    program.gltfMaterial = materials[materialIndex];
+                }
+
+                const geometry = new Geometry();
+
+                // Add each attribute found in primitive
+                for (let attr in attributes) {
+                    geometry.addAttribute(ATTRIBUTES[attr], this.parseAccessor(attributes[attr], desc, bufferViews));
+                }
+
+                // Add index attribute if found
+                if (indices !== undefined) {
+                    geometry.addAttribute('index', this.parseAccessor(indices, desc, bufferViews));
+                }
+
+                // Add instanced transform attribute if multiple instances
+                // Ignore if skin as we don't support instanced skins out of the box
+                if (numInstances > 1) {
+                    geometry.addAttribute('instanceMatrix', {
+                        instanced: 1,
+                        size: 16,
+                        data: new Float32Array(numInstances * 16),
+                    });
+                }
+
+                // Always supply lightmapScaleOffset as an instanced attribute
+                // Instanced skin lightmaps not supported
+                if (isLightmap) {
+                    geometry.addAttribute('lightmapScaleOffset', {
+                        instanced: 1,
+                        size: 4,
+                        data: new Float32Array(numInstances * 4),
+                    });
+                }
+
+                return {
+                    geometry,
+                    program,
+                    mode,
+                };
+            }
+        );
+    }
+
+    static parseAccessor(index, desc, bufferViews) {
+        // TODO: init missing bufferView with 0s
+        // TODO: support sparse
+
+        const {
+            bufferView: bufferViewIndex, // optional
+            byteOffset = 0, // optional
+            componentType, // required
+            normalized = false, // optional
+            count, // required
+            type, // required
+            min, // optional
+            max, // optional
+            sparse, // optional
+            // name, // optional
+            // extensions, // optional
+            // extras, // optional
+        } = desc.accessors[index];
+
+        const {
+            data, // attached in parseBufferViews
+            buffer, // replaced to be the actual GL buffer
+            byteOffset: bufferByteOffset = 0,
+            // byteLength, // applied in parseBufferViews
+            byteStride = 0,
+            target,
+            // name,
+            // extensions,
+            // extras,
+        } = bufferViews[bufferViewIndex];
+
+        const size = TYPE_SIZE[type];
+
+        // Parse data from joined buffers
+        const TypeArray = TYPE_ARRAY[componentType];
+        const elementBytes = data.BYTES_PER_ELEMENT;
+        const componentStride = byteStride / elementBytes;
+        const isInterleaved = !!byteStride && componentStride !== size;
+
+        // TODO: interleaved
+        // Convert data to typed array for various uses (bounding boxes, animation etc)
+        const newData = isInterleaved ? new TypeArray(data) : new TypeArray(data, byteOffset, count * size);
+
+        // Return attribute data
+        return {
+            data: newData,
+            size,
+            type: componentType,
+            normalized,
+            buffer,
+            stride: byteStride,
+            offset: byteOffset,
+            count,
+            min,
+            max,
+        };
+    }
+
+    static parseNodes(desc, meshes, skins, images) {
+        if (!desc.nodes) return null;
+        const nodes = desc.nodes.map(
+            ({
+                camera, // optional
+                children, // optional
+                skin: skinIndex, // optional
+                matrix, // optional
+                mesh: meshIndex, // optional
+                rotation, // optional
+                scale, // optional
+                translation, // optional
+                weights, // optional
+                name, // optional
+                extensions, // optional
+                extras, // optional
+            }) => {
+                const node = new Transform();
+                if (name) node.name = name;
+                node.extras = extras;
+                node.extensions = extensions;
+
+                // Need to attach to node as may have same material but different lightmap
+                if (extras && extras.lightmapTexture !== undefined) {
+                    extras.lightmapTexture.texture = this.createTexture(desc, images, { source: extras.lightmapTexture.index });
+                }
+
+                // Apply transformations
+                if (matrix) {
+                    node.matrix.copy(matrix);
+                    node.decompose();
+                } else {
+                    if (rotation) node.quaternion.copy(rotation);
+                    if (scale) node.scale.copy(scale);
+                    if (translation) node.position.copy(translation);
+                    node.updateMatrix();
+                }
+
+                // Flags for avoiding duplicate transforms and removing unused instance nodes
+                let isInstanced = false;
+                let isFirstInstance = true;
+                let isInstancedMatrix = false;
+                let isSkin = skinIndex !== undefined;
+
+                // add mesh if included
+                if (meshIndex !== undefined) {
+                    if (isSkin) {
+                        meshes[meshIndex].primitives[meshes[meshIndex].primitives.instanceCount].forEach((mesh) => {
+                            mesh.extras = extras;
+                            mesh.setParent(node);
+                        });
+                        meshes[meshIndex].primitives.instanceCount++;
+                        // Remove properties once all instances added
+                        if (meshes[meshIndex].primitives.instanceCount === meshes[meshIndex].primitives.numInstances) {
+                            delete meshes[meshIndex].primitives.numInstances;
+                            delete meshes[meshIndex].primitives.instanceCount;
+                        }
+                    } else {
+                        meshes[meshIndex].primitives.forEach((mesh) => {
+                            mesh.extras = extras;
+
+                            // instanced mesh might only have 1
+                            if (mesh.geometry.isInstanced) {
+                                isInstanced = true;
+                                if (!mesh.instanceCount) {
+                                    mesh.instanceCount = 0;
+                                } else {
+                                    isFirstInstance = false;
+                                }
+                                if (mesh.geometry.attributes.instanceMatrix) {
+                                    isInstancedMatrix = true;
+                                    node.matrix.toArray(mesh.geometry.attributes.instanceMatrix.data, mesh.instanceCount * 16);
+                                }
+
+                                if (mesh.geometry.attributes.lightmapScaleOffset) {
+                                    mesh.geometry.attributes.lightmapScaleOffset.data.set(extras.lightmap_scale_offset, mesh.instanceCount * 4);
+                                }
+
+                                mesh.instanceCount++;
+
+                                if (mesh.instanceCount === mesh.numInstances) {
+                                    // Remove properties once all instances added
+                                    delete mesh.numInstances;
+                                    delete mesh.instanceCount;
+                                    // Flag attribute as dirty
+                                    if (mesh.geometry.attributes.instanceMatrix) {
+                                        mesh.geometry.attributes.instanceMatrix.needsUpdate = true;
+                                    }
+                                    if (mesh.geometry.attributes.lightmapScaleOffset) {
+                                        mesh.geometry.attributes.lightmapScaleOffset.needsUpdate = true;
+                                    }
+                                }
+                            }
+
+                            // For instances, only the first node will actually have the mesh
+                            if (isInstanced) {
+                                if (isFirstInstance) mesh.setParent(node);
+                            } else {
+                                mesh.setParent(node);
+                            }
+                        });
+                    }
+                }
+
+                // Reset node if instanced to not duplicate transforms
+                if (isInstancedMatrix) {
+                    // Remove unused nodes just providing an instance transform
+                    if (!isFirstInstance) return null;
+                    // Avoid duplicate transform for node containing the instanced mesh
+                    node.matrix.identity();
+                    node.decompose();
+                }
+
+                return node;
+            }
+        );
+
+        desc.nodes.forEach(({ children = [] }, i) => {
+            // Set hierarchy now all nodes created
+            children.forEach((childIndex) => {
+                if (!nodes[childIndex]) return;
+                nodes[childIndex].setParent(nodes[i]);
+            });
+        });
+
+        // Add frustum culling for instances now that instanceMatrix attribute is populated
+        meshes.forEach(({ primitives }, i) => {
+            primitives.forEach((primitive, i) => {
+                if (primitive.isInstancedMesh) primitive.addFrustumCull();
+            });
+        });
+
+        return nodes;
+    }
+
+    static populateSkins(skins, nodes) {
+        if (!skins) return;
+        skins.forEach((skin) => {
+            skin.joints = skin.joints.map((i, index) => {
+                const joint = nodes[i];
+                joint.bindInverse = new Mat4(...skin.inverseBindMatrices.data.slice(index * 16, (index + 1) * 16));
+                return joint;
+            });
+            if (skin.skeleton) skin.skeleton = nodes[skin.skeleton];
+        });
+    }
+
+    static parseAnimations(desc, nodes, bufferViews) {
+        if (!desc.animations) return null;
+        return desc.animations.map(
+            ({
+                channels, // required
+                samplers, // required
+                name, // optional
+                // extensions, // optional
+                // extras,  // optional
+            }) => {
+                const data = channels.map(
+                    ({
+                        sampler: samplerIndex, // required
+                        target, // required
+                        // extensions, // optional
+                        // extras, // optional
+                    }) => {
+                        const {
+                            input: inputIndex, // required
+                            interpolation = 'LINEAR',
+                            output: outputIndex, // required
+                            // extensions, // optional
+                            // extras, // optional
+                        } = samplers[samplerIndex];
+
+                        const {
+                            node: nodeIndex, // optional - TODO: when is it not included?
+                            path, // required
+                            // extensions, // optional
+                            // extras, // optional
+                        } = target;
+
+                        const node = nodes[nodeIndex];
+                        const transform = TRANSFORMS[path];
+                        const times = this.parseAccessor(inputIndex, desc, bufferViews).data;
+                        const values = this.parseAccessor(outputIndex, desc, bufferViews).data;
+
+                        return {
+                            node,
+                            transform,
+                            interpolation,
+                            times,
+                            values,
+                        };
+                    }
+                );
+
+                return {
+                    name,
+                    animation: new GLTFAnimation(data),
+                };
+            }
+        );
+    }
+
+    static parseScenes(desc, nodes) {
+        if (!desc.scenes) return null;
+        return desc.scenes.map(
+            ({
+                nodes: nodesIndices = [],
+                name, // optional
+                extensions,
+                extras,
+            }) => {
+                const scene = nodesIndices.reduce((map, i) => {
+                    // Don't add null nodes (instanced transforms)
+                    if (nodes[i]) map.push(nodes[i]);
+                    return map;
+                }, []);
+                scene.extras = extras;
+                return scene;
+            }
+        );
+    }
+
+    static parseLights(desc, nodes, scenes) {
+        const lights = {
+            directional: [],
+            point: [],
+            spot: [],
+        };
+
+        // Update matrices on root nodes
+        scenes.forEach((scene) => scene.forEach((node) => node.updateMatrixWorld()));
+
+        // uses KHR_lights_punctual extension
+        const lightsDescArray = desc.extensions?.KHR_lights_punctual?.lights || [];
+
+        // Need nodes for transforms
+        nodes.forEach((node) => {
+            if (!node?.extensions?.KHR_lights_punctual) return;
+            const lightIndex = node.extensions.KHR_lights_punctual.light;
+            const lightDesc = lightsDescArray[lightIndex];
+            const light = {
+                name: lightDesc.name || '',
+                color: { value: new Vec3().set(lightDesc.color || 1) },
+            };
+            // Apply intensity directly to color
+            if (lightDesc.intensity !== undefined) light.color.value.multiply(lightDesc.intensity);
+
+            switch (lightDesc.type) {
+                case 'directional':
+                    light.direction = { value: new Vec3(0, 0, 1).transformDirection(node.worldMatrix) };
+                    break;
+                case 'point':
+                    light.position = { value: new Vec3().applyMatrix4(node.worldMatrix) };
+                    light.distance = { value: lightDesc.range };
+                    light.decay = { value: 2 };
+                    break;
+                case 'spot':
+                    // TODO: support spot uniforms
+                    Object.assign(light, lightDesc);
+                    break;
+            }
+
+            lights[lightDesc.type].push(light);
+        });
+
+        return lights;
+    }
+}
+
+// TODO: Support cubemaps
+// Generate textures using https://github.com/TimvanScherpenzeel/texture-compressor
+
+class KTXTexture extends Texture {
+
+    constructor({
+        buffer,
+        wrapS = renderer.gl.CLAMP_TO_EDGE,
+        wrapT = renderer.gl.CLAMP_TO_EDGE,
+        anisotropy = 0,
+        minFilter,
+        magFilter
+    } = {}) {
+        super({
+            generateMipmaps: false,
+            wrapS,
+            wrapT,
+            anisotropy,
+            minFilter,
+            magFilter,
+        });
+
+        if (buffer) return this.parseBuffer(buffer);
+    }
+
+    parseBuffer(buffer) {
+        const ktx = new KhronosTextureContainer(buffer);
+        ktx.mipmaps.isCompressedTexture = true;
+
+        // Update texture
+        this.image = ktx.mipmaps;
+        this.internalFormat = ktx.glInternalFormat;
+        if (ktx.numberOfMipmapLevels > 1) {
+            if (this.minFilter === renderer.gl.LINEAR) this.minFilter = renderer.gl.NEAREST_MIPMAP_LINEAR;
+        } else {
+            if (this.minFilter === renderer.gl.NEAREST_MIPMAP_LINEAR) this.minFilter = renderer.gl.LINEAR;
+        }
+
+        // TODO: support cube maps
+        // ktx.numberOfFaces
+    }
+}
+
+function KhronosTextureContainer(buffer) {
+    const idCheck = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
+    const id = new Uint8Array(buffer, 0, 12);
+    for (let i = 0; i < id.length; i++) if (id[i] !== idCheck[i]) return console.error('File missing KTX identifier');
+
+    // TODO: Is this always 4? Tested: [android, macos]
+    const size = Uint32Array.BYTES_PER_ELEMENT;
+    const head = new DataView(buffer, 12, 13 * size);
+    const littleEndian = head.getUint32(0, true) === 0x04030201;
+    const glType = head.getUint32(1 * size, littleEndian);
+    if (glType !== 0) return console.warn('only compressed formats currently supported');
+    this.glInternalFormat = head.getUint32(4 * size, littleEndian);
+    let width = head.getUint32(6 * size, littleEndian);
+    let height = head.getUint32(7 * size, littleEndian);
+    this.numberOfFaces = head.getUint32(10 * size, littleEndian);
+    this.numberOfMipmapLevels = Math.max(1, head.getUint32(11 * size, littleEndian));
+    const bytesOfKeyValueData = head.getUint32(12 * size, littleEndian);
+
+    this.mipmaps = [];
+    let offset = 12 + 13 * 4 + bytesOfKeyValueData;
+    for (let level = 0; level < this.numberOfMipmapLevels; level++) {
+        const levelSize = new Int32Array(buffer, offset, 1)[0]; // size per face, since not supporting array cubemaps
+        offset += 4; // levelSize field
+        for (let face = 0; face < this.numberOfFaces; face++) {
+            const data = new Uint8Array(buffer, offset, levelSize);
+            this.mipmaps.push({ data, width, height });
+            offset += levelSize;
+            offset += 3 - ((levelSize + 3) % 4); // add padding for odd sized image
+        }
+        width = width >> 1;
+        height = height >> 1;
+    }
+}
+
+// For compressed textures, generate using https://github.com/TimvanScherpenzeel/texture-compressor
+
+let cache = {};
+const supportedExtensions = [];
+
+class TextureLoader {
+
+    static load({
+        src, // string or object of extension:src key-values
+        // {
+        //     pvrtc: '...ktx',
+        //     s3tc: '...ktx',
+        //     etc: '...ktx',
+        //     etc1: '...ktx',
+        //     astc: '...ktx',
+        //     webp: '...webp',
+        //     jpg: '...jpg',
+        //     png: '...png',
+        // }
+
+        // Only props relevant to KTXTexture
+        wrapS = renderer.gl.CLAMP_TO_EDGE,
+        wrapT = renderer.gl.CLAMP_TO_EDGE,
+        anisotropy = 0,
+
+        // For regular images
+        format = renderer.gl.RGBA,
+        internalFormat = format,
+        generateMipmaps = true,
+        minFilter = generateMipmaps ? renderer.gl.NEAREST_MIPMAP_LINEAR : renderer.gl.LINEAR,
+        magFilter = renderer.gl.LINEAR,
+        premultiplyAlpha = false,
+        unpackAlignment = 4,
+        flipY = true,
+    } = {}) {
+        const support = this.getSupportedExtensions();
+        let ext = 'none';
+
+        // If src is string, determine which format from the extension
+        if (typeof src === 'string') {
+            ext = src.split('.').pop().split('?')[0].toLowerCase();
+        }
+
+        // If src is object, use supported extensions and provided list to choose best option
+        // Get first supported match, so put in order of preference
+        if (typeof src === 'object') {
+            for (const prop in src) {
+                if (support.includes(prop.toLowerCase())) {
+                    ext = prop.toLowerCase();
+                    src = src[prop];
+                    break;
                 }
             }
         }
 
-        if (geometry.attributes.index) {
-            const idata = geometry.attributes.index.data;
+        // Stringify props
+        const cacheID =
+            src +
+            wrapS +
+            wrapT +
+            anisotropy +
+            format +
+            internalFormat +
+            generateMipmaps +
+            minFilter +
+            magFilter +
+            premultiplyAlpha +
+            unpackAlignment +
+            flipY +
+            renderer.id;
 
-            for (let i = 0; i < idata.length; i += 3) {
-                // For every triangle, make three line pairs (start, end)
-                addUniqueIndices([
-                    idata[i], idata[i + 1],
-                    idata[i + 1], idata[i + 2],
-                    idata[i + 2], idata[i]
-                ]);
-            }
-        } else {
-            const numVertices = Math.floor(positionArray.length / 3);
+        // Check cache for existing texture
+        if (cache[cacheID]) return cache[cacheID];
 
-            for (let i = 0; i < numVertices; i += 3) {
-                addUniqueIndices([i, i + 1, i + 1, i + 2, i + 2, i]);
-            }
+        let texture;
+        switch (ext) {
+            case 'ktx':
+            case 'pvrtc':
+            case 's3tc':
+            case 'etc':
+            case 'etc1':
+            case 'astc':
+                // Load compressed texture using KTX format
+                texture = new KTXTexture({
+                    src,
+                    wrapS,
+                    wrapT,
+                    anisotropy,
+                    minFilter,
+                    magFilter,
+                });
+                texture.loaded = this.loadKTX(src, texture);
+                break;
+            case 'webp':
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+                texture = new Texture({
+                    wrapS,
+                    wrapT,
+                    anisotropy,
+                    format,
+                    internalFormat,
+                    generateMipmaps,
+                    minFilter,
+                    magFilter,
+                    premultiplyAlpha,
+                    unpackAlignment,
+                    flipY,
+                });
+                texture.loaded = this.loadImage(src, texture, flipY);
+                break;
+            default:
+                console.warn('No supported format supplied');
+                texture = new Texture();
         }
 
-        const indicesTyped = indices.length > 65536 ? new Uint32Array(indices) : new Uint16Array(indices);
-        const wireGeometry = new Geometry({
-            position: { ...geometry.attributes.position },
-            index: { data: indicesTyped },
+        texture.ext = ext;
+        cache[cacheID] = texture;
+        return texture;
+    }
+
+    static getSupportedExtensions() {
+        if (supportedExtensions.length) return supportedExtensions;
+
+        const logWarnings = false;
+
+        const extensions = {
+            pvrtc: renderer.getExtension('WEBGL_compressed_texture_pvrtc', logWarnings),
+            s3tc: renderer.getExtension('WEBGL_compressed_texture_s3tc', logWarnings),
+            etc1: renderer.getExtension('WEBGL_compressed_texture_etc1', logWarnings),
+            astc: renderer.getExtension('WEBGL_compressed_texture_astc', logWarnings),
+            bc7: renderer.getExtension('EXT_texture_compression_bptc', logWarnings),
+        };
+
+        for (const ext in extensions) if (extensions[ext]) supportedExtensions.push(ext);
+
+        // Check for WebP support
+        if (detectWebP()) supportedExtensions.push('webp');
+
+        // Formats supported by all
+        supportedExtensions.push('png', 'jpg');
+
+        return supportedExtensions;
+    }
+
+    static loadKTX(src, texture) {
+        return fetch(src)
+            .then((res) => res.arrayBuffer())
+            .then((buffer) => texture.parseBuffer(buffer));
+    }
+
+    static loadImage(src, texture, flipY) {
+        return decodeImage(src, flipY).then((imgBmp) => {
+            // Catch non POT textures and update params to avoid errors
+            if (!powerOfTwo(imgBmp.width) || !powerOfTwo(imgBmp.height)) {
+                if (texture.generateMipmaps) texture.generateMipmaps = false;
+                if (texture.minFilter === renderer.gl.NEAREST_MIPMAP_LINEAR) texture.minFilter = renderer.gl.LINEAR;
+                if (texture.wrapS === renderer.gl.REPEAT) texture.wrapS = texture.wrapT = renderer.gl.CLAMP_TO_EDGE;
+            }
+
+            texture.image = imgBmp;
+
+            // For createImageBitmap, close once uploaded
+            texture.onUpdate = () => {
+                if (imgBmp.close) imgBmp.close();
+                texture.onUpdate = null;
+            };
+
+            return imgBmp;
+        });
+    }
+
+    static clearCache() {
+        cache = {};
+    }
+}
+
+function detectWebP() {
+    return document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') == 0;
+}
+
+function powerOfTwo(value) {
+    // (width & (width - 1)) !== 0
+    return Math.log2(value) % 1 === 0;
+}
+
+function decodeImage(src, flipY) {
+    return new Promise((resolve) => {
+        // Only chrome's implementation of createImageBitmap is fully supported
+        const isChrome = navigator.userAgent.toLowerCase().includes('chrome');
+        if (!!window.createImageBitmap && isChrome) {
+            fetch(src, { mode: 'cors' })
+                .then(r => r.blob())
+                .then(b => createImageBitmap(b, { imageOrientation: flipY ? 'flipY' : 'none', premultiplyAlpha: 'none' }))
+                .then(resolve);
+        } else {
+            const img = new Image();
+
+            img.crossOrigin = '';
+            img.src = src;
+            img.onload = () => resolve(img);
+        }
+    });
+}
+
+class Curve {
+
+    constructor({
+        points = [ new Vec3(0, 0, 0), new Vec3(0, 1, 0), new Vec3(1, 1, 0), new Vec3(1, 0, 0) ],
+        divisions = 12,
+        type = Curve.CATMULLROM
+    } = {}) {
+
+        this.points = points;
+        this.divisions = divisions;
+        this.type = type;
+    }
+
+    getPoints({ divisions = this.divisions, type = this.type, a = 0.168, b = 0.168 } = {}) {
+        if (type === Curve.QUADRATICBEZIER) return Curve.getQuadraticBezierPoints(this.points, divisions);
+        else if (type === Curve.CUBICBEZIER) return Curve.getCubicBezierPoints(this.points, divisions);
+        else if (type === Curve.CATMULLROM) return Curve.getCatmullRomPoints(this.points, divisions, a, b);
+        else return this.points;
+    }
+
+    /***** Static *****/
+
+    static CATMULLROM = 'catmullrom';
+    static CUBICBEZIER = 'cubicbezier';
+    static QUADRATICBEZIER = 'quadraticbezier';
+
+    static getQuadraticBezierPoints(points = [], divisions = 12) {
+        const count = points.length;
+        if (count < 3) {
+            console.warn('Curve.getQuadraticBezierPoints: Not enough points provided');
+            return [];
+        }
+
+        const newPoints = [];
+        let p0 = points[0];
+        let c0 = points[1];
+        let p1 = points[2];
+
+        divisions = Math.max(1, Math.ceil(divisions));
+        for (let i = 0; i <= divisions; i++) {
+            const p = getQuadraticBezierPoint(i / divisions, p0, c0, p1);
+            newPoints.push(p);
+        }
+
+        let offset = 3;
+        while (count - offset > 0) {
+            p0.copy(p1);
+            c0 = p1.scale(2).sub(c0);
+            p1 = points[offset];
+            for (let i = 1; i <= divisions; i++) {
+                const p = getQuadraticBezierPoint(i / divisions, p0, c0, p1);
+                newPoints.push(p);
+            }
+            offset++;
+        }
+
+        return newPoints;
+    }
+
+    static getCubicBezierPoints(points = [], divisions = 12) {
+        const count = points.length;
+        if (count < 4) {
+            console.warn('Curve.getCubicBezierPoints: Not enough points provided');
+            return [];
+        }
+
+        const newPoints = [];
+        let p0 = points[0];
+        let c0 = points[1];
+        let c1 = points[2];
+        let p1 = points[3];
+
+        divisions = Math.max(1, Math.ceil(divisions));
+        for (let i = 0; i <= divisions; i++) {
+            const p = getCubicBezierPoint(i / divisions, p0, c0, c1, p1);
+            newPoints.push(p);
+        }
+
+        let offset = 4;
+        while (count - offset > 1) {
+            p0.copy(p1);
+            c0 = p1.scale(2).sub(c1);
+            c1 = points[offset];
+            p1 = points[offset + 1];
+            for (let i = 1; i <= divisions; i++) {
+                const p = getCubicBezierPoint(i / divisions, p0, c0, c1, p1);
+                newPoints.push(p);
+            }
+            offset += 2;
+        }
+
+        return newPoints;
+    }
+
+    static getCatmullRomPoints(points = [], divisions = 12, a = 0.168, b = 0.168) {
+        const count = points.length;
+        if (count <= 2) {
+            console.warn('Curve.getCatmullRomPoints: Not enough points provided');
+            return [];
+        }
+
+        const newPoints = [];
+        let p0;
+        points.forEach((p, i) => {
+            if (i === 0) {
+                p0 = p;
+            } else {
+                const [ c0, c1 ] = getCtrlPoint(points, i - 1, a, b);
+                const c = new Curve({
+                    points: [ p0, c0, c1, p ],
+                    divisions: Math.max(1, Math.ceil(divisions / points.length)),
+                    type: Curve.CUBICBEZIER,
+                });
+                newPoints.pop();
+                newPoints.push(...c.getPoints());
+                p0 = p;
+            }
         });
 
-        super({
-            ...meshProps,
-            mode: renderer.gl.LINES,
-            geometry: wireGeometry,
-            program: wireProgram
-        });
+        return newPoints;
     }
 
 }
 
 /***** Internal *****/
 
-// https://github.com/mrdoob/three.js/blob/0c26bb4bb8220126447c8373154ac045588441de/src/geometries/WireframeGeometry.js#L116
-function isUniqueEdgePosition(start, end, pos, hashSet) {
-    const hash1 = [
-        pos[start], pos[start + 1], pos[start + 2],
-        pos[end], pos[end + 1], pos[end + 2]
-    ].join('#');
+const _a0 = new Vec3(), _a1 = new Vec3(), _a2 = new Vec3(), _a3 = new Vec3();
 
-    // coincident edge
-    const hash2 = [
-        pos[end], pos[end + 1], pos[end + 2],
-        pos[start], pos[start + 1], pos[start + 2]
-    ].join('#');
-
-    const oldSize = hashSet.size;
-    hashSet.add(hash1);
-    hashSet.add(hash2);
-    return hashSet.size - oldSize === 2;
+/**
+ * Get the control points of cubic bezier curve.
+ *
+ * @param {*} points
+ * @param {*} i
+ * @param {*} a
+ * @param {*} b
+ */
+function getCtrlPoint(points, i, a = 0.168, b = 0.168) {
+    if (i < 1) {
+        _a0.sub(points[1], points[0]).scale(a).add(points[0]);
+    } else {
+        _a0.sub(points[i + 1], points[i - 1])
+            .scale(a)
+            .add(points[i]);
+    }
+    if (i > points.length - 3) {
+        const last = points.length - 1;
+        _a1.sub(points[last - 1], points[last])
+            .scale(b)
+            .add(points[last]);
+    } else {
+        _a1.sub(points[i], points[i + 2])
+            .scale(b)
+            .add(points[i + 1]);
+    }
+    return [ _a0.clone(), _a1.clone() ];
 }
 
-const vertex = /* glsl */ `
+function getQuadraticBezierPoint(t, p0, c0, p1) {
+    const k = 1 - t;
+    _a0.copy(p0).scale(k ** 2);
+    _a1.copy(c0).scale(2 * k * t);
+    _a2.copy(p1).scale(t ** 2);
+    const ret = new Vec3();
+    ret.add(_a0, _a1).add(_a2);
+    return ret;
+}
+
+function getCubicBezierPoint(t, p0, c0, c1, p1) {
+    const k = 1 - t;
+    _a0.copy(p0).scale(k ** 3);
+    _a1.copy(c0).scale(3 * k ** 2 * t);
+    _a2.copy(c1).scale(3 * k * t ** 2);
+    _a3.copy(p1).scale(t ** 3);
+    const ret = new Vec3();
+    ret.add(_a0, _a1).add(_a2).add(_a3);
+    return ret;
+}
+
+const tmp = new Vec3();
+
+class Polyline {
+
+    constructor({
+        points, // Array of Vec3s
+        vertex = defaultVertex,
+        fragment = defaultFragment,
+        uniforms = {},
+        attributes = {}, // For passing in custom attribs
+    } = {}) {
+        this.points = points;
+        this.count = points.length;
+
+        // Create buffers
+        this.position = new Float32Array(this.count * 3 * 2);
+        this.prev = new Float32Array(this.count * 3 * 2);
+        this.next = new Float32Array(this.count * 3 * 2);
+        const side = new Float32Array(this.count * 1 * 2);
+        const uv = new Float32Array(this.count * 2 * 2);
+        const index = new Uint16Array((this.count - 1) * 3 * 2);
+
+        // Set static buffers
+        for (let i = 0; i < this.count; i++) {
+            side.set([-1, 1], i * 2);
+            const v = i / (this.count - 1);
+            uv.set([0, v, 1, v], i * 4);
+
+            if (i === this.count - 1) continue;
+            const ind = i * 2;
+            index.set([ind + 0, ind + 1, ind + 2], (ind + 0) * 3);
+            index.set([ind + 2, ind + 1, ind + 3], (ind + 1) * 3);
+        }
+
+        const geometry = (this.geometry = new Geometry(Object.assign(attributes, {
+            position: { size: 3, data: this.position },
+            prev: { size: 3, data: this.prev },
+            next: { size: 3, data: this.next },
+            side: { size: 1, data: side },
+            uv: { size: 2, data: uv },
+            index: { size: 1, data: index },
+        })));
+
+        // Populate dynamic buffers
+        this.updateGeometry();
+
+        if (! uniforms.uResolution) this.resolution = uniforms.uResolution = { value: new Vec2() };
+        if (! uniforms.uDPR) this.dpr = uniforms.uDPR = { value: 1 };
+        if (! uniforms.uThickness) this.thickness = uniforms.uThickness = { value: 1 };
+        if (! uniforms.uColor) this.color = uniforms.uColor = { value: new Color('#000') };
+        if (! uniforms.uMiter) this.miter = uniforms.uMiter = { value: 1 };
+
+        // Set size uniforms' values
+        this.resize();
+
+        const program = (this.program = new Program({
+            vertex,
+            fragment,
+            uniforms,
+        }));
+
+        this.mesh = new Mesh({ geometry, program });
+    }
+
+    updateGeometry() {
+        this.points.forEach((p, i) => {
+            p.toArray(this.position, i * 3 * 2);
+            p.toArray(this.position, i * 3 * 2 + 3);
+
+            if (! i) {
+                // If first point, calculate prev using the distance to 2nd point
+                tmp.copy(p)
+                    .sub(this.points[i + 1])
+                    .add(p);
+                tmp.toArray(this.prev, i * 3 * 2);
+                tmp.toArray(this.prev, i * 3 * 2 + 3);
+            } else {
+                p.toArray(this.next, (i - 1) * 3 * 2);
+                p.toArray(this.next, (i - 1) * 3 * 2 + 3);
+            }
+
+            if (i === this.points.length - 1) {
+                // If last point, calculate next using distance to 2nd last point
+                tmp.copy(p)
+                    .sub(this.points[i - 1])
+                    .add(p);
+                tmp.toArray(this.next, i * 3 * 2);
+                tmp.toArray(this.next, i * 3 * 2 + 3);
+            } else {
+                p.toArray(this.prev, (i + 1) * 3 * 2);
+                p.toArray(this.prev, (i + 1) * 3 * 2 + 3);
+            }
+        });
+
+        this.geometry.attributes.position.needsUpdate = true;
+        this.geometry.attributes.prev.needsUpdate = true;
+        this.geometry.attributes.next.needsUpdate = true;
+    }
+
+    // Only need to call if not handling resolution uniforms manually
+    resize() {
+        // Update automatic uniforms if not overridden
+        if (this.resolution) this.resolution.value.set(renderer.gl.canvas.width, renderer.gl.canvas.height);
+        if (this.dpr) this.dpr.value = renderer.dpr;
+    }
+}
+
+/***** Internal *****/
+
+const defaultVertex = /* glsl */ `
+    precision highp float;
+
     attribute vec3 position;
+    attribute vec3 next;
+    attribute vec3 prev;
+    attribute vec2 uv;
+    attribute float side;
+
     uniform mat4 modelViewMatrix;
     uniform mat4 projectionMatrix;
+    uniform vec2 uResolution;
+    uniform float uDPR;
+    uniform float uThickness;
+    uniform float uMiter;
+
+    varying vec2 vUv;
+
+    vec4 getPosition() {
+        mat4 mvp = projectionMatrix * modelViewMatrix;
+        vec4 current = mvp * vec4(position, 1);
+        vec4 nextPos = mvp * vec4(next, 1);
+        vec4 prevPos = mvp * vec4(prev, 1);
+
+        vec2 aspect = vec2(uResolution.x / uResolution.y, 1);
+        vec2 currentScreen = current.xy / current.w * aspect;
+        vec2 nextScreen = nextPos.xy / nextPos.w * aspect;
+        vec2 prevScreen = prevPos.xy / prevPos.w * aspect;
+
+        vec2 dir1 = normalize(currentScreen - prevScreen);
+        vec2 dir2 = normalize(nextScreen - currentScreen);
+        vec2 dir = normalize(dir1 + dir2);
+
+        vec2 normal = vec2(-dir.y, dir.x);
+        normal /= mix(1.0, max(0.3, dot(normal, vec2(-dir1.y, dir1.x))), uMiter);
+        normal /= aspect;
+
+        float pixelWidthRatio = 1.0 / (uResolution.y / uDPR);
+        float pixelWidth = current.w * pixelWidthRatio;
+        normal *= pixelWidth * uThickness;
+        current.xy -= normal * side;
+
+        return current;
+    }
 
     void main() {
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        vUv = uv;
+        gl_Position = getPosition();
     }
 `;
 
-const fragment = /* glsl */ `
+const defaultFragment = /* glsl */ `
     precision highp float;
-    uniform vec3 wireColor;
+
+    uniform vec3 uColor;
+
+    varying vec2 vUv;
 
     void main() {
-        gl_FragColor = vec4(wireColor, 1.0);
+        gl_FragColor.rgb = uColor;
+        gl_FragColor.a = 1.0;
     }
 `;
 
@@ -7564,20 +9265,34 @@ function cleanAttributes(geometry) {
 
     // Remove zero sized triangles
     if (geometry.attributes.position) {
-        const removeIndices = [];
-        const positions = geometry.attributes.position.data;
-        for (let i = 0; i < positions.length; i += 9) {
-            const index = i / 3;
-            pA.fromArray(positions, i);
-            pB.fromArray(positions, i + 3);
-            pC.fromArray(positions, i + 6);
-            const area = triangleArea(pA, pB, pC);
-            console.log(area);
-            if (fuzzyFloat(area, 0.0, EPSILON)) {
-                removeIndices.push(index, index + 1, index + 2);
+        // Indexed
+        if (geometry.attributes.index) {
+            const removeIndices = [];
+            const indices = geometry.attributes.index.data;
+            const positions = geometry.attributes.position.data;
+            for (let i = 0; i < indices.length; i += 3) {
+                pA.fromArray(positions, indices[i + 0] * 3);
+                pB.fromArray(positions, indices[i + 1] * 3);
+                pC.fromArray(positions, indices[i + 2] * 3);
+                const area = triangleArea(pA, pB, pC);
+                if (fuzzyFloat(area, 0.0, EPSILON)) removeIndices.push(i, i + 1, i + 2);
             }
+            removeIndexValues(geometry, removeIndices);
+
+        // Non indexed
+        } else {
+            const removeIndices = [];
+            const positions = geometry.attributes.position.data;
+            for (let i = 0; i < positions.length; i += 9) {
+                const index = i / 3;
+                pA.fromArray(positions, i);
+                pB.fromArray(positions, i + 3);
+                pC.fromArray(positions, i + 6);
+                const area = triangleArea(pA, pB, pC);
+                if (fuzzyFloat(area, 0.0, EPSILON)) removeIndices.push(index, index + 1, index + 2);
+            }
+            removeIndexValues(geometry, removeIndices);
         }
-        removeIndexValues(geometry, removeIndices, false /* shiftIndex */);
     }
 }
 
@@ -7796,34 +9511,35 @@ function toNonIndexed(geometry) {
  *
  * @param {Geometry} geometry geometry to remove indices from
  * @param {Array} removeIndices array of integer index values to remove
- * @param {Boolean} shiftIndex should we shift index values? otherwise they will be removed
  * @returns
  */
-function removeIndexValues(geometry, removeIndices = [], shiftIndex = false) {
+function removeIndexValues(geometry, removeIndices = []) {
     if (removeIndices.length === 0) return;
-    for (const attributeName in geometry.attributes) {
-        const attribute = geometry.attributes[attributeName];
-        // Shift index values instead of remove
-        if (attributeName === 'index' && shiftIndex) {
-            for (let i = 0; i < removeIndices.length; i++) {
-                const index = removeIndices[i];
-                // Shift indices
-                for (let j = 0; j < attribute.data.length; j++) {
-                    if (attribute.data[j] >= index) attribute.data[j] -= 1;
-                }
-                // Shift removal indices
-                for (let j = i + 1; j < removeIndices.length; j++) removeIndices[j] -= 1;
-            }
+
+    // Indexed (remove index only)
+    if (geometry.attributes.index) {
+        const attribute = geometry.attributes.index;
+        const array2 = [];
+        for (let i = 0; i < attribute.data.length; i++) {
+            if (removeIndices.includes(i)) continue;
+            array2.push(attribute.data[i]);
+        }
+        attribute.data = new attribute.data.constructor(array2);
+        attribute.needsUpdate = true;
+
+    // Non indexed (remove all attributes at index)
+    } else {
         // Build new data array, only include un-skipped index values
-        } else {
+        for (const attributeName in geometry.attributes) {
+            const attribute = geometry.attributes[attributeName];
             const array2 = [];
             for (let i = 0; i < attribute.data.length; i += attribute.size) {
                 if (removeIndices.includes(i / attribute.size)) continue;
                 for (let j = 0; j < attribute.size; j++) array2.push(attribute.data[i + j]);
             }
             attribute.data = new attribute.data.constructor(array2);
+            attribute.needsUpdate = true;
         }
-        attribute.needsUpdate = true;
     }
 }
 
@@ -7869,6 +9585,31 @@ var GeomUtils$1 = /*#__PURE__*/Object.freeze({
     toNonIndexed: toNonIndexed
 });
 
+class WireMesh extends Mesh {
+
+    constructor({
+        geometry,
+        wireColor = new Vec3(0, 0.75, 0.5),
+        wireTint = 1.0,
+        ...meshProps
+    } = {}) {
+
+        toNonIndexed(geometry);
+
+        const program = new Standard({
+            tint: wireColor,
+            tintIntensity: wireTint,
+        });
+
+        super({
+            ...meshProps,
+            geometry: geometry,
+            program: program
+        });
+    }
+
+}
+
 /**
  * @description EyeGL
  * @about       Fast WebGL 2 graphics library built for games.
@@ -7879,24 +9620,17 @@ var GeomUtils$1 = /*#__PURE__*/Object.freeze({
 
 /***** Unused *****/
 
-// export { Curve } from './extras/Curve.js';
-// export { Path } from './extras/Path/Path.js';
-// export { Skin } from './extras/Skin.js';
 // export { Animation } from './extras/Animation.js';
-// export { Text } from './extras/Text.js';
-// export { NormalProgram } from './extras/NormalProgram.js';
+// export { AxesHelper } from './extras/helpers/AxesHelper.js';
+// export { BasisManager } from './extras/BasisManager.js';
+// export { FaceNormalsHelper } from './extras/helpers/FaceNormalsHelper.js';
 // export { Flowmap } from './extras/Flowmap.js';
 // export { GPGPU } from './extras/GPGPU.js';
-// export { Polyline } from './extras/Polyline.js';
-// export { Shadow } from './extras/Shadow.js';
-// export { KTXTexture } from './extras/KTXTexture.js';
-// export { TextureLoader } from './extras/TextureLoader.js';
-// export { GLTFLoader } from './extras/GLTFLoader.js';
-// export { GLTFSkin } from './extras/GLTFSkin.js';
-// export { BasisManager } from './extras/BasisManager.js';
-// export { AxesHelper } from './extras/helpers/AxesHelper.js';
 // export { GridHelper } from './extras/helpers/GridHelper.js';
+// export { Path } from './extras/Path/Path.js';
+// export { Shadow } from './extras/Shadow.js';
+// export { Skin } from './extras/Skin.js';
+// export { Text } from './extras/Text.js';
 // export { VertexNormalsHelper } from './extras/helpers/VertexNormalsHelper.js';
-// export { FaceNormalsHelper } from './extras/helpers/FaceNormalsHelper.js';
 
-export { Box, Camera, Capabilities, Color, ColorFunc$1 as ColorFunc, Cylinder, Euler, EulerFunc$1 as EulerFunc, Extensions, GeomUtils$1 as GeomUtils, Geometry, InstancedMesh, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, MeshProgram, Orbit, Plane, Post, Program, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Texture, Torus, Transform, Triangle, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };
+export { Box, Camera, Capabilities, Color, ColorFunc$1 as ColorFunc, Curve, Cylinder, Euler, EulerFunc$1 as EulerFunc, Extensions, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, InstancedMesh, KTXTexture, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Plane, Polyline, Post, Program, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Standard, Texture, TextureLoader, Torus, Transform, Triangle, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };

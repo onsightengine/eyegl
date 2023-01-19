@@ -5,7 +5,6 @@
 // ----------------------------------------------------------------------------------
 
 Geometry Utility Functions (GeomUtils):
-    - geometry.clone()
     - mergeGeometries()
 
 Context Lost:
