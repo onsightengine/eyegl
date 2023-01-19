@@ -48,7 +48,9 @@ export { KTXTexture } from './extras/loaders/KTXTexture.js';
 export { TextureLoader } from './extras/loaders/TextureLoader.js'
 
 // Objects
+export { Curve } from './extras/objects/Curve.js';
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
+export { Polyline } from './extras/objects/Polyline.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
 
 /***** Math *****/
@@ -78,22 +80,15 @@ export * as MathUtils from './utils/MathUtils.js';
 
 /***** Unused *****/
 
-// export { Curve } from './extras/Curve.js';
-// export { Path } from './extras/Path/Path.js';
-// export { Skin } from './extras/Skin.js';
 // export { Animation } from './extras/Animation.js';
-// export { Text } from './extras/Text.js';
-// export { NormalProgram } from './extras/NormalProgram.js';
+// export { AxesHelper } from './extras/helpers/AxesHelper.js';
+// export { BasisManager } from './extras/BasisManager.js';
+// export { FaceNormalsHelper } from './extras/helpers/FaceNormalsHelper.js';
 // export { Flowmap } from './extras/Flowmap.js';
 // export { GPGPU } from './extras/GPGPU.js';
-// export { Polyline } from './extras/Polyline.js';
-// export { Shadow } from './extras/Shadow.js';
-// export { KTXTexture } from './extras/KTXTexture.js';
-// export { TextureLoader } from './extras/TextureLoader.js';
-// export { GLTFLoader } from './extras/GLTFLoader.js';
-// export { GLTFSkin } from './extras/GLTFSkin.js';
-// export { BasisManager } from './extras/BasisManager.js';
-// export { AxesHelper } from './extras/helpers/AxesHelper.js';
 // export { GridHelper } from './extras/helpers/GridHelper.js';
+// export { Path } from './extras/Path/Path.js';
+// export { Shadow } from './extras/Shadow.js';
+// export { Skin } from './extras/Skin.js';
+// export { Text } from './extras/Text.js';
 // export { VertexNormalsHelper } from './extras/helpers/VertexNormalsHelper.js';
-// export { FaceNormalsHelper } from './extras/helpers/FaceNormalsHelper.js';
