@@ -9,8 +9,8 @@
 
 import { Color } from '../math/Color.js';
 import { Vec3 } from '../math/Vec3.js';
-import { Capabilities } from './webgl/Capabilities.js';
-import { Extensions } from './webgl/Extensions.js';
+import { Capabilities } from '../extras/webgl/Capabilities.js';
+import { Extensions } from '../extras/webgl/Extensions.js';
 
 const tempVec3 = new Vec3();
 

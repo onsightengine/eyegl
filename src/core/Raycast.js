@@ -198,7 +198,7 @@ class Raycast {
                 }
             }
 
-            if (!localDistance) hits.splice(i, 1);
+            if (! localDistance) hits.splice(i, 1);
 
             // Update hit values from bounds-test
             mesh.hit.localPoint.copy(direction).multiply(localDistance).add(origin);

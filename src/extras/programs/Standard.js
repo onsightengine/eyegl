@@ -1,4 +1,5 @@
-import { Program } from '../Program.js';
+import { Program } from '../../core/Program.js';
+import { Texture } from '../../core/Texture.js';
 
 class Standard extends Program {
 
@@ -9,9 +10,10 @@ class Standard extends Program {
 
         vec3 bary[3] = vec3[](vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 1.0));
 
+        uniform mat3 normalMatrix;
+        uniform mat4 modelMatrix;
         uniform mat4 modelViewMatrix;
         uniform mat4 projectionMatrix;
-        uniform mat3 normalMatrix;
 
         #ifdef FLAT_SHADED
             flat out vec3 vNormal;
@@ -20,12 +22,14 @@ class Standard extends Program {
         #endif
 
         out vec3 vBary;
+        out vec3 vMPos;
         out vec2 vUv;
 
         void main() {
             vBary = bary[int(mod(float(gl_VertexID), 3.0))];
-            vNormal = normalize(normalMatrix * normal);
             vUv = uv;
+            vNormal = normalize(normalMatrix * normal);
+            vMPos = (modelMatrix * vec4(position, 1.0)).xyz;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
     `;
@@ -39,7 +43,13 @@ class Standard extends Program {
         uniform float uTintIntensity;
         uniform float uWireIntensity;
 
-        uniform sampler2D tMap;
+        uniform sampler2D tDiffuse;
+        uniform sampler2D tNormal;
+        uniform float uNormalScale;
+        uniform float uNormalUVScale;
+
+        uniform mat4 viewMatrix;
+        uniform float uTime;
 
         #ifdef FLAT_SHADED
             flat in vec3 vNormal;
@@ -48,6 +58,7 @@ class Standard extends Program {
         #endif
 
         in vec3 vBary;
+        in vec3 vMPos;
         in vec2 vUv;
 
         layout(location = 0) out highp vec4 pc_fragColor;
@@ -55,11 +66,17 @@ class Standard extends Program {
         void main() {
             float alpha = uOpacity;
 
-            // ----- Normal Tint -----
-            vec3 normal = normalize(vNormal);
-            vec3 tex = texture(tMap, vUv).rgb;
-            vec3 light = normalize(vec3(0.5, 1.0, -0.3));
-            float shading = dot(normal, light) * 0.15;
+            // ----- Normal -----
+            vec3 plainNormal = normalize(vNormal);
+            vec3 textNormal = mix(vec3(1.0), texture(tNormal, vUv).rgb, uNormalScale);
+            vec3 normal = normalize(plainNormal * textNormal);
+
+            // ----- Diffuse -----
+            vec3 tex = texture(tDiffuse, vUv).rgb;
+
+            vec3 light = normalize(vec3(sin(uTime), 1.0, cos(uTime)));
+            float shading = dot(normal, light) * 0.25;
+
             vec3 diffuse = tex + shading;
 
             // ----- Color Tint -----
@@ -98,6 +115,7 @@ class Standard extends Program {
     #flatShading = false;
 
     #mapDiffuse = 0;
+
     #normalIntensity = 0.0;
     #opacity = 1.0;
     #tint = [ 1, 1, 1];
@@ -105,24 +123,30 @@ class Standard extends Program {
     #wireIntensity = 0.0;
 
     constructor({
+        texture = 0,
+        textureNormal = 0,
+
         flatShading = false,
         normalIntensity = 0.0,
+        normalScale = 0.0,
         opacity = 1.0,
-        texture = 0,
         tint = [ 1, 1, 1 ],
         tintIntensity = 0.0,
         wireIntensity = 0.0,
         ...programProps
     } = {}) {
-
         super({
             ...programProps,
             vertex: Standard.vertex,
             fragment: Standard.fragment,
             uniforms: {
-                tMap: { value: texture },
+                tDiffuse: { value: texture },
+                tNormal: { value: textureNormal },
+                uNormalScale: { value: normalScale },
+                uNormalUVScale: { value: 1 },
                 uNormalIntensity: { value: normalIntensity },
                 uOpacity: { value: opacity },
+                uTime: { value: 0 },
                 uTint: { value: tint },
                 uTintIntensity: { value: tintIntensity },
                 uWireIntensity: { value: wireIntensity },
@@ -146,7 +170,7 @@ class Standard extends Program {
             vertex: Standard.vertex,
             fragment: Standard.fragment,
             uniforms: {
-                tMap: { value: this.#mapDiffuse },
+                tDiffuse: { value: this.#mapDiffuse },
                 uNormalIntensity: { value: this.#normalIntensity },
                 uOpacity: { value: this.#opacity },
                 uTint: { value: this.#tint },

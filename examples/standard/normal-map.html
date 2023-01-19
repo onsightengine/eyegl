@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>EyeGL • Normal Map</title>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
+        <link rel="icon" type="image/png" href="../../files/logo/favicon.png" />
+        <link href="../main.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="Info">Normal Map</div>
+        <div class="Credits"></div>
+
+        <script async src='https://unpkg.com/es-module-shims@1.5.0/dist/es-module-shims.js'></script>
+		<script type='importmap'>
+            {
+                "imports": {
+                    "eyegl": "../../src/EyeGL.js",
+                    "osui": "../../../osui/build/osui.module.js"
+                }
+            }
+        </script>
+
+        <script type="module">
+            import {
+                Camera, Orbit,
+                Geometry,
+                Mesh,
+                Program,
+                Renderer,
+                Standard,
+                Texture,
+                Transform,
+            } from 'eyegl';
+
+            import { Gooey } from 'osui';
+
+            const renderer = new Renderer({ dpr: 2 });
+            const gl = renderer.gl;
+            document.body.appendChild(gl.canvas);
+            gl.clearColor(1, 1, 1, 1);
+
+            const camera = new Camera({ fov: 45 });
+            camera.position.set(1.5, 0, 2);
+
+            const controls = new Orbit(camera);
+
+            function resize() {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+            }
+            window.addEventListener('resize', resize, false);
+            resize();
+
+            const scene = new Transform();
+
+            const textureDiffuse = new Texture();
+            const imgDiffuse = new Image();
+            imgDiffuse.onload = () => (textureDiffuse.image = imgDiffuse);
+            imgDiffuse.src = '../../files/textures/granite-diffuse.jpg';
+
+            const textureNormal = new Texture();
+            const imgNormal = new Image();
+            imgNormal.onload = () => (textureNormal.image = imgNormal);
+            imgNormal.src = '../../files/textures/granite-normal.jpg';
+
+            // const program = new Program({
+            //     vertex: vertex300,
+            //     fragment: fragment300,
+            //     uniforms: {
+            //         tDiffuse: { value: textureDiffuse },
+            //         tNormal: { value: textureNormal },
+            //         uNormalScale: { value: 2 },
+            //         uNormalUVScale: { value: 1 },
+            //         uTime: { value: 0 },
+            //     },
+            // });
+
+            const program = new Standard({
+                texture: textureDiffuse,
+                textureNormal: textureNormal,
+                normalScale: 2.0,
+            });
+
+            loadModel();
+            async function loadModel() {
+                const data = await (await fetch(`../../files/models/json/rounded-cube.json`)).json();
+
+                const geometry = new Geometry({
+                    position: { size: 3, data: new Float32Array(data.position) },
+                    uv: { size: 2, data: new Float32Array(data.uv) },
+                    normal: { size: 3, data: new Float32Array(data.normal) },
+                });
+
+                const mesh = new Mesh({ geometry, program });
+                mesh.setParent(scene);
+            }
+
+            requestAnimationFrame(update);
+            function update(t) {
+                requestAnimationFrame(update);
+                controls.update();
+
+                program.uniforms.uTime.value = t * 0.001;
+                renderer.render({ scene, camera });
+            }
+
+        </script>
+    </body>
+</html>

@@ -1,9 +1,9 @@
 // TODO: Destroy render targets if size changed and exists
 
-import { Program } from '../core/Program.js';
-import { Mesh } from '../core/Mesh.js';
-import { RenderTarget } from '../core/RenderTarget.js';
-import { Triangle } from './geometries/Triangle.js';
+import { Program } from '../../core/Program.js';
+import { Mesh } from '../../core/Mesh.js';
+import { RenderTarget } from '../../core/RenderTarget.js';
+import { Triangle } from '../geometries/Triangle.js';
 
 class Post {
 
@@ -41,7 +41,7 @@ class Post {
         this.resize({ width, height, dpr });
     }
 
-    addPass({ vertex = defaultVertex, fragment = defaultFragment, uniforms = {}, textureUniform = 'tMap', enabled = true } = {}) {
+    addPass({ vertex = defaultVertex, fragment = defaultFragment, uniforms = {}, textureUniform = 'tDiffuse', enabled = true } = {}) {
         uniforms[textureUniform] = { value: this.fbo.read.texture };
 
         const program = new Program({ vertex, fragment, uniforms });
@@ -127,10 +127,10 @@ const defaultVertex = /* glsl */ `
 const defaultFragment = /* glsl */ `
     precision highp float;
 
-    uniform sampler2D tMap;
+    uniform sampler2D tDiffuse;
     varying vec2 vUv;
 
     void main() {
-        gl_FragColor = texture2D(tMap, vUv);
+        gl_FragColor = texture2D(tDiffuse, vUv);
     }
 `;
