@@ -9,22 +9,22 @@
 
 import { Color } from '../math/Color.js';
 import { Vec3 } from '../math/Vec3.js';
-import { Capabilities } from '../extras/webgl/Capabilities.js';
-import { Extensions } from '../extras/webgl/Extensions.js';
+import { Capabilities } from './webgl/Capabilities.js';
+import { Extensions } from './webgl/Extensions.js';
 
-const tempVec3 = new Vec3();
-
-let _ID = 1;
+const _tempVec3 = new Vec3();
 
 class Renderer {
 
+    static #ID = 1;
+
     constructor({
-        depth = true,                       // drawing buffer has depth buffer (at least 16 bits)?
-        stencil = false,                    // drawing buffer has stencil buffer (at least 8 bits)?
-        antialias = false,                  // perform anti-aliasing if possible?
-        powerPreference = 'default',        // 'default', 'low-power', 'high-performance'
-        premultipliedAlpha = false,         // drawing buffer contains colors with pre-multiplied alpha
-        preserveDrawingBuffer = false,      // true is slower, mostly not needed
+        depth = true,                               // drawing buffer has depth buffer (at least 16 bits)?
+        stencil = false,                            // drawing buffer has stencil buffer (at least 8 bits)?
+        antialias = false,                          // perform anti-aliasing if possible?
+        powerPreference = 'default',                // 'default', 'low-power', 'high-performance'
+        premultipliedAlpha = false,                 // drawing buffer contains colors with pre-multiplied alpha
+        preserveDrawingBuffer = false,              // true is slower, mostly not needed
 
         webgl = 2,                                  // request webgl 1 or 2?
         canvas = document.createElement('canvas'),  // canvas to use
@@ -35,7 +35,7 @@ class Renderer {
         this.isRenderer = true;
 
         // Properties
-        this.id = _ID++;
+        this.id = Renderer.#ID++;
         this.dpr = dpr;
 
         this.color = true;
@@ -98,13 +98,8 @@ class Renderer {
         this.state.currentProgram = null;
 
         function initContext(self) {
-
             self.extensions = new Extensions(gl);
             self.capabilities = new Capabilities(gl, self.extensions);
-
-            // // DEBUG: Log WebGL 2 capabilities, max values
-            // self.capabilities.log();
-
         };
         initContext(this);
 
@@ -266,7 +261,7 @@ class Renderer {
         }
     }
 
-    getRenderList({ scene, camera, frustumCull, sort }) {
+    getRenderList({ scene, camera, frustumCull, sort } = {}) {
         if (camera && frustumCull) camera.updateFrustum();
 
         // Get visible objects
@@ -300,9 +295,9 @@ class Renderer {
                 if (node.renderOrder !== 0 || ! node.program.depthTest || ! camera) return;
 
                 // Update z-depth
-                node.worldMatrix.getTranslation(tempVec3);
-                tempVec3.applyMatrix4(camera.projectionViewMatrix);
-                node.zDepth = tempVec3.z;
+                node.worldMatrix.getTranslation(_tempVec3);
+                _tempVec3.applyMatrix4(camera.projectionViewMatrix);
+                node.zDepth = _tempVec3.z;
             });
 
             opaque.sort(this.sortOpaque);

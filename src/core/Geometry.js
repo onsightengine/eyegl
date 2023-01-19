@@ -5,16 +5,16 @@ import { normalize } from '../math/functions/Vec3Func.js';
 
 const _tempVec3 = new Vec3();
 
-let _ID = 1;
-
 class Geometry {
+
+    static #ID = 1;
 
     constructor(attributes = {}) {
         this.isGeometry = true;
 
         if (! renderer) console.error(`Geometry.constructor: Renderer not found`);
 
-        this.id = _ID++;
+        this.id = Geometry.#ID++;
         this.attributes = {};
 
         this.VAOs = {}; /* store one VAO per program attribute locations order */

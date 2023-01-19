@@ -2,9 +2,9 @@ import { Transform } from './Transform.js';
 import { Mat3 } from '../math/Mat3.js';
 import { Mat4 } from '../math/Mat4.js';
 
-let _ID = 1;
-
 class Mesh extends Transform {
+
+    static #ID = 1;
 
     constructor({
         geometry,
@@ -17,7 +17,7 @@ class Mesh extends Transform {
         this.isMesh = true;
 
         if (! renderer) console.error(`Mesh.constructor: Renderer not found`);
-        this.id = _ID++;
+        this.id = Mesh.#ID++;
         this.geometry = geometry;
         this.program = program;
         this.mode = mode;

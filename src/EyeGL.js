@@ -12,11 +12,17 @@ export { Camera } from './core/Camera.js';
 export { Geometry } from './core/Geometry.js';
 export { Mesh } from './core/Mesh.js';
 export { Program } from './core/Program.js';
-export { Raycast } from './core/Raycast.js';
 export { Renderer } from './core/Renderer.js';
 export { RenderTarget } from './core/RenderTarget.js';
 export { Texture } from './core/Texture.js';
 export { Transform } from './core/Transform.js';
+
+// Programs
+export { Standard } from './core/programs/Standard.js';
+
+// WebGL
+export { Capabilities } from './core/webgl/Capabilities.js';
+export { Extensions } from './core/webgl/Extensions.js';
 
 /***** Extras *****/
 
@@ -47,12 +53,8 @@ export { WireMesh } from './extras/objects/WireMesh.js';
 // Postprocessing
 export { Post } from './extras/post/Post.js';
 
-// Programs
-export { Standard } from './extras/programs/Standard.js';
-
-// WebGL
-export { Capabilities } from './extras/webgl/Capabilities.js';
-export { Extensions } from './extras/webgl/Extensions.js';
+// Tools
+export { Raycast } from './extras/tools/Raycast.js';
 
 /***** Math *****/
 

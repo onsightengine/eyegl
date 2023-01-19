@@ -11,11 +11,11 @@ const tmp = new Vec3();
 class Polyline {
 
     constructor({
-        points, // Array of Vec3s
+        points,                         // Array of Vec3s
         vertex = defaultVertex,
         fragment = defaultFragment,
         uniforms = {},
-        attributes = {}, // For passing in custom attribs
+        attributes = {},                // For passing in custom attribs
     } = {}) {
         this.points = points;
         this.count = points.length;

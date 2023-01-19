@@ -1,9 +1,9 @@
 // TODO: barycentric code shouldn't be here, but where?
 // TODO: SphereCast?
 
-import { Vec2 } from '../math/Vec2.js';
-import { Vec3 } from '../math/Vec3.js';
-import { Mat4 } from '../math/Mat4.js';
+import { Vec2 } from '../../math/Vec2.js';
+import { Vec3 } from '../../math/Vec3.js';
+import { Mat4 } from '../../math/Mat4.js';
 
 const tempVec2a = new Vec2();
 const tempVec2b = new Vec2();
@@ -70,7 +70,7 @@ class Raycast {
         meshes.forEach((mesh) => {
 
             // Create bounds
-            if (!mesh.geometry.bounds || mesh.geometry.bounds.radius === Infinity) mesh.geometry.computeBoundingSphere();
+            if (! mesh.geometry.bounds || mesh.geometry.bounds.radius === Infinity) mesh.geometry.computeBoundingSphere();
             const bounds = mesh.geometry.bounds;
             invWorldMat4.inverse(mesh.worldMatrix);
 
@@ -115,7 +115,7 @@ class Raycast {
             if (maxDistance && localDistance > localMaxDistance) return;
 
             // Create object on mesh to avoid generating lots of objects
-            if (!mesh.hit) mesh.hit = { localPoint: new Vec3(), point: new Vec3() };
+            if (! mesh.hit) mesh.hit = { localPoint: new Vec3(), point: new Vec3() };
 
             mesh.hit.localPoint.copy(direction).multiply(localDistance).add(origin);
             mesh.hit.point.copy(mesh.hit.localPoint).applyMatrix4(mesh.worldMatrix);
@@ -131,7 +131,7 @@ class Raycast {
     intersectMeshes(meshes, { cullFace = true, maxDistance, includeUV = true, includeNormal = true, output = [] } = {}) {
         // Test bounds first before testing geometry
         const hits = this.intersectBounds(meshes, { maxDistance, output });
-        if (!hits.length) return hits;
+        if (! hits.length) return hits;
 
         const invWorldMat4 = tempMat4;
         const origin = tempVec3a;
@@ -184,12 +184,12 @@ class Raycast {
                 c.fromArray(position.data, ci * stride);
 
                 const distance = this.intersectTriangle(a, b, c, cullFace, origin, direction, faceNormal);
-                if (!distance) continue;
+                if (! distance) continue;
 
                 // Too far away
                 if (maxDistance && distance > localMaxDistance) continue;
 
-                if (!localDistance || distance < localDistance) {
+                if (! localDistance || distance < localDistance) {
                     localDistance = distance;
                     closestA = ai;
                     closestB = bi;
@@ -206,7 +206,7 @@ class Raycast {
             mesh.hit.distance = mesh.hit.point.distance(this.origin);
 
             // Add unique hit objects on mesh to avoid generating lots of objects
-            if (!mesh.hit.faceNormal) {
+            if (! mesh.hit.faceNormal) {
                 mesh.hit.localFaceNormal = new Vec3();
                 mesh.hit.faceNormal = new Vec3();
                 mesh.hit.uv = new Vec2();
@@ -304,7 +304,7 @@ class Raycast {
         edge2.sub(c, a);
         normal.cross(edge1, edge2);
         let DdN = direction.dot(normal);
-        if (!DdN) return 0;
+        if (! DdN) return 0;
         let sign;
         if (DdN > 0) {
             if (backfaceCulling) return 0;

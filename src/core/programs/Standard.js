@@ -1,5 +1,5 @@
-import { Program } from '../../core/Program.js';
-import { Texture } from '../../core/Texture.js';
+import { Program } from '../Program.js';
+import { Texture } from '../Texture.js';
 
 class Standard extends Program {
 
@@ -68,7 +68,7 @@ class Standard extends Program {
 
             // ----- Normal -----
             vec3 plainNormal = normalize(vNormal);
-            vec3 textNormal = mix(vec3(1.0), texture(tNormal, vUv).rgb, uNormalScale);
+            vec3 textNormal = mix(vec3(1.0), texture(tNormal, vUv).rgb * 2.0 - 1.0, uNormalScale);
             vec3 normal = normalize(plainNormal * textNormal);
 
             // ----- Diffuse -----
@@ -89,7 +89,7 @@ class Standard extends Program {
             vec3 baryDiffuse = diffuse;
             float baryAlpha = 1.0;
 
-            float lineWidth = 1.0; // line thickness - in pixels
+            float lineWidth = 5.0; // line thickness - in pixels
             float lineHalf = lineWidth / 2.0;
             vec3 d = fwidth(vBary);
             vec3 s = smoothstep(d * (lineWidth + lineHalf), d * (lineWidth - lineHalf), vBary);

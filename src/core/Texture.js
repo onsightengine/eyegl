@@ -5,9 +5,9 @@
 
 const emptyPixel = new Uint8Array(4);
 
-let _ID = 1;
-
 class Texture {
+
+    static #ID = 1;
 
     constructor({
         image,
@@ -30,7 +30,7 @@ class Texture {
     } = {}) {
         this.isTexture = true;
 
-        this.id = _ID++;
+        this.id = Texture.#ID++;
 
         this.image = image;
         this.target = target;

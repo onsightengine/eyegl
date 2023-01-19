@@ -1,7 +1,7 @@
 import { Geometry } from '../../core/Geometry.js';
 import { InstancedMesh } from '../objects/InstancedMesh.js';
 import { Mesh } from '../../core/Mesh.js';
-import { Standard } from '../programs/Standard.js';
+import { Standard } from '../../core/programs/Standard.js';
 import { Transform } from '../../core/Transform.js';
 import { Texture } from '../../core/Texture.js';
 

@@ -4,7 +4,7 @@ import { Geometry } from '../../core/Geometry.js';
 import { Vec3 } from '../../math/Vec3.js';
 
 import * as GeomUtils from '../../utils/GeomUtils.js';
-import { Standard } from '../programs/Standard.js';
+import { Standard } from '../../core/programs/Standard.js';
 
 class WireMesh extends Mesh {
 

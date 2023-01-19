@@ -4,9 +4,9 @@
 
 const arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
 
-let _ID = 1;
-
 class Program {
+
+    static #ID = 1;
 
     constructor({
         vertex,
@@ -27,7 +27,7 @@ class Program {
         if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
         if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
 
-        this.id = _ID++;
+        this.id = Program.#ID++;
         this.uniforms = uniforms;
 
         // Store program state
@@ -315,7 +315,7 @@ function flatten(a) {
     if (valueLen === undefined) return a;
     const length = arrayLen * valueLen;
     let value = arrayCacheF32[length];
-    if (!value) arrayCacheF32[length] = value = new Float32Array(length);
+    if (! value) arrayCacheF32[length] = value = new Float32Array(length);
     for (let i = 0; i < arrayLen; i++) value.set(a[i], i * valueLen);
     return value;
 }
