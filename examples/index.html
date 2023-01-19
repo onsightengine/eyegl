@@ -46,7 +46,7 @@
 
             // Load query example in iFrame if linked
             let loadQuery = location.search.split('src=');
-            if (loadQuery[1]) {
+            if (loadQuery[1] && loadQuery[1] !== 'undefined') {
                 iFrame.src = loadQuery[1];
                 sourceLink.href = sourcePath + loadQuery[1];
                 highlight(loadQuery[1]);
