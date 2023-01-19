@@ -13,7 +13,7 @@
         <div class="Side">
             <a class="Title" href="https://github.com/onsightengine/eyegl">EyeGL</a>
             <div class="Section">Geometry</div>
-            <a class="Example" href="geometry/base-primitives.html">Base Primitives</a>
+            <a class="Example" href="geometry/base-primitives.html" id="default">Base Primitives</a>
             <a class="Example" href="geometry/curves.html">Curves</a>
             <a class="Example" href="geometry/draw-modes.html">Draw Modes</a>
             <a class="Example" href="geometry/gpu-picking.html">Gpu Picking</a>
@@ -51,9 +51,11 @@
                 sourceLink.href = sourcePath + loadQuery[1];
                 highlight(loadQuery[1]);
             } else {
-                // choose random example to show if none linked
-                let target = exampleLinks[Math.floor(Math.random() * exampleLinks.length)];
-                updateExample({ target });
+                // default
+                let target = document.querySelector('#default');
+                // // or, choose random example to show if none linked
+                // let target = exampleLinks[Math.floor(Math.random() * exampleLinks.length)];
+                updateExample({ target: document.querySelector('#default') });
             }
 
             exampleLinks.forEach((link) => {
