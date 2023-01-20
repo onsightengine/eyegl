@@ -5684,7 +5684,7 @@ const _tempVec2b = new Vec2();
 class Orbit {
 
     constructor(object, {
-        element = document,
+        element,
         enabled = true,
         target = new Vec3(),
         ease = 0.25,
@@ -5705,6 +5705,14 @@ class Orbit {
         minDistance = 0,
         maxDistance = Infinity,
     } = {}) {
+        if (! element) {
+            console.log(window);
+            if (window.renderer) element = renderer.gl.canvas;
+            else element = document.body;
+        }
+
+        console.log(element);
+
         this.enabled = enabled;
         this.target = target;
         this.zoomStyle = zoomStyle;
@@ -5809,12 +5817,11 @@ class Orbit {
         }
 
         const pan = (deltaX, deltaY) => {
-            let el = element === document ? document.body : element;
             _tempVec3.copy(object.position).sub(this.target);
             let targetDistance = _tempVec3.distance();
             targetDistance *= Math.tan((((object.fov || 45) / 2) * Math.PI) / 180.0);
-            panLeft((2 * deltaX * targetDistance) / el.clientHeight, object.matrix);
-            panUp((2 * deltaY * targetDistance) / el.clientHeight, object.matrix);
+            panLeft((2 * deltaX * targetDistance) / element.clientHeight, object.matrix);
+            panUp((2 * deltaY * targetDistance) / element.clientHeight, object.matrix);
         };
 
         const dolly = (dollyScale) => {
@@ -5834,9 +5841,8 @@ class Orbit {
         function handleMoveRotate(x, y) {
             _tempVec2a.set(x, y);
             _tempVec2b.sub(_tempVec2a, rotateStart).multiply(rotateSpeed);
-            let el = element === document ? document.body : element;
-            sphericalDelta.theta -= (2 * Math.PI * _tempVec2b.x) / el.clientHeight;
-            sphericalDelta.phi -= (2 * Math.PI * _tempVec2b.y) / el.clientHeight;
+            sphericalDelta.theta -= (2 * Math.PI * _tempVec2b.x) / element.clientHeight;
+            sphericalDelta.phi -= (2 * Math.PI * _tempVec2b.y) / element.clientHeight;
             rotateStart.copy(_tempVec2a);
         }
 
