@@ -210,3 +210,20 @@ canvas {
     top: 0;
     left: 0;
 }
+
+details {
+    font-size: 12px;
+    color: #009b96;
+    margin-left: 3.5em;
+}
+
+summary {
+    font-size: 14px;
+    color: #ff7100;
+    margin-left: -2em;
+}
+
+.Light {
+    font-size: 12px;
+    color: #a5f300;
+}
