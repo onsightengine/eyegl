@@ -4,7 +4,7 @@
  * triangleArea()
  */
 
-import * as Vec3Func from '../math/functions/Vec3Func.js';
+import * as Vec3Func from '../../math/functions/Vec3Func.js';
 
 /**
  * Compares two decimal numbers to see if they're almost the same

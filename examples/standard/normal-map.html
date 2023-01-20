@@ -15,28 +15,18 @@
         <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Camera, Orbit,
-                Geometry,
-                Mesh,
-                Program,
-                Renderer,
-                Standard,
-                Texture,
-                Transform,
-            } from 'eyegl';
-
+            import * as EYE from 'eyegl';
             import { Gooey } from 'osui';
 
-            const renderer = new Renderer({ dpr: 2 });
+            const renderer = new EYE.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(1, 1, 1, 1);
 
-            const camera = new Camera({ fov: 45 });
+            const camera = new EYE.Camera({ fov: 45 });
             camera.position.set(1.5, 0, 2);
 
-            const controls = new Orbit(camera);
+            const controls = new EYE.Orbit(camera);
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -45,13 +35,13 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const scene = new Transform();
+            const scene = new EYE.Transform();
 
-            const textureDiffuse = new Texture({ src: '../../files/textures/granite-diffuse.jpg' });
-            const textureNormal = new Texture();
+            const textureDiffuse = new EYE.Texture({ src: '../../files/textures/granite-diffuse.jpg' });
+            const textureNormal = new EYE.Texture();
             const imgNormal = new Image({ src: '../../files/textures/granite-normal.jpg' });
 
-            // const program = new Program({
+            // const program = new EYE.Program({
             //     vertex: vertex300,
             //     fragment: fragment300,
             //     uniforms: {
@@ -63,7 +53,7 @@
             //     },
             // });
 
-            const program = new Standard({
+            const program = new EYE.Standard({
                 texture: textureDiffuse,
                 textureNormal: textureNormal,
                 normalScale: 2.0,
@@ -73,13 +63,13 @@
             async function loadModel() {
                 const data = await (await fetch(`../../files/models/json/rounded-cube.json`)).json();
 
-                const geometry = new Geometry({
+                const geometry = new EYE.Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
                 });
 
-                const mesh = new Mesh({ geometry, program });
+                const mesh = new EYE.Mesh({ geometry, program });
                 mesh.setParent(scene);
             }
 

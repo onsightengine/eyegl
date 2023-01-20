@@ -15,15 +15,8 @@
         <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Camera,
-                Geometry,
-                Mesh,
-                Program,
-                Renderer,
-                Texture,
-                Transform,
-            } from 'eyegl';
+            import * as EYE from 'eyegl';
+            import { Gooey } from 'osui';
 
             const vertex = /* glsl */ `
                 attribute vec2 uv;
@@ -83,12 +76,12 @@
             `;
 
 
-            const renderer = new Renderer({ dpr: 2 });
+            const renderer = new EYE.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(1, 1, 1, 1);
 
-            const camera = new Camera({ fov: 15 });
+            const camera = new EYE.Camera({ fov: 15 });
             camera.position.z = 15;
 
             function resize() {
@@ -100,11 +93,11 @@
 
             //
 
-            const scene = new Transform();
+            const scene = new EYE.Transform();
 
-            const texture = new Texture({ src: '../../files/models/json/acorn.jpg' });
+            const texture = new EYE.Texture({ src: '../../files/models/json/acorn.jpg' });
 
-            const program = new Program({
+            const program = new EYE.Program({
                 vertex,
                 fragment,
                 uniforms: {
@@ -130,7 +123,7 @@
                     random.set([Math.random(), Math.random() * 5, Math.random()], i * 3);
                 }
 
-                const geometry = new Geometry({
+                const geometry = new EYE.Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
@@ -141,7 +134,7 @@
                     random: { instanced: 1, size: 3, data: random },
                 });
 
-                mesh = new Mesh({ geometry, program });
+                mesh = new EYE.Mesh({ geometry, program });
                 mesh.setParent(scene);
             }
 

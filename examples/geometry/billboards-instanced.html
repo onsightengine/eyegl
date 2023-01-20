@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>EyeGL • Billboards • Instanced</title>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
+        <link rel="icon" type="image/png" href="../../files/logo/favicon.png" />
+        <link href="../main.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="Info">Billboards • Instanced</div>
+        <div class="Credits">Icons by Freepik - <a href="https://www.flaticon.com/">Flaticon</a></div>
+
+        <script language="JavaScript" src="../imports.js"></script>
+
+        <script type="module">
+            import * as EYE from 'eyegl';
+            import { Gooey } from 'osui';
+
+            const renderer = new EYE.Renderer({});
+            const gl = renderer.gl;
+            document.body.appendChild(gl.canvas);
+
+            const camera = new EYE.Camera({ fov: 35 });
+            camera.position.set(20, 20, -40);
+            camera.lookAt([0, 0, 0]);
+
+            const controls = new EYE.Orbit(camera);
+
+            function resize() {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+            }
+            window.addEventListener('resize', resize, false);
+            resize();
+
+            const params = {
+                count: 10000,
+            };
+
+            const gui = new Gooey();
+            const folder1 = gui.addFolder('Parameters');
+            folder1.add(params, 'count', 50000, 500000, 25000, 0).onChange(() => buildScene(params.count));
+
+            const dragon = new EYE.Texture({ src: '../../files/sprites/dragon.png' });
+            const unicorn = new EYE.Texture({ src: '../../files/sprites/unicorn.png' });
+            const kraken = new EYE.Texture({ src: '../../files/sprites/kraken.png' });
+
+            let scene;
+            let sceneChanged = true;
+
+            function buildScene(count) {
+                scene = new EYE.Transform();
+
+                // add new meshes
+                for (let i = 0; i < count; i++) {
+                    let texture;
+                    const img = Math.floor(Math.random() * 3);
+                    switch (img) {
+                        case 0: texture = dragon; break;
+                        case 1: texture = unicorn; break;
+                        case 2: texture = kraken; break;
+                    }
+
+                    const sprite = new EYE.Sprite({ texture });
+                    sprite.position.set(
+                        (Math.random() * 20) - 10,
+                        (Math.random() * 20) - 10,
+                        (Math.random() * 20) - 10,
+                    );
+
+                    scene.addChild(sprite);
+                }
+
+                sceneChanged = true;
+            }
+
+            buildScene(params.count);
+
+            //
+
+            const instanced = new EYE.InstancedBillboard({
+                cullFace: null,
+                transparent: true,
+                texture: dragon
+            });
+
+            const plane = new EYE.Plane();
+            EYE.GeomUtils.toNonIndexed(plane);
+
+            // Instance Matrices
+            let offset1 = new Float32Array(4); const m1 = { instanced: 1, size: 4, data: offset1 };
+            let offset2 = new Float32Array(4); const m2 = { instanced: 1, size: 4, data: offset2 };
+            let offset3 = new Float32Array(4); const m3 = { instanced: 1, size: 4, data: offset3 };
+            let offset4 = new Float32Array(4); const m4 = { instanced: 1, size: 4, data: offset4 };
+            plane.addAttribute('m1', m1);
+            plane.addAttribute('m2', m2);
+            plane.addAttribute('m3', m3);
+            plane.addAttribute('m4', m4);
+
+            const quad = new EYE.Mesh({ geometry: plane, program: instanced });
+
+            // console.log(renderer.programs);
+            // const renderList = renderer.render({ scene, camera, draw: false });
+            // console.log(renderList);
+
+            requestAnimationFrame(update);
+            function update() {
+                requestAnimationFrame(update);
+                controls.update();
+
+                // const renderList = renderer.render({ scene, camera, draw: false, sort: false });
+                renderer.prepRender({ scene, camera });
+                const renderList = scene.children;
+
+                if (sceneChanged) {
+                    const count = renderList.length;
+                    const current = plane.attributes['m1'].data.length / 4;
+                    if (count !== current) {
+                        plane.deleteAttribute(plane.attributes['m1']);
+                        plane.deleteAttribute(plane.attributes['m2']);
+                        plane.deleteAttribute(plane.attributes['m3']);
+                        plane.deleteAttribute(plane.attributes['m4']);
+                        plane.instancedCount = count;
+                        offset1 = new Float32Array(count * 4);
+                        offset2 = new Float32Array(count * 4);
+                        offset3 = new Float32Array(count * 4);
+                        offset4 = new Float32Array(count * 4);
+                        const m1 = { instanced: 1, size: 4, data: offset1 };
+                        const m2 = { instanced: 1, size: 4, data: offset2 };
+                        const m3 = { instanced: 1, size: 4, data: offset3 };
+                        const m4 = { instanced: 1, size: 4, data: offset4 };
+                        plane.addAttribute('m1', m1);
+                        plane.addAttribute('m2', m2);
+                        plane.addAttribute('m3', m3);
+                        plane.addAttribute('m4', m4);
+                    }
+
+                    let index = 0;
+                    for (let i = 0; i < count; i++) {
+                        const instance = renderList[i];
+                        for (let j = 0; j < 4; j++) {
+                            plane.attributes['m1'].data[index] = instance.worldMatrix[j + 0];
+                            plane.attributes['m2'].data[index] = instance.worldMatrix[j + 4];
+                            plane.attributes['m3'].data[index] = instance.worldMatrix[j + 8];
+                            plane.attributes['m4'].data[index] = instance.worldMatrix[j + 12];
+                            index++;
+                        }
+                    }
+
+                    plane.attributes['m1'].needsUpdate = true;
+                    plane.attributes['m2'].needsUpdate = true;
+                    plane.attributes['m3'].needsUpdate = true;
+                    plane.attributes['m4'].needsUpdate = true;
+
+                    sceneChanged = false;
+                }
+
+                camera.updateFrustum();
+                quad.draw({ camera });
+
+            }
+
+        </script>
+    </body>
+</html>

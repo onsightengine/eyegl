@@ -15,15 +15,11 @@
         <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Capabilities,
-                Renderer,
-            } from 'eyegl';
-
+            import * as EYE from 'eyegl';
             import { Gooey } from 'osui';
 
-            const renderer = new Renderer({});
-            const capabilities = new Capabilities(renderer);
+            const renderer = new EYE.Renderer({});
+            const capabilities = new EYE.Capabilities(renderer);
 
             document.querySelector('#Debug').innerHTML = capabilities.toHtml();
 

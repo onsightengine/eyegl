@@ -15,18 +15,7 @@
         <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Box, Cylinder, Plane, Sphere, Torus,
-                Camera, Orbit,
-                GeomUtils,
-                Mesh,
-                Renderer,
-                Standard,
-                Texture,
-                Transform,
-                Vec3,
-            } from 'eyegl';
-
+            import * as EYE from 'eyegl';
             import { Gooey } from 'osui';
 
             const debug = document.getElementById('debugInfo');
@@ -42,7 +31,7 @@
                 flatShading: false,
                 normalIntensity: 0.5,
                 opacity: 1.0,
-                tint: new Vec3(1, 1, 1),
+                tint: new EYE.Vec3(1, 1, 1),
                 tintIntensity: 0.0,
                 wireframe: false,
                 wireIntensity: 0.0,
@@ -64,11 +53,11 @@
             folder2.add(params, 'wireframe').onChange(toggleWireframe);
             folder2.add(params, 'wireIntensity', 0, 1).onChange(() => program.wireIntensity = params.wireIntensity);
 
-            const renderer = new Renderer({ dpr: 2 });
+            const renderer = new EYE.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new Camera({ fov: 35 });
+            const camera = new EYE.Camera({ fov: 35 });
             camera.position.set(5, 3, -6);
             camera.lookAt([0, 0, 0]);
 
@@ -79,12 +68,12 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const texture = new Texture({ src: '../../files/textures/uv-test-col.png' });
+            const texture = new EYE.Texture({ src: '../../files/textures/uv-test-col.png' });
 
-            const scene = new Transform();
-            const controls = new Orbit(camera);
+            const scene = new EYE.Transform();
+            const controls = new EYE.Orbit(camera);
 
-            const program = new Standard({
+            const program = new EYE.Standard({
                 // cullFace: null,
                 normalIntensity: params.normalIntensity,
                 opacity: params.opacity,
@@ -94,25 +83,25 @@
 
             /***** Geometries *****/
 
-            geoms['Box'] = new Box({
+            geoms['Box'] = new EYE.Box({
                 width: 1.5,
                 height: 1.5,
                 depth: 1.5,
             });
 
-            geoms['Cylinder'] = new Cylinder({
+            geoms['Cylinder'] = new EYE.Cylinder({
                 radiusTop: 1.0,
                 radiusBottom: 1.0,
                 height: 2
             });
 
-            geoms['Plane'] = new Plane({ width: 1.5, height: 1.5 });
+            geoms['Plane'] = new EYE.Plane({ width: 1.5, height: 1.5 });
 
             //  Sphere
-            geoms['Sphere'] = new Sphere({ radius: 1.25 });
+            geoms['Sphere'] = new EYE.Sphere({ radius: 1.25 });
 
             // Torus
-            geoms['Torus'] = new Torus({
+            geoms['Torus'] = new EYE.Torus({
                 radius: 1,
                 tube: 0.4,
                 radialSegments: 16,
@@ -124,17 +113,17 @@
 
             for (const key in geoms) {
                 const geometry = geoms[key];
-                if (CLEAN) GeomUtils.cleanAttributes(geometry);
-                if (COMPUTE) GeomUtils.computeVertexNormals(geometry);
-                meshes[key] = new Mesh({ geometry: geometry, program });
+                if (CLEAN) EYE.GeomUtils.cleanAttributes(geometry);
+                if (COMPUTE) EYE.GeomUtils.computeVertexNormals(geometry);
+                meshes[key] = new EYE.Mesh({ geometry: geometry, program });
                 scene.addChild(meshes[key]);
 
                 const clone = geometry.clone();
-                GeomUtils.toNonIndexed(clone);
-                // GeomUtils.toIndexed(boxGeometry, [ 'normal' ]);
-                // GeomUtils.computeVertexNormals(boxGeometry);
-                // GeomUtils.toNonIndexed(boxGeometry);
-                meshesNon[key] = new Mesh({ geometry: clone, program });
+                EYE.GeomUtils.toNonIndexed(clone);
+                // EYE.GeomUtils.toIndexed(boxGeometry, [ 'normal' ]);
+                // EYE.GeomUtils.computeVertexNormals(boxGeometry);
+                // EYE.GeomUtils.toNonIndexed(boxGeometry);
+                meshesNon[key] = new EYE.Mesh({ geometry: clone, program });
                 scene.addChild(meshesNon[key]);
             }
 

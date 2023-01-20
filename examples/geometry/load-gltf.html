@@ -15,17 +15,8 @@
         <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Camera, Orbit,
-                Color,
-                GLTFLoader,
-                GLTFSkin,
-                Program,
-                Renderer,
-                TextureLoader,
-                Transform,
-                Vec3,
-            } from 'eyegl';
+            import * as EYE from 'eyegl';
+            import { Gooey } from 'osui';
 
             const shader = {
                 vertex: /* glsl */ `
@@ -363,15 +354,15 @@
                 `,
             };
 
-            const renderer = new Renderer({ dpr: 2 });
+            const renderer = new EYE.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0.1, 0.1, 0.1, 1);
 
-            const camera = new Camera({ near: 1, far: 1000 });
+            const camera = new EYE.Camera({ near: 1, far: 1000 });
             // camera.position.set(60, 25, -60);
             camera.position.set(30, 15, -30);
-            const controls = new Orbit(camera);
+            const controls = new EYE.Orbit(camera);
             // controls.target.y = 25;
 
             function resize() {
@@ -381,20 +372,20 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const scene = new Transform();
+            const scene = new EYE.Transform();
 
             let gltf;
 
             // Common textures for uber shader
-            const lutTexture = TextureLoader.load({ src: '../../files/pbr/lut.png' });
-            const envDiffuseTexture = TextureLoader.load({ src: '../../files/textures/sunset-diffuse-RGBM.png' });
-            const envSpecularTexture = TextureLoader.load({ src: '../../files/textures/sunset-specular-RGBM.png' });
+            const lutTexture = EYE.TextureLoader.load({ src: '../../files/pbr/lut.png' });
+            const envDiffuseTexture = EYE.TextureLoader.load({ src: '../../files/textures/sunset-diffuse-RGBM.png' });
+            const envSpecularTexture = EYE.TextureLoader.load({ src: '../../files/textures/sunset-specular-RGBM.png' });
 
             loadInitial();
             handlers();
 
             async function loadInitial() {
-                gltf = await GLTFLoader.load(`../../files/models/gltf/hershel.glb`);
+                gltf = await EYE.GLTFLoader.load(`../../files/models/gltf/hershel.glb`);
                 addGLTF(gltf);
             }
 
@@ -422,12 +413,12 @@
                 reader.onload = async function (e) {
                     let desc;
                     if (isGLB) {
-                        desc = GLTFLoader.unpackGLB(e.target.result);
+                        desc = EYE.GLTFLoader.unpackGLB(e.target.result);
                     } else {
                         desc = JSON.parse(e.target.result);
                     }
                     const dir = '';
-                    gltf = await GLTFLoader.parse(desc, dir);
+                    gltf = await EYE.GLTFLoader.parse(desc, dir);
                     addGLTF(gltf);
                 };
             }
@@ -450,15 +441,15 @@
                 scene.updateMatrixWorld();
 
                 // Calculate rough world bounds to update camera
-                const min = new Vec3(+Infinity);
-                const max = new Vec3(-Infinity);
-                const center = new Vec3();
-                const scale = new Vec3();
+                const min = new EYE.Vec3(+Infinity);
+                const max = new EYE.Vec3(-Infinity);
+                const center = new EYE.Vec3();
+                const scale = new EYE.Vec3();
 
-                const boundsMin = new Vec3();
-                const boundsMax = new Vec3();
-                const boundsCenter = new Vec3();
-                const boundsScale = new Vec3();
+                const boundsMin = new EYE.Vec3();
+                const boundsMax = new EYE.Vec3();
+                const boundsCenter = new EYE.Vec3();
+                const boundsScale = new EYE.Vec3();
 
                 gltf.meshes.forEach((group) => {
                     group.primitives.forEach((mesh) => {
@@ -535,7 +526,7 @@
                 vertex = vertexPrefix + defines + vertex;
                 fragment = fragmentPrefix + defines + fragment;
 
-                const program = new Program({
+                const program = new EYE.Program({
                     vertex,
                     fragment,
                     uniforms: {
@@ -560,8 +551,8 @@
                         uEnvDiffuse: { value: 0.5 },
                         uEnvSpecular: { value: 0.5 },
 
-                        uLightDirection: { value: new Vec3(0, 1, 1) },
-                        uLightColor: { value: new Vec3(2.5) },
+                        uLightDirection: { value: new EYE.Vec3(0, 1, 1) },
+                        uLightColor: { value: new EYE.Vec3(2.5) },
 
                         uAlpha: { value: 1 },
                         uAlphaCutoff: { value: gltf.alphaCutoff },

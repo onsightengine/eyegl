@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Billboards</title>
+        <title>EyeGL • Billboards • Draw Elements</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -9,35 +9,24 @@
         <link href="../main.css" rel="stylesheet" />
     </head>
     <body>
-        <div class="Info">Billboards</div>
+        <div class="Info">Billboards • Draw Elements</div>
         <div class="Credits">Icons by Freepik - <a href="https://www.flaticon.com/">Flaticon</a></div>
 
         <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Camera, Orbit,
-                Color,
-                Mesh,
-                Plane,
-                Program,
-                Renderer,
-                Sprite,
-                Texture,
-                Transform,
-            } from 'eyegl';
-
+            import * as EYE from 'eyegl';
             import { Gooey } from 'osui';
 
-            const renderer = new Renderer({});
+            const renderer = new EYE.Renderer({});
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new Camera({ fov: 35 });
+            const camera = new EYE.Camera({ fov: 35 });
             camera.position.set(20, 20, -40);
             camera.lookAt([0, 0, 0]);
 
-            const controls = new Orbit(camera);
+            const controls = new EYE.Orbit(camera);
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -52,16 +41,16 @@
 
             const gui = new Gooey();
             const folder1 = gui.addFolder('Parameters');
-            folder1.add(params, 'count', 0, 10000, 100, 0).onChange(() => buildScene(params.count));
+            folder1.add(params, 'count', 1000, 41000, 1000, 0).onChange(() => buildScene(params.count));
 
-            const dragon = new Texture({ src: '../../files/sprites/dragon.png' });
-            const unicorn = new Texture({ src: '../../files/sprites/unicorn.png' });
-            const kraken = new Texture({ src: '../../files/sprites/kraken.png' });
+            const dragon = new EYE.Texture({ src: '../../files/sprites/dragon.png' });
+            const unicorn = new EYE.Texture({ src: '../../files/sprites/unicorn.png' });
+            const kraken = new EYE.Texture({ src: '../../files/sprites/kraken.png' });
 
             let scene;
 
             function buildScene(count) {
-                scene = new Transform();
+                scene = new EYE.Transform();
 
                 // add new meshes
                 for (let i = 0; i < count; i++) {
@@ -73,7 +62,7 @@
                         case 2: texture = kraken; break;
                     }
 
-                    const sprite = new Sprite({ texture });
+                    const sprite = new EYE.Sprite({ texture });
                     sprite.position.set(
                         (Math.random() * 20) - 10,
                         (Math.random() * 20) - 10,

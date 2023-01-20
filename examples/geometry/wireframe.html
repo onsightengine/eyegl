@@ -15,16 +15,7 @@
         <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Camera,
-                Geometry,
-                Mesh,
-                Renderer,
-                Standard,
-                Texture,
-                Transform,
-            } from 'eyegl';
-
+            import * as EYE from 'eyegl';
             import { Gooey } from 'osui';
 
             const params = {
@@ -35,11 +26,11 @@
             const folder1 = gui.addFolder('Material');
             folder1.add(params, 'wireframe', 0, 1).onChange(() => program.wireIntensity = params.wireframe);
 
-            const renderer = new Renderer({ dpr: 2 });
+            const renderer = new EYE.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new Camera({ fov: 35 });
+            const camera = new EYE.Camera({ fov: 35 });
             camera.position.set(5, 3, 6);
             camera.lookAt([0, 0, 0]);
 
@@ -63,11 +54,11 @@
             });
             /*****/
 
-            const scene = new Transform();
+            const scene = new EYE.Transform();
 
-            const texture = new Texture({ src: '../../files/models/json/croissant.jpg' });
+            const texture = new EYE.Texture({ src: '../../files/models/json/croissant.jpg' });
 
-            const program = new Standard({
+            const program = new EYE.Standard({
                 cullFace: false,
                 depthWrite: false,
                 depthTest: false,
@@ -82,19 +73,19 @@
             async function loadModel() {
                 const data = await (await fetch(`../../files/models/json/croissant.json`)).json();
 
-                const geometry = new Geometry({
+                const geometry = new EYE.Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
                 });
 
                 // Using gl.LINE_STRIP, LINES, LINE_LOOP
-                lineLoopMesh = new Mesh({ mode: gl.LINE_STRIP, geometry: geometry, program: program });
+                lineLoopMesh = new EYE.Mesh({ mode: gl.LINE_STRIP, geometry: geometry, program: program });
                 lineLoopMesh.setParent(scene);
                 lineLoopMesh.position.y = 0.75;
 
                 // Using gl.TRIANGLES
-                standardMesh = new Mesh({ mode: gl.TRIANGLES, geometry: geometry, program: program });
+                standardMesh = new EYE.Mesh({ mode: gl.TRIANGLES, geometry: geometry, program: program });
                 standardMesh.setParent(scene);
                 standardMesh.position.y = -0.75;
             }

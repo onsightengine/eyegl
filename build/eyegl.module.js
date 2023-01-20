@@ -4786,18 +4786,13 @@ class Renderer {
         return renderList;
     }
 
-    render({
+    prepRender({
         scene,
         camera,
         target = null,
         update = true,
-        sort = true,
-        frustumCull = true,
         clear = true,
-        draw = true,
     } = {}) {
-        if (this._contextLost) return;
-
         // Framebuffer
         if (target === null) {
             // Bind html canvas
@@ -4828,6 +4823,22 @@ class Renderer {
 
         // Update camera separately (in case not in scene graph)
         if (camera) camera.updateMatrixWorld();
+    };
+
+    render({
+        scene,
+        camera,
+        target = null,
+        update = true,
+        sort = true,
+        frustumCull = true,
+        clear = true,
+        draw = true,
+    } = {}) {
+        if (this._contextLost) return;
+
+        // Clear / update
+        this.prepRender({ scene, camera, target, update, clear });
 
         // Get render list (entails culling and sorting)
         const renderList = this.getRenderList({ scene, camera, frustumCull, sort });
@@ -6777,8 +6788,8 @@ class Standard extends Program {
     } = {}) {
         super({
             ...programProps,
-            vertex: defaultVertex$3,
-            fragment: defaultFragment$3,
+            vertex: defaultVertex$4,
+            fragment: defaultFragment$4,
             uniforms: {
                 tDiffuse: { value: texture },
                 tNormal: { value: textureNormal },
@@ -6865,7 +6876,7 @@ class Standard extends Program {
 
 /***** Internal *****/
 
-const defaultVertex$3 = /* glsl */ `#version 300 es
+const defaultVertex$4 = /* glsl */ `#version 300 es
     in vec2 uv;
     in vec3 position;
     in vec3 normal;
@@ -6896,7 +6907,7 @@ const defaultVertex$3 = /* glsl */ `#version 300 es
     }
 `;
 
-const defaultFragment$3 = /* glsl */ `#version 300 es
+const defaultFragment$4 = /* glsl */ `#version 300 es
     precision highp float;
 
     uniform float uNormalIntensity;
@@ -8440,8 +8451,8 @@ class Polyline {
 
     constructor({
         points,                         // Array of Vec3s
-        vertex = defaultVertex$2,
-        fragment = defaultFragment$2,
+        vertex = defaultVertex$3,
+        fragment = defaultFragment$3,
         uniforms = {},
         attributes = {},                // For passing in custom attribs
     } = {}) {
@@ -8543,7 +8554,7 @@ class Polyline {
 
 /***** Internal *****/
 
-const defaultVertex$2 = /* glsl */ `
+const defaultVertex$3 = /* glsl */ `
     precision highp float;
 
     attribute vec3 position;
@@ -8594,7 +8605,7 @@ const defaultVertex$2 = /* glsl */ `
     }
 `;
 
-const defaultFragment$2 = /* glsl */ `
+const defaultFragment$3 = /* glsl */ `
     precision highp float;
 
     uniform vec3 uColor;
@@ -8615,8 +8626,8 @@ class Billboard extends Program {
     } = {}) {
         super({
             ...programProps,
-            vertex: defaultVertex$1,
-            fragment: defaultFragment$1,
+            vertex: defaultVertex$2,
+            fragment: defaultFragment$2,
             uniforms: {
                 tDiffuse: { value: texture },
             },
@@ -8628,7 +8639,7 @@ class Billboard extends Program {
 
 /***** Internal *****/
 
-const defaultVertex$1 = /* glsl */ `#version 300 es
+const defaultVertex$2 = /* glsl */ `#version 300 es
     in vec2 uv;
     in vec3 position;
     in vec3 normal;
@@ -8654,7 +8665,7 @@ const defaultVertex$1 = /* glsl */ `#version 300 es
     }
 `;
 
-const defaultFragment$1 = /* glsl */ `#version 300 es
+const defaultFragment$2 = /* glsl */ `#version 300 es
     precision highp float;
 
     uniform sampler2D tDiffuse;
@@ -9208,8 +9219,8 @@ class Post {
     }
 
     addPass({
-        vertex = defaultVertex,
-        fragment = defaultFragment,
+        vertex = defaultVertex$1,
+        fragment = defaultFragment$1,
         uniforms = {},
         textureUniform = 'tDiffuse',
         enabled = true
@@ -9282,7 +9293,7 @@ class Post {
 
 /***** Internal *****/
 
-const defaultVertex = /* glsl */ `
+const defaultVertex$1 = /* glsl */ `
     attribute vec2 uv;
     attribute vec2 position;
 
@@ -9294,7 +9305,7 @@ const defaultVertex = /* glsl */ `
     }
 `;
 
-const defaultFragment = /* glsl */ `
+const defaultFragment$1 = /* glsl */ `
     precision highp float;
 
     uniform sampler2D tDiffuse;
@@ -9302,6 +9313,88 @@ const defaultFragment = /* glsl */ `
 
     void main() {
         gl_FragColor = texture2D(tDiffuse, vUv);
+    }
+`;
+
+class InstancedBillboard extends Program {
+
+    constructor({
+        texture,
+        ...programProps
+    } = {}) {
+        super({
+            ...programProps,
+            vertex: defaultVertex,
+            fragment: defaultFragment,
+            uniforms: {
+                tDiffuse: { value: texture },
+            },
+        });
+    }
+
+
+}
+
+/***** Internal *****/
+
+const defaultVertex = /* glsl */ `#version 300 es
+    in vec2 uv;
+    in vec3 position;
+    in vec3 normal;
+
+    in vec4 m1;
+    in vec4 m2;
+    in vec4 m3;
+    in vec4 m4;
+
+    uniform mat3 normalMatrix;
+    uniform mat4 modelMatrix;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    out vec3 vNormal;
+    out vec2 vUv;
+
+    void main() {
+        vUv = uv;
+        vNormal = normalize(normalMatrix * normal);
+
+        mat4 tsr = mat4(m1.x, m1.y, m1.z, m1.w,
+                        m2.x, m2.y, m2.z, m2.w,
+                        m3.x, m3.y, m3.z, m3.w,
+                        m4.x, m4.y, m4.z, m4.w);
+
+        vec4 mvPosition = modelViewMatrix * tsr * vec4(0.0, 0.0, 0.0, 1.0);
+        mvPosition.xy += position.xy;
+        gl_Position = projectionMatrix * mvPosition;
+
+        // vec3 pos = position;
+        // gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+    }
+`;
+
+const defaultFragment = /* glsl */ `#version 300 es
+    precision highp float;
+
+    uniform sampler2D tDiffuse;
+
+    in vec2 vUv;
+
+    layout(location = 0) out highp vec4 pc_fragColor;
+
+    void main() {
+
+        // ----- Diffuse -----
+        vec4 tex = texture(tDiffuse, vUv);
+
+        vec3 diffuse = tex.rgb;
+        float alpha = tex.a;
+
+        // ----- Output -----
+        if (alpha < 0.01) discard;
+        diffuse *= alpha;
+
+        pc_fragColor = vec4(diffuse, alpha);
     }
 `;
 
@@ -9793,4 +9886,4 @@ class Raycast {
 // export { Text } from './extras/Text.js';
 // export { VertexNormalsHelper } from './extras/helpers/VertexNormalsHelper.js';
 
-export { Billboard, Box, Camera, Capabilities, Color, ColorFunc$1 as ColorFunc, Curve, Cylinder, Euler, EulerFunc$1 as EulerFunc, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, InstancedMesh, KTXTexture, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Plane, Polyline, Post, Program, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Sprite, Standard, Texture, TextureLoader, Torus, Transform, Triangle, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };
+export { Billboard, Box, Camera, Capabilities, Color, ColorFunc$1 as ColorFunc, Curve, Cylinder, Euler, EulerFunc$1 as EulerFunc, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, InstancedBillboard, InstancedMesh, KTXTexture, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Plane, Polyline, Post, Program, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Sprite, Standard, Texture, TextureLoader, Torus, Transform, Triangle, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };

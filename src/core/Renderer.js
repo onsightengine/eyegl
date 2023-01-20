@@ -331,18 +331,13 @@ class Renderer {
         return renderList;
     }
 
-    render({
+    prepRender({
         scene,
         camera,
         target = null,
         update = true,
-        sort = true,
-        frustumCull = true,
         clear = true,
-        draw = true,
     } = {}) {
-        if (this._contextLost) return;
-
         // Framebuffer
         if (target === null) {
             // Bind html canvas
@@ -373,6 +368,22 @@ class Renderer {
 
         // Update camera separately (in case not in scene graph)
         if (camera) camera.updateMatrixWorld();
+    };
+
+    render({
+        scene,
+        camera,
+        target = null,
+        update = true,
+        sort = true,
+        frustumCull = true,
+        clear = true,
+        draw = true,
+    } = {}) {
+        if (this._contextLost) return;
+
+        // Clear / update
+        this.prepRender({ scene, camera, target, update, clear });
 
         // Get render list (entails culling and sorting)
         const renderList = this.getRenderList({ scene, camera, frustumCull, sort });

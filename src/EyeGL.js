@@ -49,11 +49,16 @@ export { Post } from './extras/post/Post.js';
 
 // Programs
 export { Billboard } from './extras/programs/Billboard.js';
+export { InstancedBillboard } from './extras/programs/InstancedBillboard.js';
 export { Standard } from './extras/programs/Standard.js';
 
 // Tools
 export { Capabilities } from './extras/tools/Capabilities.js';
 export { Raycast } from './extras/tools/Raycast.js';
+
+// Utils
+export * as GeomUtils from './extras/utils/GeomUtils.js';
+export * as MathUtils from './extras/utils/MathUtils.js';
 
 /***** Math *****/
 
@@ -74,11 +79,6 @@ export * as QuatFunc from './math/functions/QuatFunc.js';
 export * as Vec2Func from './math/functions/Vec2Func.js';
 export * as Vec3Func from './math/functions/Vec3Func.js';
 export * as Vec4Func from './math/functions/Vec4Func.js';
-
-/***** Utils *****/
-
-export * as GeomUtils from './utils/GeomUtils.js';
-export * as MathUtils from './utils/MathUtils.js';
 
 /***** Unused *****/
 

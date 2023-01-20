@@ -14,18 +14,8 @@
         <script language="JavaScript" src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Box,
-                Camera,
-                Mesh,
-                Program,
-                Renderer,
-                RenderTarget,
-                Standard,
-                Texture,
-                Transform,
-                Vec3,
-            } from 'eyegl';
+            import * as EYE from 'eyegl';
+            import { Gooey } from 'osui';
 
             const vertex = /* glsl */ `
                 attribute vec2 uv;
@@ -96,12 +86,12 @@
             `;
 
 
-            const renderer = new Renderer({ dpr: 2 });
+            const renderer = new EYE.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(1, 1, 1, 1);
 
-            const camera = new Camera({ fov: 15 });
+            const camera = new EYE.Camera({ fov: 15 });
             camera.position.z = 15;
 
             let target;
@@ -109,14 +99,14 @@
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
-                target = new RenderTarget(gl);
+                target = new EYE.RenderTarget(gl);
             }
             window.addEventListener('resize', resize, false);
             resize();
 
-            const scene = new Transform();
+            const scene = new EYE.Transform();
 
-            const program = new Program({
+            const program = new EYE.Program({
                 vertex,
                 fragment,
                 uniforms: {
@@ -150,7 +140,7 @@
                 objects.push({ id, offset, random });
             }
 
-            const geometry = new Box({
+            const geometry = new EYE.Box({
                 width: 0.2,
                 height: 0.2,
                 depth: 0.2,
@@ -162,11 +152,11 @@
                 },
             });
 
-            mesh = new Mesh({ geometry, program });
+            mesh = new EYE.Mesh({ geometry, program });
             mesh.setParent(scene);
 
             // Create a single non-instanced copy
-            highlight = new Mesh({ geometry, program: new Standard({ normalIntensity: 1.0 }) });
+            highlight = new EYE.Mesh({ geometry, program: new EYE.Standard({ normalIntensity: 1.0 }) });
             highlight.setParent(scene);
             highlight.visible = false;
 
@@ -181,7 +171,7 @@
                 false
             );
 
-            const mouse = new Vec3();
+            const mouse = new EYE.Vec3();
             function move(e) {
                 mouse.set(
                     (e.x * gl.canvas.width) / gl.canvas.clientWidth,
