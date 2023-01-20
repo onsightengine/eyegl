@@ -13,7 +13,7 @@
         <div class="Side">
             <a class="Title" href="https://github.com/onsightengine/eyegl">EyeGL</a>
             <div class="Section">Geometry</div>
-            <a class="Example" href="geometry/base-primitives.html" id="default">Base Primitives</a>
+            <a class="Example" href="geometry/base-primitives.html" id="defaultExample">Base Primitives</a>
             <a class="Example" href="geometry/billboards.html">Billboards</a>
             <a class="Example" href="geometry/curves.html">Curves</a>
             <a class="Example" href="geometry/draw-modes.html">Draw Modes</a>
@@ -52,17 +52,17 @@
             });
 
             // Load query example in iFrame if linked
-            let loadQuery = location.search.split('src=');
+            const loadQuery = location.search.split('src=');
             if (loadQuery[1] && loadQuery[1] !== 'undefined') {
                 iFrame.src = loadQuery[1];
                 sourceLink.href = sourcePath + loadQuery[1];
                 highlight(loadQuery[1]);
             } else {
-                // default
-                let target = document.querySelector('#default');
-                // // or, choose random example to show if none linked
-                // let target = exampleLinks[Math.floor(Math.random() * exampleLinks.length)];
-                updateExample({ target: document.querySelector('#default') });
+                // // choose random example to show if none linked
+                const target = exampleLinks[Math.floor(Math.random() * exampleLinks.length)];
+                // // or, default
+                // const target = document.querySelector('#default');
+                updateExample({ target: document.querySelector('#defaultExample') });
             }
 
             exampleLinks.forEach((link) => {
@@ -70,7 +70,12 @@
             });
 
             function updateExample(event) {
-                let src = event.target.href.split('examples/')[1];
+                let src;
+                if (event.target.href.includes('examples')) {
+                    src = event.target.href.split('examples/')[1];
+                } else {
+                    src = event.target.href.split('eyegl/')[1];
+                }
 
                 // Allow user to cmd/ctrl + click to open in new tab
                 if (event.metaKey) {
@@ -90,9 +95,16 @@
             // Highlight and update others
             function highlight(src) {
                 exampleLinks.forEach((link) => {
-                    let linkSrc = link.href.split('examples/')[1];
+                    link.classList.remove('active');
+
+                    let linkSrc;
+                    if (link.href.includes('examples')) {
+                        linkSrc = link.href.split('examples/')[1];
+                    } else {
+                        linkSrc = link.href.split('eyegl/')[1];
+                    }
+
                     if (src === linkSrc) link.classList.add('active');
-                    else link.classList.remove('active');
                 });
             }
 
