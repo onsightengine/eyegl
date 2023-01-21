@@ -73,13 +73,17 @@
                 mesh.setParent(scene);
             }
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);
+                debug.startFrame();
                 controls.update();
 
                 program.uniforms.uTime.value = t * 0.001;
                 renderer.render({ scene, camera });
+
+                debug.endFrame();
             }
 
         </script>

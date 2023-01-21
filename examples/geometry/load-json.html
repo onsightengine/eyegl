@@ -101,12 +101,16 @@
                 mesh.setParent(scene);
             }
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
-            function update() {
+            function update(t) {
                 requestAnimationFrame(update);
+                debug.startFrame();
 
                 if (mesh) mesh.rotation.y -= 0.005;
                 renderer.render({ scene, camera });
+
+                debug.endFrame();
             }
 
         </script>

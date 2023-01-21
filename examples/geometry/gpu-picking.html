@@ -179,10 +179,12 @@
                 );
             }
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);
                 if (!mesh) return;
+                debug.startFrame();
 
                 let time = t * 0.001;
                 program.uniforms.uTime.value = time;
@@ -229,6 +231,8 @@
                 gl.clearColor(1, 1, 1, 1);
 
                 renderer.render({ scene, camera });
+
+                debug.endFrame();
             }
 
         </script>

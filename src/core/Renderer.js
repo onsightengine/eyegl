@@ -37,8 +37,9 @@ class Renderer {
         this.depth = depth;
         this.stencil = stencil;
 
-        // Active Geometry
-        this.currentGeometry = null;
+        // Draw info
+        this.currentGeometry = null;                // active geometry
+        this.drawCallCount = 0;                     // count draw calls in frame
 
         // WebGL attributes
         const attributes = {

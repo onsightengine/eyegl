@@ -110,11 +110,14 @@
                 mesh.rotation.y = (i * -Math.PI) / 60;
             }
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
-            function update() {
+            function update(t) {
                 requestAnimationFrame(update);
+                debug.startFrame();
                 controls.update();
                 renderer.render({ scene, camera });
+                debug.endFrame();
             }
 
         </script>

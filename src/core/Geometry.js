@@ -220,6 +220,9 @@ class Geometry {
                 renderer.gl.drawArrays(mode, this.drawRange.start, this.drawRange.count);
             }
         }
+
+        // Increment draw count
+        renderer.drawCallCount++;
     }
 
     /***** Bounding Box *****/

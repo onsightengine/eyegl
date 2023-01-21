@@ -78,15 +78,18 @@
 
             const mesh = new EYE.Mesh({ geometry, program });
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
-
             function update(t) {
                 requestAnimationFrame(update);
+                debug.startFrame();
 
                 program.uniforms.uTime.value = t * 0.001;
 
                 // NOTE: Don't need a camera (camera uniforms aren't required for full screen triangle)
                 renderer.render({ scene: mesh });
+
+                debug.endFrame();
             }
 
         </script>

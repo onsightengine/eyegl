@@ -87,41 +87,43 @@ class Debug {
         dom.innerHTML = `
             <details class="EyeDetails"${(openFrame) ? ' open="true"' : ''}>
             <summary class="EyeSummary">Frame</summary>
-            <div class="EyeRow">FPS<span class="EyeInfo"><span id="EyeFps">0</span> fps</span></div>
-            <div class="EyeRow">One Frame<span class="EyeInfo"><span id="EyeFrame">0</span> ms</span></div>
-            <div class="EyeRow">Max FPS<span class="EyeInfo">~ <span id="EyeMaxFps">0</span> fps</span></div>
+            <div class="EyeRow">FPS<span class="EyeInfo" id="EyeFps"></span></div>
+            <div class="EyeRow">Render<span class="EyeInfo" id="EyeRender"></span></div>
+            <div class="EyeRow">Max<span class="EyeInfo" id="EyeMax"></span></div>
+            <div class="EyeRow">Draws <span class="EyeInfo" id="EyeDraws"></span></div>
             </details>
             <details class="EyeDetails"${(openScene) ? ' open="true"' : ''}>
             <summary class="EyeSummary">Scene</summary>
-            <div class="EyeRow">Draw Calls <span class="EyeInfo" id="EyeDrawCalls">0</span></div>
-            <div class="EyeRow">Objects <span class="EyeInfo" id="EyeObjects">0</span></div>
-            <div class="EyeRow">Lights <span class="EyeInfo" id="EyeLights">0</span></div>
-            <div class="EyeRow">Vertices <span class="EyeInfo" id="EyeVertices">0</span></div>
-            <div class="EyeRow">Triangles <span class="EyeInfo" id="EyeTriangles">0</span></div>
+            <div class="EyeRow">Objects <span class="EyeInfo" id="EyeObjects"></span></div>
+            <div class="EyeRow">Lights <span class="EyeInfo" id="EyeLights"></span></div>
+            <div class="EyeRow">Vertices <span class="EyeInfo" id="EyeVertices"></span></div>
+            <div class="EyeRow">Triangles <span class="EyeInfo" id="EyeTriangles"></span></div>
             </details>
             <details class="EyeDetails"${(openBuffers) ? ' open="true"' : ''}>
             <summary class="EyeSummary">Buffers</summary>
-            <div class="EyeRow">Programs <span class="EyeInfo" id="EyePrograms">0</span></div>
-            <div class="EyeRow">Geometries <span class="EyeInfo" id="EyeGeometries">0</span></div>
-            <div class="EyeRow">Textures <span class="EyeInfo" id="EyeTextures">0</span></div>
+            <div class="EyeRow">Programs <span class="EyeInfo" id="EyePrograms"></span></div>
+            <div class="EyeRow">Geometries <span class="EyeInfo" id="EyeGeometries"></span></div>
+            <div class="EyeRow">Textures <span class="EyeInfo" id="EyeTextures"></span></div>
             </details>
             <details class="EyeDetails"${(openSystem) ? ' open="true"' : ''}>
             <summary class="EyeSummary">System</summary>
-            <div class="EyeRow">Memory <span class="EyeInfo"><span id="EyeMemory">?</span> mb</span></div>
+            <div class="EyeRow">Memory <span class="EyeInfo" id="EyeMemory">?</span></div>
             </details>
         `;
         document.body.appendChild(dom);
 
         const domFps = document.getElementById('EyeFps');
-        const domFrame = document.getElementById('EyeFrame');
-        const domMax = document.getElementById('EyeMaxFps');
+        const domRender = document.getElementById('EyeRender');
+        const domMax = document.getElementById('EyeMax');
         const domMem = document.getElementById('EyeMemory');
+        const domDraws = document.getElementById('EyeDraws');
 
         const frameClock = new Clock();
         const elapsedClock = new Clock();
 
         this.#startInternal = function() {
             frameClock.start();
+            renderer.drawCallCount = 0;
         }
 
         this.#stopInternal = function() {
@@ -129,21 +131,24 @@ class Debug {
 
             const elapsed = elapsedClock.getElapsedTime();
             if (elapsed > 1) {
-                // Actual Fps
+                // Actual fps
                 const fps = elapsedClock.count() / elapsed;
-                if (domFps) domFps.textContent = `${fps.toFixed(1)}`;
+                if (domFps) domFps.textContent = `${fps.toFixed(1)} fps`;
                 elapsedClock.reset();
 
                 // Average time of actual rendering frames
                 const frameAvg = frameClock.averageDelta();
-                if (domFrame) domFrame.textContent = `${frameAvg.toFixed(2)}`;
-                if (domMax) domMax.textContent = `${Math.floor(1000 / frameAvg)}`;
+                if (domRender) domRender.textContent = `${frameAvg.toFixed(2)} ms`;
+                if (domMax) domMax.textContent = `~ ${Math.floor(1000 / frameAvg)} fps`;
                 frameClock.reset();
 
-                // Memory Usage
+                // Draw call count
+                if (domDraws) domDraws.textContent = `${renderer.drawCallCount}`;
+
+                // Memory usage
                 if (domMem && performance.memory) {
                     const memory = performance.memory.usedJSHeapSize / 1048576;
-                    domMem.textContent = `${memory.toFixed(2)}`;
+                    domMem.textContent = `${memory.toFixed(2)} mb`;
                 }
             }
         };

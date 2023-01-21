@@ -18,7 +18,7 @@
             import * as EYE from 'eyegl';
             import { Gooey } from 'osui';
 
-            const debug = document.getElementById('debugInfo');
+            const debugInfo = document.getElementById('debugInfo');
 
             const geomTypes = [ 'Box', 'Cylinder', 'Plane', 'Sphere', 'Torus' ];
             const geoms = {}, nonIndexed = {};
@@ -147,7 +147,7 @@
                     if (params.indexed) info += `Indices: ${mesh.geometry.attributes.index.data.length}<br />`;
                     info += `Positions: ${mesh.geometry.attributes.position.data.length}<br />`;
                     info += `Normals: ${mesh.geometry.attributes.normal.data.length}<br />`;
-                    debug.innerHTML = info;
+                    debugInfo.innerHTML = info;
                 }
             }
             setVisibleGeometry();
@@ -160,11 +160,14 @@
                 }
             }
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
-            function update() {
+            function update(t) {
                 requestAnimationFrame(update);
+                debug.startFrame();
                 controls.update();
                 renderer.render({ scene, camera });
+                debug.endFrame();
             }
 
         </script>

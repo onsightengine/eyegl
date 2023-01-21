@@ -112,9 +112,11 @@
             // Make sure mode is gl.POINTS
             const particles = new EYE.Mesh({ mode: gl.POINTS, geometry, program });
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);
+                debug.startFrame();
 
                 // add some slight overall movement to be more interesting
                 particles.rotation.x = Math.sin(t * 0.0002) * 0.1;
@@ -123,6 +125,8 @@
 
                 program.uniforms.uTime.value = t * 0.001;
                 renderer.render({ scene: particles, camera });
+
+                debug.endFrame();
             }
 
         </script>

@@ -90,14 +90,18 @@
                 standardMesh.position.y = -0.75;
             }
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
-            function update() {
+            function update(t) {
                 requestAnimationFrame(update);
+                debug.startFrame();
 
                 if (lineLoopMesh) lineLoopMesh.rotation.y -= 0.005;
                 if (standardMesh) standardMesh.rotation.y -= 0.005;
 
                 renderer.render({ scene, camera });
+
+                debug.endFrame();
             }
 
         </script>

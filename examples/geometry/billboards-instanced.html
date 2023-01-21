@@ -168,9 +168,12 @@
             // const renderList = renderer.render({ scene, camera, draw: false });
             // console.log(renderList);
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
-            function update() {
+            function update(t) {
                 requestAnimationFrame(update);
+                debug.startFrame();
+
                 controls.update();
 
                 if (! sceneChanged) {
@@ -226,6 +229,7 @@
                 camera.updateFrustum();
                 quad.draw({ camera });
 
+                debug.endFrame();
             }
 
         </script>

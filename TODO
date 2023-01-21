@@ -7,9 +7,6 @@
 Debug:
     - Program info
 
-Program:
-    - improve
-
 Sprite Shader:
     - atlas / texture mergering
 
@@ -26,6 +23,15 @@ Context Lost:
 
 TypeScript:
     !! Convert to typescript?
+
+// ----- Outline
+
+- Asset Manager
+    - File loaders
+    - File management
+
+- Program Management
+    - Shader Chunks
 
 // ----------------------------------------------------------------------------------
 //

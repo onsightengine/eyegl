@@ -63,7 +63,7 @@
             const targetMesh = new EYE.Mesh({ geometry, program: targetProgram });
 
             requestAnimationFrame(update);
-            function update() {
+            function update(t) {
                 requestAnimationFrame(update);
 
                 mesh.rotation.y -= 0.02;
