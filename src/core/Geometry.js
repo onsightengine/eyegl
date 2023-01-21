@@ -1,7 +1,7 @@
-// TODO: fit in transform feedback
-
 import { Vec3 } from '../math/Vec3.js';
 import { normalize } from '../math/functions/Vec3Func.js';
+
+// TODO: fit in transform feedback
 
 const _tempVec3 = new Vec3();
 

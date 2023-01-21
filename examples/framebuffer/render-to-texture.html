@@ -62,9 +62,6 @@
             const mesh = new EYE.Mesh({ geometry, program });
             const targetMesh = new EYE.Mesh({ geometry, program: targetProgram });
 
-            // Set background for first render to target
-            renderer.clearColor.set([ 0.25, 0.25, 0.2 ]);
-
             requestAnimationFrame(update);
             function update() {
                 requestAnimationFrame(update);
@@ -73,12 +70,14 @@
                 targetMesh.rotation.y -= 0.005;
                 targetMesh.rotation.x -= 0.01;
 
-                renderer.clearAlpha = 1;
+                // Set background for first render to target
+                gl.clearColor(0.15, 0.05, 0.2, 1);
 
                 // Add target property to render call
                 renderer.render({ scene: mesh, camera, target });
 
-                renderer.clearAlpha = 0;
+                // Change to final background
+                gl.clearColor(1, 1, 1, 1);
 
                 // Omit target to render to canvas
                 renderer.render({ scene: targetMesh, camera: targetCamera });

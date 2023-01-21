@@ -1,7 +1,7 @@
-// https://github.com/mrdoob/three.js/blob/master/src/geometries/TorusGeometry.js
-
 import { Geometry } from '../../core/Geometry.js';
 import { Vec3 } from '../../math/Vec3.js';
+
+// https://github.com/mrdoob/three.js/blob/master/src/geometries/TorusGeometry.js
 
 class Torus extends Geometry {
 

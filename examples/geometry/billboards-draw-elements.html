@@ -23,7 +23,7 @@
             document.body.appendChild(gl.canvas);
 
             const camera = new EYE.Camera({ fov: 35 });
-            camera.position.set(20, 20, -40);
+            camera.position.set(25, 25, -50);
             camera.lookAt([0, 0, 0]);
 
             const controls = new EYE.Orbit(camera);
@@ -39,9 +39,9 @@
                 count: 1000,
             };
 
-            const gui = new Gooey();
+            const gui = new Gooey().opacity(0.8);
             const folder1 = gui.addFolder('Parameters');
-            folder1.add(params, 'count', 1000, 41000, 1000, 0).onChange(() => buildScene(params.count));
+            folder1.add(params, 'count', 1000, 50000, 1000, 0).onFinishChange(() => buildScene(params.count));
 
             const dragon = new EYE.Texture({ src: '../../files/sprites/dragon.png' });
             const unicorn = new EYE.Texture({ src: '../../files/sprites/unicorn.png' });
@@ -75,17 +75,17 @@
 
             buildScene(params.count);
 
-            //
-
-            console.log(renderer.programs);
-
-            //
+            const debug = new EYE.Debug();
 
             requestAnimationFrame(update);
             function update() {
                 requestAnimationFrame(update);
+                debug.startFrame();
+
                 controls.update();
                 renderer.render({ scene, camera });
+
+                debug.endFrame();
             }
 
         </script>

@@ -3990,8 +3990,6 @@ class Program {
         depthWrite = true,
         depthFunc = renderer.gl.LESS,
     } = {}) {
-        this.isProgram = true;
-
         if (! renderer) console.error(`Program.constructor: Renderer not found`);
         if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
         if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
@@ -4110,6 +4108,8 @@ class Program {
             this.attributeLocations.set(attribute, location);
         }
         this.attributeOrder = locations.join('');
+
+        console.log(this.attributeOrder);
     }
 
     setBlendFunc(src, dst, srcAlpha, dstAlpha) {
@@ -4463,6 +4463,14 @@ class Color extends Array {
 
 }
 
+// NOTE: Must use these methods manually
+// gl.clearColor( r, g, b, a );
+// gl.colorMask( colorMask, colorMask, colorMask, colorMask );
+// gl.stencilMask( stencilMask );
+// gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
+// gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
+// gl.clearStencil( stencil );
+
 // TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
 
 const _tempVec3$1 = new Vec3();
@@ -4470,6 +4478,8 @@ const _tempVec3$1 = new Vec3();
 class Renderer {
 
     static #ID = 1;
+
+    #contextLost = false;
 
     constructor({
         depth = true,                               // drawing buffer has depth buffer (at least 16 bits)?
@@ -4479,10 +4489,7 @@ class Renderer {
         preserveDrawingBuffer = false,              // true is slower, mostly not needed
         canvas = document.createElement('canvas'),  // canvas to use
         dpr = 1,                                    // window.devicePixelRatio
-        clearColor = new Color(),                   // color to clear COLOR_BUFFER_BIT
-        clearAlpha = 0,                             // alpha to clear COLOR_BUFFER_BIT
     } = {}) {
-        this.isRenderer = true;
 
         // Properties
         this.id = Renderer.#ID++;
@@ -4491,14 +4498,9 @@ class Renderer {
         this.color = true;
         this.depth = depth;
         this.stencil = stencil;
-        this.clearColor = (clearColor && clearColor instanceof Color) ? clearColor : new Color(clearColor);
-        this.clearAlpha = clearAlpha;
 
         // Active Geometry
         this.currentGeometry = null;
-
-        // Private
-        this._contextLost = false;
 
         // WebGL attributes
         const attributes = {
@@ -4575,13 +4577,13 @@ class Renderer {
         gl.canvas.addEventListener('webglcontextlost', function(event) {
             event.preventDefault();
             console.log('Renderer: Context lost');
-            this._contextLost = true;
+            this.#contextLost = true;
         }.bind(this));
 
         gl.canvas.addEventListener('webglcontextrestored', function(event) {
             console.log('Renderer: Context restored');
             initContext(this);
-            this._contextLost = false;
+            this.#contextLost = false;
         }.bind(this));
     }
 
@@ -4814,7 +4816,6 @@ class Renderer {
             const clearColor = (this.color) ? this.gl.COLOR_BUFFER_BIT : 0;
             const clearDepth = (this.depth) ? this.gl.DEPTH_BUFFER_BIT : 0;
             const clearStencil = (this.stencil) ? this.gl.STENCIL_BUFFER_BIT : 0;
-            this.gl.clearColor(this.clearColor.r, this.clearColor.g, this.clearColor.b, this.clearAlpha);
             this.gl.clear(clearColor | clearDepth | clearStencil);
         }
 
@@ -4835,7 +4836,7 @@ class Renderer {
         clear = true,
         draw = true,
     } = {}) {
-        if (this._contextLost) return;
+        if (this.#contextLost) return;
 
         // Clear / update
         this.prepRender({ scene, camera, target, update, clear });
@@ -5095,8 +5096,6 @@ class RenderTarget {
         unpackAlignment,
         premultiplyAlpha,
     } = {}) {
-        this.isRenderTarget = true;
-
         renderer.gl = renderer.gl;
         this.width = width;
         this.height = height;
@@ -6791,8 +6790,8 @@ class Standard extends Program {
     } = {}) {
         super({
             ...programProps,
-            vertex: defaultVertex$4,
-            fragment: defaultFragment$4,
+            vertex: defaultVertex$3,
+            fragment: defaultFragment$3,
             uniforms: {
                 tDiffuse: { value: texture },
                 tNormal: { value: textureNormal },
@@ -6879,7 +6878,7 @@ class Standard extends Program {
 
 /***** Internal *****/
 
-const defaultVertex$4 = /* glsl */ `#version 300 es
+const defaultVertex$3 = /* glsl */ `#version 300 es
     in vec2 uv;
     in vec3 position;
     in vec3 normal;
@@ -6910,7 +6909,7 @@ const defaultVertex$4 = /* glsl */ `#version 300 es
     }
 `;
 
-const defaultFragment$4 = /* glsl */ `#version 300 es
+const defaultFragment$3 = /* glsl */ `#version 300 es
     precision highp float;
 
     uniform float uNormalIntensity;
@@ -8454,8 +8453,8 @@ class Polyline {
 
     constructor({
         points,                         // Array of Vec3s
-        vertex = defaultVertex$3,
-        fragment = defaultFragment$3,
+        vertex = defaultVertex$2,
+        fragment = defaultFragment$2,
         uniforms = {},
         attributes = {},                // For passing in custom attribs
     } = {}) {
@@ -8557,7 +8556,7 @@ class Polyline {
 
 /***** Internal *****/
 
-const defaultVertex$3 = /* glsl */ `
+const defaultVertex$2 = /* glsl */ `
     precision highp float;
 
     attribute vec3 position;
@@ -8608,7 +8607,7 @@ const defaultVertex$3 = /* glsl */ `
     }
 `;
 
-const defaultFragment$3 = /* glsl */ `
+const defaultFragment$2 = /* glsl */ `
     precision highp float;
 
     uniform vec3 uColor;
@@ -8618,78 +8617,6 @@ const defaultFragment$3 = /* glsl */ `
     void main() {
         gl_FragColor.rgb = uColor;
         gl_FragColor.a = 1.0;
-    }
-`;
-
-class Billboard extends Program {
-
-    constructor({
-        texture,
-        ...programProps
-    } = {}) {
-        super({
-            ...programProps,
-            vertex: defaultVertex$2,
-            fragment: defaultFragment$2,
-            uniforms: {
-                tDiffuse: { value: texture },
-            },
-        });
-    }
-
-
-}
-
-/***** Internal *****/
-
-const defaultVertex$2 = /* glsl */ `#version 300 es
-    in vec2 uv;
-    in vec3 position;
-    in vec3 normal;
-
-    uniform mat3 normalMatrix;
-    uniform mat4 modelMatrix;
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
-
-    out vec3 vNormal;
-    out vec2 vUv;
-
-    void main() {
-        vUv = uv;
-        vNormal = normalize(normalMatrix * normal);
-
-        vec4 mvPosition = modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
-        mvPosition.xy += position.xy;
-        gl_Position = projectionMatrix * mvPosition;
-
-        // vec3 pos = position;
-        // gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    }
-`;
-
-const defaultFragment$2 = /* glsl */ `#version 300 es
-    precision highp float;
-
-    uniform sampler2D tDiffuse;
-
-    in vec2 vUv;
-
-    layout(location = 0) out highp vec4 pc_fragColor;
-
-    void main() {
-
-        // ----- Diffuse -----
-        vec4 tex = texture(tDiffuse, vUv);
-
-        vec3 diffuse = tex.rgb;
-        float alpha = tex.a;
-
-        // ----- Output -----
-        if (alpha < 0.01) discard;
-        diffuse *= alpha;
-
-        pc_fragColor = vec4(diffuse, alpha);
     }
 `;
 
@@ -8703,9 +8630,14 @@ class Sprite extends Mesh {
     } = {}) {
         if (! Sprite.#geometry) Sprite.#geometry = new Plane();
         if (! Sprite.#program) {
-            Sprite.#program = new Billboard({
+            Sprite.#program = new Program({
                 cullFace: null,
                 transparent: true,
+                vertex: defaultVertex$1,
+                fragment: defaultFragment$1,
+                uniforms: {
+                    tDiffuse: { value: texture },
+                },
             });
         }
 
@@ -8757,11 +8689,62 @@ class Sprite extends Mesh {
 
 }
 
-/**
- * fuzzyFloat()
- * isPowerOf2()
- * triangleArea()
- */
+/***** Internal *****/
+
+const defaultVertex$1 = /* glsl */ `#version 300 es
+    in vec2 uv;
+    in vec3 position;
+    in vec3 normal;
+
+    uniform mat3 normalMatrix;
+    uniform mat4 modelMatrix;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    out vec3 vNormal;
+    out vec2 vUv;
+
+    void main() {
+        vUv = uv;
+        vNormal = normalize(normalMatrix * normal);
+
+        vec4 mvPosition = modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
+        mvPosition.xy += position.xy;
+        gl_Position = projectionMatrix * mvPosition;
+
+        // vec3 pos = position;
+        // gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+    }
+`;
+
+const defaultFragment$1 = /* glsl */ `#version 300 es
+    precision highp float;
+
+    uniform sampler2D tDiffuse;
+
+    in vec2 vUv;
+
+    layout(location = 0) out highp vec4 pc_fragColor;
+
+    void main() {
+
+        // ----- Diffuse -----
+        vec4 tex = texture(tDiffuse, vUv);
+
+        vec3 diffuse = tex.rgb;
+        float alpha = tex.a;
+
+        // ----- Output -----
+        if (alpha < 0.01) discard;
+        diffuse *= alpha;
+
+        pc_fragColor = vec4(diffuse, alpha);
+    }
+`;
+
+// fuzzyFloat()
+// isPowerOf2()
+// triangleArea()
 
 /**
  * Compares two decimal numbers to see if they're almost the same
@@ -8813,11 +8796,12 @@ var MathUtils$1 = /*#__PURE__*/Object.freeze({
     triangleArea: triangleArea
 });
 
-/**
- * cleanAttributes()
- * computeVertexNormals()
- * toNonIndexed()
- */
+// cleanAttributes()
+// computeVertexNormals()
+// toIndexed()
+// toNonIndexed()
+
+// TODO: mergeGeometries()
 
 const EPSILON = 0.000001;
 const POSITION_DECIMALS = 6;
@@ -9222,8 +9206,8 @@ class Post {
     }
 
     addPass({
-        vertex = defaultVertex$1,
-        fragment = defaultFragment$1,
+        vertex = defaultVertex,
+        fragment = defaultFragment,
         uniforms = {},
         textureUniform = 'tDiffuse',
         enabled = true
@@ -9296,7 +9280,7 @@ class Post {
 
 /***** Internal *****/
 
-const defaultVertex$1 = /* glsl */ `
+const defaultVertex = /* glsl */ `
     attribute vec2 uv;
     attribute vec2 position;
 
@@ -9308,7 +9292,7 @@ const defaultVertex$1 = /* glsl */ `
     }
 `;
 
-const defaultFragment$1 = /* glsl */ `
+const defaultFragment = /* glsl */ `
     precision highp float;
 
     uniform sampler2D tDiffuse;
@@ -9316,88 +9300,6 @@ const defaultFragment$1 = /* glsl */ `
 
     void main() {
         gl_FragColor = texture2D(tDiffuse, vUv);
-    }
-`;
-
-class InstancedBillboard extends Program {
-
-    constructor({
-        texture,
-        ...programProps
-    } = {}) {
-        super({
-            ...programProps,
-            vertex: defaultVertex,
-            fragment: defaultFragment,
-            uniforms: {
-                tDiffuse: { value: texture },
-            },
-        });
-    }
-
-
-}
-
-/***** Internal *****/
-
-const defaultVertex = /* glsl */ `#version 300 es
-    in vec2 uv;
-    in vec3 position;
-    in vec3 normal;
-
-    in vec4 m1;
-    in vec4 m2;
-    in vec4 m3;
-    in vec4 m4;
-
-    uniform mat3 normalMatrix;
-    uniform mat4 modelMatrix;
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
-
-    out vec3 vNormal;
-    out vec2 vUv;
-
-    void main() {
-        vUv = uv;
-        vNormal = normalize(normalMatrix * normal);
-
-        mat4 tsr = mat4(m1.x, m1.y, m1.z, m1.w,
-                        m2.x, m2.y, m2.z, m2.w,
-                        m3.x, m3.y, m3.z, m3.w,
-                        m4.x, m4.y, m4.z, m4.w);
-
-        vec4 mvPosition = modelViewMatrix * tsr * vec4(0.0, 0.0, 0.0, 1.0);
-        mvPosition.xy += position.xy;
-        gl_Position = projectionMatrix * mvPosition;
-
-        // vec3 pos = position;
-        // gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    }
-`;
-
-const defaultFragment = /* glsl */ `#version 300 es
-    precision highp float;
-
-    uniform sampler2D tDiffuse;
-
-    in vec2 vUv;
-
-    layout(location = 0) out highp vec4 pc_fragColor;
-
-    void main() {
-
-        // ----- Diffuse -----
-        vec4 tex = texture(tDiffuse, vUv);
-
-        vec3 diffuse = tex.rgb;
-        float alpha = tex.a;
-
-        // ----- Output -----
-        if (alpha < 0.01) discard;
-        diffuse *= alpha;
-
-        pc_fragColor = vec4(diffuse, alpha);
     }
 `;
 
@@ -9540,6 +9442,259 @@ function checkRenderTargetSupport(gl, internalFormat, format, type) {
 	gl.bindTexture(gl.TEXTURE_2D, null);
 	return (status === gl.FRAMEBUFFER_COMPLETE);
 };
+
+const _timer = (performance == null || typeof performance === 'undefined') ? Date : performance;
+
+class Clock {
+
+	#running = false;
+	#startTime = 0;
+	#elapsedTime = 0;
+	#lastChecked = 0;
+	#deltaCount = 0;
+
+	constructor(autoStart = true) {
+        if (autoStart) this.start();
+	}
+
+	start() {
+		this.#startTime = _timer.now();
+		this.#lastChecked = this.#startTime;
+		this.#running = true;
+	}
+
+	stop() {
+		this.getDeltaTime();
+		this.#running = false;
+	}
+
+	reset() {
+		this.#startTime = _timer.now();
+		this.#lastChecked = this.#startTime;
+		this.#elapsedTime = 0;
+		this.#deltaCount = 0;
+	}
+
+	/** Time between start() or reset() and now (if running) or stop() (if not running) */
+	getElapsedTime() {
+		this.getDeltaTime();
+		return this.#elapsedTime;
+	}
+
+	/** Returns delta time (time since last getDeltaTime() call) */
+	getDeltaTime() {
+		if (! this.#running) return 0;
+
+        const newTime = _timer.now();
+        const dt = (newTime - this.#lastChecked) / 1000;
+        this.#lastChecked = newTime;
+        this.#elapsedTime += dt;
+
+		this.#deltaCount++;
+		return dt;
+	}
+
+	/** Is clock running? */
+	isRunning() {
+		return this.#running;
+	}
+
+	/** Total number of times getDeltaTime() has been called since start() or reset() were called */
+	count() {
+		return this.#deltaCount;
+	}
+
+	/** Average delta time since start (in ms) */
+	averageDelta() {
+		return (this.#elapsedTime * 1000) / this.#deltaCount;
+	}
+
+}
+
+class Debug {
+
+    static #singleton;
+
+    #startInternal;
+    #stopInternal;
+
+    constructor(openFrame = true, openScene = false, openBuffers = false, openSystem = false) {
+        if (Debug.#singleton) return Debug.#singleton;
+
+        const backgroundColor = getVariable('background-light') ?? '32, 32, 32';
+        const backgroundAlpha = getVariable('panel-transparency') ?? '1.0';
+        const textColor = getVariable('text') ?? '190, 190, 190';
+        const textLight = getVariable('text-light') ?? '225, 225, 225';
+
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            #EyeDebug {
+                position: absolute;
+                display: flex;
+                flex-direction: column;
+                justify-contents: left;
+                text-align: left;
+                left: 0;
+                bottom: 0;
+                margin: 0.35em;
+                padding: 0.25em;
+                padding-left: 0.6em;
+                padding-right: 0.6em;
+                border-radius: 1em;
+                z-index: 10000;
+                color: rgb(${textColor});
+                background-color: rgba(${backgroundColor}, ${backgroundAlpha});
+            }
+
+            .EyeDetails { /* closed */
+                filter: brightness(0.75);
+                padding: 0;
+                margin: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+            }
+
+            .EyeDetails[open] {
+                filter: none;
+                padding-top: 0.1em;
+                min-width: 9em;
+            }
+
+            .EyeSummary /* when closed */ {
+                padding: 0.2em 0;
+                margin-left: 0.1em;
+                margin-top: -0.05em;
+                margin-bottom: -0.05em;
+                left: 0;
+                width: 100%;
+                font-size: 0.9em;
+            }
+
+            .EyeDetails[open] .EyeSummary {
+                margin: 0;
+                font-size: 1.1em;
+            }
+
+            .EyeRow {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.2em;
+                padding-left: 0.3em;
+                padding-right: 0.3em;
+                width: 95%;
+                font-size: 0.9em;
+            }
+
+            .EyeInfo, .EyeInfo > * {
+                font-size: inherit;
+                color: rgb(${textLight});
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+        const dom = document.createElement('div');
+        dom.id = 'EyeDebug';
+        dom.innerHTML = `
+            <details class="EyeDetails"${(openFrame) ? ' open="true"' : ''}>
+            <summary class="EyeSummary">Frame</summary>
+            <div class="EyeRow">FPS<span class="EyeInfo"><span id="EyeFps">0</span> fps</span></div>
+            <div class="EyeRow">One Frame<span class="EyeInfo"><span id="EyeFrame">0</span> ms</span></div>
+            <div class="EyeRow">Max FPS<span class="EyeInfo">~ <span id="EyeMaxFps">0</span> fps</span></div>
+            </details>
+            <details class="EyeDetails"${(openScene) ? ' open="true"' : ''}>
+            <summary class="EyeSummary">Scene</summary>
+            <div class="EyeRow">Draw Calls <span class="EyeInfo" id="EyeDrawCalls">0</span></div>
+            <div class="EyeRow">Objects <span class="EyeInfo" id="EyeObjects">0</span></div>
+            <div class="EyeRow">Lights <span class="EyeInfo" id="EyeLights">0</span></div>
+            <div class="EyeRow">Vertices <span class="EyeInfo" id="EyeVertices">0</span></div>
+            <div class="EyeRow">Triangles <span class="EyeInfo" id="EyeTriangles">0</span></div>
+            </details>
+            <details class="EyeDetails"${(openBuffers) ? ' open="true"' : ''}>
+            <summary class="EyeSummary">Buffers</summary>
+            <div class="EyeRow">Programs <span class="EyeInfo" id="EyePrograms">0</span></div>
+            <div class="EyeRow">Geometries <span class="EyeInfo" id="EyeGeometries">0</span></div>
+            <div class="EyeRow">Textures <span class="EyeInfo" id="EyeTextures">0</span></div>
+            </details>
+            <details class="EyeDetails"${(openSystem) ? ' open="true"' : ''}>
+            <summary class="EyeSummary">System</summary>
+            <div class="EyeRow">Memory <span class="EyeInfo"><span id="EyeMemory">?</span> mb</span></div>
+            </details>
+        `;
+        document.body.appendChild(dom);
+
+        const domFps = document.getElementById('EyeFps');
+        const domFrame = document.getElementById('EyeFrame');
+        const domMax = document.getElementById('EyeMaxFps');
+        const domMem = document.getElementById('EyeMemory');
+
+        const frameClock = new Clock();
+        const elapsedClock = new Clock();
+
+        this.#startInternal = function() {
+            frameClock.start();
+        };
+
+        this.#stopInternal = function() {
+            frameClock.stop();
+
+            const elapsed = elapsedClock.getElapsedTime();
+            if (elapsed > 1) {
+                // Actual Fps
+                const fps = elapsedClock.count() / elapsed;
+                if (domFps) domFps.textContent = `${fps.toFixed(1)}`;
+                elapsedClock.reset();
+
+                // Average time of actual rendering frames
+                const frameAvg = frameClock.averageDelta();
+                if (domFrame) domFrame.textContent = `${frameAvg.toFixed(2)}`;
+                if (domMax) domMax.textContent = `${Math.floor(1000 / frameAvg)}`;
+                frameClock.reset();
+
+                // Memory Usage
+                if (domMem && performance.memory) {
+                    const memory = performance.memory.usedJSHeapSize / 1048576;
+                    domMem.textContent = `${memory.toFixed(2)}`;
+                }
+            }
+        };
+
+        Debug.#singleton = this;
+    }
+
+    startFrame() {
+        this.#startInternal();
+    }
+
+    endFrame() {
+        this.#stopInternal();
+    }
+
+}
+
+/***** Internal *****/
+
+/**
+ * Gets a CSS variable, hyphens optional, ex: getVariable('--tooltip-delay') or getVariable('tooltip-delay');
+ *
+ * @param {String} variable
+ * @returns variable as string, undefined if variable not found
+ */
+function getVariable(variable) {
+    variable = String(variable);
+    if (! variable.startsWith('--')) variable = '--' + variable;
+    const rootElement = document.querySelector(':root');
+    const value = getComputedStyle(rootElement).getPropertyValue(variable);
+    return ((value === '') ? undefined : value);
+}
+
+/** Sets a CSS variable by name, hyphens optional */
+function setVariable(variable, valueAsString) {
+    variable = String(variable);
+    if (! variable.startsWith('--')) variable = '--' + variable;
+    const rootElement = document.querySelector(':root');
+    rootElement.style.setProperty(variable, valueAsString);
+}
 
 // TODO: barycentric code shouldn't be here, but where?
 
@@ -9910,4 +10065,4 @@ class Raycast {
 // export { Text } from './extras/Text.js';
 // export { VertexNormalsHelper } from './extras/helpers/VertexNormalsHelper.js';
 
-export { Billboard, Box, Camera, Capabilities, Color, ColorFunc$1 as ColorFunc, Curve, Cylinder, Euler, EulerFunc$1 as EulerFunc, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, InstancedBillboard, InstancedMesh, KTXTexture, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Plane, Polyline, Post, Program, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Sprite, Standard, Texture, TextureLoader, Torus, Transform, Triangle, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };
+export { Box, Camera, Capabilities, Clock, Color, ColorFunc$1 as ColorFunc, Curve, Cylinder, Debug, Euler, EulerFunc$1 as EulerFunc, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, InstancedMesh, KTXTexture, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Plane, Polyline, Post, Program, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Sprite, Standard, Texture, TextureLoader, Torus, Transform, Triangle, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };

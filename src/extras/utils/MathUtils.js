@@ -1,10 +1,8 @@
-/**
- * fuzzyFloat()
- * isPowerOf2()
- * triangleArea()
- */
-
 import * as Vec3Func from '../../math/functions/Vec3Func.js';
+
+// fuzzyFloat()
+// isPowerOf2()
+// triangleArea()
 
 /**
  * Compares two decimal numbers to see if they're almost the same

@@ -48,12 +48,12 @@ export { WireMesh } from './extras/objects/WireMesh.js';
 export { Post } from './extras/post/Post.js';
 
 // Programs
-export { Billboard } from './extras/programs/Billboard.js';
-export { InstancedBillboard } from './extras/programs/InstancedBillboard.js';
 export { Standard } from './extras/programs/Standard.js';
 
 // Tools
 export { Capabilities } from './extras/tools/Capabilities.js';
+export { Clock } from './extras/tools/Clock.js';
+export { Debug } from './extras/tools/Debug.js';
 export { Raycast } from './extras/tools/Raycast.js';
 
 // Utils

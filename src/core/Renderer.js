@@ -1,20 +1,23 @@
-// TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
-
-// Not automatic, devs to use these methods manually:
-//  gl.colorMask( colorMask, colorMask, colorMask, colorMask );
-//  gl.stencilMask( stencilMask );
-//  gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
-//  gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
-//  gl.clearStencil( stencil );
-
 import { Color } from '../math/Color.js';
 import { Vec3 } from '../math/Vec3.js';
+
+// NOTE: Must use these methods manually
+// gl.clearColor( r, g, b, a );
+// gl.colorMask( colorMask, colorMask, colorMask, colorMask );
+// gl.stencilMask( stencilMask );
+// gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
+// gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
+// gl.clearStencil( stencil );
+
+// TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
 
 const _tempVec3 = new Vec3();
 
 class Renderer {
 
     static #ID = 1;
+
+    #contextLost = false;
 
     constructor({
         depth = true,                               // drawing buffer has depth buffer (at least 16 bits)?
@@ -24,10 +27,7 @@ class Renderer {
         preserveDrawingBuffer = false,              // true is slower, mostly not needed
         canvas = document.createElement('canvas'),  // canvas to use
         dpr = 1,                                    // window.devicePixelRatio
-        clearColor = new Color(),                   // color to clear COLOR_BUFFER_BIT
-        clearAlpha = 0,                             // alpha to clear COLOR_BUFFER_BIT
     } = {}) {
-        this.isRenderer = true;
 
         // Properties
         this.id = Renderer.#ID++;
@@ -36,14 +36,9 @@ class Renderer {
         this.color = true;
         this.depth = depth;
         this.stencil = stencil;
-        this.clearColor = (clearColor && clearColor instanceof Color) ? clearColor : new Color(clearColor);
-        this.clearAlpha = clearAlpha;
 
         // Active Geometry
         this.currentGeometry = null;
-
-        // Private
-        this._contextLost = false;
 
         // WebGL attributes
         const attributes = {
@@ -120,13 +115,13 @@ class Renderer {
         gl.canvas.addEventListener('webglcontextlost', function(event) {
             event.preventDefault();
             console.log('Renderer: Context lost');
-            this._contextLost = true;
+            this.#contextLost = true;
         }.bind(this));
 
         gl.canvas.addEventListener('webglcontextrestored', function(event) {
             console.log('Renderer: Context restored');
             initContext(this);
-            this._contextLost = false;
+            this.#contextLost = false;
         }.bind(this));
     }
 
@@ -359,7 +354,6 @@ class Renderer {
             const clearColor = (this.color) ? this.gl.COLOR_BUFFER_BIT : 0;
             const clearDepth = (this.depth) ? this.gl.DEPTH_BUFFER_BIT : 0;
             const clearStencil = (this.stencil) ? this.gl.STENCIL_BUFFER_BIT : 0;
-            this.gl.clearColor(this.clearColor.r, this.clearColor.g, this.clearColor.b, this.clearAlpha);
             this.gl.clear(clearColor | clearDepth | clearStencil);
         }
 
@@ -380,7 +374,7 @@ class Renderer {
         clear = true,
         draw = true,
     } = {}) {
-        if (this._contextLost) return;
+        if (this.#contextLost) return;
 
         // Clear / update
         this.prepRender({ scene, camera, target, update, clear });

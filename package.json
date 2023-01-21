@@ -1,6 +1,6 @@
 {
   "name": "eyegl",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Fast WebGL 2 graphics library built for games.",
   "module": "src/EyeGL.js",
   "main": "build/eyegl.module.js",

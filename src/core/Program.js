@@ -21,8 +21,6 @@ class Program {
         depthWrite = true,
         depthFunc = renderer.gl.LESS,
     } = {}) {
-        this.isProgram = true;
-
         if (! renderer) console.error(`Program.constructor: Renderer not found`);
         if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
         if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
@@ -141,6 +139,8 @@ class Program {
             this.attributeLocations.set(attribute, location);
         }
         this.attributeOrder = locations.join('');
+
+        console.log(this.attributeOrder);
     }
 
     setBlendFunc(src, dst, srcAlpha, dstAlpha) {

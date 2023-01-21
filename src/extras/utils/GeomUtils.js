@@ -1,13 +1,14 @@
-/**
- * cleanAttributes()
- * computeVertexNormals()
- * toNonIndexed()
- */
-
 import { Geometry } from '../../core/Geometry.js';
 import { Vec3 } from '../../math/Vec3.js';
 import { calculateNormal } from '../../math/functions/Vec3Func.js';
 import { fuzzyFloat, triangleArea } from './MathUtils.js';
+
+// cleanAttributes()
+// computeVertexNormals()
+// toIndexed()
+// toNonIndexed()
+
+// TODO: mergeGeometries()
 
 const EPSILON = 0.000001;
 const POSITION_DECIMALS = 6;

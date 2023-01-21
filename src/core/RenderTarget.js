@@ -1,6 +1,6 @@
-// TODO: test stencil and depth
-
 import { Texture } from './Texture.js';
+
+// TODO: test stencil and depth
 
 class RenderTarget {
 
@@ -22,8 +22,6 @@ class RenderTarget {
         unpackAlignment,
         premultiplyAlpha,
     } = {}) {
-        this.isRenderTarget = true;
-
         renderer.gl = renderer.gl;
         this.width = width;
         this.height = height;
