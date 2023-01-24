@@ -43,6 +43,12 @@ class Renderer {
         this.drawCallCount = 0;                     // count draw calls in frame
         this.lastScene = null;                      // last rendered scene
 
+        this.info = {
+            programs: 0,
+            geometries: 0,
+            textures: 0,
+        };
+
         // WebGL attributes
         const attributes = {
             // NOTE: About 'alpha', here we force canvas to have alpha buffer for performance reasons

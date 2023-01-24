@@ -55,6 +55,7 @@ class Texture {
         this.height = height;
 
         this.texture = renderer.gl.createTexture();
+        renderer.info.textures++;
 
         this.store = {
             image: null,
@@ -209,6 +210,14 @@ class Texture {
         }
 
         this.store.image = this.image;
+    }
+
+    flush() {
+
+        // TODO
+
+        renderer.info.textures--;
+
     }
 
 }

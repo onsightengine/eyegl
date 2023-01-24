@@ -24,14 +24,12 @@ class Debug {
         openBuffers = openBuffers || checkState('DebugBuffers');
         openSystem = openSystem || checkState('DebugSystem');
 
-        console.log(openFrame, openScene, openBuffers, openSystem);
-
         const backgroundColor = getVariable('background-light') ?? '32, 32, 32';
         const backgroundAlpha = getVariable('panel-transparency') ?? '1.0';
         const textColor = getVariable('text') ?? '190, 190, 190';
         const textLight = getVariable('text-light') ?? '225, 225, 225';
 
-        const styleSheet = document.createElement("style");
+        const styleSheet = document.createElement('style');
         styleSheet.innerText = `
             #EyeDebug {
                 position: absolute;
@@ -147,6 +145,8 @@ class Debug {
         const domVertices = document.getElementById('EyeVertices');
         const domTriangles = document.getElementById('EyeTriangles');
 
+        const domTextures = document.getElementById('EyeTextures');
+
         const domMem = document.getElementById('EyeMemory');
 
         const frameClock = new Clock();
@@ -203,15 +203,9 @@ class Debug {
                 domVertices.textContent = `${vertices}`;
                 domTriangles.textContent = `${triangles}`;
 
-                // // Renderer info: geometries, textures, etc
-                // if (editor) {
-                //     const info = editor.viewport.renderer.info;
                 //     programsInfo.setTextContent(ONE.MathUtils.addCommas(info.programs.length));
                 //     geometriesInfo.setTextContent(ONE.MathUtils.addCommas(info.memory.geometries));
-                //     texturesInfo.setTextContent(ONE.MathUtils.addCommas(info.memory.textures));
-                //     let drawCalls = editor.totalDrawCalls ?? 0;
-                //     callsInfo.setTextContent(ONE.MathUtils.addCommas(drawCalls));
-                // }
+                domTextures.textContent = `${renderer.info.textures}`;
             }
 
         };
