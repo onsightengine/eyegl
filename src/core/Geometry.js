@@ -4,10 +4,9 @@ import { normalize } from '../math/functions/Vec3Func.js';
 // TODO: fit in transform feedback
 
 const _tempVec3 = new Vec3();
+let _idGenerator = 1;
 
 class Geometry {
-
-    static #ID = 1;
 
     constructor(attributes = {}) {
         if (! renderer) console.error(`Geometry.constructor: Renderer not found`);
@@ -15,7 +14,7 @@ class Geometry {
         this.isGeometry = true;
 
         this.uuid = crypto.randomUUID();
-        this.id = this.#ID++;
+        this.id = _idGenerator++;
         this.attributes = {};
 
         this.VAOs = {}; /* store one VAO per program attribute locations order */

@@ -1,21 +1,37 @@
 import { Clock } from './Clock.js';
 
-class Debug {
+let _singleton = null;
 
-    static #singleton;
+class Debug {
 
     #startInternal;
     #stopInternal;
 
     constructor(openFrame = true, openScene = false, openBuffers = false, openSystem = false) {
-        if (Debug.#singleton) return Debug.#singleton;
+        if (_singleton) return _singleton;
+
+        function checkState(key) {
+            const value = localStorage.getItem(key);
+            if (typeof value === 'string') {
+                if (value === 'undefined' || value === 'null' || value === 'false') return false;
+                return true;
+            }
+            return Boolean(value);
+        }
+
+        openFrame = openFrame || checkState('DebugFrame');
+        openScene = openScene || checkState('DebugScenes');
+        openBuffers = openBuffers || checkState('DebugBuffers');
+        openSystem = openSystem || checkState('DebugSystem');
+
+        console.log(openFrame, openScene, openBuffers, openSystem);
 
         const backgroundColor = getVariable('background-light') ?? '32, 32, 32';
         const backgroundAlpha = getVariable('panel-transparency') ?? '1.0';
         const textColor = getVariable('text') ?? '190, 190, 190';
         const textLight = getVariable('text-light') ?? '225, 225, 225';
 
-        const styleSheet = document.createElement("style")
+        const styleSheet = document.createElement("style");
         styleSheet.innerText = `
             #EyeDebug {
                 position: absolute;
@@ -85,38 +101,53 @@ class Debug {
         const dom = document.createElement('div');
         dom.id = 'EyeDebug';
         dom.innerHTML = `
-            <details class="EyeDetails"${(openFrame) ? ' open="true"' : ''}>
+            <details class="EyeDetails" id="SumFrame"${(openFrame) ? ' open="true"' : ''}>
             <summary class="EyeSummary">Frame</summary>
-            <div class="EyeRow">FPS<span class="EyeInfo" id="EyeFps"></span></div>
-            <div class="EyeRow">Render<span class="EyeInfo" id="EyeRender"></span></div>
-            <div class="EyeRow">Max<span class="EyeInfo" id="EyeMax"></span></div>
-            <div class="EyeRow">Draws <span class="EyeInfo" id="EyeDraws"></span></div>
+            <div class="EyeRow">FPS<span class="EyeInfo" id="EyeFps">?</span></div>
+            <div class="EyeRow">Render<span class="EyeInfo" id="EyeRender">?</span></div>
+            <div class="EyeRow">Max<span class="EyeInfo" id="EyeMax">?</span></div>
+            <div class="EyeRow">Draws <span class="EyeInfo" id="EyeDraws">?</span></div>
             </details>
-            <details class="EyeDetails"${(openScene) ? ' open="true"' : ''}>
+            <details class="EyeDetails" id="SumScene"${(openScene) ? ' open="true"' : ''}>
             <summary class="EyeSummary">Scene</summary>
-            <div class="EyeRow">Objects <span class="EyeInfo" id="EyeObjects"></span></div>
-            <div class="EyeRow">Lights <span class="EyeInfo" id="EyeLights"></span></div>
-            <div class="EyeRow">Vertices <span class="EyeInfo" id="EyeVertices"></span></div>
-            <div class="EyeRow">Triangles <span class="EyeInfo" id="EyeTriangles"></span></div>
+            <div class="EyeRow">Objects <span class="EyeInfo" id="EyeObjects">?</span></div>
+            <div class="EyeRow">Lights <span class="EyeInfo" id="EyeLights">?</span></div>
+            <div class="EyeRow">Vertices <span class="EyeInfo" id="EyeVertices">?</span></div>
+            <div class="EyeRow">Triangles <span class="EyeInfo" id="EyeTriangles">?</span></div>
             </details>
-            <details class="EyeDetails"${(openBuffers) ? ' open="true"' : ''}>
+            <details class="EyeDetails" id="SumBuffers"${(openBuffers) ? ' open="true"' : ''}>
             <summary class="EyeSummary">Buffers</summary>
-            <div class="EyeRow">Programs <span class="EyeInfo" id="EyePrograms"></span></div>
-            <div class="EyeRow">Geometries <span class="EyeInfo" id="EyeGeometries"></span></div>
-            <div class="EyeRow">Textures <span class="EyeInfo" id="EyeTextures"></span></div>
+            <div class="EyeRow">Programs <span class="EyeInfo" id="EyePrograms">?</span></div>
+            <div class="EyeRow">Geometries <span class="EyeInfo" id="EyeGeometries">?</span></div>
+            <div class="EyeRow">Textures <span class="EyeInfo" id="EyeTextures">?</span></div>
             </details>
-            <details class="EyeDetails"${(openSystem) ? ' open="true"' : ''}>
+            <details class="EyeDetails" id="SumSystem"${(openSystem) ? ' open="true"' : ''}>
             <summary class="EyeSummary">System</summary>
             <div class="EyeRow">Memory <span class="EyeInfo" id="EyeMemory">?</span></div>
             </details>
         `;
         document.body.appendChild(dom);
 
+        dom.addEventListener('click', () => {
+            setTimeout(() => {
+                localStorage.setItem('DebugFrame', Boolean(document.getElementById('SumFrame').open));
+                localStorage.setItem('DebugScene', Boolean(document.getElementById('SumScene').open));
+                localStorage.setItem('DebugBuffers', Boolean(document.getElementById('SumBuffers').open));
+                localStorage.setItem('DebugSystem', Boolean(document.getElementById('SumSystem').open));
+            }, 350);
+        });
+
         const domFps = document.getElementById('EyeFps');
         const domRender = document.getElementById('EyeRender');
         const domMax = document.getElementById('EyeMax');
-        const domMem = document.getElementById('EyeMemory');
         const domDraws = document.getElementById('EyeDraws');
+
+        const domObjects = document.getElementById('EyeObjects');
+        const domLights = document.getElementById('EyeLights');
+        const domVertices = document.getElementById('EyeVertices');
+        const domTriangles = document.getElementById('EyeTriangles');
+
+        const domMem = document.getElementById('EyeMemory');
 
         const frameClock = new Clock();
         const elapsedClock = new Clock();
@@ -150,10 +181,42 @@ class Debug {
                     const memory = performance.memory.usedJSHeapSize / 1048576;
                     domMem.textContent = `${memory.toFixed(2)} mb`;
                 }
+
+                // Scene Info
+                let objects = 0, vertices = 0, triangles = 0, lights = 0;
+                const scene = renderer.lastScene;
+                if (scene && scene.isTransform) {
+                    scene.traverseVisible((object) => {
+                        objects++;
+                        if (object.isLight) lights++;
+                        if (object.isMesh && object.geometry) {
+                            const geometry = object.geometry;
+                            vertices += geometry.attributes.position.count;
+                            const instance = (geometry.isInstanced) ? geometry.instancedCount : 1;
+                            if (geometry.attributes.index) triangles += (geometry.attributes.index.count / 3) * instance;
+                            else triangles += (geometry.attributes.position.count / 3) * instance;
+                        }
+                    });
+                }
+                domObjects.textContent = `${objects}`;
+                domLights.textContent = `${lights}`;
+                domVertices.textContent = `${vertices}`;
+                domTriangles.textContent = `${triangles}`;
+
+                // // Renderer info: geometries, textures, etc
+                // if (editor) {
+                //     const info = editor.viewport.renderer.info;
+                //     programsInfo.setTextContent(ONE.MathUtils.addCommas(info.programs.length));
+                //     geometriesInfo.setTextContent(ONE.MathUtils.addCommas(info.memory.geometries));
+                //     texturesInfo.setTextContent(ONE.MathUtils.addCommas(info.memory.textures));
+                //     let drawCalls = editor.totalDrawCalls ?? 0;
+                //     callsInfo.setTextContent(ONE.MathUtils.addCommas(drawCalls));
+                // }
             }
+
         };
 
-        Debug.#singleton = this;
+        _singleton = this;
     }
 
     startFrame() {

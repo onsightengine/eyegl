@@ -181,7 +181,7 @@ function loadImage(src, texture, flipY) {
         //     if (texture.wrapS === renderer.gl.REPEAT) texture.wrapS = texture.wrapT = renderer.gl.CLAMP_TO_EDGE;
         // }
 
-        texture.name = nameFromUrl(imgBmp.src);
+        texture.name = nameFromUrl(src);
         texture.image = imgBmp;
 
         // For createImageBitmap, close once uploaded

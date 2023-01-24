@@ -3,15 +3,15 @@ import { Quat } from '../math/Quat.js';
 import { Mat4 } from '../math/Mat4.js';
 import { Euler } from '../math/Euler.js';
 
-class Transform {
+let _idGenerator = 1;
 
-    static #ID = 1;
+class Transform {
 
     constructor() {
         this.isTransform = true;
 
         this.uuid = crypto.randomUUID();
-        this.id = this.#ID++;
+        this.id = _idGenerator++;
 
         this.parent = null;
         this.children = [];
@@ -87,14 +87,23 @@ class Transform {
         return this;
     }
 
+    /** Return true in callback to stop traversing children */
     traverse(callback) {
-        // Return true in callback to stop traversing children
         if (callback(this)) return;
-        // Traverse children
-        for (let i = 0, l = this.children.length; i < l; i++) {
-            this.children[i].traverse(callback);
-        }
+        for (let i = 0, l = this.children.length; i < l; i++) this.children[i].traverse(callback);
     }
+
+    traverseVisible(callback) {
+		if (! this.visible) return;
+        callback(this);
+        for (let i = 0, l = this.children.length; i < l; i++) this.children[i].traverseVisible(callback);
+	}
+
+    traverseAncestors(callback) {
+		if (! this.parent) return;
+		callback(this.parent);
+		this.parent.traverseAncestors(callback);
+	}
 
     decompose() {
         this.matrix.getTranslation(this.position);

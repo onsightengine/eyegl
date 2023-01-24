@@ -3,10 +3,9 @@
 // TODO: sampler Cube
 
 const _arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
+let _idGenerator = 1;
 
 class Program {
-
-    static #ID = 1;
 
     constructor({
         vertex,
@@ -26,7 +25,7 @@ class Program {
         if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
 
         this.uuid = crypto.randomUUID();
-        this.id = this.#ID++;
+        this.id = _idGenerator++;
         this.uniforms = uniforms;
 
         // Store program state

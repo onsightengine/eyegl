@@ -8,8 +8,10 @@ class Clock {
 	#lastChecked = 0;
 	#deltaCount = 0;
 
-	constructor(autoStart = true) {
-        if (autoStart) this.start();
+	constructor(autoStart = true, msRewind = 0) {
+		if (autoStart) this.start();
+		this.#startTime -= msRewind;
+		this.#lastChecked -= msRewind;
 	}
 
 	start() {

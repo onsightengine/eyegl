@@ -227,7 +227,7 @@
                 }
 
                 camera.updateFrustum();
-                quad.draw({ camera });
+                renderer.render({ scene: quad, camera });
 
                 debug.endFrame();
             }

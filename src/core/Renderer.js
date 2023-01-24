@@ -12,10 +12,11 @@ import { Vec3 } from '../math/Vec3.js';
 // TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
 
 const _tempVec3 = new Vec3();
+let _idGenerator = 1;
 
 class Renderer {
 
-    static #ID = 1;
+    static #idGenerator = 1;
 
     #contextLost = false;
 
@@ -30,7 +31,7 @@ class Renderer {
     } = {}) {
 
         this.uuid = crypto.randomUUID();
-        this.id = this.#ID++;
+        this.id = _idGenerator++;
         this.dpr = dpr;
 
         this.color = true;
@@ -40,12 +41,13 @@ class Renderer {
         // Draw info
         this.currentGeometry = null;                // active geometry
         this.drawCallCount = 0;                     // count draw calls in frame
+        this.lastScene = null;                      // last rendered scene
 
         // WebGL attributes
         const attributes = {
             // NOTE: About 'alpha', here we force canvas to have alpha buffer for performance reasons
-            // If using destination blending (such as with weighted, blended order independent transparency), will need
-            // to set alpha channel to 1.0 to avoid color errors.
+            // If using destination blending (such as with weighted, blended order independent transparency),
+            // will need to set alpha channel to 1.0 to avoid color errors.
             // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#avoid_alphafalse_which_can_be_expensive
             alpha: true,
             depth,
@@ -390,6 +392,7 @@ class Renderer {
             });
         }
 
+        this.lastScene = scene;
         return renderList;
     }
 

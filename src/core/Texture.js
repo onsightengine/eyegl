@@ -1,15 +1,14 @@
 import { TextureLoader } from '../EyeGL.js';
 
-// TODO: delete texture
+// TODO: delete (flush)  texture
 // TODO: use texSubImage2D for updates (video or when loaded)
 // TODO: need? encoding = linearEncoding
 // TODO: support non-compressed mipmaps uploads
 
 const _emptyPixel = new Uint8Array(4);
+let _idGenerator = 1;
 
 class Texture {
-
-    static #ID = 1;
 
     constructor({
         image,
@@ -35,18 +34,18 @@ class Texture {
         this.isTexture = true;
 
         this.uuid = crypto.randomUUID();
-        this.id = this.#ID++;
+        this.id = _idGenerator++;
 
         this.image = image;
         this.target = target;
         this.type = type;
         this.format = format;
         this.internalFormat = internalFormat;
-        this.minFilter = minFilter;
-        this.magFilter = magFilter;
         this.wrapS = wrapS;
         this.wrapT = wrapT;
         this.generateMipmaps = generateMipmaps;
+        this.minFilter = minFilter;
+        this.magFilter = magFilter;
         this.premultiplyAlpha = premultiplyAlpha;
         this.unpackAlignment = unpackAlignment;
         this.flipY = flipY;
@@ -54,6 +53,7 @@ class Texture {
         this.level = level;
         this.width = width;
         this.height = height;
+
         this.texture = renderer.gl.createTexture();
 
         this.store = {
