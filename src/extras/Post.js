@@ -1,7 +1,7 @@
-import { Program } from '../../core/Program.js';
-import { Mesh } from '../../core/Mesh.js';
-import { RenderTarget } from '../../core/RenderTarget.js';
-import { Triangle } from '../geometries/Triangle.js';
+import { Program } from '../core/Program.js';
+import { Mesh } from '../core/Mesh.js';
+import { RenderTarget } from '../core/RenderTarget.js';
+import { Triangle } from './geometries/Triangle.js';
 
 // TODO: Destroy render targets if size changed and exists
 

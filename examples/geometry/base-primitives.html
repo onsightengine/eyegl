@@ -68,7 +68,7 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const texture = new EYE.Texture({ src: '../../files/textures/uv-test-col.png' });
+            const texture = EYE.TextureLoader.load({ src: '../../files/textures/uv-test-col.png' });
 
             const scene = new EYE.Transform();
             const controls = new EYE.Orbit(camera);

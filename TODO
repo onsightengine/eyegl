@@ -4,8 +4,19 @@
 //
 // ----------------------------------------------------------------------------------
 
+Asset Manager:
+    - File loaders
+        - see three loader, https://github.com/mrdoob/three.js/tree/dev/src/loaders
+        - see phaser loader, https://github.com/photonstorm/phaser/tree/master/src/loader
+    - File management
+        - File class, extended by file types
+        - FileTypeManager
+
 Debug:
     - Program info
+
+Program Management:
+    - Shader Chunks
 
 Sprite Shader:
     - atlas / texture mergering
@@ -23,15 +34,6 @@ Context Lost:
 
 TypeScript:
     !! Convert to typescript?
-
-// ----- Outline
-
-- Asset Manager
-    - File loaders
-    - File management
-
-- Program Management
-    - Shader Chunks
 
 // ----------------------------------------------------------------------------------
 //

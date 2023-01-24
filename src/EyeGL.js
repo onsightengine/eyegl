@@ -19,6 +19,10 @@ export { Transform } from './core/Transform.js';
 
 /***** Extras *****/
 
+export { AssetManager } from './extras/AssetManager.js';
+export { Post } from './extras/Post.js';
+export { Raycast } from './extras/Raycast.js';
+
 // Controls
 export { Orbit } from './extras/controls/Orbit.js';
 
@@ -44,9 +48,6 @@ export { Polyline } from './extras/objects/Polyline.js';
 export { Sprite } from './extras/objects/Sprite.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
 
-// Postprocessing
-export { Post } from './extras/post/Post.js';
-
 // Programs
 export { Standard } from './extras/programs/Standard.js';
 
@@ -54,7 +55,6 @@ export { Standard } from './extras/programs/Standard.js';
 export { Capabilities } from './extras/tools/Capabilities.js';
 export { Clock } from './extras/tools/Clock.js';
 export { Debug } from './extras/tools/Debug.js';
-export { Raycast } from './extras/tools/Raycast.js';
 
 // Utils
 export * as GeomUtils from './extras/utils/GeomUtils.js';

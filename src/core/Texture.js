@@ -1,7 +1,10 @@
+
 // TODO: delete texture
 // TODO: use texSubImage2D for updates (video or when loaded)
 // TODO: need? encoding = linearEncoding
 // TODO: support non-compressed mipmaps uploads
+
+import { TextureLoader } from '../EyeGL.js';
 
 const emptyPixel = new Uint8Array(4);
 
@@ -11,7 +14,6 @@ class Texture {
 
     constructor({
         image,
-        src,
         target = renderer.gl.TEXTURE_2D,
         type = renderer.gl.UNSIGNED_BYTE,
         format = renderer.gl.RGBA,
@@ -57,12 +59,6 @@ class Texture {
         this.store = {
             image: null,
         };
-
-        if (! image && src) {
-            const img = new Image();
-            img.onload = () => (self.image = img);
-            img.src = src;
-        }
 
         // Alias for state store to avoid redundant calls for global state
         renderer.glState = renderer.state;
@@ -186,7 +182,7 @@ class Texture {
             }
 
             // Callback for when data is pushed to GPU
-            this.onUpdate && this.onUpdate();
+            if (this.onUpdate) this.onUpdate();
         } else {
             if (this.target === renderer.gl.TEXTURE_CUBE_MAP) {
                 // Upload empty pixel for each side while no image to avoid errors while image or video loading

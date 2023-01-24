@@ -104,9 +104,9 @@
             const folder1 = gui.addFolder('Parameters');
             folder1.add(params, 'count', 100000, 1000000, 50000, 0).onFinishChange(() => buildScene(params.count));
 
-            const dragon = new EYE.Texture({ src: '../../files/sprites/dragon.png' });
-            const unicorn = new EYE.Texture({ src: '../../files/sprites/unicorn.png' });
-            const kraken = new EYE.Texture({ src: '../../files/sprites/kraken.png' });
+            const dragon = EYE.TextureLoader.load({ src: '../../files/sprites/dragon.png' });
+            const unicorn = EYE.TextureLoader.load({ src: '../../files/sprites/unicorn.png' });
+            const kraken = EYE.TextureLoader.load({ src: '../../files/sprites/kraken.png' });
 
             let scene;
             let sceneChanged = true;

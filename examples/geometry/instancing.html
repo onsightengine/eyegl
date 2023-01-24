@@ -95,7 +95,7 @@
 
             const scene = new EYE.Transform();
 
-            const texture = new EYE.Texture({ src: '../../files/models/json/acorn.jpg' });
+            const texture = EYE.TextureLoader.load({ src: '../../files/models/json/acorn.jpg' });
 
             const program = new EYE.Program({
                 vertex,

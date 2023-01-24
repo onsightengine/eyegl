@@ -37,9 +37,8 @@
 
             const scene = new EYE.Transform();
 
-            const textureDiffuse = new EYE.Texture({ src: '../../files/textures/granite-diffuse.jpg' });
-            const textureNormal = new EYE.Texture();
-            const imgNormal = new Image({ src: '../../files/textures/granite-normal.jpg' });
+            const textureDiffuse = EYE.TextureLoader.load({ src: '../../files/textures/granite-diffuse.jpg' });
+            const textureNormal = EYE.TextureLoader.load({ src: '../../files/textures/granite-normal.jpg' });
 
             // const program = new EYE.Program({
             //     vertex: vertex300,

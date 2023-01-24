@@ -2,7 +2,7 @@
 // https://github.com/mapbox/potpack
 // https://github.com/oguzeroglu/TextureMerger
 
-class Atlas {
+class TextureAtlas {
 
     constructor({
 
@@ -13,4 +13,4 @@ class Atlas {
 
 }
 
-export { Atlas };
+export { TextureAtlas };

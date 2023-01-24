@@ -3,7 +3,7 @@ import { Texture } from '../../core/Texture.js';
 // TODO: Support cubemaps
 // Generate textures using https://github.com/TimvanScherpenzeel/texture-compressor
 
-export class KTXTexture extends Texture {
+class KTXTexture extends Texture {
 
     constructor({
         buffer,
@@ -43,17 +43,23 @@ export class KTXTexture extends Texture {
     }
 }
 
+export { KTXTexture };
+
+/***** Internal *****/
+
 function KhronosTextureContainer(buffer) {
     const idCheck = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
     const id = new Uint8Array(buffer, 0, 12);
-    for (let i = 0; i < id.length; i++) if (id[i] !== idCheck[i]) return console.error('File missing KTX identifier');
+    for (let i = 0; i < id.length; i++) {
+        if (id[i] !== idCheck[i]) return console.error('KTXTexture: File missing KTX identifier');
+    }
 
     // TODO: Is this always 4? Tested: [android, macos]
     const size = Uint32Array.BYTES_PER_ELEMENT;
     const head = new DataView(buffer, 12, 13 * size);
     const littleEndian = head.getUint32(0, true) === 0x04030201;
     const glType = head.getUint32(1 * size, littleEndian);
-    if (glType !== 0) return console.warn('only compressed formats currently supported');
+    if (glType !== 0) return console.warn('KTXTexture: Only compressed formats currently supported.');
     this.glInternalFormat = head.getUint32(4 * size, littleEndian);
     let width = head.getUint32(6 * size, littleEndian);
     let height = head.getUint32(7 * size, littleEndian);
