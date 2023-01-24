@@ -110,7 +110,6 @@ class Renderer {
             self.getExtension('WEBGL_compressed_texture_pvrtc');
             self.getExtension('WEBGL_multisampled_render_to_texture');
 
-
             self.maxAnisotropy = 0;
             if (self.extensions['EXT_texture_filter_anisotropic']) {
                 const extension = self.extensions['EXT_texture_filter_anisotropic'];
@@ -142,7 +141,7 @@ class Renderer {
         return this.extensions[name];
     }
 
-    // Usually (window.innerWidth, window.innerHeight)
+    /** Typically (window.innerWidth, window.innerHeight) */
     setSize(width, height, updateStyle = true) {
         this.width = width;
         this.height = height;
@@ -342,18 +341,15 @@ class Renderer {
         update = true,
         clear = true,
     } = {}) {
-        // Framebuffer
-        if (target === null) {
-            // Bind html canvas
-            this.bindFramebuffer();
+
+        if (! target) {
+            this.bindFramebuffer();         // to screen
             this.setViewport(this.width * this.dpr, this.height * this.dpr);
         } else {
-            // Bind render target
-            this.bindFramebuffer(target);
+            this.bindFramebuffer(target);   // to framebuffer
             this.setViewport(target.width, target.height);
         }
 
-        // Perform clear
         if (clear) {
             // Ensure depth buffer writing is enabled so it can be cleared
             if (this.depth && (! target || target.depth)) {
@@ -392,12 +388,9 @@ class Renderer {
         const renderList = this.getRenderList({ scene, camera, frustumCull, sort });
 
         // Render objects
-        if (draw) {
-            renderList.forEach((node) => {
-                node.draw({ camera });
-            });
-        }
+        if (draw) renderList.forEach(node => node.draw({ camera }));
 
+        // Return list
         this.lastScene = scene;
         return renderList;
     }

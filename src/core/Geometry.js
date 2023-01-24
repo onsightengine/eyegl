@@ -50,6 +50,7 @@ class Geometry {
     addAttribute(key, attr) {
         if (! attr) return console.warn(`Geometry.addAttribute: Attribute for '${key}' missing`);
         if (! attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
+        const gl = renderer.gl;
 
         // Unbind current VAO so that new buffers don't get added to active mesh
         renderer.clearActiveGeometry();
@@ -65,12 +66,12 @@ class Geometry {
         attr.size = attr.size || 1;
         if (! attr.type) {
             switch (attr.data.constructor) {
-                case Float32Array: attr.type = renderer.gl.FLOAT; break;
-                case Uint16Array: attr.type = renderer.gl.UNSIGNED_SHORT; break;
-                case Uint32Array: default: attr.type = renderer.gl.UNSIGNED_INT;
+                case Float32Array: attr.type = gl.FLOAT; break;
+                case Uint16Array: attr.type = gl.UNSIGNED_SHORT; break;
+                case Uint32Array: default: attr.type = gl.UNSIGNED_INT;
             }
         }
-        attr.target = (key === 'index') ? renderer.gl.ELEMENT_ARRAY_BUFFER : renderer.gl.ARRAY_BUFFER;
+        attr.target = (key === 'index') ? gl.ELEMENT_ARRAY_BUFFER : gl.ARRAY_BUFFER;
         attr.normalized = attr.normalized || false;
         attr.stride = attr.stride || 0;
         attr.offset = attr.offset || 0;
@@ -78,7 +79,7 @@ class Geometry {
         attr.divisor = attr.instanced || 0;
 
         attr.needsUpdate = false;
-        attr.usage = attr.usage || renderer.gl.STATIC_DRAW;
+        attr.usage = attr.usage || gl.STATIC_DRAW;
 
         // Push data to buffer
         if (! attr.buffer) this.updateAttribute(attr);
@@ -106,21 +107,25 @@ class Geometry {
     }
 
     updateAttribute(attr) {
+        const gl = renderer.gl;
+
         // New Buffer
         if (! attr.buffer) {
-            attr.buffer = renderer.gl.createBuffer();
-            renderer.gl.bindBuffer(attr.target, attr.buffer);
-            renderer.gl.bufferData(attr.target, attr.data, attr.usage);
+            attr.buffer = gl.createBuffer();
+            gl.bindBuffer(attr.target, attr.buffer);
+            gl.bufferData(attr.target, attr.data, attr.usage);
         // Existing Buffer
         } else {
-            if (this.glState.boundBuffer !== attr.buffer) renderer.gl.bindBuffer(attr.target, attr.buffer);
-            renderer.gl.bufferSubData(attr.target, 0, attr.data);
+            if (this.glState.boundBuffer !== attr.buffer) gl.bindBuffer(attr.target, attr.buffer);
+            gl.bufferSubData(attr.target, 0, attr.data);
         }
         this.glState.boundBuffer = attr.buffer;
         attr.needsUpdate = false;
     }
 
     bindAttributes(program) {
+        const gl = renderer.gl;
+
         // Link all attributes to program using gl.vertexAttribPointer
         program.attributeLocations.forEach((location, { name, type }) => {
             // Missing a required shader attribute
@@ -130,7 +135,7 @@ class Geometry {
             }
 
             const attr = this.attributes[name];
-            renderer.gl.bindBuffer(attr.target, attr.buffer);
+            gl.bindBuffer(attr.target, attr.buffer);
             this.glState.boundBuffer = attr.buffer;
 
             // For matrix attributes, buffer needs to be defined per column
@@ -144,18 +149,18 @@ class Geometry {
             const offset = numLoc === 1 ? 0 : numLoc * numLoc;
 
             for (let i = 0; i < numLoc; i++) {
-                renderer.gl.vertexAttribPointer(location + i, size, attr.type, attr.normalized, attr.stride + stride, attr.offset + i * offset);
-                renderer.gl.enableVertexAttribArray(location + i);
+                gl.vertexAttribPointer(location + i, size, attr.type, attr.normalized, attr.stride + stride, attr.offset + i * offset);
+                gl.enableVertexAttribArray(location + i);
 
                 // For instanced attributes, divisor needs to be set.
                 // For firefox, need to set back to 0 if non-instanced drawn after instanced, else won't render.
-                renderer.gl.vertexAttribDivisor(location + i, attr.divisor);
+                gl.vertexAttribDivisor(location + i, attr.divisor);
             }
         });
 
         // Bind indices if geometry indexed
         if (this.attributes.index) {
-            renderer.gl.bindBuffer(renderer.gl.ELEMENT_ARRAY_BUFFER, this.attributes.index.buffer);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.attributes.index.buffer);
         }
     }
 
@@ -178,16 +183,18 @@ class Geometry {
     }
 
     draw({ program, mode = renderer.gl.TRIANGLES }) {
+        const gl = renderer.gl;
+
         // Make sure current geometry attributes are bound
         if (renderer.currentGeometry !== `${this.id}_${program.attributeOrder}`) {
             // Need to create vertex array object, bind attribute buffers
             if (! this.VAOs[program.attributeOrder]) {
-                this.VAOs[program.attributeOrder] = renderer.gl.createVertexArray();
-                renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
+                this.VAOs[program.attributeOrder] = gl.createVertexArray();
+                gl.bindVertexArray(this.VAOs[program.attributeOrder]);
                 this.bindAttributes(program);
             // Rebind existing vertex array object
             } else {
-                renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
+                gl.bindVertexArray(this.VAOs[program.attributeOrder]);
             }
             renderer.currentGeometry = `${this.id}_${program.attributeOrder}`;
         }
@@ -205,7 +212,7 @@ class Geometry {
 
         if (this.isInstanced) {
             if (this.attributes.index) {
-                renderer.gl.drawElementsInstanced(
+                gl.drawElementsInstanced(
                     mode,
                     this.drawRange.count,
                     this.attributes.index.type,
@@ -213,13 +220,13 @@ class Geometry {
                     this.instancedCount,
                 );
             } else {
-                renderer.gl.drawArraysInstanced(mode, this.drawRange.start, this.drawRange.count, this.instancedCount);
+                gl.drawArraysInstanced(mode, this.drawRange.start, this.drawRange.count, this.instancedCount);
             }
         } else {
             if (this.attributes.index) {
-                renderer.gl.drawElements(mode, this.drawRange.count, this.attributes.index.type, this.attributes.index.offset + this.drawRange.start * 2);
+                gl.drawElements(mode, this.drawRange.count, this.attributes.index.type, this.attributes.index.offset + this.drawRange.start * 2);
             } else {
-                renderer.gl.drawArrays(mode, this.drawRange.start, this.drawRange.count);
+                gl.drawArrays(mode, this.drawRange.start, this.drawRange.count);
             }
         }
 

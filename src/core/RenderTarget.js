@@ -22,12 +22,12 @@ class RenderTarget {
         unpackAlignment,
         premultiplyAlpha,
     } = {}) {
+        const gl = renderer.gl;
 
-        renderer.gl = renderer.gl;
         this.width = width;
         this.height = height;
         this.depth = depth;
-        this.buffer = renderer.gl.createFramebuffer();
+        this.buffer = gl.createFramebuffer();
         this.target = target;
         renderer.bindFramebuffer(this);
 
@@ -54,12 +54,12 @@ class RenderTarget {
                 })
             );
             this.textures[i].update();
-            renderer.gl.framebufferTexture2D(this.target, renderer.gl.COLOR_ATTACHMENT0 + i, renderer.gl.TEXTURE_2D, this.textures[i].texture, 0 /* level */);
-            drawBuffers.push(renderer.gl.COLOR_ATTACHMENT0 + i);
+            gl.framebufferTexture2D(this.target, gl.COLOR_ATTACHMENT0 + i, gl.TEXTURE_2D, this.textures[i].texture, 0 /* level */);
+            drawBuffers.push(gl.COLOR_ATTACHMENT0 + i);
         }
 
         // For multi-render targets shader access
-        if (drawBuffers.length > 1) renderer.gl.drawBuffers(drawBuffers);
+        if (drawBuffers.length > 1) gl.drawBuffers(drawBuffers);
 
         // Alias for majority of use cases
         this.texture = this.textures[0];
@@ -69,35 +69,35 @@ class RenderTarget {
             this.depthTexture = new Texture({
                 width,
                 height,
-                minFilter: renderer.gl.NEAREST,
-                magFilter: renderer.gl.NEAREST,
-                format: renderer.gl.DEPTH_COMPONENT,
-                internalFormat: renderer.gl.DEPTH_COMPONENT16,
-                type: renderer.gl.UNSIGNED_INT,
+                minFilter: gl.NEAREST,
+                magFilter: gl.NEAREST,
+                format: gl.DEPTH_COMPONENT,
+                internalFormat: gl.DEPTH_COMPONENT16,
+                type: gl.UNSIGNED_INT,
             });
             this.depthTexture.update();
-            renderer.gl.framebufferTexture2D(this.target, renderer.gl.DEPTH_ATTACHMENT, renderer.gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
+            gl.framebufferTexture2D(this.target, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
         } else {
             // Render buffers
-            if (depth && !stencil) {
-                this.depthBuffer = renderer.gl.createRenderbuffer();
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.depthBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.DEPTH_COMPONENT16, width, height);
-                renderer.gl.framebufferRenderbuffer(this.target, renderer.gl.DEPTH_ATTACHMENT, renderer.gl.RENDERBUFFER, this.depthBuffer);
+            if (depth && ! stencil) {
+                this.depthBuffer = gl.createRenderbuffer();
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+                gl.framebufferRenderbuffer(this.target, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.depthBuffer);
             }
 
             if (stencil && !depth) {
-                this.stencilBuffer = renderer.gl.createRenderbuffer();
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.stencilBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.STENCIL_INDEX8, width, height);
-                renderer.gl.framebufferRenderbuffer(this.target, renderer.gl.STENCIL_ATTACHMENT, renderer.gl.RENDERBUFFER, this.stencilBuffer);
+                this.stencilBuffer = gl.createRenderbuffer();
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.stencilBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
+                gl.framebufferRenderbuffer(this.target, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, this.stencilBuffer);
             }
 
             if (depth && stencil) {
-                this.depthStencilBuffer = renderer.gl.createRenderbuffer();
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.depthStencilBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.DEPTH_STENCIL, width, height);
-                renderer.gl.framebufferRenderbuffer(this.target, renderer.gl.DEPTH_STENCIL_ATTACHMENT, renderer.gl.RENDERBUFFER, this.depthStencilBuffer);
+                this.depthStencilBuffer = gl.createRenderbuffer();
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthStencilBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
+                gl.framebufferRenderbuffer(this.target, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, this.depthStencilBuffer);
             }
         }
 
@@ -107,6 +107,7 @@ class RenderTarget {
     setSize(width, height) {
         if (this.width === width && this.height === height) return;
 
+        const gl = renderer.gl;
         this.width = width;
         this.height = height;
         renderer.bindFramebuffer(this);
@@ -116,7 +117,7 @@ class RenderTarget {
             this.textures[i].height = height;
             this.textures[i].needsUpdate = true;
             this.textures[i].update();
-            renderer.gl.framebufferTexture2D(this.target, renderer.gl.COLOR_ATTACHMENT0 + i, renderer.gl.TEXTURE_2D, this.textures[i].texture, 0 /* level */);
+            gl.framebufferTexture2D(this.target, gl.COLOR_ATTACHMENT0 + i, gl.TEXTURE_2D, this.textures[i].texture, 0 /* level */);
         }
 
         if (this.depthTexture) {
@@ -124,21 +125,21 @@ class RenderTarget {
             this.depthTexture.height = height;
             this.depthTexture.needsUpdate = true;
             this.depthTexture.update();
-            renderer.gl.framebufferTexture2D(this.target, renderer.gl.DEPTH_ATTACHMENT, renderer.gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
+            gl.framebufferTexture2D(this.target, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
         } else {
             if (this.depthBuffer) {
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.depthBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.DEPTH_COMPONENT16, width, height);
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
             }
 
             if (this.stencilBuffer) {
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.stencilBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.STENCIL_INDEX8, width, height);
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.stencilBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
             }
 
             if (this.depthStencilBuffer) {
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.depthStencilBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.DEPTH_STENCIL, width, height);
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthStencilBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
             }
         }
 

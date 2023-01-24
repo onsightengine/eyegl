@@ -23,6 +23,7 @@ class Program {
         if (! renderer) console.error(`Program.constructor: Renderer not found`);
         if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
         if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
+        const gl = renderer.gl;
 
         this.uuid = crypto.randomUUID();
         this.id = _idGenerator++;
@@ -39,8 +40,8 @@ class Program {
         this.blendEquation = {};
 
         // Default blendFunc
-        this.setBlendFunc(renderer.gl.ONE, renderer.gl.ONE_MINUS_SRC_ALPHA);
-        // this.setBlendFunc(renderer.gl.SRC_ALPHA, renderer.gl.ONE_MINUS_SRC_ALPHA);
+        this.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+        // this.setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         // Incerase program count
         renderer.info.programs++;
@@ -50,6 +51,8 @@ class Program {
     }
 
     buildProgram({ vertex, fragment, defines } = {}) {
+        const gl = renderer.gl;
+
         // Add defines to shaders
         const customDefines = generateDefines(defines);
 
@@ -72,48 +75,48 @@ class Program {
         } else fragmentGlsl = prefixFragment + fragment;
 
         // Compile vertex shader and log errors
-        const vertexShader = renderer.gl.createShader(renderer.gl.VERTEX_SHADER);
-        renderer.gl.shaderSource(vertexShader, vertexGlsl);
-        renderer.gl.compileShader(vertexShader);
-        if (renderer.gl.getShaderInfoLog(vertexShader) !== '') {
-            console.warn(`${renderer.gl.getShaderInfoLog(vertexShader)}\nVertex Shader\n${addLineNumbers(vertex)}`);
+        const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, vertexGlsl);
+        gl.compileShader(vertexShader);
+        if (gl.getShaderInfoLog(vertexShader) !== '') {
+            console.warn(`${gl.getShaderInfoLog(vertexShader)}\nVertex Shader\n${addLineNumbers(vertex)}`);
         }
 
         // Compile fragment shader and log errors
-        const fragmentShader = renderer.gl.createShader(renderer.gl.FRAGMENT_SHADER);
-        renderer.gl.shaderSource(fragmentShader, fragmentGlsl);
-        renderer.gl.compileShader(fragmentShader);
-        if (renderer.gl.getShaderInfoLog(fragmentShader) !== '') {
-            console.warn(`${renderer.gl.getShaderInfoLog(fragmentShader)}\nFragment Shader\n${addLineNumbers(fragment)}`);
+        const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragmentShader, fragmentGlsl);
+        gl.compileShader(fragmentShader);
+        if (gl.getShaderInfoLog(fragmentShader) !== '') {
+            console.warn(`${gl.getShaderInfoLog(fragmentShader)}\nFragment Shader\n${addLineNumbers(fragment)}`);
         }
 
         // Check if was built before, if so delete
         if (this.program) {
-            renderer.gl.deleteProgram(this.program);
+            gl.deleteProgram(this.program);
             renderer.state.currentProgram = -1; // force gl program update 'this.use()'
         }
 
         // Compile program and log errors
-        this.program = renderer.gl.createProgram();
-        renderer.gl.attachShader(this.program, vertexShader);
-        renderer.gl.attachShader(this.program, fragmentShader);
-        renderer.gl.linkProgram(this.program);
-        if (! renderer.gl.getProgramParameter(this.program, renderer.gl.LINK_STATUS)) {
-            return console.warn(renderer.gl.getProgramInfoLog(this.program));
+        this.program = gl.createProgram();
+        gl.attachShader(this.program, vertexShader);
+        gl.attachShader(this.program, fragmentShader);
+        gl.linkProgram(this.program);
+        if (! gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+            return console.warn(gl.getProgramInfoLog(this.program));
         }
 
         renderer.programs[this.id] = this.program;
 
         // Remove shader once linked
-        renderer.gl.deleteShader(vertexShader);
-        renderer.gl.deleteShader(fragmentShader);
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
 
         // Get active uniform locations
         this.uniformLocations = new Map();
-        const numUniforms = renderer.gl.getProgramParameter(this.program, renderer.gl.ACTIVE_UNIFORMS);
+        const numUniforms = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
         for (let uIndex = 0; uIndex < numUniforms; uIndex++) {
-            const uniform = renderer.gl.getActiveUniform(this.program, uIndex);
-            this.uniformLocations.set(uniform, renderer.gl.getUniformLocation(this.program, uniform.name));
+            const uniform = gl.getActiveUniform(this.program, uIndex);
+            this.uniformLocations.set(uniform, gl.getUniformLocation(this.program, uniform.name));
 
             // split uniforms' names to separate array and struct declarations
             const split = uniform.name.match(/(\w+)/g);
@@ -133,10 +136,10 @@ class Program {
         // Get active attribute locations
         this.attributeLocations = new Map();
         const locations = [];
-        const numAttribs = renderer.gl.getProgramParameter(this.program, renderer.gl.ACTIVE_ATTRIBUTES);
+        const numAttribs = gl.getProgramParameter(this.program, gl.ACTIVE_ATTRIBUTES);
         for (let aIndex = 0; aIndex < numAttribs; aIndex++) {
-            const attribute = renderer.gl.getActiveAttrib(this.program, aIndex);
-            const location = renderer.gl.getAttribLocation(this.program, attribute.name);
+            const attribute = gl.getActiveAttrib(this.program, aIndex);
+            const location = gl.getAttribLocation(this.program, attribute.name);
             if (location === -1) continue; // Ignore special built-in inputs. eg gl_VertexID, gl_InstanceID
             locations[location] = attribute.name;
             this.attributeLocations.set(attribute, location);
@@ -160,14 +163,16 @@ class Program {
     }
 
     applyState() {
-        if (this.depthTest) renderer.enable(renderer.gl.DEPTH_TEST);
-        else renderer.disable(renderer.gl.DEPTH_TEST);
+        const gl = renderer.gl;
 
-        if (this.cullFace) renderer.enable(renderer.gl.CULL_FACE);
-        else renderer.disable(renderer.gl.CULL_FACE);
+        if (this.depthTest) renderer.enable(gl.DEPTH_TEST);
+        else renderer.disable(gl.DEPTH_TEST);
 
-        if (this.blendFunc.src) renderer.enable(renderer.gl.BLEND);
-        else renderer.disable(renderer.gl.BLEND);
+        if (this.cullFace) renderer.enable(gl.CULL_FACE);
+        else renderer.disable(gl.CULL_FACE);
+
+        if (this.blendFunc.src) renderer.enable(gl.BLEND);
+        else renderer.disable(gl.BLEND);
 
         if (this.cullFace) renderer.setCullFace(this.cullFace);
         renderer.setFrontFace(this.frontFace);
@@ -178,12 +183,13 @@ class Program {
     }
 
     use({ flipFaces = false } = {}) {
+        const gl = renderer.gl;
         let textureUnit = -1;
 
         // Avoid gl call if program already in use
         const programActive = (renderer.state.currentProgram === this.id);
         if (! programActive) {
-            renderer.gl.useProgram(this.program);
+            gl.useProgram(this.program);
             renderer.state.currentProgram = this.id;
         }
 
@@ -217,7 +223,7 @@ class Program {
 
                 // Check if texture needs to be updated
                 uniform.value.update(textureUnit);
-                return setUniform(renderer.gl, activeUniform.type, location, textureUnit);
+                return setUniform(gl, activeUniform.type, location, textureUnit);
             }
 
             // For texture arrays, set uniform as an array of texture units instead of just one
@@ -229,14 +235,14 @@ class Program {
                     textureUnits.push(textureUnit);
                 });
 
-                return setUniform(renderer.gl, activeUniform.type, location, textureUnits);
+                return setUniform(gl, activeUniform.type, location, textureUnits);
             }
 
-            setUniform(renderer.gl, activeUniform.type, location, uniform.value);
+            setUniform(gl, activeUniform.type, location, uniform.value);
         });
 
         this.applyState();
-        if (flipFaces) renderer.setFrontFace(this.frontFace === renderer.gl.CCW ? renderer.gl.CW : renderer.gl.CCW);
+        if (flipFaces) renderer.setFrontFace(this.frontFace === gl.CCW ? gl.CW : gl.CCW);
     }
 
     flush() {

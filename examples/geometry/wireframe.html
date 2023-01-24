@@ -18,6 +18,8 @@
             import * as EYE from 'eyegl';
             import { Gooey } from 'osui';
 
+            // Gui
+
             const params = {
                 wireframe: 0.5,
             }
@@ -26,13 +28,16 @@
             const folder1 = gui.addFolder('Material');
             folder1.add(params, 'wireframe', 0, 1).onChange(() => program.wireIntensity = params.wireframe);
 
+            // Scene
+
             const renderer = new EYE.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
+            gl.clearColor(0, 0, 0, 0);
 
             const camera = new EYE.Camera({ fov: 35 });
             camera.position.set(5, 3, 6);
-            camera.lookAt([0, 0, 0]);
+            camera.lookAt([ 0, 0, 0 ]);
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -92,6 +97,7 @@
 
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
+
             function update(t) {
                 requestAnimationFrame(update);
                 debug.startFrame();
