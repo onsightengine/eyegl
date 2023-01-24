@@ -22,6 +22,8 @@ class Geometry {
         this.instancedCount = 0;
         this.glState = renderer.state; /* alias for renderer.state to avoid redundant calls for global state */
 
+        renderer.info.geometries++;
+
         // Create the buffers
         for (let key in attributes) {
             this.addAttribute(key, attributes[key]);
@@ -301,6 +303,7 @@ class Geometry {
         for (let key in this.attributes) {
             this.deleteAttribute(this.attributes[key]);
         }
+        renderer.info.geometries--;
     }
 
     /***** Copy / Clone *****/

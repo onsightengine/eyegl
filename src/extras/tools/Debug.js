@@ -145,6 +145,8 @@ class Debug {
         const domVertices = document.getElementById('EyeVertices');
         const domTriangles = document.getElementById('EyeTriangles');
 
+        const domPrograms = document.getElementById('EyePrograms');
+        const domGeometries = document.getElementById('EyeGeometries');
         const domTextures = document.getElementById('EyeTextures');
 
         const domMem = document.getElementById('EyeMemory');
@@ -203,8 +205,8 @@ class Debug {
                 domVertices.textContent = `${vertices}`;
                 domTriangles.textContent = `${triangles}`;
 
-                //     programsInfo.setTextContent(ONE.MathUtils.addCommas(info.programs.length));
-                //     geometriesInfo.setTextContent(ONE.MathUtils.addCommas(info.memory.geometries));
+                domPrograms.textContent = `${renderer.info.programs}`;
+                domGeometries.textContent = `${renderer.info.geometries}`;
                 domTextures.textContent = `${renderer.info.textures}`;
             }
 

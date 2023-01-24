@@ -42,6 +42,9 @@ class Program {
         this.setBlendFunc(renderer.gl.ONE, renderer.gl.ONE_MINUS_SRC_ALPHA);
         // this.setBlendFunc(renderer.gl.SRC_ALPHA, renderer.gl.ONE_MINUS_SRC_ALPHA);
 
+        // Incerase program count
+        renderer.info.programs++;
+
         // Compile shaders, build program
         this.buildProgram({ vertex, fragment, defines });
     }
@@ -239,6 +242,7 @@ class Program {
     flush() {
         renderer.gl.deleteProgram(this.program);
         this.program = undefined;
+        renderer.info.programs--;
     }
 
 }
