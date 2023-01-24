@@ -5,8 +5,13 @@ import { Euler } from '../math/Euler.js';
 
 class Transform {
 
+    static #ID = 1;
+
     constructor() {
         this.isTransform = true;
+
+        this.uuid = crypto.randomUUID();
+        this.id = this.#ID++;
 
         this.parent = null;
         this.children = [];

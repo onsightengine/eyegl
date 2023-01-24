@@ -29,8 +29,8 @@ class Renderer {
         dpr = 1,                                    // window.devicePixelRatio
     } = {}) {
 
-        // Properties
-        this.id = Renderer.#ID++;
+        this.uuid = crypto.randomUUID();
+        this.id = this.#ID++;
         this.dpr = dpr;
 
         this.color = true;

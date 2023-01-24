@@ -63,7 +63,7 @@ class TextureLoader {
         }
 
         // Check cache for existing texture
-        const cacheID = src + renderer.id;
+        const cacheID = src;// + renderer.id;
         if (this.#cache[cacheID]) return this.#cache[cacheID];
 
         let texture;
@@ -139,6 +139,12 @@ class TextureLoader {
         return this.#supportedExtensions;
     }
 
+    static removeFromCache(texture) {
+        for (let url in this.#cache) {
+            if (this.#cache[url].uuid === texture.uuid) delete this.#cache[url];
+        }
+    }
+
 }
 
 export { TextureLoader };
@@ -152,6 +158,12 @@ function detectWebP() {
 function powerOfTwo(value) {
     // (width & (width - 1)) !== 0
     return Math.log2(value) % 1 === 0;
+}
+
+function nameFromUrl(url) {
+    let imageName = new String(url.replace(/^.*[\\\/]/, ''));       // Filename only
+    imageName = imageName.replace(/\.[^/.]+$/, "");                 // Remove extension
+    return imageName;
 }
 
 function loadKTX(src, texture) {
@@ -169,6 +181,7 @@ function loadImage(src, texture, flipY) {
         //     if (texture.wrapS === renderer.gl.REPEAT) texture.wrapS = texture.wrapT = renderer.gl.CLAMP_TO_EDGE;
         // }
 
+        texture.name = nameFromUrl(imgBmp.src);
         texture.image = imgBmp;
 
         // For createImageBitmap, close once uploaded

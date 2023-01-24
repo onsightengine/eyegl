@@ -349,7 +349,7 @@ class Orbit {
             element.addEventListener('touchmove', onTouchMove, { passive: false });
         }
 
-        this.remove = function() {
+        this.flush = function() {
             element.removeEventListener('contextmenu', onContextMenu);
             element.removeEventListener('pointerdown', onMouseDown);
             element.removeEventListener('wheel', onMouseWheel);

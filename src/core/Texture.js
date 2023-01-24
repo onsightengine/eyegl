@@ -1,12 +1,11 @@
+import { TextureLoader } from '../EyeGL.js';
 
 // TODO: delete texture
 // TODO: use texSubImage2D for updates (video or when loaded)
 // TODO: need? encoding = linearEncoding
 // TODO: support non-compressed mipmaps uploads
 
-import { TextureLoader } from '../EyeGL.js';
-
-const emptyPixel = new Uint8Array(4);
+const _emptyPixel = new Uint8Array(4);
 
 class Texture {
 
@@ -31,11 +30,12 @@ class Texture {
         width, // used for RenderTargets or Data Textures
         height = width,
     } = {}) {
-        const self = this;
+        if (! renderer) console.error(`Texture.constructor: Renderer not found`);
 
         this.isTexture = true;
 
-        this.id = Texture.#ID++;
+        this.uuid = crypto.randomUUID();
+        this.id = this.#ID++;
 
         this.image = image;
         this.target = target;
@@ -196,7 +196,7 @@ class Texture {
                         0,
                         renderer.gl.RGBA,
                         renderer.gl.UNSIGNED_BYTE,
-                        emptyPixel
+                        _emptyPixel
                     );
                 }
             } else if (this.width) {
@@ -204,12 +204,13 @@ class Texture {
                 renderer.gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
             } else {
                 // Upload empty pixel if no image to avoid errors while image or video loading
-                renderer.gl.texImage2D(this.target, 0, renderer.gl.RGBA, 1, 1, 0, renderer.gl.RGBA, renderer.gl.UNSIGNED_BYTE, emptyPixel);
+                renderer.gl.texImage2D(this.target, 0, renderer.gl.RGBA, 1, 1, 0, renderer.gl.RGBA, renderer.gl.UNSIGNED_BYTE, _emptyPixel);
             }
         }
 
         this.store.image = this.image;
     }
+
 }
 
 export { Texture };

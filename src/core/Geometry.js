@@ -10,11 +10,12 @@ class Geometry {
     static #ID = 1;
 
     constructor(attributes = {}) {
-        this.isGeometry = true;
-
         if (! renderer) console.error(`Geometry.constructor: Renderer not found`);
 
-        this.id = Geometry.#ID++;
+        this.isGeometry = true;
+
+        this.uuid = crypto.randomUUID();
+        this.id = this.#ID++;
         this.attributes = {};
 
         this.VAOs = {}; /* store one VAO per program attribute locations order */
@@ -296,7 +297,7 @@ class Geometry {
         }
     }
 
-    remove() {
+    flush() {
         this.clearVertexArrayObjects();
         for (let key in this.attributes) {
             this.deleteAttribute(this.attributes[key]);

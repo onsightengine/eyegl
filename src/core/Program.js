@@ -2,7 +2,7 @@
 // TODO: upload identity matrix if null ?
 // TODO: sampler Cube
 
-const arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
+const _arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
 
 class Program {
 
@@ -25,7 +25,8 @@ class Program {
         if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
         if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
 
-        this.id = Program.#ID++;
+        this.uuid = crypto.randomUUID();
+        this.id = this.#ID++;
         this.uniforms = uniforms;
 
         // Store program state
@@ -236,7 +237,7 @@ class Program {
         if (flipFaces) renderer.setFrontFace(this.frontFace === renderer.gl.CCW ? renderer.gl.CW : renderer.gl.CCW);
     }
 
-    remove() {
+    flush() {
         renderer.gl.deleteProgram(this.program);
         this.program = undefined;
     }
@@ -313,8 +314,8 @@ function flatten(a) {
     const valueLen = a[0].length;
     if (valueLen === undefined) return a;
     const length = arrayLen * valueLen;
-    let value = arrayCacheF32[length];
-    if (! value) arrayCacheF32[length] = value = new Float32Array(length);
+    let value = _arrayCacheF32[length];
+    if (! value) _arrayCacheF32[length] = value = new Float32Array(length);
     for (let i = 0; i < arrayLen; i++) value.set(a[i], i * valueLen);
     return value;
 }

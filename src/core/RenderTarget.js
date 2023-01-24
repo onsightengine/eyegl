@@ -22,6 +22,7 @@ class RenderTarget {
         unpackAlignment,
         premultiplyAlpha,
     } = {}) {
+
         renderer.gl = renderer.gl;
         this.width = width;
         this.height = height;

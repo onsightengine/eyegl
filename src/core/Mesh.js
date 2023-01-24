@@ -4,8 +4,6 @@ import { Mat4 } from '../math/Mat4.js';
 
 class Mesh extends Transform {
 
-    static #ID = 1;
-
     constructor({
         geometry,
         program,
@@ -13,11 +11,11 @@ class Mesh extends Transform {
         frustumCulled = true,
         renderOrder = 0
     } = {}) {
+        if (! renderer) console.error(`Mesh.constructor: Renderer not found`);
+
         super();
         this.isMesh = true;
 
-        if (! renderer) console.error(`Mesh.constructor: Renderer not found`);
-        this.id = Mesh.#ID++;
         this.geometry = geometry;
         this.program = program;
         this.mode = mode;
