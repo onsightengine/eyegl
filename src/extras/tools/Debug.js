@@ -24,6 +24,7 @@ class Debug {
         openBuffers = openBuffers || checkState('DebugBuffers');
         openSystem = openSystem || checkState('DebugSystem');
 
+        const buttonColor = getVariable('button-light') ?? '60, 60, 60';
         const backgroundColor = getVariable('background-light') ?? '32, 32, 32';
         const backgroundAlpha = getVariable('panel-transparency') ?? '1.0';
         const textColor = getVariable('text') ?? '170, 170, 170';
@@ -39,7 +40,7 @@ class Debug {
                 text-align: left;
                 left: 0;
                 bottom: 0;
-                margin: 0;
+                margin: 0.25em;
                 padding: 0;
                 z-index: 1000; /* debug info */
                 background: transparent;
@@ -66,9 +67,9 @@ class Debug {
                 background-color: rgba(${backgroundColor}, ${backgroundAlpha});
                 min-height: 2em;
                 min-width: 2em;
-                margin-left: 0.15em;
-                margin-right: 0.15em;
-                padding-bottom: 0.1em;
+                margin-left: 0.2em;
+                margin-right: 0.2em;
+                padding-bottom: 0.05em;
             }
 
             .EyeDebugButton:hover {
@@ -83,6 +84,11 @@ class Debug {
                 box-shadow: none;
             }
 
+            #ButtonFrame { border: solid 2px rgba(${buttonColor}, 0.7); }
+            #ButtonScene { border: solid 2px rgba(${buttonColor}, 0.7); }
+            #ButtonBuffers { border: solid 2px rgba(${buttonColor}, 0.7); }
+            #ButtonSystem { border: solid 2px rgba(${buttonColor}, 0.7); }
+
             #FrameFrame, #ButtonFrame.Selected { border: solid 2px rgba(0, 180, 175, 0.75); }
             #SceneFrame, #ButtonScene.Selected { border: solid 2px rgba(255, 113, 0, 0.75); }
             #BuffersFrame, #ButtonBuffers.Selected { border: solid 2px rgba(255, 93, 0, 0.75); }
@@ -95,10 +101,10 @@ class Debug {
             .EyeDebugButton:active {
                 filter: brightness(100%);
                 box-shadow:
-                    inset -1px 1px 3px 1px rgba(0, 0, 0, 0.5),
-                    inset  1px 1px 3px 1px rgba(0, 0, 0, 0.5),
-                    inset -1px -1px 3px 1px rgba(0, 0, 0, 0.5),
-                    inset  1px -1px 3px 1px rgba(0, 0, 0, 0.5);
+                    inset -1px 1px 3px 1px rgba(0, 0, 0, 0.75),
+                    inset  1px 1px 3px 1px rgba(0, 0, 0, 0.75),
+                    inset -1px -1px 3px 1px rgba(0, 0, 0, 0.75),
+                    inset  1px -1px 3px 1px rgba(0, 0, 0, 0.75);
             }
 
             .EyeDetails { /* closed */
