@@ -10,7 +10,7 @@ Program Management:
 Sprite Shader:
     - atlas / texture merging
 
-Standard Shader:
+Uber Shader:
     - lighting
 
 Geometry Utility Functions (GeomUtils):

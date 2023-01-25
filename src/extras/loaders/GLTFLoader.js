@@ -1,7 +1,7 @@
 import { Geometry } from '../../core/Geometry.js';
 import { InstancedMesh } from '../objects/InstancedMesh.js';
 import { Mesh } from '../../core/Mesh.js';
-import { Standard } from '../programs/Standard.js';
+import { Uber } from '../programs/Uber.js';
 import { Transform } from '../../core/Transform.js';
 import { Texture } from '../../core/Texture.js';
 
@@ -547,7 +547,7 @@ export class GLTFLoader {
                 extras, // optional
             }) => {
                 // TODO: materials
-                const program = new Standard();
+                const program = new Uber();
                 if (materialIndex !== undefined) {
                     program.gltfMaterial = materials[materialIndex];
                 }

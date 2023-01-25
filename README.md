@@ -16,11 +16,6 @@ Under heavy development, more info to come...
 
 ## Credits
 
-Thanks to these libraries / repos:
-- [ogl](https://github.com/oframe/ogl)
-- [three.js](https://github.com/mrdoob/three.js/)
-- [picogl.js](https://github.com/tsherif/picogl.js)
-- [redgl](https://github.com/redcamel/RedGL2)
-- [twgl](https://github.com/greggman/twgl.js/)
+This library builds heavily off the wonderful [ogl](https://github.com/oframe/ogl) library, with further inspiration from [three.js](https://github.com/mrdoob/three.js/).
 
 <br />

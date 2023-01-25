@@ -1,7 +1,7 @@
 import { Program } from '../../core/Program.js';
 import { Texture } from '../../core/Texture.js';
 
-class Standard extends Program {
+class Uber extends Program {
 
     #flatShading = false;
 
@@ -14,8 +14,8 @@ class Standard extends Program {
     #wireIntensity = 0.0;
 
     constructor({
-        texture = 0,
-        textureNormal = 0,
+        texture = new Texture(),
+        textureNormal = new Texture(),
 
         flatShading = false,
         normalIntensity = 0.0,
@@ -58,8 +58,8 @@ class Standard extends Program {
 
     rebuildProgram() {
         this.buildProgram({
-            vertex: Standard.vertex,
-            fragment: Standard.fragment,
+            vertex: defaultVertex,
+            fragment: defaultFragment,
             uniforms: {
                 tDiffuse: { value: this.#mapDiffuse },
                 uNormalIntensity: { value: this.#normalIntensity },
@@ -114,7 +114,7 @@ class Standard extends Program {
 
 }
 
-export { Standard };
+export { Uber };
 
 /***** Internal *****/
 

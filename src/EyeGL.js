@@ -49,7 +49,7 @@ export { Sprite } from './extras/objects/Sprite.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
 
 // Programs
-export { Standard } from './extras/programs/Standard.js';
+export { Uber } from './extras/programs/Uber.js';
 
 // Tools
 export { Capabilities } from './extras/tools/Capabilities.js';

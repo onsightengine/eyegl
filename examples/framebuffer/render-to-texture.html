@@ -56,8 +56,8 @@
                 height: 512,
             });
 
-            const program = new EYE.Standard({ texture: texture });
-            const targetProgram = new EYE.Standard({ texture: target.texture });
+            const program = new EYE.Uber({ texture: texture });
+            const targetProgram = new EYE.Uber({ texture: target.texture });
 
             const mesh = new EYE.Mesh({ geometry, program });
             const targetMesh = new EYE.Mesh({ geometry, program: targetProgram });

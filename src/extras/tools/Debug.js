@@ -26,7 +26,7 @@ class Debug {
 
         const backgroundColor = getVariable('background-light') ?? '32, 32, 32';
         const backgroundAlpha = getVariable('panel-transparency') ?? '1.0';
-        const textColor = getVariable('text') ?? '190, 190, 190';
+        const textColor = getVariable('text') ?? '170, 170, 170';
         const textLight = getVariable('text-light') ?? '225, 225, 225';
 
         const styleSheet = document.createElement('style');
@@ -42,7 +42,6 @@ class Debug {
                 margin: 0;
                 padding: 0;
                 z-index: 1000; /* debug info */
-                color: rgb(${textColor});
                 background: transparent;
             }
 
@@ -50,7 +49,7 @@ class Debug {
                 margin: 0.35em;
                 margin-bottom: 0;
                 padding: 0.25em;
-                border-radius: 1em;
+                border-radius: 0.71429em;
                 background-color: rgba(${backgroundColor}, ${backgroundAlpha});
             }
 
@@ -84,10 +83,10 @@ class Debug {
                 box-shadow: none;
             }
 
-            #ButtonFrame.Selected { border: solid 2px rgba(0, 180, 175, 0.75); }
-            #ButtonScene.Selected { border: solid 2px rgba(255, 113, 0, 0.75); }
-            #ButtonBuffers.Selected { border: solid 2px rgba(255, 93, 0, 0.75); }
-            #ButtonSystem.Selected { border: solid 2px rgba(145, 223, 0, 0.75); }
+            #FrameFrame, #ButtonFrame.Selected { border: solid 2px rgba(0, 180, 175, 0.75); }
+            #SceneFrame, #ButtonScene.Selected { border: solid 2px rgba(255, 113, 0, 0.75); }
+            #BuffersFrame, #ButtonBuffers.Selected { border: solid 2px rgba(255, 93, 0, 0.75); }
+            #SystemFrame, #ButtonSystem.Selected { border: solid 2px rgba(145, 223, 0, 0.75); }
 
             .EyeDebugButton.Selected:hover {
                 filter: brightness(125%);
@@ -139,7 +138,7 @@ class Debug {
                 padding-right: 0.3em;
                 width: 100%;
                 font-size: 0.8em;
-                color: rgb(${textColor});
+                color: rgba(${textColor}, 0.8);
             }
 
             .EyeInfo, .EyeInfo > * {
@@ -363,7 +362,7 @@ class Debug {
                 domObjects.textContent = `${objects}`;
                 domLights.textContent = `${lights}`;
                 domVertices.textContent = `${vertices}`;
-                domTriangles.textContent = `${triangles}`;
+                domTriangles.textContent = `${triangles.toFixed(0)}`;
 
                 domPrograms.textContent = `${renderer.info.programs}`;
                 domGeometries.textContent = `${renderer.info.geometries}`;

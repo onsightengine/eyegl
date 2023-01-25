@@ -122,7 +122,7 @@ export { Capabilities };
 /***** Internal *****/
 
 function checkRenderTargetSupport(gl, internalFormat, format, type) {
-	// Create temp frame buffer and texture
+	// Create temp framebuffer and texture
 	const framebuffer = gl.createFramebuffer();
 	const texture = gl.createTexture();
 
@@ -131,7 +131,7 @@ function checkRenderTargetSupport(gl, internalFormat, format, type) {
 	gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
 	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
 
-	// Check frame buffer status
+	// Check framebuffer status
 	const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
 
 	// Clean up

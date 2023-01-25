@@ -60,7 +60,7 @@
 
             const sphereGeometry = new EYE.Sphere({ radius: 0.25 });
 
-            const sphere = new EYE.Mesh({ geometry: sphereGeometry, program: new EYE.Standard({ normalIntensity: 1.0 }) });
+            const sphere = new EYE.Mesh({ geometry: sphereGeometry, program: new EYE.Uber({ normalIntensity: 1.0 }) });
             sphere.setParent(scene);
 
             const cubic = [ new EYE.Vec3(0, 0.5, 0), new EYE.Vec3(1, 1, 0), new EYE.Vec3(1, -1, 0), new EYE.Vec3(0, -0.5, 0) ];
