@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>EyeGL • Blank</title>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
+        <link rel="icon" type="image/png" href="../../files/logo/favicon.png" />
+        <link href="../main.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="Info">Blank</div>
+        <div class="Credits"></div>
+
+        <script language="JavaScript" src="../imports.js"></script>
+
+        <script type="module">
+            import * as EYE from 'eyegl';
+            import { Gooey } from 'osui';
+
+            // Gui
+
+            const params = {
+
+            };
+
+            // const gui = new Gooey();
+            // const folder1 = gui.addFolder('Parameters');
+
+            // Setup
+
+            const renderer = new EYE.Renderer({ dpr: 2 });
+            const gl = renderer.gl;
+            document.body.appendChild(gl.canvas);
+            gl.clearColor(0, 0, 0, 0);
+
+            const camera = new EYE.Camera({ fov: 35 });
+            camera.position.set(0, 0, -10);
+            camera.lookAt([ 0, 0, 0 ]);
+
+            function resize() {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const scene = new EYE.Transform();
+            const controls = new EYE.Orbit(camera);
+
+            // Scene
+
+            // ...
+
+            // Render
+
+            const debug = new EYE.Debug();
+            requestAnimationFrame(update);
+
+            function update(t) {
+                requestAnimationFrame(update);
+                debug.startFrame();
+
+                controls.update();
+                renderer.render({ scene, camera });
+
+                debug.endFrame();
+            }
+
+        </script>
+    </body>
+</html>

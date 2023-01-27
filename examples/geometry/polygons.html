@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>EyeGL • Polygons</title>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
+        <link rel="icon" type="image/png" href="../../files/logo/favicon.png" />
+        <link href="../main.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="Info">Polygons</div>
+        <div class="Credits"></div>
+
+        <script language="JavaScript" src="../imports.js"></script>
+
+        <script type="module">
+            import * as EYE from 'eyegl';
+            import { Gooey } from 'osui';
+
+            const vertex = /* glsl */ `#version 300 es
+                precision highp float;
+
+                in vec3 position;
+                in vec2 uv;
+                // in float radius;
+
+                uniform mat4 modelViewMatrix;
+                uniform mat4 projectionMatrix;
+                uniform float uRadius;
+
+                out vec2 vUv;
+
+                void main() {
+                    vUv = uv;
+
+                    vec3 smoothPosition = vec3(position.xy + (uv * uRadius), 0);
+
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(smoothPosition, 1.0);
+                }
+            `;
+
+            const fragment = /* glsl */ `#version 300 es
+                precision highp float;
+
+                uniform vec3 uColor;
+                uniform vec3 uOutline;
+                uniform float uAlpha;
+
+                in vec2 vUv;
+
+                layout(location = 0) out highp vec4 pc_fragColor;
+
+                void main() {
+                    float len = length(vUv);
+                    float fw = length(fwidth(vUv));
+                    float mask = smoothstep(-1.0, fw - 1.0, -len);
+
+                    float outline = 0.9 - fw; // 1.0
+                    float outline_mask = smoothstep(outline - fw, outline, len);
+
+                    vec3 color = uColor + ((uOutline - uColor) * outline_mask);
+                    pc_fragColor = vec4(color, uAlpha) * mask;
+
+                    // vec4 color = uColor + (uOutline - uColor * uAlpha) * outline_mask;
+                    // pc_fragColor = color * mask;
+                }
+            `;
+
+            // Gui
+
+            const params = {
+                radius: 0.0,
+            };
+
+            const gui = new Gooey();
+            const folder1 = gui.addFolder('Parameters');
+
+            folder1.add(params, 'radius', -10.0, 10, 0.1, 1).onChange(() => program.uniforms.uRadius.value = params.radius);
+
+            // Setup
+
+            const renderer = new EYE.Renderer({ dpr: 2 });
+            const gl = renderer.gl;
+            document.body.appendChild(gl.canvas);
+            gl.clearColor(0, 0, 0, 0);
+
+            const camera = new EYE.Camera({ fov: 35 });
+            camera.position.set(0, 0, -10);
+            camera.lookAt([ 0, 0, 0 ]);
+
+            function resize() {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const scene = new EYE.Transform();
+            const controls = new EYE.Orbit(camera);
+
+            // Scene
+
+            const program = new EYE.Program({
+                vertex,
+                fragment,
+                uniforms: {
+                    uColor: { value: new EYE.Color(1.0, 0.0, 0.0) },
+                    uOutline: { value: new EYE.Color(0.0, 1.0, 0.0) },
+                    uAlpha: { value: 0.8 },
+                    uRadius: { value: 0.0 },
+                },
+                transparent: true,
+            });
+
+            const geometry = EYE.Polygon.Circle();
+
+            const mesh = new EYE.Mesh({ geometry, program });
+            scene.addChild(mesh);
+
+            // Render
+
+            const debug = new EYE.Debug();
+            requestAnimationFrame(update);
+
+            function update(t) {
+                requestAnimationFrame(update);
+                debug.startFrame();
+
+                controls.update();
+                renderer.render({ scene, camera });
+
+                debug.endFrame();
+            }
+
+        </script>
+    </body>
+</html>

@@ -8,60 +8,51 @@ import { Vec3 } from '../../math/Vec3.js';
 
 const tmp = new Vec3();
 
+// seee https://github.com/slembcke/Chipmunk2D/blob/master/demo/ChipmunkDebugDraw.c
+
 class Polygon {
 
-    constructor({
-        points,                         // Array of Vec3s
+    static Circle ({
+        point = new Vec3(0, 0, 0),
         color = new Vec3(1, 1, 1),
         outline = new Vec3(1, 0, 0),
         radius = 0,
+        attributes = {},
     } = {}) {
 
-        const count = points.length;
+        const count = 4;
 
         // Create buffers
-        const position = new Float32Array(this.count * 3 * 2);
-        const uv = new Float32Array(this.count * 2 * 2);
-        const radius = new Float32Array(this.count * 1 * 2);
-        const index = new Uint16Array((this.count - 1) * 3 * 2);
+        const position = new Float32Array(count * 3);
+        const uv = new Float32Array(count * 2);
+        // const radius = new Float32Array(count * 1);
+        const index = new Uint16Array(6);
+        // const index = count > 65536 ? new Uint32Array(count) : new Uint16Array(count);
 
-        // Set static buffers
-        for (let i = 0; i < this.count; i++) {
-            side.set([-1, 1], i * 2);
-            const v = i / (this.count - 1);
-            uv.set([0, v, 1, v], i * 4);
+        function setIndex(i, x, y, z, u, v) {
+            position[i * 3 + 0] = x;
+            position[i * 3 + 1] = y;
+            position[i * 3 + 2] = z;
 
-            if (i === this.count - 1) continue;
-            const ind = i * 2;
-            index.set([ind + 0, ind + 1, ind + 2], (ind + 0) * 3);
-            index.set([ind + 2, ind + 1, ind + 3], (ind + 1) * 3);
+            uv[i * 2 + 0] = u;
+            uv[i * 2 + 1] = v;
         }
 
-        const geometry = (this.geometry = new Geometry(Object.assign(attributes, {
-            position: { size: 3, data: this.position },
-            prev: { size: 3, data: this.prev },
-            next: { size: 3, data: this.next },
-            side: { size: 1, data: side },
+        setIndex(0, point.x, point.y, 0, -1, -1);
+        setIndex(1, point.x, point.y, 0, -1, +1);
+        setIndex(2, point.x, point.y, 0, +1, +1);
+        setIndex(3, point.x, point.y, 0, +1, -1);
+
+        index.set([ 0, 1, 2, 0, 2, 3 ]);
+
+        Object.assign(attributes, {
+            position: { size: 3, data: position },
+            // normal: { size: 3, data: normal },
             uv: { size: 2, data: uv },
-            index: { size: 1, data: index },
-        })));
+            index: { data: index },
+        });
 
-        // Populate dynamic buffers
-        this.updateGeometry();
-
-        if (! uniforms.uResolution) this.resolution = uniforms.uResolution = { value: new Vec2() };
-        if (! uniforms.uDPR) this.dpr = uniforms.uDPR = { value: 1 };
-        if (! uniforms.uThickness) this.thickness = uniforms.uThickness = { value: 1 };
-        if (! uniforms.uColor) this.color = uniforms.uColor = { value: new Color('#000') };
-        if (! uniforms.uMiter) this.miter = uniforms.uMiter = { value: 1 };
-
-        const program = (this.program = new Program({
-            vertex,
-            fragment,
-            uniforms,
-        }));
-
-        this.mesh = new Mesh({ geometry, program });
+        return new Geometry(attributes);
     }
 
 }

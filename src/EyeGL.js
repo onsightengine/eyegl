@@ -44,6 +44,7 @@ export { TextureLoader } from './extras/loaders/TextureLoader.js'
 // Objects
 export { Curve } from './extras/objects/Curve.js';
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
+export { Polygon } from './extras/objects/Polygon.js';
 export { Polyline } from './extras/objects/Polyline.js';
 export { Sprite } from './extras/objects/Sprite.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
