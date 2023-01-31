@@ -12,17 +12,15 @@ const tmp = new Vec3();
 
 class Polygon {
 
-    static Circle ({
+    static Circle({
         point = new Vec3(0, 0, 0),
         color = new Vec3(1, 1, 1),
         outline = new Vec3(1, 0, 0),
-        radius = 0,
+        radius = 1,
         attributes = {},
     } = {}) {
 
         const count = 4;
-
-        // Create buffers
         const position = new Float32Array(count * 3);
         const uv = new Float32Array(count * 2);
         // const radius = new Float32Array(count * 1);
@@ -33,7 +31,6 @@ class Polygon {
             position[i * 3 + 0] = x;
             position[i * 3 + 1] = y;
             position[i * 3 + 2] = z;
-
             uv[i * 2 + 0] = u;
             uv[i * 2 + 1] = v;
         }
@@ -47,7 +44,52 @@ class Polygon {
 
         Object.assign(attributes, {
             position: { size: 3, data: position },
-            // normal: { size: 3, data: normal },
+            uv: { size: 2, data: uv },
+            index: { data: index },
+        });
+
+        return new Geometry(attributes);
+    }
+
+    static FatSegment({
+        a = new Vec3(0, 0, 0),
+        b = new Vec3(0, 0, 0),
+        color = new Vec3(1, 1, 1),
+        outline = new Vec3(1, 0, 0),
+        radius = 1,
+        attributes = {},
+    } = {}) {
+
+        const count = 8;
+        const position = new Float32Array(count * 3);
+        const uv = new Float32Array(count * 2);
+        const index = new Uint16Array(18);
+
+        function setIndex(i, x, y, z, u, v) {
+            position[i * 3 + 0] = x;
+            position[i * 3 + 1] = y;
+            position[i * 3 + 2] = z;
+            uv[i * 2 + 0] = u;
+            uv[i * 2 + 1] = v;
+        }
+
+        const t = b.sub(a).normalize();
+
+        console.log(t);
+
+        setIndex(0, a.x, a.y, 0, (-t.x + t.y), (-t.x - t.y));
+	    setIndex(1, a.x, a.y, 0, (-t.x - t.y), (+t.x - t.y));
+	    setIndex(2, a.x, a.y, 0, (-0.0 + t.y), (-t.x + 0.0));
+	    setIndex(3, a.x, a.y, 0, (-0.0 - t.y), (+t.x + 0.0));
+	    setIndex(4, b.x, b.y, 0, (+0.0 + t.y), (-t.x - 0.0));
+	    setIndex(5, b.x, b.y, 0, (+0.0 - t.y), (+t.x - 0.0));
+	    setIndex(6, b.x, b.y, 0, (+t.x + t.y), (-t.x + t.y));
+	    setIndex(7, b.x, b.y, 0, (+t.x - t.y), (+t.x + t.y));
+
+        index.set([ 0, 1, 2, 1, 3, 2, /**/ 2, 3, 4, 3, 5, 4, /**/ 4, 5, 6, 5, 7, 6 ]);
+
+        Object.assign(attributes, {
+            position: { size: 3, data: position },
             uv: { size: 2, data: uv },
             index: { data: index },
         });

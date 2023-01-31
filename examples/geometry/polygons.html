@@ -70,13 +70,13 @@
             // Gui
 
             const params = {
-                radius: 0.0,
+                radius: 0.01,
             };
 
             const gui = new Gooey();
             const folder1 = gui.addFolder('Parameters');
 
-            folder1.add(params, 'radius', -10.0, 10, 0.1, 1).onChange(() => program.uniforms.uRadius.value = params.radius);
+            folder1.add(params, 'radius', -5.0, 5, 0.001, 3).onChange(() => program.uniforms.uRadius.value = params.radius);
 
             // Setup
 
@@ -108,12 +108,13 @@
                     uColor: { value: new EYE.Color(1.0, 0.0, 0.0) },
                     uOutline: { value: new EYE.Color(0.0, 1.0, 0.0) },
                     uAlpha: { value: 0.8 },
-                    uRadius: { value: 0.0 },
+                    uRadius: { value: params.radius },
                 },
                 transparent: true,
+                cullFace: false,
             });
 
-            const geometry = EYE.Polygon.Circle();
+            const geometry = EYE.Polygon.FatSegment({ a: new EYE.Vec3(1, 0, 0), b: new EYE.Vec3(-1, 0, 0) });
 
             const mesh = new EYE.Mesh({ geometry, program });
             scene.addChild(mesh);
