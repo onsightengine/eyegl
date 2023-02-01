@@ -1,7 +1,8 @@
-import { Vec3 } from '../math/Vec3.js';
-import { Quat } from '../math/Quat.js';
-import { Mat4 } from '../math/Mat4.js';
 import { Euler } from '../math/Euler.js';
+import { Mat4 } from '../math/Mat4.js';
+import { Quat } from '../math/Quat.js';
+import { uuid } from '../extras/utils/MathUtils.js';
+import { Vec3 } from '../math/Vec3.js';
 
 let _idGenerator = 1;
 
@@ -10,7 +11,7 @@ class Transform {
     constructor() {
         this.isTransform = true;
 
-        this.uuid = crypto.randomUUID();
+        this.uuid = uuid();
         this.id = _idGenerator++;
 
         this.parent = null;

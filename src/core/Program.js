@@ -1,3 +1,5 @@
+import { uuid } from '../extras/utils/MathUtils.js';
+
 // TODO: upload empty texture if null ? maybe not
 // TODO: upload identity matrix if null ?
 // TODO: sampler Cube
@@ -25,7 +27,7 @@ class Program {
         if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
         const gl = renderer.gl;
 
-        this.uuid = crypto.randomUUID();
+        this.uuid = uuid();
         this.id = _idGenerator++;
         this.uniforms = uniforms;
 

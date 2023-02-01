@@ -1,5 +1,6 @@
-import { Vec3 } from '../math/Vec3.js';
 import { normalize } from '../math/functions/Vec3Func.js';
+import { uuid } from '../extras/utils/MathUtils.js';
+import { Vec3 } from '../math/Vec3.js';
 
 // TODO: fit in transform feedback
 
@@ -13,7 +14,7 @@ class Geometry {
 
         this.isGeometry = true;
 
-        this.uuid = crypto.randomUUID();
+        this.uuid = uuid();
         this.id = _idGenerator++;
         this.attributes = {};
 

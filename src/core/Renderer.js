@@ -1,4 +1,5 @@
 import { Color } from '../math/Color.js';
+import { uuid } from '../extras/utils/MathUtils.js';
 import { Vec3 } from '../math/Vec3.js';
 
 // NOTE: Must use these methods manually
@@ -30,7 +31,7 @@ class Renderer {
         dpr = 1,                                    // window.devicePixelRatio
     } = {}) {
 
-        this.uuid = crypto.randomUUID();
+        this.uuid = uuid();
         this.id = _idGenerator++;
         this.dpr = dpr;
 
