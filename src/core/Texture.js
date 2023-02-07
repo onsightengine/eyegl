@@ -1,4 +1,3 @@
-import { TextureLoader } from '../EyeGL.js';
 import { uuid } from '../extras/utils/MathUtils.js';
 
 // TODO: delete (flush)  texture

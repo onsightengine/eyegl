@@ -4,7 +4,7 @@
 
 # EyeGL
 
-Fast WebGL 2 graphics library built for games.
+WebGL 2 graphics library built for games.
 
 <br />
 

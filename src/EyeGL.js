@@ -1,8 +1,8 @@
 /**
  * @description EyeGL
- * @about       Fast WebGL 2 graphics library built for games.
+ * @about       WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
- * @license     MIT - Copyright (c) 2022-2023 Stephens Nunnally and Scidian Studios
+ * @license     MIT - Copyright (c) 2023 Stephens Nunnally
  * @source      https://github.com/onsightengine/eyegl
  */
 
@@ -80,18 +80,3 @@ export * as QuatFunc from './math/functions/QuatFunc.js';
 export * as Vec2Func from './math/functions/Vec2Func.js';
 export * as Vec3Func from './math/functions/Vec3Func.js';
 export * as Vec4Func from './math/functions/Vec4Func.js';
-
-/***** Unused *****/
-
-// export { Animation } from './extras/Animation.js';
-// export { AxesHelper } from './extras/helpers/AxesHelper.js';
-// export { BasisManager } from './extras/BasisManager.js';
-// export { FaceNormalsHelper } from './extras/helpers/FaceNormalsHelper.js';
-// export { Flowmap } from './extras/Flowmap.js';
-// export { GPGPU } from './extras/GPGPU.js';
-// export { GridHelper } from './extras/helpers/GridHelper.js';
-// export { Path } from './extras/Path/Path.js';
-// export { Shadow } from './extras/Shadow.js';
-// export { Skin } from './extras/Skin.js';
-// export { Text } from './extras/Text.js';
-// export { VertexNormalsHelper } from './extras/helpers/VertexNormalsHelper.js';

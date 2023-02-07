@@ -2,1410 +2,83 @@
  * @description EyeGL
  * @about       Fast WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
- * @license     MIT - Copyright (c) 2021-2023 Stephens Nunnally and Scidian Studios
+ * @license     MIT - Copyright (c) 2021-2023 Stephens Nunnally
  * @source      https://github.com/onsightengine/eyegl
+ * @version     v0.0.8
  */
-const EPSILON$5 = 0.000001;
-
 /**
- * Calculates the length of a Vec3
+ * Assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
  *
- * @param {Vec3} a vector to calculate length of
- * @returns {Number} length of a
+ * @param {Euler} out
+ * @param {Mat4} m
+ * @param {String} order
+ * @returns
  */
-function length$3(a) {
-    let x = a[0];
-    let y = a[1];
-    let z = a[2];
-    return Math.sqrt(x * x + y * y + z * z);
-}
-
-/**
- * Copy the values from one Vec3 to another
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the source vector
- * @returns {Vec3} out
- */
-function copy$5(out, a) {
-    out[0] = a[0];
-    out[1] = a[1];
-    out[2] = a[2];
-    return out;
-}
-
-/**
- * Set the components of a Vec3 to the given values
- *
- * @param {Vec3} out the receiving vector
- * @param {Number} x X component
- * @param {Number} y Y component
- * @param {Number} z Z component
- * @returns {Vec3} out
- */
-function set$5(out, x, y, z) {
-    out[0] = x;
-    out[1] = y;
-    out[2] = z;
-    return out;
-}
-
-/**
- * Adds two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function add$5(out, a, b) {
-    out[0] = a[0] + b[0];
-    out[1] = a[1] + b[1];
-    out[2] = a[2] + b[2];
-    return out;
-}
-
-/**
- * Subtracts vector b from vector a
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function subtract$3(out, a, b) {
-    out[0] = a[0] - b[0];
-    out[1] = a[1] - b[1];
-    out[2] = a[2] - b[2];
-    return out;
-}
-
-/**
- * Multiplies two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function multiply$4(out, a, b) {
-    out[0] = a[0] * b[0];
-    out[1] = a[1] * b[1];
-    out[2] = a[2] * b[2];
-    return out;
-}
-
-/**
- * Divides two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function divide$1(out, a, b) {
-    out[0] = a[0] / b[0];
-    out[1] = a[1] / b[1];
-    out[2] = a[2] / b[2];
-    return out;
-}
-
-/**
- * Scales a Vec3 by a scalar number
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to scale
- * @param {Number} b amount to scale the vector by
- * @returns {Vec3} out
- */
-function scale$5(out, a, b) {
-    out[0] = a[0] * b;
-    out[1] = a[1] * b;
-    out[2] = a[2] * b;
-    return out;
-}
-
-/**
- * Calculates the euclidian distance between two Vec3's
- *
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Number} distance between a and b
- */
-function distance$1(a, b) {
-    let x = b[0] - a[0];
-    let y = b[1] - a[1];
-    let z = b[2] - a[2];
-    return Math.sqrt(x * x + y * y + z * z);
-}
-
-/**
- * Calculates the squared euclidian distance between two Vec3's
- *
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Number} squared distance between a and b
- */
-function squaredDistance$1(a, b) {
-    let x = b[0] - a[0];
-    let y = b[1] - a[1];
-    let z = b[2] - a[2];
-    return x * x + y * y + z * z;
-}
-
-/**
- * Calculates the squared length of a Vec3
- *
- * @param {Vec3} a vector to calculate squared length of
- * @returns {Number} squared length of a
- */
-function squaredLength$1(a) {
-    let x = a[0];
-    let y = a[1];
-    let z = a[2];
-    return x * x + y * y + z * z;
-}
-
-/**
- * Negates the components of a Vec3
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a vector to negate
- * @returns {Vec3} out
- */
-function negate$1(out, a) {
-    out[0] = -a[0];
-    out[1] = -a[1];
-    out[2] = -a[2];
-    return out;
-}
-
-/**
- * Returns the inverse of the components of a Vec3
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a vector to invert
- * @returns {Vec3} out
- */
-function inverse$1(out, a) {
-    out[0] = 1.0 / a[0];
-    out[1] = 1.0 / a[1];
-    out[2] = 1.0 / a[2];
-    return out;
-}
-
-/**
- * Normalize a Vec3
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a vector to normalize
- * @returns {Vec3} out
- */
-function normalize$3(out, a) {
-    let x = a[0];
-    let y = a[1];
-    let z = a[2];
-    let len = x * x + y * y + z * z;
-    if (len > 0) {
-        // TODO: evaluate use of glm_invsqrt here?
-        len = 1 / Math.sqrt(len);
-    }
-    out[0] = a[0] * len;
-    out[1] = a[1] * len;
-    out[2] = a[2] * len;
-    return out;
-}
-
-/**
- * Calculates the dot product of two Vec3's
- *
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Number} dot product of a and b
- */
-function dot$3(a, b) {
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
-
-/**
- * Computes the cross product of two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function cross$1(out, a, b) {
-    let ax = a[0], ay = a[1], az = a[2];
-    let bx = b[0], by = b[1], bz = b[2];
-
-    out[0] = ay * bz - az * by;
-    out[1] = az * bx - ax * bz;
-    out[2] = ax * by - ay * bx;
-    return out;
-}
-
-/**
- * Performs a linear interpolation between two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @param {Number} t interpolation amount between the two inputs
- * @returns {Vec3} out
- */
-function lerp$3(out, a, b, t) {
-    let ax = a[0];
-    let ay = a[1];
-    let az = a[2];
-    out[0] = ax + t * (b[0] - ax);
-    out[1] = ay + t * (b[1] - ay);
-    out[2] = az + t * (b[2] - az);
-    return out;
-}
-
-/**
- * Transforms the Vec3 with a Mat4
- * 4th vector component is implicitly '1'
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to transform
- * @param {Mat4} m matrix to transform with
- * @returns {Vec3} out
- */
-function transformMat4$1(out, a, m) {
-    let x = a[0],
-        y = a[1],
-        z = a[2];
-    let w = m[3] * x + m[7] * y + m[11] * z + m[15];
-    w = w || 1.0;
-    out[0] = (m[0] * x + m[4] * y + m[8] * z + m[12]) / w;
-    out[1] = (m[1] * x + m[5] * y + m[9] * z + m[13]) / w;
-    out[2] = (m[2] * x + m[6] * y + m[10] * z + m[14]) / w;
-    return out;
-}
-
-/**
- * Same as above but doesn't apply translation
- * Useful for rays
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to transform
- * @param {Mat4} m matrix to transform with
- * @returns {Vec3} out
- */
-function scaleRotateMat4(out, a, m) {
-    let x = a[0],
-        y = a[1],
-        z = a[2];
-    let w = m[3] * x + m[7] * y + m[11] * z + m[15];
-    w = w || 1.0;
-    out[0] = (m[0] * x + m[4] * y + m[8] * z) / w;
-    out[1] = (m[1] * x + m[5] * y + m[9] * z) / w;
-    out[2] = (m[2] * x + m[6] * y + m[10] * z) / w;
-    return out;
-}
-
-/**
- * Transforms the Vec3 with a Mat3
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to transform
- * @param {Mat3} m the 3x3 matrix to transform with
- * @returns {Vec3} out
- */
-function transformMat3$1(out, a, m) {
-    let x = a[0],
-        y = a[1],
-        z = a[2];
-    out[0] = x * m[0] + y * m[3] + z * m[6];
-    out[1] = x * m[1] + y * m[4] + z * m[7];
-    out[2] = x * m[2] + y * m[5] + z * m[8];
-    return out;
-}
-
-/**
- * Transforms the Vec3 with a Quat
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to transform
- * @param {Quat} q quaternion to transform with
- * @returns {Vec3} out
- */
-function transformQuat(out, a, q) {
-    // benchmarks: https://jsperf.com/quaternion-transform-vec3-implementations-fixed
-    let x = a[0],
-        y = a[1],
-        z = a[2];
-    let qx = q[0],
-        qy = q[1],
-        qz = q[2],
-        qw = q[3];
-
-    let uvx = qy * z - qz * y;
-    let uvy = qz * x - qx * z;
-    let uvz = qx * y - qy * x;
-
-    let uuvx = qy * uvz - qz * uvy;
-    let uuvy = qz * uvx - qx * uvz;
-    let uuvz = qx * uvy - qy * uvx;
-
-    let w2 = qw * 2;
-    uvx *= w2;
-    uvy *= w2;
-    uvz *= w2;
-
-    uuvx *= 2;
-    uuvy *= 2;
-    uuvz *= 2;
-
-    out[0] = x + uvx + uuvx;
-    out[1] = y + uvy + uuvy;
-    out[2] = z + uvz + uuvz;
-    return out;
-}
-
-/**
- * Get the angle between two 3D vectors
- *
- * @param {Vec3} a The first operand
- * @param {Vec3} b The second operand
- * @returns {Number} The angle in radians
- */
-const angle = (function() {
-    const tempA = [ 0, 0, 0 ];
-    const tempB = [ 0, 0, 0 ];
-
-    return function(a, b) {
-        copy$5(tempA, a);
-        copy$5(tempB, b);
-
-        normalize$3(tempA, tempA);
-        normalize$3(tempB, tempB);
-
-        let cosine = dot$3(tempA, tempB);
-
-        if (cosine > 1.0) {
-            return 0;
-        } else if (cosine < -1.0) {
-            return Math.PI;
-        } else {
-            return Math.acos(cosine);
-        }
-    };
-})();
-
-/**
- * Returns whether or not the vectors have exactly the same elements in the same position (when compared with ===)
- *
- * @param {Vec3} a The first vector
- * @param {Vec3} b The second vector
- * @returns {Boolean} True if the vectors are equal, false otherwise
- */
-function exactEquals$1(a, b) {
-    return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
-}
-
-/**
- * Returns whether the vectors have approximately the same values
- *
- * @param {Vec3} a
- * @param {Vec3} b
- * @param {Number} tolerance
- * @returns {Boolean} True is vectors are equal +/- tolerance
- */
-function fuzzyEquals(a, b, tolerance = 0.001) {
-    if (fuzzyFloat$1(a[0], b[0], tolerance) === false) return false;
-    if (fuzzyFloat$1(a[1], b[1], tolerance) === false) return false;
-    if (fuzzyFloat$1(a[2], b[2], tolerance) === false) return false;
-    return true;
-}
-
-/**
- * Calculates the normal of a triangle
- *
- * @param {Vec3} out Vector which will store the normal
- * @param {Vec3} a
- * @param {Vec3} b
- * @param {Vec3} c
- */
-const calculateNormal = (function() {
-    const temp = [ 0, 0, 0 ];
-
-    return function(out, a, b, c) {
-        subtract$3(temp, a, b);
-        subtract$3(out, b, c);
-        cross$1(out, temp, out);
-        normalize$3(out, out);
-    };
-})();
-
-/***** Internal *****/
-
-/**
- * Compares two decimal numbers to see if they're almost the same
- *
- * @param {Number} a
- * @param {Number} b
- * @param {Number} tolerance
- * @returns {Boolean}
- */
-function fuzzyFloat$1(a, b, tolerance = 0.001) {
-    return ((a < (b + tolerance)) && (a > (b - tolerance)));
-}
-
-var Vec3Func$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    length: length$3,
-    copy: copy$5,
-    set: set$5,
-    add: add$5,
-    subtract: subtract$3,
-    multiply: multiply$4,
-    divide: divide$1,
-    scale: scale$5,
-    distance: distance$1,
-    squaredDistance: squaredDistance$1,
-    squaredLength: squaredLength$1,
-    negate: negate$1,
-    inverse: inverse$1,
-    normalize: normalize$3,
-    dot: dot$3,
-    cross: cross$1,
-    lerp: lerp$3,
-    transformMat4: transformMat4$1,
-    scaleRotateMat4: scaleRotateMat4,
-    transformMat3: transformMat3$1,
-    transformQuat: transformQuat,
-    angle: angle,
-    exactEquals: exactEquals$1,
-    fuzzyEquals: fuzzyEquals,
-    calculateNormal: calculateNormal
-});
-
-class Vec3 extends Array {
-
-    constructor(x = 0, y = x, z = x) {
-        super(x, y, z);
-        return this;
-    }
-
-    get x() {
-        return this[0];
-    }
-
-    get y() {
-        return this[1];
-    }
-
-    get z() {
-        return this[2];
-    }
-
-    set x(v) {
-        this[0] = v;
-    }
-
-    set y(v) {
-        this[1] = v;
-    }
-
-    set z(v) {
-        this[2] = v;
-    }
-
-    set(x, y = x, z = x) {
-        if (x.length) return this.copy(x);
-        set$5(this, x, y, z);
-        return this;
-    }
-
-    copy(v) {
-        copy$5(this, v);
-        return this;
-    }
-
-    add(va, vb) {
-        if (vb) add$5(this, va, vb);
-        else add$5(this, this, va);
-        return this;
-    }
-
-    sub(va, vb) {
-        if (vb) subtract$3(this, va, vb);
-        else subtract$3(this, this, va);
-        return this;
-    }
-
-    multiply(v) {
-        if (v.length) multiply$4(this, this, v);
-        else scale$5(this, this, v);
-        return this;
-    }
-
-    divide(v) {
-        if (v.length) divide$1(this, this, v);
-        else scale$5(this, this, 1 / v);
-        return this;
-    }
-
-    inverse(v = this) {
-        inverse$1(this, v);
-        return this;
-    }
-
-    // Can't use 'length' as Array.prototype uses it
-    len() {
-        return length$3(this);
-    }
-
-    distance(v) {
-        if (v) return distance$1(this, v);
-        else return length$3(this);
-    }
-
-    squaredLen() {
-        return squaredLength$1(this);
-    }
-
-    squaredDistance(v) {
-        if (v) return squaredDistance$1(this, v);
-        else return squaredLength$1(this);
-    }
-
-    negate(v = this) {
-        negate$1(this, v);
-        return this;
-    }
-
-    cross(va, vb) {
-        if (vb) cross$1(this, va, vb);
-        else cross$1(this, this, va);
-        return this;
-    }
-
-    scale(multiplier) {
-        scale$5(this, this, multiplier);
-        return this;
-    }
-
-    normalize() {
-        normalize$3(this, this);
-        return this;
-    }
-
-    dot(v) {
-        return dot$3(this, v);
-    }
-
-    equals(v) {
-        return exactEquals$1(this, v);
-    }
-
-    fuzzyEquals(v, tolerance) {
-        return fuzzyEquals(this, v, tolerance);
-    }
-
-    applyMatrix3(mat3) {
-        transformMat3$1(this, this, mat3);
-        return this;
-    }
-
-    applyMatrix4(mat4) {
-        transformMat4$1(this, this, mat4);
-        return this;
-    }
-
-    scaleRotateMatrix4(mat4) {
-        scaleRotateMat4(this, this, mat4);
-        return this;
-    }
-
-    applyQuaternion(q) {
-        transformQuat(this, this, q);
-        return this;
-    }
-
-    angle(v) {
-        return angle(this, v);
-    }
-
-    lerp(v, t) {
-        lerp$3(this, this, v, t);
-        return this;
-    }
-
-    clone() {
-        return new Vec3(this[0], this[1], this[2]);
-    }
-
-    fromArray(a, o = 0) {
-        this[0] = a[o];
-        this[1] = a[o + 1];
-        this[2] = a[o + 2];
-        return this;
-    }
-
-    toArray(a = [], o = 0) {
-        a[o] = this[0];
-        a[o + 1] = this[1];
-        a[o + 2] = this[2];
-        return a;
-    }
-
-    transformDirection(mat4) {
-        const x = this[0];
-        const y = this[1];
-        const z = this[2];
-
-        this[0] = mat4[0] * x + mat4[4] * y + mat4[8] * z;
-        this[1] = mat4[1] * x + mat4[5] * y + mat4[9] * z;
-        this[2] = mat4[2] * x + mat4[6] * y + mat4[10] * z;
-
-        return this.normalize();
-    }
-
-    log(description = '') {
-        if (description !== '') description += ' - ';
-        console.log(`${description}X: ${this.x}, Y: ${this.y}, Z: ${this.z}`);
-    }
-
-}
-
-const EPSILON$4 = 0.000001;
-
-/**
- * Copy the values from one Vec4 to another
- *
- * @param {Vec4} out the receiving vector
- * @param {Vec4} a the source vector
- * @returns {Vec4} out
- */
-function copy$4(out, a) {
-    out[0] = a[0];
-    out[1] = a[1];
-    out[2] = a[2];
-    out[3] = a[3];
-    return out;
-}
-
-/**
- * Set the components of a Vec4 to the given values
- *
- * @param {Vec4} out the receiving vector
- * @param {Number} x X component
- * @param {Number} y Y component
- * @param {Number} z Z component
- * @param {Number} w W component
- * @returns {Vec4} out
- */
-function set$4(out, x, y, z, w) {
-    out[0] = x;
-    out[1] = y;
-    out[2] = z;
-    out[3] = w;
-    return out;
-}
-
-/**
- * Adds two Vec4's
- *
- * @param {Vec4} out the receiving vector
- * @param {Vec4} a the first operand
- * @param {Vec4} b the second operand
- * @returns {Vec4} out
- */
-function add$4(out, a, b) {
-    out[0] = a[0] + b[0];
-    out[1] = a[1] + b[1];
-    out[2] = a[2] + b[2];
-    out[3] = a[3] + b[3];
-    return out;
-}
-
-/**
- * Scales a Vec4 by a scalar number
- *
- * @param {Vec4} out the receiving vector
- * @param {Vec4} a the vector to scale
- * @param {Number} b amount to scale the vector by
- * @returns {Vec4} out
- */
-function scale$4(out, a, b) {
-    out[0] = a[0] * b;
-    out[1] = a[1] * b;
-    out[2] = a[2] * b;
-    out[3] = a[3] * b;
-    return out;
-}
-
-/**
- * Calculates the length of a Vec4
- *
- * @param {Vec4} a vector to calculate length of
- * @returns {Number} length of a
- */
-function length$2(a) {
-    let x = a[0];
-    let y = a[1];
-    let z = a[2];
-    let w = a[3];
-    return Math.sqrt(x * x + y * y + z * z + w * w);
-}
-
-/**
- * Normalize a Vec4
- *
- * @param {Vec4} out the receiving vector
- * @param {Vec4} a vector to normalize
- * @returns {Vec4} out
- */
-function normalize$2(out, a) {
-    let x = a[0];
-    let y = a[1];
-    let z = a[2];
-    let w = a[3];
-    let len = x * x + y * y + z * z + w * w;
-    if (len > 0) {
-        len = 1 / Math.sqrt(len);
-    }
-    out[0] = x * len;
-    out[1] = y * len;
-    out[2] = z * len;
-    out[3] = w * len;
-    return out;
-}
-
-/**
- * Calculates the dot product of two Vec4's
- *
- * @param {Vec4} a the first operand
- * @param {Vec4} b the second operand
- * @returns {Number} dot product of a and b
- */
-function dot$2(a, b) {
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
-}
-
-/**
- * Performs a linear interpolation between two Vec4's
- *
- * @param {Vec4} out the receiving vector
- * @param {Vec4} a the first operand
- * @param {Vec4} b the second operand
- * @param {Number} t interpolation amount between the two inputs
- * @returns {Vec4} out
- */
-function lerp$2(out, a, b, t) {
-    let ax = a[0];
-    let ay = a[1];
-    let az = a[2];
-    let aw = a[3];
-    out[0] = ax + t * (b[0] - ax);
-    out[1] = ay + t * (b[1] - ay);
-    out[2] = az + t * (b[2] - az);
-    out[3] = aw + t * (b[3] - aw);
-    return out;
-}
-
-var Vec4Func$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    copy: copy$4,
-    set: set$4,
-    add: add$4,
-    scale: scale$4,
-    length: length$2,
-    normalize: normalize$2,
-    dot: dot$2,
-    lerp: lerp$2
-});
-
-/**
- * Set a Quat to the identity quaternion
- *
- * @param {Quat} out the receiving quaternion
- * @returns {Quat} out
- */
-function identity$3(out) {
-    out[0] = 0;
-    out[1] = 0;
-    out[2] = 0;
-    out[3] = 1;
-    return out;
-}
-
-/**
- * Sets a Quat from the given angle and rotation axis, then returns it.
- *
- * @param {Quat} out the receiving quaternion
- * @param {Vec3} axis the axis around which to rotate
- * @param {Number} rad the angle in radians
- * @returns {Quat} out
- **/
-function setAxisAngle(out, axis, rad) {
-    rad = rad * 0.5;
-    let s = Math.sin(rad);
-    out[0] = s * axis[0];
-    out[1] = s * axis[1];
-    out[2] = s * axis[2];
-    out[3] = Math.cos(rad);
-    return out;
-}
-
-/**
- * Multiplies two Quats
- *
- * @param {Quat} out the receiving quaternion
- * @param {Quat} a the first operand
- * @param {Quat} b the second operand
- * @returns {Quat} out
- */
-function multiply$3(out, a, b) {
-    let ax = a[0],
-        ay = a[1],
-        az = a[2],
-        aw = a[3];
-    let bx = b[0],
-        by = b[1],
-        bz = b[2],
-        bw = b[3];
-
-    out[0] = ax * bw + aw * bx + ay * bz - az * by;
-    out[1] = ay * bw + aw * by + az * bx - ax * bz;
-    out[2] = az * bw + aw * bz + ax * by - ay * bx;
-    out[3] = aw * bw - ax * bx - ay * by - az * bz;
-    return out;
-}
-
-/**
- * Rotates a quaternion by the given angle about the X axis
- *
- * @param {Quat} out Quat receiving operation result
- * @param {Quat} a Quat to rotate
- * @param {Number} rad angle (in radians) to rotate
- * @returns {Quat} out
- */
-function rotateX(out, a, rad) {
-    rad *= 0.5;
-
-    let ax = a[0],
-        ay = a[1],
-        az = a[2],
-        aw = a[3];
-    let bx = Math.sin(rad),
-        bw = Math.cos(rad);
-
-    out[0] = ax * bw + aw * bx;
-    out[1] = ay * bw + az * bx;
-    out[2] = az * bw - ay * bx;
-    out[3] = aw * bw - ax * bx;
-    return out;
-}
-
-/**
- * Rotates a quaternion by the given angle about the Y axis
- *
- * @param {Quat} out Quat receiving operation result
- * @param {Quat} a Quat to rotate
- * @param {Number} rad angle (in radians) to rotate
- * @returns {Quat} out
- */
-function rotateY(out, a, rad) {
-    rad *= 0.5;
-
-    let ax = a[0],
-        ay = a[1],
-        az = a[2],
-        aw = a[3];
-    let by = Math.sin(rad),
-        bw = Math.cos(rad);
-
-    out[0] = ax * bw - az * by;
-    out[1] = ay * bw + aw * by;
-    out[2] = az * bw + ax * by;
-    out[3] = aw * bw - ay * by;
-    return out;
-}
-
-/**
- * Rotates a quaternion by the given angle about the Z axis
- *
- * @param {Quat} out Quat receiving operation result
- * @param {Quat} a Quat to rotate
- * @param {Number} rad angle (in radians) to rotate
- * @returns {Quat} out
- */
-function rotateZ(out, a, rad) {
-    rad *= 0.5;
-
-    let ax = a[0],
-        ay = a[1],
-        az = a[2],
-        aw = a[3];
-    let bz = Math.sin(rad),
-        bw = Math.cos(rad);
-
-    out[0] = ax * bw + ay * bz;
-    out[1] = ay * bw - ax * bz;
-    out[2] = az * bw + aw * bz;
-    out[3] = aw * bw - az * bz;
-    return out;
-}
-
-/**
- * Performs a spherical linear interpolation between two Quat
- *
- * @param {Quat} out the receiving quaternion
- * @param {Quat} a the first operand
- * @param {Quat} b the second operand
- * @param {Number} t interpolation amount between the two inputs
- * @returns {Quat} out
- */
-function slerp(out, a, b, t) {
-    // benchmarks: http://jsperf.com/quaternion-slerp-implementations
-    let ax = a[0],
-        ay = a[1],
-        az = a[2],
-        aw = a[3];
-    let bx = b[0],
-        by = b[1],
-        bz = b[2],
-        bw = b[3];
-
-    let omega, cosom, sinom, scale0, scale1;
-
-    // calc cosine
-    cosom = ax * bx + ay * by + az * bz + aw * bw;
-    // adjust signs (if necessary)
-    if (cosom < 0.0) {
-        cosom = -cosom;
-        bx = -bx;
-        by = -by;
-        bz = -bz;
-        bw = -bw;
-    }
-    // calculate coefficients
-    if (1.0 - cosom > 0.000001) {
-        // standard case (slerp)
-        omega = Math.acos(cosom);
-        sinom = Math.sin(omega);
-        scale0 = Math.sin((1.0 - t) * omega) / sinom;
-        scale1 = Math.sin(t * omega) / sinom;
-    } else {
-        // "from" and "to" quaternions are very close
-        //  ... so we can do a linear interpolation
-        scale0 = 1.0 - t;
-        scale1 = t;
-    }
-    // calculate final values
-    out[0] = scale0 * ax + scale1 * bx;
-    out[1] = scale0 * ay + scale1 * by;
-    out[2] = scale0 * az + scale1 * bz;
-    out[3] = scale0 * aw + scale1 * bw;
-
-    return out;
-}
-
-/**
- * Calculates the inverse of a Quat
- *
- * @param {Quat} out the receiving quaternion
- * @param {Quat} a Quat to calculate inverse of
- * @returns {Quat} out
- */
-function invert$2(out, a) {
-    let a0 = a[0],
-        a1 = a[1],
-        a2 = a[2],
-        a3 = a[3];
-    let dot = a0 * a0 + a1 * a1 + a2 * a2 + a3 * a3;
-    let invDot = dot ? 1.0 / dot : 0;
-
-    // TODO: Would be faster to return [0,0,0,0] immediately if dot == 0
-
-    out[0] = -a0 * invDot;
-    out[1] = -a1 * invDot;
-    out[2] = -a2 * invDot;
-    out[3] = a3 * invDot;
-    return out;
-}
-
-/**
- * Calculates the conjugate of a Quat.
- * If the quaternion is normalized, this function is faster than Quat.inverse and produces the same result.
- *
- * @param {Quat} out the receiving quaternion
- * @param {Quat} a Quat to calculate conjugate of
- * @returns {Quat} out
- */
-function conjugate(out, a) {
-    out[0] = -a[0];
-    out[1] = -a[1];
-    out[2] = -a[2];
-    out[3] = a[3];
-    return out;
-}
-
-/**
- * Creates a quaternion from the given 3x3 rotation matrix.
- *
- * NOTE: The resultant quaternion is not normalized, so you should be sure
- * to renormalize the quaternion yourself where necessary.
- *
- * @param {Quat} out the receiving quaternion
- * @param {Mat3} m rotation matrix
- * @returns {Quat} out
- * @function
- */
-function fromMat3(out, m) {
-    // Algorithm in Ken Shoemake's article in 1987 SIGGRAPH course notes
-    // article "Quaternion Calculus and Fast Animation".
-    let fTrace = m[0] + m[4] + m[8];
-    let fRoot;
-
-    if (fTrace > 0.0) {
-        // |w| > 1/2, may as well choose w > 1/2
-        fRoot = Math.sqrt(fTrace + 1.0); // 2w
-        out[3] = 0.5 * fRoot;
-        fRoot = 0.5 / fRoot; // 1/(4w)
-        out[0] = (m[5] - m[7]) * fRoot;
-        out[1] = (m[6] - m[2]) * fRoot;
-        out[2] = (m[1] - m[3]) * fRoot;
-    } else {
-        // |w| <= 1/2
-        let i = 0;
-        if (m[4] > m[0]) i = 1;
-        if (m[8] > m[i * 3 + i]) i = 2;
-        let j = (i + 1) % 3;
-        let k = (i + 2) % 3;
-
-        fRoot = Math.sqrt(m[i * 3 + i] - m[j * 3 + j] - m[k * 3 + k] + 1.0);
-        out[i] = 0.5 * fRoot;
-        fRoot = 0.5 / fRoot;
-        out[3] = (m[j * 3 + k] - m[k * 3 + j]) * fRoot;
-        out[j] = (m[j * 3 + i] + m[i * 3 + j]) * fRoot;
-        out[k] = (m[k * 3 + i] + m[i * 3 + k]) * fRoot;
-    }
-
-    return out;
-}
-
-/**
- * Creates a quaternion from the given euler angle x, y, z
- *
- * @param {Quat} out the receiving quaternion
- * @param {Vec3} euler Angles to rotate around each axis in degrees.
- * @param {String} order detailing order of operations. Default 'XYZ'.
- * @returns {Quat} out
- * @function
- */
-function fromEuler(out, euler, order = 'YXZ') {
-    let sx = Math.sin(euler[0] * 0.5);
-    let cx = Math.cos(euler[0] * 0.5);
-    let sy = Math.sin(euler[1] * 0.5);
-    let cy = Math.cos(euler[1] * 0.5);
-    let sz = Math.sin(euler[2] * 0.5);
-    let cz = Math.cos(euler[2] * 0.5);
-
+function fromRotationMatrix(out, m, order = 'YXZ') {
     if (order === 'XYZ') {
-        out[0] = sx * cy * cz + cx * sy * sz;
-        out[1] = cx * sy * cz - sx * cy * sz;
-        out[2] = cx * cy * sz + sx * sy * cz;
-        out[3] = cx * cy * cz - sx * sy * sz;
+        out[1] = Math.asin(Math.min(Math.max(m[8], -1), 1));
+        if (Math.abs(m[8]) < 0.99999) {
+            out[0] = Math.atan2(-m[9], m[10]);
+            out[2] = Math.atan2(-m[4], m[0]);
+        } else {
+            out[0] = Math.atan2(m[6], m[5]);
+            out[2] = 0;
+        }
     } else if (order === 'YXZ') {
-        out[0] = sx * cy * cz + cx * sy * sz;
-        out[1] = cx * sy * cz - sx * cy * sz;
-        out[2] = cx * cy * sz - sx * sy * cz;
-        out[3] = cx * cy * cz + sx * sy * sz;
+        out[0] = Math.asin(-Math.min(Math.max(m[9], -1), 1));
+        if (Math.abs(m[9]) < 0.99999) {
+            out[1] = Math.atan2(m[8], m[10]);
+            out[2] = Math.atan2(m[1], m[5]);
+        } else {
+            out[1] = Math.atan2(-m[2], m[0]);
+            out[2] = 0;
+        }
     } else if (order === 'ZXY') {
-        out[0] = sx * cy * cz - cx * sy * sz;
-        out[1] = cx * sy * cz + sx * cy * sz;
-        out[2] = cx * cy * sz + sx * sy * cz;
-        out[3] = cx * cy * cz - sx * sy * sz;
+        out[0] = Math.asin(Math.min(Math.max(m[6], -1), 1));
+        if (Math.abs(m[6]) < 0.99999) {
+            out[1] = Math.atan2(-m[2], m[10]);
+            out[2] = Math.atan2(-m[4], m[5]);
+        } else {
+            out[1] = 0;
+            out[2] = Math.atan2(m[1], m[0]);
+        }
     } else if (order === 'ZYX') {
-        out[0] = sx * cy * cz - cx * sy * sz;
-        out[1] = cx * sy * cz + sx * cy * sz;
-        out[2] = cx * cy * sz - sx * sy * cz;
-        out[3] = cx * cy * cz + sx * sy * sz;
+        out[1] = Math.asin(-Math.min(Math.max(m[2], -1), 1));
+        if (Math.abs(m[2]) < 0.99999) {
+            out[0] = Math.atan2(m[6], m[10]);
+            out[2] = Math.atan2(m[1], m[0]);
+        } else {
+            out[0] = 0;
+            out[2] = Math.atan2(-m[4], m[5]);
+        }
     } else if (order === 'YZX') {
-        out[0] = sx * cy * cz + cx * sy * sz;
-        out[1] = cx * sy * cz + sx * cy * sz;
-        out[2] = cx * cy * sz - sx * sy * cz;
-        out[3] = cx * cy * cz - sx * sy * sz;
+        out[2] = Math.asin(Math.min(Math.max(m[1], -1), 1));
+        if (Math.abs(m[1]) < 0.99999) {
+            out[0] = Math.atan2(-m[9], m[5]);
+            out[1] = Math.atan2(-m[2], m[0]);
+        } else {
+            out[0] = 0;
+            out[1] = Math.atan2(m[8], m[10]);
+        }
     } else if (order === 'XZY') {
-        out[0] = sx * cy * cz - cx * sy * sz;
-        out[1] = cx * sy * cz - sx * cy * sz;
-        out[2] = cx * cy * sz + sx * sy * cz;
-        out[3] = cx * cy * cz + sx * sy * sz;
+        out[2] = Math.asin(-Math.min(Math.max(m[4], -1), 1));
+        if (Math.abs(m[4]) < 0.99999) {
+            out[0] = Math.atan2(m[6], m[5]);
+            out[1] = Math.atan2(m[8], m[0]);
+        } else {
+            out[0] = Math.atan2(-m[9], m[10]);
+            out[1] = 0;
+        }
     }
-
     return out;
 }
 
-/**
- * Copy the values from one Quat to another
- *
- * @param {Quat} out the receiving quaternion
- * @param {Quat} a the source quaternion
- * @returns {Quat} out
- * @function
- */
-const copy$3 = copy$4;
-
-/**
- * Set the components of a Quat to the given values
- *
- * @param {Quat} out the receiving quaternion
- * @param {Number} x X component
- * @param {Number} y Y component
- * @param {Number} z Z component
- * @param {Number} w W component
- * @returns {Quat} out
- * @function
- */
-const set$3 = set$4;
-
-/**
- * Adds two Quat's
- *
- * @param {Quat} out the receiving quaternion
- * @param {Quat} a the first operand
- * @param {Quat} b the second operand
- * @returns {Quat} out
- * @function
- */
-const add$3 = add$4;
-
-/**
- * Scales a Quat by a scalar Number
- *
- * @param {Quat} out the receiving vector
- * @param {Quat} a the vector to scale
- * @param {Number} b amount to scale the vector by
- * @returns {Quat} out
- * @function
- */
-const scale$3 = scale$4;
-
-/**
- * Calculates the dot product of two Quat's
- *
- * @param {Quat} a the first operand
- * @param {Quat} b the second operand
- * @returns {Number} dot product of a and b
- * @function
- */
-const dot$1 = dot$2;
-
-/**
- * Performs a linear interpolation between two Quat's
- *
- * @param {Quat} out the receiving quaternion
- * @param {Quat} a the first operand
- * @param {Quat} b the second operand
- * @param {Number} t interpolation amount between the two inputs
- * @returns {Quat} out
- * @function
- */
-const lerp$1 = lerp$2;
-
-/**
- * Calculates the length of a Quat
- *
- * @param {Quat} a vector to calculate length of
- * @returns {Number} length of a
- */
-const length$1 = length$2;
-
-/**
- * Normalize a Quat
- *
- * @param {Quat} out the receiving quaternion
- * @param {Quat} a quaternion to normalize
- * @returns {Quat} out
- * @function
- */
-const normalize$1 = normalize$2;
-
-var QuatFunc$1 = /*#__PURE__*/Object.freeze({
+var EulerFunc$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    identity: identity$3,
-    setAxisAngle: setAxisAngle,
-    multiply: multiply$3,
-    rotateX: rotateX,
-    rotateY: rotateY,
-    rotateZ: rotateZ,
-    slerp: slerp,
-    invert: invert$2,
-    conjugate: conjugate,
-    fromMat3: fromMat3,
-    fromEuler: fromEuler,
-    copy: copy$3,
-    set: set$3,
-    add: add$3,
-    scale: scale$3,
-    dot: dot$1,
-    lerp: lerp$1,
-    length: length$1,
-    normalize: normalize$1
+    fromRotationMatrix: fromRotationMatrix
 });
 
-class Quat extends Array {
-
-    constructor(x = 0, y = 0, z = 0, w = 1) {
-        super(x, y, z, w);
-        this.onChange = () => {};
-        return this;
-    }
-
-    get x() {
-        return this[0];
-    }
-
-    get y() {
-        return this[1];
-    }
-
-    get z() {
-        return this[2];
-    }
-
-    get w() {
-        return this[3];
-    }
-
-    set x(v) {
-        this[0] = v;
-        this.onChange();
-    }
-
-    set y(v) {
-        this[1] = v;
-        this.onChange();
-    }
-
-    set z(v) {
-        this[2] = v;
-        this.onChange();
-    }
-
-    set w(v) {
-        this[3] = v;
-        this.onChange();
-    }
-
-    identity() {
-        identity$3(this);
-        this.onChange();
-        return this;
-    }
-
-    set(x, y, z, w) {
-        if (x.length) return this.copy(x);
-        set$3(this, x, y, z, w);
-        this.onChange();
-        return this;
-    }
-
-    rotateX(a) {
-        rotateX(this, this, a);
-        this.onChange();
-        return this;
-    }
-
-    rotateY(a) {
-        rotateY(this, this, a);
-        this.onChange();
-        return this;
-    }
-
-    rotateZ(a) {
-        rotateZ(this, this, a);
-        this.onChange();
-        return this;
-    }
-
-    inverse(q = this) {
-        invert$2(this, q);
-        this.onChange();
-        return this;
-    }
-
-    conjugate(q = this) {
-        conjugate(this, q);
-        this.onChange();
-        return this;
-    }
-
-    copy(q) {
-        copy$3(this, q);
-        this.onChange();
-        return this;
-    }
-
-    normalize(q = this) {
-        normalize$1(this, q);
-        this.onChange();
-        return this;
-    }
-
-    multiply(qA, qB) {
-        if (qB) {
-            multiply$3(this, qA, qB);
-        } else {
-            multiply$3(this, this, qA);
-        }
-        this.onChange();
-        return this;
-    }
-
-    dot(v) {
-        return dot$1(this, v);
-    }
-
-    fromMatrix3(matrix3) {
-        fromMat3(this, matrix3);
-        this.onChange();
-        return this;
-    }
-
-    fromEuler(euler) {
-        fromEuler(this, euler, euler.order);
-        return this;
-    }
-
-    fromAxisAngle(axis, a) {
-        setAxisAngle(this, axis, a);
-        this.onChange();
-        return this;
-    }
-
-    slerp(q, t) {
-        slerp(this, this, q, t);
-        this.onChange();
-        return this;
-    }
-
-    fromArray(a, o = 0) {
-        this[0] = a[o];
-        this[1] = a[o + 1];
-        this[2] = a[o + 2];
-        this[3] = a[o + 3];
-        this.onChange();
-        return this;
-    }
-
-    toArray(a = [], o = 0) {
-        a[o] = this[0];
-        a[o + 1] = this[1];
-        a[o + 2] = this[2];
-        a[o + 3] = this[3];
-        return a;
-    }
-
-}
-
-const EPSILON$3 = 0.000001;
+const EPSILON$5 = 0.000001;
 
 /**
  * Copy the values from one Mat4 to another
@@ -1414,7 +87,7 @@ const EPSILON$3 = 0.000001;
  * @param {Mat4} a the source matrix
  * @returns {Mat4} out
  */
-function copy$2(out, a) {
+function copy$5(out, a) {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -1440,7 +113,7 @@ function copy$2(out, a) {
  * @param {Mat4} out the receiving matrix
  * @returns {Mat4} out
  */
-function set$2(out, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33) {
+function set$5(out, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33) {
     out[0] = m00;
     out[1] = m01;
     out[2] = m02;
@@ -1466,7 +139,7 @@ function set$2(out, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, 
  * @param {Mat4} out the receiving matrix
  * @returns {Mat4} out
  */
-function identity$2(out) {
+function identity$3(out) {
     out[0] = 1;
     out[1] = 0;
     out[2] = 0;
@@ -1544,7 +217,7 @@ function transpose$1(out, a) {
  * @param {Mat4} a the source matrix
  * @returns {Mat4} out
  */
-function invert$1(out, a) {
+function invert$2(out, a) {
     let a00 = a[0],
         a01 = a[1],
         a02 = a[2],
@@ -1652,7 +325,7 @@ function determinant$1(a) {
  * @param {Mat4} b the second operand
  * @returns {Mat4} out
  */
-function multiply$2(out, a, b) {
+function multiply$4(out, a, b) {
     let a00 = a[0],
         a01 = a[1],
         a02 = a[2],
@@ -1774,7 +447,7 @@ function translate$1(out, a, v) {
  * @param {Vec3} v the Vec3 to scale the matrix by
  * @returns {Mat4} out
  **/
-function scale$2(out, a, v) {
+function scale$5(out, a, v) {
     let x = v[0],
         y = v[1],
         z = v[2];
@@ -1820,7 +493,7 @@ function rotate$1(out, a, rad, axis) {
     let b10, b11, b12;
     let b20, b21, b22;
 
-    if (Math.abs(len) < EPSILON$3) {
+    if (Math.abs(len) < EPSILON$5) {
         return null;
     }
 
@@ -2266,7 +939,7 @@ function targetTo(out, eye, target, up) {
  * @param {Mat4} b the second operand
  * @returns {Mat4} out
  */
-function add$2(out, a, b) {
+function add$5(out, a, b) {
     out[0] = a[0] + b[0];
     out[1] = a[1] + b[1];
     out[2] = a[2] + b[2];
@@ -2294,7 +967,7 @@ function add$2(out, a, b) {
  * @param {Mat4} b the second operand
  * @returns {Mat4} out
  */
-function subtract$2(out, a, b) {
+function subtract$3(out, a, b) {
     out[0] = a[0] - b[0];
     out[1] = a[1] - b[1];
     out[2] = a[2] - b[2];
@@ -2344,15 +1017,15 @@ function multiplyScalar$1(out, a, b) {
 
 var Mat4Func$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    copy: copy$2,
-    set: set$2,
-    identity: identity$2,
+    copy: copy$5,
+    set: set$5,
+    identity: identity$3,
     transpose: transpose$1,
-    invert: invert$1,
+    invert: invert$2,
     determinant: determinant$1,
-    multiply: multiply$2,
+    multiply: multiply$4,
     translate: translate$1,
-    scale: scale$2,
+    scale: scale$5,
     rotate: rotate$1,
     getTranslation: getTranslation,
     getScaling: getScaling,
@@ -2363,8 +1036,8 @@ var Mat4Func$1 = /*#__PURE__*/Object.freeze({
     perspective: perspective,
     ortho: ortho,
     targetTo: targetTo,
-    add: add$2,
-    subtract: subtract$2,
+    add: add$5,
+    subtract: subtract$3,
     multiplyScalar: multiplyScalar$1
 });
 
@@ -2426,7 +1099,7 @@ class Mat4 extends Array {
 
     set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33) {
         if (m00.length) return this.copy(m00);
-        set$2(this, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
+        set$5(this, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
         return this;
     }
 
@@ -2441,26 +1114,26 @@ class Mat4 extends Array {
     }
 
     scale(v, m = this) {
-        scale$2(this, m, typeof v === 'number' ? [v, v, v] : v);
+        scale$5(this, m, typeof v === 'number' ? [v, v, v] : v);
         return this;
     }
 
     multiply(ma, mb) {
         if (mb) {
-            multiply$2(this, ma, mb);
+            multiply$4(this, ma, mb);
         } else {
-            multiply$2(this, this, ma);
+            multiply$4(this, this, ma);
         }
         return this;
     }
 
     identity() {
-        identity$2(this);
+        identity$3(this);
         return this;
     }
 
     copy(m) {
-        copy$2(this, m);
+        copy$5(this, m);
         return this;
     }
 
@@ -2487,7 +1160,7 @@ class Mat4 extends Array {
     }
 
     inverse(m = this) {
-        invert$1(this, m);
+        invert$2(this, m);
         return this;
     }
 
@@ -2565,78 +1238,6 @@ class Mat4 extends Array {
     }
 
 }
-
-/**
- * Assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
- *
- * @param {Euler} out
- * @param {Mat4} m
- * @param {String} order
- * @returns
- */
-function fromRotationMatrix(out, m, order = 'YXZ') {
-    if (order === 'XYZ') {
-        out[1] = Math.asin(Math.min(Math.max(m[8], -1), 1));
-        if (Math.abs(m[8]) < 0.99999) {
-            out[0] = Math.atan2(-m[9], m[10]);
-            out[2] = Math.atan2(-m[4], m[0]);
-        } else {
-            out[0] = Math.atan2(m[6], m[5]);
-            out[2] = 0;
-        }
-    } else if (order === 'YXZ') {
-        out[0] = Math.asin(-Math.min(Math.max(m[9], -1), 1));
-        if (Math.abs(m[9]) < 0.99999) {
-            out[1] = Math.atan2(m[8], m[10]);
-            out[2] = Math.atan2(m[1], m[5]);
-        } else {
-            out[1] = Math.atan2(-m[2], m[0]);
-            out[2] = 0;
-        }
-    } else if (order === 'ZXY') {
-        out[0] = Math.asin(Math.min(Math.max(m[6], -1), 1));
-        if (Math.abs(m[6]) < 0.99999) {
-            out[1] = Math.atan2(-m[2], m[10]);
-            out[2] = Math.atan2(-m[4], m[5]);
-        } else {
-            out[1] = 0;
-            out[2] = Math.atan2(m[1], m[0]);
-        }
-    } else if (order === 'ZYX') {
-        out[1] = Math.asin(-Math.min(Math.max(m[2], -1), 1));
-        if (Math.abs(m[2]) < 0.99999) {
-            out[0] = Math.atan2(m[6], m[10]);
-            out[2] = Math.atan2(m[1], m[0]);
-        } else {
-            out[0] = 0;
-            out[2] = Math.atan2(-m[4], m[5]);
-        }
-    } else if (order === 'YZX') {
-        out[2] = Math.asin(Math.min(Math.max(m[1], -1), 1));
-        if (Math.abs(m[1]) < 0.99999) {
-            out[0] = Math.atan2(-m[9], m[5]);
-            out[1] = Math.atan2(-m[2], m[0]);
-        } else {
-            out[0] = 0;
-            out[1] = Math.atan2(m[8], m[10]);
-        }
-    } else if (order === 'XZY') {
-        out[2] = Math.asin(-Math.min(Math.max(m[4], -1), 1));
-        if (Math.abs(m[4]) < 0.99999) {
-            out[0] = Math.atan2(m[6], m[5]);
-            out[1] = Math.atan2(m[8], m[0]);
-        } else {
-            out[0] = Math.atan2(-m[9], m[10]);
-            out[1] = 0;
-        }
-    }
-    return out;
-}
-
-var EulerFunc$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    fromRotationMatrix: fromRotationMatrix
-});
 
 const tempMat4$2 = new Mat4();
 
@@ -2719,10 +1320,1494 @@ class Euler extends Array {
 
 }
 
+const EPSILON$4 = 0.000001;
+
+/**
+ * Copy the values from one Vec4 to another
+ *
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a the source vector
+ * @returns {Vec4} out
+ */
+function copy$4(out, a) {
+    out[0] = a[0];
+    out[1] = a[1];
+    out[2] = a[2];
+    out[3] = a[3];
+    return out;
+}
+
+/**
+ * Set the components of a Vec4 to the given values
+ *
+ * @param {Vec4} out the receiving vector
+ * @param {Number} x X component
+ * @param {Number} y Y component
+ * @param {Number} z Z component
+ * @param {Number} w W component
+ * @returns {Vec4} out
+ */
+function set$4(out, x, y, z, w) {
+    out[0] = x;
+    out[1] = y;
+    out[2] = z;
+    out[3] = w;
+    return out;
+}
+
+/**
+ * Adds two Vec4's
+ *
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a the first operand
+ * @param {Vec4} b the second operand
+ * @returns {Vec4} out
+ */
+function add$4(out, a, b) {
+    out[0] = a[0] + b[0];
+    out[1] = a[1] + b[1];
+    out[2] = a[2] + b[2];
+    out[3] = a[3] + b[3];
+    return out;
+}
+
+/**
+ * Scales a Vec4 by a scalar number
+ *
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a the vector to scale
+ * @param {Number} b amount to scale the vector by
+ * @returns {Vec4} out
+ */
+function scale$4(out, a, b) {
+    out[0] = a[0] * b;
+    out[1] = a[1] * b;
+    out[2] = a[2] * b;
+    out[3] = a[3] * b;
+    return out;
+}
+
+/**
+ * Calculates the length of a Vec4
+ *
+ * @param {Vec4} a vector to calculate length of
+ * @returns {Number} length of a
+ */
+function length$3(a) {
+    let x = a[0];
+    let y = a[1];
+    let z = a[2];
+    let w = a[3];
+    return Math.sqrt(x * x + y * y + z * z + w * w);
+}
+
+/**
+ * Normalize a Vec4
+ *
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a vector to normalize
+ * @returns {Vec4} out
+ */
+function normalize$3(out, a) {
+    let x = a[0];
+    let y = a[1];
+    let z = a[2];
+    let w = a[3];
+    let len = x * x + y * y + z * z + w * w;
+    if (len > 0) {
+        len = 1 / Math.sqrt(len);
+    }
+    out[0] = x * len;
+    out[1] = y * len;
+    out[2] = z * len;
+    out[3] = w * len;
+    return out;
+}
+
+/**
+ * Calculates the dot product of two Vec4's
+ *
+ * @param {Vec4} a the first operand
+ * @param {Vec4} b the second operand
+ * @returns {Number} dot product of a and b
+ */
+function dot$3(a, b) {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
+}
+
+/**
+ * Performs a linear interpolation between two Vec4's
+ *
+ * @param {Vec4} out the receiving vector
+ * @param {Vec4} a the first operand
+ * @param {Vec4} b the second operand
+ * @param {Number} t interpolation amount between the two inputs
+ * @returns {Vec4} out
+ */
+function lerp$3(out, a, b, t) {
+    let ax = a[0];
+    let ay = a[1];
+    let az = a[2];
+    let aw = a[3];
+    out[0] = ax + t * (b[0] - ax);
+    out[1] = ay + t * (b[1] - ay);
+    out[2] = az + t * (b[2] - az);
+    out[3] = aw + t * (b[3] - aw);
+    return out;
+}
+
+var Vec4Func$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    copy: copy$4,
+    set: set$4,
+    add: add$4,
+    scale: scale$4,
+    length: length$3,
+    normalize: normalize$3,
+    dot: dot$3,
+    lerp: lerp$3
+});
+
+/**
+ * Set a Quat to the identity quaternion
+ *
+ * @param {Quat} out the receiving quaternion
+ * @returns {Quat} out
+ */
+function identity$2(out) {
+    out[0] = 0;
+    out[1] = 0;
+    out[2] = 0;
+    out[3] = 1;
+    return out;
+}
+
+/**
+ * Sets a Quat from the given angle and rotation axis, then returns it.
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Vec3} axis the axis around which to rotate
+ * @param {Number} rad the angle in radians
+ * @returns {Quat} out
+ **/
+function setAxisAngle(out, axis, rad) {
+    rad = rad * 0.5;
+    let s = Math.sin(rad);
+    out[0] = s * axis[0];
+    out[1] = s * axis[1];
+    out[2] = s * axis[2];
+    out[3] = Math.cos(rad);
+    return out;
+}
+
+/**
+ * Multiplies two Quats
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Quat} a the first operand
+ * @param {Quat} b the second operand
+ * @returns {Quat} out
+ */
+function multiply$3(out, a, b) {
+    let ax = a[0],
+        ay = a[1],
+        az = a[2],
+        aw = a[3];
+    let bx = b[0],
+        by = b[1],
+        bz = b[2],
+        bw = b[3];
+
+    out[0] = ax * bw + aw * bx + ay * bz - az * by;
+    out[1] = ay * bw + aw * by + az * bx - ax * bz;
+    out[2] = az * bw + aw * bz + ax * by - ay * bx;
+    out[3] = aw * bw - ax * bx - ay * by - az * bz;
+    return out;
+}
+
+/**
+ * Rotates a quaternion by the given angle about the X axis
+ *
+ * @param {Quat} out Quat receiving operation result
+ * @param {Quat} a Quat to rotate
+ * @param {Number} rad angle (in radians) to rotate
+ * @returns {Quat} out
+ */
+function rotateX(out, a, rad) {
+    rad *= 0.5;
+
+    let ax = a[0],
+        ay = a[1],
+        az = a[2],
+        aw = a[3];
+    let bx = Math.sin(rad),
+        bw = Math.cos(rad);
+
+    out[0] = ax * bw + aw * bx;
+    out[1] = ay * bw + az * bx;
+    out[2] = az * bw - ay * bx;
+    out[3] = aw * bw - ax * bx;
+    return out;
+}
+
+/**
+ * Rotates a quaternion by the given angle about the Y axis
+ *
+ * @param {Quat} out Quat receiving operation result
+ * @param {Quat} a Quat to rotate
+ * @param {Number} rad angle (in radians) to rotate
+ * @returns {Quat} out
+ */
+function rotateY(out, a, rad) {
+    rad *= 0.5;
+
+    let ax = a[0],
+        ay = a[1],
+        az = a[2],
+        aw = a[3];
+    let by = Math.sin(rad),
+        bw = Math.cos(rad);
+
+    out[0] = ax * bw - az * by;
+    out[1] = ay * bw + aw * by;
+    out[2] = az * bw + ax * by;
+    out[3] = aw * bw - ay * by;
+    return out;
+}
+
+/**
+ * Rotates a quaternion by the given angle about the Z axis
+ *
+ * @param {Quat} out Quat receiving operation result
+ * @param {Quat} a Quat to rotate
+ * @param {Number} rad angle (in radians) to rotate
+ * @returns {Quat} out
+ */
+function rotateZ(out, a, rad) {
+    rad *= 0.5;
+
+    let ax = a[0],
+        ay = a[1],
+        az = a[2],
+        aw = a[3];
+    let bz = Math.sin(rad),
+        bw = Math.cos(rad);
+
+    out[0] = ax * bw + ay * bz;
+    out[1] = ay * bw - ax * bz;
+    out[2] = az * bw + aw * bz;
+    out[3] = aw * bw - az * bz;
+    return out;
+}
+
+/**
+ * Performs a spherical linear interpolation between two Quat
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Quat} a the first operand
+ * @param {Quat} b the second operand
+ * @param {Number} t interpolation amount between the two inputs
+ * @returns {Quat} out
+ */
+function slerp(out, a, b, t) {
+    // benchmarks: http://jsperf.com/quaternion-slerp-implementations
+    let ax = a[0],
+        ay = a[1],
+        az = a[2],
+        aw = a[3];
+    let bx = b[0],
+        by = b[1],
+        bz = b[2],
+        bw = b[3];
+
+    let omega, cosom, sinom, scale0, scale1;
+
+    // calc cosine
+    cosom = ax * bx + ay * by + az * bz + aw * bw;
+    // adjust signs (if necessary)
+    if (cosom < 0.0) {
+        cosom = -cosom;
+        bx = -bx;
+        by = -by;
+        bz = -bz;
+        bw = -bw;
+    }
+    // calculate coefficients
+    if (1.0 - cosom > 0.000001) {
+        // standard case (slerp)
+        omega = Math.acos(cosom);
+        sinom = Math.sin(omega);
+        scale0 = Math.sin((1.0 - t) * omega) / sinom;
+        scale1 = Math.sin(t * omega) / sinom;
+    } else {
+        // "from" and "to" quaternions are very close
+        //  ... so we can do a linear interpolation
+        scale0 = 1.0 - t;
+        scale1 = t;
+    }
+    // calculate final values
+    out[0] = scale0 * ax + scale1 * bx;
+    out[1] = scale0 * ay + scale1 * by;
+    out[2] = scale0 * az + scale1 * bz;
+    out[3] = scale0 * aw + scale1 * bw;
+
+    return out;
+}
+
+/**
+ * Calculates the inverse of a Quat
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Quat} a Quat to calculate inverse of
+ * @returns {Quat} out
+ */
+function invert$1(out, a) {
+    let a0 = a[0],
+        a1 = a[1],
+        a2 = a[2],
+        a3 = a[3];
+    let dot = a0 * a0 + a1 * a1 + a2 * a2 + a3 * a3;
+    let invDot = dot ? 1.0 / dot : 0;
+
+    // TODO: Would be faster to return [0,0,0,0] immediately if dot == 0
+
+    out[0] = -a0 * invDot;
+    out[1] = -a1 * invDot;
+    out[2] = -a2 * invDot;
+    out[3] = a3 * invDot;
+    return out;
+}
+
+/**
+ * Calculates the conjugate of a Quat.
+ * If the quaternion is normalized, this function is faster than Quat.inverse and produces the same result.
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Quat} a Quat to calculate conjugate of
+ * @returns {Quat} out
+ */
+function conjugate(out, a) {
+    out[0] = -a[0];
+    out[1] = -a[1];
+    out[2] = -a[2];
+    out[3] = a[3];
+    return out;
+}
+
+/**
+ * Creates a quaternion from the given 3x3 rotation matrix.
+ *
+ * NOTE: The resultant quaternion is not normalized, so you should be sure
+ * to renormalize the quaternion yourself where necessary.
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Mat3} m rotation matrix
+ * @returns {Quat} out
+ * @function
+ */
+function fromMat3(out, m) {
+    // Algorithm in Ken Shoemake's article in 1987 SIGGRAPH course notes
+    // article "Quaternion Calculus and Fast Animation".
+    let fTrace = m[0] + m[4] + m[8];
+    let fRoot;
+
+    if (fTrace > 0.0) {
+        // |w| > 1/2, may as well choose w > 1/2
+        fRoot = Math.sqrt(fTrace + 1.0); // 2w
+        out[3] = 0.5 * fRoot;
+        fRoot = 0.5 / fRoot; // 1/(4w)
+        out[0] = (m[5] - m[7]) * fRoot;
+        out[1] = (m[6] - m[2]) * fRoot;
+        out[2] = (m[1] - m[3]) * fRoot;
+    } else {
+        // |w| <= 1/2
+        let i = 0;
+        if (m[4] > m[0]) i = 1;
+        if (m[8] > m[i * 3 + i]) i = 2;
+        let j = (i + 1) % 3;
+        let k = (i + 2) % 3;
+
+        fRoot = Math.sqrt(m[i * 3 + i] - m[j * 3 + j] - m[k * 3 + k] + 1.0);
+        out[i] = 0.5 * fRoot;
+        fRoot = 0.5 / fRoot;
+        out[3] = (m[j * 3 + k] - m[k * 3 + j]) * fRoot;
+        out[j] = (m[j * 3 + i] + m[i * 3 + j]) * fRoot;
+        out[k] = (m[k * 3 + i] + m[i * 3 + k]) * fRoot;
+    }
+
+    return out;
+}
+
+/**
+ * Creates a quaternion from the given euler angle x, y, z
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Vec3} euler Angles to rotate around each axis in degrees.
+ * @param {String} order detailing order of operations. Default 'XYZ'.
+ * @returns {Quat} out
+ * @function
+ */
+function fromEuler(out, euler, order = 'YXZ') {
+    let sx = Math.sin(euler[0] * 0.5);
+    let cx = Math.cos(euler[0] * 0.5);
+    let sy = Math.sin(euler[1] * 0.5);
+    let cy = Math.cos(euler[1] * 0.5);
+    let sz = Math.sin(euler[2] * 0.5);
+    let cz = Math.cos(euler[2] * 0.5);
+
+    if (order === 'XYZ') {
+        out[0] = sx * cy * cz + cx * sy * sz;
+        out[1] = cx * sy * cz - sx * cy * sz;
+        out[2] = cx * cy * sz + sx * sy * cz;
+        out[3] = cx * cy * cz - sx * sy * sz;
+    } else if (order === 'YXZ') {
+        out[0] = sx * cy * cz + cx * sy * sz;
+        out[1] = cx * sy * cz - sx * cy * sz;
+        out[2] = cx * cy * sz - sx * sy * cz;
+        out[3] = cx * cy * cz + sx * sy * sz;
+    } else if (order === 'ZXY') {
+        out[0] = sx * cy * cz - cx * sy * sz;
+        out[1] = cx * sy * cz + sx * cy * sz;
+        out[2] = cx * cy * sz + sx * sy * cz;
+        out[3] = cx * cy * cz - sx * sy * sz;
+    } else if (order === 'ZYX') {
+        out[0] = sx * cy * cz - cx * sy * sz;
+        out[1] = cx * sy * cz + sx * cy * sz;
+        out[2] = cx * cy * sz - sx * sy * cz;
+        out[3] = cx * cy * cz + sx * sy * sz;
+    } else if (order === 'YZX') {
+        out[0] = sx * cy * cz + cx * sy * sz;
+        out[1] = cx * sy * cz + sx * cy * sz;
+        out[2] = cx * cy * sz - sx * sy * cz;
+        out[3] = cx * cy * cz - sx * sy * sz;
+    } else if (order === 'XZY') {
+        out[0] = sx * cy * cz - cx * sy * sz;
+        out[1] = cx * sy * cz - sx * cy * sz;
+        out[2] = cx * cy * sz + sx * sy * cz;
+        out[3] = cx * cy * cz + sx * sy * sz;
+    }
+
+    return out;
+}
+
+/**
+ * Copy the values from one Quat to another
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Quat} a the source quaternion
+ * @returns {Quat} out
+ * @function
+ */
+const copy$3 = copy$4;
+
+/**
+ * Set the components of a Quat to the given values
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Number} x X component
+ * @param {Number} y Y component
+ * @param {Number} z Z component
+ * @param {Number} w W component
+ * @returns {Quat} out
+ * @function
+ */
+const set$3 = set$4;
+
+/**
+ * Adds two Quat's
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Quat} a the first operand
+ * @param {Quat} b the second operand
+ * @returns {Quat} out
+ * @function
+ */
+const add$3 = add$4;
+
+/**
+ * Scales a Quat by a scalar Number
+ *
+ * @param {Quat} out the receiving vector
+ * @param {Quat} a the vector to scale
+ * @param {Number} b amount to scale the vector by
+ * @returns {Quat} out
+ * @function
+ */
+const scale$3 = scale$4;
+
+/**
+ * Calculates the dot product of two Quat's
+ *
+ * @param {Quat} a the first operand
+ * @param {Quat} b the second operand
+ * @returns {Number} dot product of a and b
+ * @function
+ */
+const dot$2 = dot$3;
+
+/**
+ * Performs a linear interpolation between two Quat's
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Quat} a the first operand
+ * @param {Quat} b the second operand
+ * @param {Number} t interpolation amount between the two inputs
+ * @returns {Quat} out
+ * @function
+ */
+const lerp$2 = lerp$3;
+
+/**
+ * Calculates the length of a Quat
+ *
+ * @param {Quat} a vector to calculate length of
+ * @returns {Number} length of a
+ */
+const length$2 = length$3;
+
+/**
+ * Normalize a Quat
+ *
+ * @param {Quat} out the receiving quaternion
+ * @param {Quat} a quaternion to normalize
+ * @returns {Quat} out
+ * @function
+ */
+const normalize$2 = normalize$3;
+
+var QuatFunc$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    identity: identity$2,
+    setAxisAngle: setAxisAngle,
+    multiply: multiply$3,
+    rotateX: rotateX,
+    rotateY: rotateY,
+    rotateZ: rotateZ,
+    slerp: slerp,
+    invert: invert$1,
+    conjugate: conjugate,
+    fromMat3: fromMat3,
+    fromEuler: fromEuler,
+    copy: copy$3,
+    set: set$3,
+    add: add$3,
+    scale: scale$3,
+    dot: dot$2,
+    lerp: lerp$2,
+    length: length$2,
+    normalize: normalize$2
+});
+
+class Quat extends Array {
+
+    constructor(x = 0, y = 0, z = 0, w = 1) {
+        super(x, y, z, w);
+        this.onChange = () => {};
+        return this;
+    }
+
+    get x() {
+        return this[0];
+    }
+
+    get y() {
+        return this[1];
+    }
+
+    get z() {
+        return this[2];
+    }
+
+    get w() {
+        return this[3];
+    }
+
+    set x(v) {
+        this[0] = v;
+        this.onChange();
+    }
+
+    set y(v) {
+        this[1] = v;
+        this.onChange();
+    }
+
+    set z(v) {
+        this[2] = v;
+        this.onChange();
+    }
+
+    set w(v) {
+        this[3] = v;
+        this.onChange();
+    }
+
+    identity() {
+        identity$2(this);
+        this.onChange();
+        return this;
+    }
+
+    set(x, y, z, w) {
+        if (x.length) return this.copy(x);
+        set$3(this, x, y, z, w);
+        this.onChange();
+        return this;
+    }
+
+    rotateX(a) {
+        rotateX(this, this, a);
+        this.onChange();
+        return this;
+    }
+
+    rotateY(a) {
+        rotateY(this, this, a);
+        this.onChange();
+        return this;
+    }
+
+    rotateZ(a) {
+        rotateZ(this, this, a);
+        this.onChange();
+        return this;
+    }
+
+    inverse(q = this) {
+        invert$1(this, q);
+        this.onChange();
+        return this;
+    }
+
+    conjugate(q = this) {
+        conjugate(this, q);
+        this.onChange();
+        return this;
+    }
+
+    copy(q) {
+        copy$3(this, q);
+        this.onChange();
+        return this;
+    }
+
+    normalize(q = this) {
+        normalize$2(this, q);
+        this.onChange();
+        return this;
+    }
+
+    multiply(qA, qB) {
+        if (qB) {
+            multiply$3(this, qA, qB);
+        } else {
+            multiply$3(this, this, qA);
+        }
+        this.onChange();
+        return this;
+    }
+
+    dot(v) {
+        return dot$2(this, v);
+    }
+
+    fromMatrix3(matrix3) {
+        fromMat3(this, matrix3);
+        this.onChange();
+        return this;
+    }
+
+    fromEuler(euler) {
+        fromEuler(this, euler, euler.order);
+        return this;
+    }
+
+    fromAxisAngle(axis, a) {
+        setAxisAngle(this, axis, a);
+        this.onChange();
+        return this;
+    }
+
+    slerp(q, t) {
+        slerp(this, this, q, t);
+        this.onChange();
+        return this;
+    }
+
+    fromArray(a, o = 0) {
+        this[0] = a[o];
+        this[1] = a[o + 1];
+        this[2] = a[o + 2];
+        this[3] = a[o + 3];
+        this.onChange();
+        return this;
+    }
+
+    toArray(a = [], o = 0) {
+        a[o] = this[0];
+        a[o + 1] = this[1];
+        a[o + 2] = this[2];
+        a[o + 3] = this[3];
+        return a;
+    }
+
+}
+
+const EPSILON$3 = 0.000001;
+
+/**
+ * Calculates the length of a Vec3
+ *
+ * @param {Vec3} a vector to calculate length of
+ * @returns {Number} length of a
+ */
+function length$1(a) {
+    let x = a[0];
+    let y = a[1];
+    let z = a[2];
+    return Math.sqrt(x * x + y * y + z * z);
+}
+
+/**
+ * Copy the values from one Vec3 to another
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the source vector
+ * @returns {Vec3} out
+ */
+function copy$2(out, a) {
+    out[0] = a[0];
+    out[1] = a[1];
+    out[2] = a[2];
+    return out;
+}
+
+/**
+ * Set the components of a Vec3 to the given values
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Number} x X component
+ * @param {Number} y Y component
+ * @param {Number} z Z component
+ * @returns {Vec3} out
+ */
+function set$2(out, x, y, z) {
+    out[0] = x;
+    out[1] = y;
+    out[2] = z;
+    return out;
+}
+
+/**
+ * Adds two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function add$2(out, a, b) {
+    out[0] = a[0] + b[0];
+    out[1] = a[1] + b[1];
+    out[2] = a[2] + b[2];
+    return out;
+}
+
+/**
+ * Subtracts vector b from vector a
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function subtract$2(out, a, b) {
+    out[0] = a[0] - b[0];
+    out[1] = a[1] - b[1];
+    out[2] = a[2] - b[2];
+    return out;
+}
+
+/**
+ * Multiplies two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function multiply$2(out, a, b) {
+    out[0] = a[0] * b[0];
+    out[1] = a[1] * b[1];
+    out[2] = a[2] * b[2];
+    return out;
+}
+
+/**
+ * Divides two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function divide$1(out, a, b) {
+    out[0] = a[0] / b[0];
+    out[1] = a[1] / b[1];
+    out[2] = a[2] / b[2];
+    return out;
+}
+
+/**
+ * Scales a Vec3 by a scalar number
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to scale
+ * @param {Number} b amount to scale the vector by
+ * @returns {Vec3} out
+ */
+function scale$2(out, a, b) {
+    out[0] = a[0] * b;
+    out[1] = a[1] * b;
+    out[2] = a[2] * b;
+    return out;
+}
+
+/**
+ * Calculates the euclidian distance between two Vec3's
+ *
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Number} distance between a and b
+ */
+function distance$1(a, b) {
+    let x = b[0] - a[0];
+    let y = b[1] - a[1];
+    let z = b[2] - a[2];
+    return Math.sqrt(x * x + y * y + z * z);
+}
+
+/**
+ * Calculates the squared euclidian distance between two Vec3's
+ *
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Number} squared distance between a and b
+ */
+function squaredDistance$1(a, b) {
+    let x = b[0] - a[0];
+    let y = b[1] - a[1];
+    let z = b[2] - a[2];
+    return x * x + y * y + z * z;
+}
+
+/**
+ * Calculates the squared length of a Vec3
+ *
+ * @param {Vec3} a vector to calculate squared length of
+ * @returns {Number} squared length of a
+ */
+function squaredLength$1(a) {
+    let x = a[0];
+    let y = a[1];
+    let z = a[2];
+    return x * x + y * y + z * z;
+}
+
+/**
+ * Negates the components of a Vec3
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a vector to negate
+ * @returns {Vec3} out
+ */
+function negate$1(out, a) {
+    out[0] = -a[0];
+    out[1] = -a[1];
+    out[2] = -a[2];
+    return out;
+}
+
+/**
+ * Returns the inverse of the components of a Vec3
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a vector to invert
+ * @returns {Vec3} out
+ */
+function inverse$1(out, a) {
+    out[0] = 1.0 / a[0];
+    out[1] = 1.0 / a[1];
+    out[2] = 1.0 / a[2];
+    return out;
+}
+
+/**
+ * Normalize a Vec3
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a vector to normalize
+ * @returns {Vec3} out
+ */
+function normalize$1(out, a) {
+    let x = a[0];
+    let y = a[1];
+    let z = a[2];
+    let len = x * x + y * y + z * z;
+    if (len > 0) {
+        // TODO: evaluate use of glm_invsqrt here?
+        len = 1 / Math.sqrt(len);
+    }
+    out[0] = a[0] * len;
+    out[1] = a[1] * len;
+    out[2] = a[2] * len;
+    return out;
+}
+
+/**
+ * Calculates the dot product of two Vec3's
+ *
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Number} dot product of a and b
+ */
+function dot$1(a, b) {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+/**
+ * Computes the cross product of two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function cross$1(out, a, b) {
+    let ax = a[0], ay = a[1], az = a[2];
+    let bx = b[0], by = b[1], bz = b[2];
+
+    out[0] = ay * bz - az * by;
+    out[1] = az * bx - ax * bz;
+    out[2] = ax * by - ay * bx;
+    return out;
+}
+
+/**
+ * Performs a linear interpolation between two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @param {Number} t interpolation amount between the two inputs
+ * @returns {Vec3} out
+ */
+function lerp$1(out, a, b, t) {
+    let ax = a[0];
+    let ay = a[1];
+    let az = a[2];
+    out[0] = ax + t * (b[0] - ax);
+    out[1] = ay + t * (b[1] - ay);
+    out[2] = az + t * (b[2] - az);
+    return out;
+}
+
+/**
+ * Transforms the Vec3 with a Mat4
+ * 4th vector component is implicitly '1'
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to transform
+ * @param {Mat4} m matrix to transform with
+ * @returns {Vec3} out
+ */
+function transformMat4$1(out, a, m) {
+    let x = a[0],
+        y = a[1],
+        z = a[2];
+    let w = m[3] * x + m[7] * y + m[11] * z + m[15];
+    w = w || 1.0;
+    out[0] = (m[0] * x + m[4] * y + m[8] * z + m[12]) / w;
+    out[1] = (m[1] * x + m[5] * y + m[9] * z + m[13]) / w;
+    out[2] = (m[2] * x + m[6] * y + m[10] * z + m[14]) / w;
+    return out;
+}
+
+/**
+ * Same as above but doesn't apply translation
+ * Useful for rays
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to transform
+ * @param {Mat4} m matrix to transform with
+ * @returns {Vec3} out
+ */
+function scaleRotateMat4(out, a, m) {
+    let x = a[0],
+        y = a[1],
+        z = a[2];
+    let w = m[3] * x + m[7] * y + m[11] * z + m[15];
+    w = w || 1.0;
+    out[0] = (m[0] * x + m[4] * y + m[8] * z) / w;
+    out[1] = (m[1] * x + m[5] * y + m[9] * z) / w;
+    out[2] = (m[2] * x + m[6] * y + m[10] * z) / w;
+    return out;
+}
+
+/**
+ * Transforms the Vec3 with a Mat3
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to transform
+ * @param {Mat3} m the 3x3 matrix to transform with
+ * @returns {Vec3} out
+ */
+function transformMat3$1(out, a, m) {
+    let x = a[0],
+        y = a[1],
+        z = a[2];
+    out[0] = x * m[0] + y * m[3] + z * m[6];
+    out[1] = x * m[1] + y * m[4] + z * m[7];
+    out[2] = x * m[2] + y * m[5] + z * m[8];
+    return out;
+}
+
+/**
+ * Transforms the Vec3 with a Quat
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to transform
+ * @param {Quat} q quaternion to transform with
+ * @returns {Vec3} out
+ */
+function transformQuat(out, a, q) {
+    // benchmarks: https://jsperf.com/quaternion-transform-vec3-implementations-fixed
+    let x = a[0],
+        y = a[1],
+        z = a[2];
+    let qx = q[0],
+        qy = q[1],
+        qz = q[2],
+        qw = q[3];
+
+    let uvx = qy * z - qz * y;
+    let uvy = qz * x - qx * z;
+    let uvz = qx * y - qy * x;
+
+    let uuvx = qy * uvz - qz * uvy;
+    let uuvy = qz * uvx - qx * uvz;
+    let uuvz = qx * uvy - qy * uvx;
+
+    let w2 = qw * 2;
+    uvx *= w2;
+    uvy *= w2;
+    uvz *= w2;
+
+    uuvx *= 2;
+    uuvy *= 2;
+    uuvz *= 2;
+
+    out[0] = x + uvx + uuvx;
+    out[1] = y + uvy + uuvy;
+    out[2] = z + uvz + uuvz;
+    return out;
+}
+
+/**
+ * Get the angle between two 3D vectors
+ *
+ * @param {Vec3} a The first operand
+ * @param {Vec3} b The second operand
+ * @returns {Number} The angle in radians
+ */
+const angle = (function() {
+    const tempA = [ 0, 0, 0 ];
+    const tempB = [ 0, 0, 0 ];
+
+    return function(a, b) {
+        copy$2(tempA, a);
+        copy$2(tempB, b);
+
+        normalize$1(tempA, tempA);
+        normalize$1(tempB, tempB);
+
+        let cosine = dot$1(tempA, tempB);
+
+        if (cosine > 1.0) {
+            return 0;
+        } else if (cosine < -1.0) {
+            return Math.PI;
+        } else {
+            return Math.acos(cosine);
+        }
+    };
+})();
+
+/**
+ * Returns whether or not the vectors have exactly the same elements in the same position (when compared with ===)
+ *
+ * @param {Vec3} a The first vector
+ * @param {Vec3} b The second vector
+ * @returns {Boolean} True if the vectors are equal, false otherwise
+ */
+function exactEquals$1(a, b) {
+    return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
+}
+
+/**
+ * Returns whether the vectors have approximately the same values
+ *
+ * @param {Vec3} a
+ * @param {Vec3} b
+ * @param {Number} tolerance
+ * @returns {Boolean} True is vectors are equal +/- tolerance
+ */
+function fuzzyEquals(a, b, tolerance = 0.001) {
+    if (fuzzyFloat$1(a[0], b[0], tolerance) === false) return false;
+    if (fuzzyFloat$1(a[1], b[1], tolerance) === false) return false;
+    if (fuzzyFloat$1(a[2], b[2], tolerance) === false) return false;
+    return true;
+}
+
+/**
+ * Calculates the normal of a triangle
+ *
+ * @param {Vec3} out Vector which will store the normal
+ * @param {Vec3} a
+ * @param {Vec3} b
+ * @param {Vec3} c
+ */
+const calculateNormal = (function() {
+    const temp = [ 0, 0, 0 ];
+
+    return function(out, a, b, c) {
+        subtract$2(temp, a, b);
+        subtract$2(out, b, c);
+        cross$1(out, temp, out);
+        normalize$1(out, out);
+    };
+})();
+
+/***** Internal *****/
+
+/**
+ * Compares two decimal numbers to see if they're almost the same
+ *
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} tolerance
+ * @returns {Boolean}
+ */
+function fuzzyFloat$1(a, b, tolerance = 0.001) {
+    return ((a < (b + tolerance)) && (a > (b - tolerance)));
+}
+
+var Vec3Func$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    length: length$1,
+    copy: copy$2,
+    set: set$2,
+    add: add$2,
+    subtract: subtract$2,
+    multiply: multiply$2,
+    divide: divide$1,
+    scale: scale$2,
+    distance: distance$1,
+    squaredDistance: squaredDistance$1,
+    squaredLength: squaredLength$1,
+    negate: negate$1,
+    inverse: inverse$1,
+    normalize: normalize$1,
+    dot: dot$1,
+    cross: cross$1,
+    lerp: lerp$1,
+    transformMat4: transformMat4$1,
+    scaleRotateMat4: scaleRotateMat4,
+    transformMat3: transformMat3$1,
+    transformQuat: transformQuat,
+    angle: angle,
+    exactEquals: exactEquals$1,
+    fuzzyEquals: fuzzyEquals,
+    calculateNormal: calculateNormal
+});
+
+// fuzzyFloat()
+// isPowerOf2()
+// triangleArea()
+// uuid()
+
+const _lut = [ '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d', '1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '2a', '2b', '2c', '2d', '2e', '2f', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '3a', '3b', '3c', '3d', '3e', '3f', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '4a', '4b', '4c', '4d', '4e', '4f', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '5a', '5b', '5c', '5d', '5e', '5f', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '6a', '6b', '6c', '6d', '6e', '6f', '70', '71', '72', '73', '74', '75', '76', '77', '78', '79', '7a', '7b', '7c', '7d', '7e', '7f', '80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '8a', '8b', '8c', '8d', '8e', '8f', '90', '91', '92', '93', '94', '95', '96', '97', '98', '99', '9a', '9b', '9c', '9d', '9e', '9f', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af', 'b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'ba', 'bb', 'bc', 'bd', 'be', 'bf', 'c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'ca', 'cb', 'cc', 'cd', 'ce', 'cf', 'd0', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'da', 'db', 'dc', 'dd', 'de', 'df', 'e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8', 'e9', 'ea', 'eb', 'ec', 'ed', 'ee', 'ef', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'fa', 'fb', 'fc', 'fd', 'fe', 'ff' ];
+
+/**
+ * Compares two decimal numbers to see if they're almost the same
+ *
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} tolerance
+ * @returns {Boolean}
+ */
+function fuzzyFloat(a, b, tolerance = 0.001) {
+    return ((a < (b + tolerance)) && (a > (b - tolerance)));
+}
+
+/**
+ * Determins if value is a power of 2
+ *
+ * @param {Number} value number to check
+ * @returns {Boolean} is value power of 2?
+ */
+function isPowerOf2(value) {
+    return (value & (value - 1)) === 0;
+}
+
+/**
+ * Computes the area of a triangle defined by 3 points (points as arrays [x, y, z])
+ *
+ * @param {Vec3} a
+ * @param {Vec3} b
+ * @param {Vec3} c
+ * @returns {Number} area of the triangle
+ */
+const triangleArea = (function() {
+    const v0 = [ 0, 0, 0 ];
+    const v1 = [ 0, 0, 0 ];
+    const vc = [ 0, 0, 0 ];
+
+    return function(a, b, c) {
+        subtract$2(v0, c, b);
+        subtract$2(v1, a, b);
+        cross$1(vc, v0, v1);
+        return (length$1(vc) * 0.5);
+    };
+})();
+
+/**
+ * Returns randomized UUID
+ *
+ * @returns {String} randomized UUID
+ */
+function uuid() {
+    if (window.crypto && window.crypto.randomUUID) return crypto.randomUUID();
+
+    // https://github.com/mrdoob/three.js/blob/dev/src/math/MathUtils.js
+    // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+    const d0 = Math.random() * 0xffffffff | 0;
+    const d1 = Math.random() * 0xffffffff | 0;
+    const d2 = Math.random() * 0xffffffff | 0;
+    const d3 = Math.random() * 0xffffffff | 0;
+    const uuid = _lut[ d0 & 0xff ] + _lut[ d0 >> 8 & 0xff ] + _lut[ d0 >> 16 & 0xff ] + _lut[ d0 >> 24 & 0xff ] + '-' +
+        _lut[ d1 & 0xff ] + _lut[ d1 >> 8 & 0xff ] + '-' + _lut[ d1 >> 16 & 0x0f | 0x40 ] + _lut[ d1 >> 24 & 0xff ] + '-' +
+        _lut[ d2 & 0x3f | 0x80 ] + _lut[ d2 >> 8 & 0xff ] + '-' + _lut[ d2 >> 16 & 0xff ] + _lut[ d2 >> 24 & 0xff ] +
+        _lut[ d3 & 0xff ] + _lut[ d3 >> 8 & 0xff ] + _lut[ d3 >> 16 & 0xff ] + _lut[ d3 >> 24 & 0xff ];
+    return uuid.toLowerCase(); // .toLowerCase() flattens concatenated strings to save heap memory space
+}
+
+var MathUtils$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    fuzzyFloat: fuzzyFloat,
+    isPowerOf2: isPowerOf2,
+    triangleArea: triangleArea,
+    uuid: uuid
+});
+
+class Vec3 extends Array {
+
+    constructor(x = 0, y = x, z = x) {
+        super(x, y, z);
+        return this;
+    }
+
+    get x() {
+        return this[0];
+    }
+
+    get y() {
+        return this[1];
+    }
+
+    get z() {
+        return this[2];
+    }
+
+    set x(v) {
+        this[0] = v;
+    }
+
+    set y(v) {
+        this[1] = v;
+    }
+
+    set z(v) {
+        this[2] = v;
+    }
+
+    set(x, y = x, z = x) {
+        if (x.length) return this.copy(x);
+        set$2(this, x, y, z);
+        return this;
+    }
+
+    copy(v) {
+        copy$2(this, v);
+        return this;
+    }
+
+    add(va, vb) {
+        if (vb) add$2(this, va, vb);
+        else add$2(this, this, va);
+        return this;
+    }
+
+    sub(va, vb) {
+        if (vb) subtract$2(this, va, vb);
+        else subtract$2(this, this, va);
+        return this;
+    }
+
+    multiply(v) {
+        if (v.length) multiply$2(this, this, v);
+        else scale$2(this, this, v);
+        return this;
+    }
+
+    divide(v) {
+        if (v.length) divide$1(this, this, v);
+        else scale$2(this, this, 1 / v);
+        return this;
+    }
+
+    inverse(v = this) {
+        inverse$1(this, v);
+        return this;
+    }
+
+    // Can't use 'length' as Array.prototype uses it
+    len() {
+        return length$1(this);
+    }
+
+    distance(v) {
+        if (v) return distance$1(this, v);
+        else return length$1(this);
+    }
+
+    squaredLen() {
+        return squaredLength$1(this);
+    }
+
+    squaredDistance(v) {
+        if (v) return squaredDistance$1(this, v);
+        else return squaredLength$1(this);
+    }
+
+    negate(v = this) {
+        negate$1(this, v);
+        return this;
+    }
+
+    cross(va, vb) {
+        if (vb) cross$1(this, va, vb);
+        else cross$1(this, this, va);
+        return this;
+    }
+
+    scale(multiplier) {
+        scale$2(this, this, multiplier);
+        return this;
+    }
+
+    normalize() {
+        normalize$1(this, this);
+        return this;
+    }
+
+    dot(v) {
+        return dot$1(this, v);
+    }
+
+    equals(v) {
+        return exactEquals$1(this, v);
+    }
+
+    fuzzyEquals(v, tolerance) {
+        return fuzzyEquals(this, v, tolerance);
+    }
+
+    applyMatrix3(mat3) {
+        transformMat3$1(this, this, mat3);
+        return this;
+    }
+
+    applyMatrix4(mat4) {
+        transformMat4$1(this, this, mat4);
+        return this;
+    }
+
+    scaleRotateMatrix4(mat4) {
+        scaleRotateMat4(this, this, mat4);
+        return this;
+    }
+
+    applyQuaternion(q) {
+        transformQuat(this, this, q);
+        return this;
+    }
+
+    angle(v) {
+        return angle(this, v);
+    }
+
+    lerp(v, t) {
+        lerp$1(this, this, v, t);
+        return this;
+    }
+
+    clone() {
+        return new Vec3(this[0], this[1], this[2]);
+    }
+
+    fromArray(a, o = 0) {
+        this[0] = a[o];
+        this[1] = a[o + 1];
+        this[2] = a[o + 2];
+        return this;
+    }
+
+    toArray(a = [], o = 0) {
+        a[o] = this[0];
+        a[o + 1] = this[1];
+        a[o + 2] = this[2];
+        return a;
+    }
+
+    transformDirection(mat4) {
+        const x = this[0];
+        const y = this[1];
+        const z = this[2];
+
+        this[0] = mat4[0] * x + mat4[4] * y + mat4[8] * z;
+        this[1] = mat4[1] * x + mat4[5] * y + mat4[9] * z;
+        this[2] = mat4[2] * x + mat4[6] * y + mat4[10] * z;
+
+        return this.normalize();
+    }
+
+    log(description = '') {
+        if (description !== '') description += ' - ';
+        console.log(`${description}X: ${this.x}, Y: ${this.y}, Z: ${this.z}`);
+    }
+
+}
+
+let _idGenerator$4 = 1;
+
 class Transform {
 
     constructor() {
         this.isTransform = true;
+
+        this.uuid = uuid();
+        this.id = _idGenerator$4++;
 
         this.parent = null;
         this.children = [];
@@ -2798,14 +2883,23 @@ class Transform {
         return this;
     }
 
+    /** Return true in callback to stop traversing children */
     traverse(callback) {
-        // Return true in callback to stop traversing children
         if (callback(this)) return;
-        // Traverse children
-        for (let i = 0, l = this.children.length; i < l; i++) {
-            this.children[i].traverse(callback);
-        }
+        for (let i = 0, l = this.children.length; i < l; i++) this.children[i].traverse(callback);
     }
+
+    traverseVisible(callback) {
+		if (! this.visible) return;
+        callback(this);
+        for (let i = 0, l = this.children.length; i < l; i++) this.children[i].traverseVisible(callback);
+	}
+
+    traverseAncestors(callback) {
+		if (! this.parent) return;
+		callback(this.parent);
+		this.parent.traverseAncestors(callback);
+	}
 
     decompose() {
         this.matrix.getTranslation(this.position);
@@ -2975,23 +3069,25 @@ class Camera extends Transform {
 // TODO: fit in transform feedback
 
 const _tempVec3$2 = new Vec3();
+let _idGenerator$3 = 1;
 
 class Geometry {
 
-    static #ID = 1;
-
     constructor(attributes = {}) {
-        this.isGeometry = true;
-
         if (! renderer) console.error(`Geometry.constructor: Renderer not found`);
 
-        this.id = Geometry.#ID++;
+        this.isGeometry = true;
+
+        this.uuid = uuid();
+        this.id = _idGenerator$3++;
         this.attributes = {};
 
         this.VAOs = {}; /* store one VAO per program attribute locations order */
         this.drawRange = { start: 0, count: 0 };
         this.instancedCount = 0;
         this.glState = renderer.state; /* alias for renderer.state to avoid redundant calls for global state */
+
+        renderer.info.geometries++;
 
         // Create the buffers
         for (let key in attributes) {
@@ -3019,6 +3115,7 @@ class Geometry {
     addAttribute(key, attr) {
         if (! attr) return console.warn(`Geometry.addAttribute: Attribute for '${key}' missing`);
         if (! attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
+        const gl = renderer.gl;
 
         // Unbind current VAO so that new buffers don't get added to active mesh
         renderer.clearActiveGeometry();
@@ -3034,12 +3131,12 @@ class Geometry {
         attr.size = attr.size || 1;
         if (! attr.type) {
             switch (attr.data.constructor) {
-                case Float32Array: attr.type = renderer.gl.FLOAT; break;
-                case Uint16Array: attr.type = renderer.gl.UNSIGNED_SHORT; break;
-                case Uint32Array: default: attr.type = renderer.gl.UNSIGNED_INT;
+                case Float32Array: attr.type = gl.FLOAT; break;
+                case Uint16Array: attr.type = gl.UNSIGNED_SHORT; break;
+                case Uint32Array: default: attr.type = gl.UNSIGNED_INT;
             }
         }
-        attr.target = (key === 'index') ? renderer.gl.ELEMENT_ARRAY_BUFFER : renderer.gl.ARRAY_BUFFER;
+        attr.target = (key === 'index') ? gl.ELEMENT_ARRAY_BUFFER : gl.ARRAY_BUFFER;
         attr.normalized = attr.normalized || false;
         attr.stride = attr.stride || 0;
         attr.offset = attr.offset || 0;
@@ -3047,7 +3144,7 @@ class Geometry {
         attr.divisor = attr.instanced || 0;
 
         attr.needsUpdate = false;
-        attr.usage = attr.usage || renderer.gl.STATIC_DRAW;
+        attr.usage = attr.usage || gl.STATIC_DRAW;
 
         // Push data to buffer
         if (! attr.buffer) this.updateAttribute(attr);
@@ -3075,21 +3172,25 @@ class Geometry {
     }
 
     updateAttribute(attr) {
+        const gl = renderer.gl;
+
         // New Buffer
         if (! attr.buffer) {
-            attr.buffer = renderer.gl.createBuffer();
-            renderer.gl.bindBuffer(attr.target, attr.buffer);
-            renderer.gl.bufferData(attr.target, attr.data, attr.usage);
+            attr.buffer = gl.createBuffer();
+            gl.bindBuffer(attr.target, attr.buffer);
+            gl.bufferData(attr.target, attr.data, attr.usage);
         // Existing Buffer
         } else {
-            if (this.glState.boundBuffer !== attr.buffer) renderer.gl.bindBuffer(attr.target, attr.buffer);
-            renderer.gl.bufferSubData(attr.target, 0, attr.data);
+            if (this.glState.boundBuffer !== attr.buffer) gl.bindBuffer(attr.target, attr.buffer);
+            gl.bufferSubData(attr.target, 0, attr.data);
         }
         this.glState.boundBuffer = attr.buffer;
         attr.needsUpdate = false;
     }
 
     bindAttributes(program) {
+        const gl = renderer.gl;
+
         // Link all attributes to program using gl.vertexAttribPointer
         program.attributeLocations.forEach((location, { name, type }) => {
             // Missing a required shader attribute
@@ -3099,7 +3200,7 @@ class Geometry {
             }
 
             const attr = this.attributes[name];
-            renderer.gl.bindBuffer(attr.target, attr.buffer);
+            gl.bindBuffer(attr.target, attr.buffer);
             this.glState.boundBuffer = attr.buffer;
 
             // For matrix attributes, buffer needs to be defined per column
@@ -3113,18 +3214,18 @@ class Geometry {
             const offset = numLoc === 1 ? 0 : numLoc * numLoc;
 
             for (let i = 0; i < numLoc; i++) {
-                renderer.gl.vertexAttribPointer(location + i, size, attr.type, attr.normalized, attr.stride + stride, attr.offset + i * offset);
-                renderer.gl.enableVertexAttribArray(location + i);
+                gl.vertexAttribPointer(location + i, size, attr.type, attr.normalized, attr.stride + stride, attr.offset + i * offset);
+                gl.enableVertexAttribArray(location + i);
 
                 // For instanced attributes, divisor needs to be set.
                 // For firefox, need to set back to 0 if non-instanced drawn after instanced, else won't render.
-                renderer.gl.vertexAttribDivisor(location + i, attr.divisor);
+                gl.vertexAttribDivisor(location + i, attr.divisor);
             }
         });
 
         // Bind indices if geometry indexed
         if (this.attributes.index) {
-            renderer.gl.bindBuffer(renderer.gl.ELEMENT_ARRAY_BUFFER, this.attributes.index.buffer);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.attributes.index.buffer);
         }
     }
 
@@ -3147,16 +3248,18 @@ class Geometry {
     }
 
     draw({ program, mode = renderer.gl.TRIANGLES }) {
+        const gl = renderer.gl;
+
         // Make sure current geometry attributes are bound
         if (renderer.currentGeometry !== `${this.id}_${program.attributeOrder}`) {
             // Need to create vertex array object, bind attribute buffers
             if (! this.VAOs[program.attributeOrder]) {
-                this.VAOs[program.attributeOrder] = renderer.gl.createVertexArray();
-                renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
+                this.VAOs[program.attributeOrder] = gl.createVertexArray();
+                gl.bindVertexArray(this.VAOs[program.attributeOrder]);
                 this.bindAttributes(program);
             // Rebind existing vertex array object
             } else {
-                renderer.gl.bindVertexArray(this.VAOs[program.attributeOrder]);
+                gl.bindVertexArray(this.VAOs[program.attributeOrder]);
             }
             renderer.currentGeometry = `${this.id}_${program.attributeOrder}`;
         }
@@ -3174,7 +3277,7 @@ class Geometry {
 
         if (this.isInstanced) {
             if (this.attributes.index) {
-                renderer.gl.drawElementsInstanced(
+                gl.drawElementsInstanced(
                     mode,
                     this.drawRange.count,
                     this.attributes.index.type,
@@ -3182,15 +3285,18 @@ class Geometry {
                     this.instancedCount,
                 );
             } else {
-                renderer.gl.drawArraysInstanced(mode, this.drawRange.start, this.drawRange.count, this.instancedCount);
+                gl.drawArraysInstanced(mode, this.drawRange.start, this.drawRange.count, this.instancedCount);
             }
         } else {
             if (this.attributes.index) {
-                renderer.gl.drawElements(mode, this.drawRange.count, this.attributes.index.type, this.attributes.index.offset + this.drawRange.start * 2);
+                gl.drawElements(mode, this.drawRange.count, this.attributes.index.type, this.attributes.index.offset + this.drawRange.start * 2);
             } else {
-                renderer.gl.drawArrays(mode, this.drawRange.start, this.drawRange.count);
+                gl.drawArrays(mode, this.drawRange.start, this.drawRange.count);
             }
         }
+
+        // Increment draw count
+        renderer.drawCallCount++;
     }
 
     /***** Bounding Box *****/
@@ -3264,11 +3370,12 @@ class Geometry {
         }
     }
 
-    remove() {
+    flush() {
         this.clearVertexArrayObjects();
         for (let key in this.attributes) {
             this.deleteAttribute(this.attributes[key]);
         }
+        renderer.info.geometries--;
     }
 
     /***** Copy / Clone *****/
@@ -3887,8 +3994,6 @@ class Mat3 extends Array {
 
 class Mesh extends Transform {
 
-    static #ID = 1;
-
     constructor({
         geometry,
         program,
@@ -3896,11 +4001,11 @@ class Mesh extends Transform {
         frustumCulled = true,
         renderOrder = 0
     } = {}) {
+        if (! renderer) console.error(`Mesh.constructor: Renderer not found`);
+
         super();
         this.isMesh = true;
 
-        if (! renderer) console.error(`Mesh.constructor: Renderer not found`);
-        this.id = Mesh.#ID++;
         this.geometry = geometry;
         this.program = program;
         this.mode = mode;
@@ -3971,11 +4076,10 @@ class Mesh extends Transform {
 // TODO: upload identity matrix if null ?
 // TODO: sampler Cube
 
-const arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
+const _arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
+let _idGenerator$2 = 1;
 
 class Program {
-
-    static #ID = 1;
 
     constructor({
         vertex,
@@ -3993,8 +4097,10 @@ class Program {
         if (! renderer) console.error(`Program.constructor: Renderer not found`);
         if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
         if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
+        const gl = renderer.gl;
 
-        this.id = Program.#ID++;
+        this.uuid = uuid();
+        this.id = _idGenerator$2++;
         this.uniforms = uniforms;
 
         // Store program state
@@ -4008,14 +4114,19 @@ class Program {
         this.blendEquation = {};
 
         // Default blendFunc
-        this.setBlendFunc(renderer.gl.ONE, renderer.gl.ONE_MINUS_SRC_ALPHA);
-        // this.setBlendFunc(renderer.gl.SRC_ALPHA, renderer.gl.ONE_MINUS_SRC_ALPHA);
+        this.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+        // this.setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+        // Incerase program count
+        renderer.info.programs++;
 
         // Compile shaders, build program
         this.buildProgram({ vertex, fragment, defines });
     }
 
     buildProgram({ vertex, fragment, defines } = {}) {
+        const gl = renderer.gl;
+
         // Add defines to shaders
         const customDefines = generateDefines(defines);
 
@@ -4038,48 +4149,48 @@ class Program {
         } else fragmentGlsl = prefixFragment + fragment;
 
         // Compile vertex shader and log errors
-        const vertexShader = renderer.gl.createShader(renderer.gl.VERTEX_SHADER);
-        renderer.gl.shaderSource(vertexShader, vertexGlsl);
-        renderer.gl.compileShader(vertexShader);
-        if (renderer.gl.getShaderInfoLog(vertexShader) !== '') {
-            console.warn(`${renderer.gl.getShaderInfoLog(vertexShader)}\nVertex Shader\n${addLineNumbers(vertex)}`);
+        const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, vertexGlsl);
+        gl.compileShader(vertexShader);
+        if (gl.getShaderInfoLog(vertexShader) !== '') {
+            console.warn(`${gl.getShaderInfoLog(vertexShader)}\nVertex Shader\n${addLineNumbers(vertex)}`);
         }
 
         // Compile fragment shader and log errors
-        const fragmentShader = renderer.gl.createShader(renderer.gl.FRAGMENT_SHADER);
-        renderer.gl.shaderSource(fragmentShader, fragmentGlsl);
-        renderer.gl.compileShader(fragmentShader);
-        if (renderer.gl.getShaderInfoLog(fragmentShader) !== '') {
-            console.warn(`${renderer.gl.getShaderInfoLog(fragmentShader)}\nFragment Shader\n${addLineNumbers(fragment)}`);
+        const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragmentShader, fragmentGlsl);
+        gl.compileShader(fragmentShader);
+        if (gl.getShaderInfoLog(fragmentShader) !== '') {
+            console.warn(`${gl.getShaderInfoLog(fragmentShader)}\nFragment Shader\n${addLineNumbers(fragment)}`);
         }
 
         // Check if was built before, if so delete
         if (this.program) {
-            renderer.gl.deleteProgram(this.program);
+            gl.deleteProgram(this.program);
             renderer.state.currentProgram = -1; // force gl program update 'this.use()'
         }
 
         // Compile program and log errors
-        this.program = renderer.gl.createProgram();
-        renderer.gl.attachShader(this.program, vertexShader);
-        renderer.gl.attachShader(this.program, fragmentShader);
-        renderer.gl.linkProgram(this.program);
-        if (! renderer.gl.getProgramParameter(this.program, renderer.gl.LINK_STATUS)) {
-            return console.warn(renderer.gl.getProgramInfoLog(this.program));
+        this.program = gl.createProgram();
+        gl.attachShader(this.program, vertexShader);
+        gl.attachShader(this.program, fragmentShader);
+        gl.linkProgram(this.program);
+        if (! gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+            return console.warn(gl.getProgramInfoLog(this.program));
         }
 
         renderer.programs[this.id] = this.program;
 
         // Remove shader once linked
-        renderer.gl.deleteShader(vertexShader);
-        renderer.gl.deleteShader(fragmentShader);
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
 
         // Get active uniform locations
         this.uniformLocations = new Map();
-        const numUniforms = renderer.gl.getProgramParameter(this.program, renderer.gl.ACTIVE_UNIFORMS);
+        const numUniforms = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
         for (let uIndex = 0; uIndex < numUniforms; uIndex++) {
-            const uniform = renderer.gl.getActiveUniform(this.program, uIndex);
-            this.uniformLocations.set(uniform, renderer.gl.getUniformLocation(this.program, uniform.name));
+            const uniform = gl.getActiveUniform(this.program, uIndex);
+            this.uniformLocations.set(uniform, gl.getUniformLocation(this.program, uniform.name));
 
             // split uniforms' names to separate array and struct declarations
             const split = uniform.name.match(/(\w+)/g);
@@ -4099,10 +4210,10 @@ class Program {
         // Get active attribute locations
         this.attributeLocations = new Map();
         const locations = [];
-        const numAttribs = renderer.gl.getProgramParameter(this.program, renderer.gl.ACTIVE_ATTRIBUTES);
+        const numAttribs = gl.getProgramParameter(this.program, gl.ACTIVE_ATTRIBUTES);
         for (let aIndex = 0; aIndex < numAttribs; aIndex++) {
-            const attribute = renderer.gl.getActiveAttrib(this.program, aIndex);
-            const location = renderer.gl.getAttribLocation(this.program, attribute.name);
+            const attribute = gl.getActiveAttrib(this.program, aIndex);
+            const location = gl.getAttribLocation(this.program, attribute.name);
             if (location === -1) continue; // Ignore special built-in inputs. eg gl_VertexID, gl_InstanceID
             locations[location] = attribute.name;
             this.attributeLocations.set(attribute, location);
@@ -4126,14 +4237,16 @@ class Program {
     }
 
     applyState() {
-        if (this.depthTest) renderer.enable(renderer.gl.DEPTH_TEST);
-        else renderer.disable(renderer.gl.DEPTH_TEST);
+        const gl = renderer.gl;
 
-        if (this.cullFace) renderer.enable(renderer.gl.CULL_FACE);
-        else renderer.disable(renderer.gl.CULL_FACE);
+        if (this.depthTest) renderer.enable(gl.DEPTH_TEST);
+        else renderer.disable(gl.DEPTH_TEST);
 
-        if (this.blendFunc.src) renderer.enable(renderer.gl.BLEND);
-        else renderer.disable(renderer.gl.BLEND);
+        if (this.cullFace) renderer.enable(gl.CULL_FACE);
+        else renderer.disable(gl.CULL_FACE);
+
+        if (this.blendFunc.src) renderer.enable(gl.BLEND);
+        else renderer.disable(gl.BLEND);
 
         if (this.cullFace) renderer.setCullFace(this.cullFace);
         renderer.setFrontFace(this.frontFace);
@@ -4144,12 +4257,13 @@ class Program {
     }
 
     use({ flipFaces = false } = {}) {
+        const gl = renderer.gl;
         let textureUnit = -1;
 
         // Avoid gl call if program already in use
         const programActive = (renderer.state.currentProgram === this.id);
         if (! programActive) {
-            renderer.gl.useProgram(this.program);
+            gl.useProgram(this.program);
             renderer.state.currentProgram = this.id;
         }
 
@@ -4183,7 +4297,7 @@ class Program {
 
                 // Check if texture needs to be updated
                 uniform.value.update(textureUnit);
-                return setUniform(renderer.gl, activeUniform.type, location, textureUnit);
+                return setUniform(gl, activeUniform.type, location, textureUnit);
             }
 
             // For texture arrays, set uniform as an array of texture units instead of just one
@@ -4195,19 +4309,20 @@ class Program {
                     textureUnits.push(textureUnit);
                 });
 
-                return setUniform(renderer.gl, activeUniform.type, location, textureUnits);
+                return setUniform(gl, activeUniform.type, location, textureUnits);
             }
 
-            setUniform(renderer.gl, activeUniform.type, location, uniform.value);
+            setUniform(gl, activeUniform.type, location, uniform.value);
         });
 
         this.applyState();
-        if (flipFaces) renderer.setFrontFace(this.frontFace === renderer.gl.CCW ? renderer.gl.CW : renderer.gl.CCW);
+        if (flipFaces) renderer.setFrontFace(this.frontFace === gl.CCW ? gl.CW : gl.CCW);
     }
 
-    remove() {
+    flush() {
         renderer.gl.deleteProgram(this.program);
         this.program = undefined;
+        renderer.info.programs--;
     }
 
 }
@@ -4280,8 +4395,8 @@ function flatten(a) {
     const valueLen = a[0].length;
     if (valueLen === undefined) return a;
     const length = arrayLen * valueLen;
-    let value = arrayCacheF32[length];
-    if (! value) arrayCacheF32[length] = value = new Float32Array(length);
+    let value = _arrayCacheF32[length];
+    if (! value) _arrayCacheF32[length] = value = new Float32Array(length);
     for (let i = 0; i < arrayLen; i++) value.set(a[i], i * valueLen);
     return value;
 }
@@ -4474,10 +4589,11 @@ class Color extends Array {
 // TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
 
 const _tempVec3$1 = new Vec3();
+let _idGenerator$1 = 1;
 
 class Renderer {
 
-    static #ID = 1;
+    static #idGenerator = 1;
 
     #contextLost = false;
 
@@ -4491,22 +4607,30 @@ class Renderer {
         dpr = 1,                                    // window.devicePixelRatio
     } = {}) {
 
-        // Properties
-        this.id = Renderer.#ID++;
+        this.uuid = uuid();
+        this.id = _idGenerator$1++;
         this.dpr = dpr;
 
         this.color = true;
         this.depth = depth;
         this.stencil = stencil;
 
-        // Active Geometry
-        this.currentGeometry = null;
+        // Draw info
+        this.currentGeometry = null;                // active geometry
+        this.drawCallCount = 0;                     // count draw calls in frame
+        this.lastScene = null;                      // last rendered scene
+
+        this.info = {
+            programs: 0,
+            geometries: 0,
+            textures: 0,
+        };
 
         // WebGL attributes
         const attributes = {
             // NOTE: About 'alpha', here we force canvas to have alpha buffer for performance reasons
-            // If using destination blending (such as with weighted, blended order independent transparency), will need
-            // to set alpha channel to 1.0 to avoid color errors.
+            // If using destination blending (such as with weighted, blended order independent transparency),
+            // will need to set alpha channel to 1.0 to avoid color errors.
             // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#avoid_alphafalse_which_can_be_expensive
             alpha: true,
             depth,
@@ -4563,7 +4687,6 @@ class Renderer {
             self.getExtension('WEBGL_compressed_texture_pvrtc');
             self.getExtension('WEBGL_multisampled_render_to_texture');
 
-
             self.maxAnisotropy = 0;
             if (self.extensions['EXT_texture_filter_anisotropic']) {
                 const extension = self.extensions['EXT_texture_filter_anisotropic'];
@@ -4595,7 +4718,7 @@ class Renderer {
         return this.extensions[name];
     }
 
-    // Usually (window.innerWidth, window.innerHeight)
+    /** Typically (window.innerWidth, window.innerHeight) */
     setSize(width, height, updateStyle = true) {
         this.width = width;
         this.height = height;
@@ -4795,18 +4918,15 @@ class Renderer {
         update = true,
         clear = true,
     } = {}) {
-        // Framebuffer
-        if (target === null) {
-            // Bind html canvas
-            this.bindFramebuffer();
+
+        if (! target) {
+            this.bindFramebuffer();         // to screen
             this.setViewport(this.width * this.dpr, this.height * this.dpr);
         } else {
-            // Bind render target
-            this.bindFramebuffer(target);
+            this.bindFramebuffer(target);   // to framebuffer
             this.setViewport(target.width, target.height);
         }
 
-        // Perform clear
         if (clear) {
             // Ensure depth buffer writing is enabled so it can be cleared
             if (this.depth && (! target || target.depth)) {
@@ -4845,31 +4965,27 @@ class Renderer {
         const renderList = this.getRenderList({ scene, camera, frustumCull, sort });
 
         // Render objects
-        if (draw) {
-            renderList.forEach((node) => {
-                node.draw({ camera });
-            });
-        }
+        if (draw) renderList.forEach(node => node.draw({ camera }));
 
+        // Return list
+        this.lastScene = scene;
         return renderList;
     }
 
 }
 
-// TODO: delete texture
+// TODO: delete (flush)  texture
 // TODO: use texSubImage2D for updates (video or when loaded)
 // TODO: need? encoding = linearEncoding
 // TODO: support non-compressed mipmaps uploads
 
-const emptyPixel = new Uint8Array(4);
+const _emptyPixel = new Uint8Array(4);
+let _idGenerator = 1;
 
 class Texture {
 
-    static #ID = 1;
-
     constructor({
         image,
-        src,
         target = renderer.gl.TEXTURE_2D,
         type = renderer.gl.UNSIGNED_BYTE,
         format = renderer.gl.RGBA,
@@ -4887,22 +5003,24 @@ class Texture {
         width, // used for RenderTargets or Data Textures
         height = width,
     } = {}) {
-        const self = this;
+        if (! renderer) console.error(`Texture.constructor: Renderer not found`);
+        const gl = renderer.gl;
 
         this.isTexture = true;
 
-        this.id = Texture.#ID++;
+        this.uuid = uuid();
+        this.id = _idGenerator++;
 
         this.image = image;
         this.target = target;
         this.type = type;
         this.format = format;
         this.internalFormat = internalFormat;
-        this.minFilter = minFilter;
-        this.magFilter = magFilter;
         this.wrapS = wrapS;
         this.wrapT = wrapT;
         this.generateMipmaps = generateMipmaps;
+        this.minFilter = minFilter;
+        this.magFilter = magFilter;
         this.premultiplyAlpha = premultiplyAlpha;
         this.unpackAlignment = unpackAlignment;
         this.flipY = flipY;
@@ -4910,27 +5028,23 @@ class Texture {
         this.level = level;
         this.width = width;
         this.height = height;
-        this.texture = renderer.gl.createTexture();
+
+        this.texture = gl.createTexture();
+        renderer.info.textures++;
 
         this.store = {
             image: null,
         };
-
-        if (! image && src) {
-            const img = new Image();
-            img.onload = () => (self.image = img);
-            img.src = src;
-        }
 
         // Alias for state store to avoid redundant calls for global state
         renderer.glState = renderer.state;
 
         // State store to avoid redundant calls for per-texture state
         this.state = {};
-        this.state.minFilter = renderer.gl.NEAREST_MIPMAP_LINEAR;
-        this.state.magFilter = renderer.gl.LINEAR;
-        this.state.wrapS = renderer.gl.REPEAT;
-        this.state.wrapT = renderer.gl.REPEAT;
+        this.state.minFilter = gl.NEAREST_MIPMAP_LINEAR;
+        this.state.magFilter = gl.LINEAR;
+        this.state.wrapS = gl.REPEAT;
+        this.state.wrapT = gl.REPEAT;
         this.state.anisotropy = 0;
     }
 
@@ -4944,6 +5058,7 @@ class Texture {
     }
 
     update(textureUnit = 0) {
+        const gl = renderer.gl;
         const needsUpdate = ! (this.image === this.store.image && ! this.needsUpdate);
 
         // Make sure that texture is bound to its texture unit
@@ -4957,42 +5072,42 @@ class Texture {
         this.needsUpdate = false;
 
         if (this.flipY !== renderer.glState.flipY) {
-            renderer.gl.pixelStorei(renderer.gl.UNPACK_FLIP_Y_WEBGL, this.flipY);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY);
             renderer.glState.flipY = this.flipY;
         }
 
         if (this.premultiplyAlpha !== renderer.glState.premultiplyAlpha) {
-            renderer.gl.pixelStorei(renderer.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
+            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
             renderer.glState.premultiplyAlpha = this.premultiplyAlpha;
         }
 
         if (this.unpackAlignment !== renderer.glState.unpackAlignment) {
-            renderer.gl.pixelStorei(renderer.gl.UNPACK_ALIGNMENT, this.unpackAlignment);
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment);
             renderer.glState.unpackAlignment = this.unpackAlignment;
         }
 
         if (this.minFilter !== this.state.minFilter) {
-            renderer.gl.texParameteri(this.target, renderer.gl.TEXTURE_MIN_FILTER, this.minFilter);
+            gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this.minFilter);
             this.state.minFilter = this.minFilter;
         }
 
         if (this.magFilter !== this.state.magFilter) {
-            renderer.gl.texParameteri(this.target, renderer.gl.TEXTURE_MAG_FILTER, this.magFilter);
+            gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this.magFilter);
             this.state.magFilter = this.magFilter;
         }
 
         if (this.wrapS !== this.state.wrapS) {
-            renderer.gl.texParameteri(this.target, renderer.gl.TEXTURE_WRAP_S, this.wrapS);
+            gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, this.wrapS);
             this.state.wrapS = this.wrapS;
         }
 
         if (this.wrapT !== this.state.wrapT) {
-            renderer.gl.texParameteri(this.target, renderer.gl.TEXTURE_WRAP_T, this.wrapT);
+            gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, this.wrapT);
             this.state.wrapT = this.wrapT;
         }
 
         if (this.anisotropy && this.anisotropy !== this.state.anisotropy) {
-            renderer.gl.texParameterf(
+            gl.texParameterf(
                 this.target,
                 renderer.getExtension('EXT_texture_filter_anisotropic').TEXTURE_MAX_ANISOTROPY_EXT,
                 this.anisotropy
@@ -5006,11 +5121,11 @@ class Texture {
                 this.height = this.image.height;
             }
 
-            if (this.target === renderer.gl.TEXTURE_CUBE_MAP) {
+            if (this.target === gl.TEXTURE_CUBE_MAP) {
                 // For cube maps
                 for (let i = 0; i < 6; i++) {
-                    renderer.gl.texImage2D(
-                        renderer.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                    gl.texImage2D(
+                        gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
                         this.level,
                         this.internalFormat,
                         this.format,
@@ -5020,11 +5135,11 @@ class Texture {
                 }
             } else if (ArrayBuffer.isView(this.image)) {
                 // Data texture
-                renderer.gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, this.image);
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, this.image);
             } else if (this.image.isCompressedTexture) {
                 // Compressed texture
                 for (let level = 0; level < this.image.length; level++) {
-                    renderer.gl.compressedTexImage2D(
+                    gl.compressedTexImage2D(
                         this.target,
                         level,
                         this.internalFormat,
@@ -5036,42 +5151,51 @@ class Texture {
                 }
             } else {
                 // Regular texture
-                renderer.gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, this.image);
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, this.image);
             }
 
             if (this.generateMipmaps) {
-                renderer.gl.generateMipmap(this.target);
+                gl.generateMipmap(this.target);
             }
 
             // Callback for when data is pushed to GPU
-            this.onUpdate && this.onUpdate();
+            if (this.onUpdate) this.onUpdate();
         } else {
-            if (this.target === renderer.gl.TEXTURE_CUBE_MAP) {
+            if (this.target === gl.TEXTURE_CUBE_MAP) {
                 // Upload empty pixel for each side while no image to avoid errors while image or video loading
                 for (let i = 0; i < 6; i++) {
-                    renderer.gl.texImage2D(
-                        renderer.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                    gl.texImage2D(
+                        gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
                         0,
-                        renderer.gl.RGBA,
+                        gl.RGBA,
                         1,
                         1,
                         0,
-                        renderer.gl.RGBA,
-                        renderer.gl.UNSIGNED_BYTE,
-                        emptyPixel
+                        gl.RGBA,
+                        gl.UNSIGNED_BYTE,
+                        _emptyPixel
                     );
                 }
             } else if (this.width) {
                 // Image intentionally left null for RenderTarget
-                renderer.gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
             } else {
                 // Upload empty pixel if no image to avoid errors while image or video loading
-                renderer.gl.texImage2D(this.target, 0, renderer.gl.RGBA, 1, 1, 0, renderer.gl.RGBA, renderer.gl.UNSIGNED_BYTE, emptyPixel);
+                gl.texImage2D(this.target, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
             }
         }
 
         this.store.image = this.image;
     }
+
+    flush() {
+
+        // TODO
+
+        renderer.info.textures--;
+
+    }
+
 }
 
 // TODO: test stencil and depth
@@ -5096,11 +5220,12 @@ class RenderTarget {
         unpackAlignment,
         premultiplyAlpha,
     } = {}) {
-        renderer.gl = renderer.gl;
+        const gl = renderer.gl;
+
         this.width = width;
         this.height = height;
         this.depth = depth;
-        this.buffer = renderer.gl.createFramebuffer();
+        this.buffer = gl.createFramebuffer();
         this.target = target;
         renderer.bindFramebuffer(this);
 
@@ -5127,12 +5252,12 @@ class RenderTarget {
                 })
             );
             this.textures[i].update();
-            renderer.gl.framebufferTexture2D(this.target, renderer.gl.COLOR_ATTACHMENT0 + i, renderer.gl.TEXTURE_2D, this.textures[i].texture, 0 /* level */);
-            drawBuffers.push(renderer.gl.COLOR_ATTACHMENT0 + i);
+            gl.framebufferTexture2D(this.target, gl.COLOR_ATTACHMENT0 + i, gl.TEXTURE_2D, this.textures[i].texture, 0 /* level */);
+            drawBuffers.push(gl.COLOR_ATTACHMENT0 + i);
         }
 
         // For multi-render targets shader access
-        if (drawBuffers.length > 1) renderer.gl.drawBuffers(drawBuffers);
+        if (drawBuffers.length > 1) gl.drawBuffers(drawBuffers);
 
         // Alias for majority of use cases
         this.texture = this.textures[0];
@@ -5142,35 +5267,35 @@ class RenderTarget {
             this.depthTexture = new Texture({
                 width,
                 height,
-                minFilter: renderer.gl.NEAREST,
-                magFilter: renderer.gl.NEAREST,
-                format: renderer.gl.DEPTH_COMPONENT,
-                internalFormat: renderer.gl.DEPTH_COMPONENT16,
-                type: renderer.gl.UNSIGNED_INT,
+                minFilter: gl.NEAREST,
+                magFilter: gl.NEAREST,
+                format: gl.DEPTH_COMPONENT,
+                internalFormat: gl.DEPTH_COMPONENT16,
+                type: gl.UNSIGNED_INT,
             });
             this.depthTexture.update();
-            renderer.gl.framebufferTexture2D(this.target, renderer.gl.DEPTH_ATTACHMENT, renderer.gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
+            gl.framebufferTexture2D(this.target, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
         } else {
             // Render buffers
-            if (depth && !stencil) {
-                this.depthBuffer = renderer.gl.createRenderbuffer();
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.depthBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.DEPTH_COMPONENT16, width, height);
-                renderer.gl.framebufferRenderbuffer(this.target, renderer.gl.DEPTH_ATTACHMENT, renderer.gl.RENDERBUFFER, this.depthBuffer);
+            if (depth && ! stencil) {
+                this.depthBuffer = gl.createRenderbuffer();
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+                gl.framebufferRenderbuffer(this.target, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.depthBuffer);
             }
 
             if (stencil && !depth) {
-                this.stencilBuffer = renderer.gl.createRenderbuffer();
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.stencilBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.STENCIL_INDEX8, width, height);
-                renderer.gl.framebufferRenderbuffer(this.target, renderer.gl.STENCIL_ATTACHMENT, renderer.gl.RENDERBUFFER, this.stencilBuffer);
+                this.stencilBuffer = gl.createRenderbuffer();
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.stencilBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
+                gl.framebufferRenderbuffer(this.target, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, this.stencilBuffer);
             }
 
             if (depth && stencil) {
-                this.depthStencilBuffer = renderer.gl.createRenderbuffer();
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.depthStencilBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.DEPTH_STENCIL, width, height);
-                renderer.gl.framebufferRenderbuffer(this.target, renderer.gl.DEPTH_STENCIL_ATTACHMENT, renderer.gl.RENDERBUFFER, this.depthStencilBuffer);
+                this.depthStencilBuffer = gl.createRenderbuffer();
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthStencilBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
+                gl.framebufferRenderbuffer(this.target, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, this.depthStencilBuffer);
             }
         }
 
@@ -5180,6 +5305,7 @@ class RenderTarget {
     setSize(width, height) {
         if (this.width === width && this.height === height) return;
 
+        const gl = renderer.gl;
         this.width = width;
         this.height = height;
         renderer.bindFramebuffer(this);
@@ -5189,7 +5315,7 @@ class RenderTarget {
             this.textures[i].height = height;
             this.textures[i].needsUpdate = true;
             this.textures[i].update();
-            renderer.gl.framebufferTexture2D(this.target, renderer.gl.COLOR_ATTACHMENT0 + i, renderer.gl.TEXTURE_2D, this.textures[i].texture, 0 /* level */);
+            gl.framebufferTexture2D(this.target, gl.COLOR_ATTACHMENT0 + i, gl.TEXTURE_2D, this.textures[i].texture, 0 /* level */);
         }
 
         if (this.depthTexture) {
@@ -5197,27 +5323,600 @@ class RenderTarget {
             this.depthTexture.height = height;
             this.depthTexture.needsUpdate = true;
             this.depthTexture.update();
-            renderer.gl.framebufferTexture2D(this.target, renderer.gl.DEPTH_ATTACHMENT, renderer.gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
+            gl.framebufferTexture2D(this.target, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
         } else {
             if (this.depthBuffer) {
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.depthBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.DEPTH_COMPONENT16, width, height);
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
             }
 
             if (this.stencilBuffer) {
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.stencilBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.STENCIL_INDEX8, width, height);
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.stencilBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
             }
 
             if (this.depthStencilBuffer) {
-                renderer.gl.bindRenderbuffer(renderer.gl.RENDERBUFFER, this.depthStencilBuffer);
-                renderer.gl.renderbufferStorage(renderer.gl.RENDERBUFFER, renderer.gl.DEPTH_STENCIL, width, height);
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthStencilBuffer);
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
             }
         }
 
         renderer.bindFramebuffer({ target: this.target });
     }
 }
+
+// TODO: Support cubemaps
+// Generate textures using https://github.com/TimvanScherpenzeel/texture-compressor
+
+class KTXTexture extends Texture {
+
+    constructor({
+        buffer,
+        wrapS = renderer.gl.CLAMP_TO_EDGE,
+        wrapT = renderer.gl.CLAMP_TO_EDGE,
+        anisotropy = 0,
+        minFilter,
+        magFilter
+    } = {}) {
+        super({
+            generateMipmaps: false,
+            wrapS,
+            wrapT,
+            anisotropy,
+            minFilter,
+            magFilter,
+        });
+
+        if (buffer) return this.parseBuffer(buffer);
+    }
+
+    parseBuffer(buffer) {
+        const ktx = new KhronosTextureContainer(buffer);
+        ktx.mipmaps.isCompressedTexture = true;
+
+        // Update texture
+        this.image = ktx.mipmaps;
+        this.internalFormat = ktx.glInternalFormat;
+        if (ktx.numberOfMipmapLevels > 1) {
+            if (this.minFilter === renderer.gl.LINEAR) this.minFilter = renderer.gl.NEAREST_MIPMAP_LINEAR;
+        } else {
+            if (this.minFilter === renderer.gl.NEAREST_MIPMAP_LINEAR) this.minFilter = renderer.gl.LINEAR;
+        }
+
+        // TODO: support cube maps
+        // ktx.numberOfFaces
+    }
+}
+
+/***** Internal *****/
+
+function KhronosTextureContainer(buffer) {
+    const idCheck = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
+    const id = new Uint8Array(buffer, 0, 12);
+    for (let i = 0; i < id.length; i++) {
+        if (id[i] !== idCheck[i]) return console.error('KTXTexture: File missing KTX identifier');
+    }
+
+    // TODO: Is this always 4? Tested: [android, macos]
+    const size = Uint32Array.BYTES_PER_ELEMENT;
+    const head = new DataView(buffer, 12, 13 * size);
+    const littleEndian = head.getUint32(0, true) === 0x04030201;
+    const glType = head.getUint32(1 * size, littleEndian);
+    if (glType !== 0) return console.warn('KTXTexture: Only compressed formats currently supported.');
+    this.glInternalFormat = head.getUint32(4 * size, littleEndian);
+    let width = head.getUint32(6 * size, littleEndian);
+    let height = head.getUint32(7 * size, littleEndian);
+    this.numberOfFaces = head.getUint32(10 * size, littleEndian);
+    this.numberOfMipmapLevels = Math.max(1, head.getUint32(11 * size, littleEndian));
+    const bytesOfKeyValueData = head.getUint32(12 * size, littleEndian);
+
+    this.mipmaps = [];
+    let offset = 12 + 13 * 4 + bytesOfKeyValueData;
+    for (let level = 0; level < this.numberOfMipmapLevels; level++) {
+        const levelSize = new Int32Array(buffer, offset, 1)[0]; // size per face, since not supporting array cubemaps
+        offset += 4; // levelSize field
+        for (let face = 0; face < this.numberOfFaces; face++) {
+            const data = new Uint8Array(buffer, offset, levelSize);
+            this.mipmaps.push({ data, width, height });
+            offset += levelSize;
+            offset += 3 - ((levelSize + 3) % 4); // add padding for odd sized image
+        }
+        width = width >> 1;
+        height = height >> 1;
+    }
+}
+
+// For compressed textures, generate using https://github.com/TimvanScherpenzeel/texture-compressor
+
+class TextureLoader {
+
+    static #cache = {};
+    static #supportedExtensions = [];
+
+    static load({
+        src, // string or object of extension:src key-values
+        // {
+        //     pvrtc: '...ktx',
+        //     s3tc: '...ktx',
+        //     etc: '...ktx',
+        //     etc1: '...ktx',
+        //     astc: '...ktx',
+        //     webp: '...webp',
+        //     jpg: '...jpg',
+        //     png: '...png',
+        // }
+
+        // Properties for Texture only
+        format = renderer.gl.RGBA,
+        internalFormat = format,
+        generateMipmaps = true,
+        premultiplyAlpha = false,
+        unpackAlignment = 4,
+        flipY = true,
+
+        // Properties for Texture & KTXTexture
+        wrapS = renderer.gl.CLAMP_TO_EDGE,
+        wrapT = renderer.gl.CLAMP_TO_EDGE,
+        anisotropy = 0,
+        minFilter = generateMipmaps ? renderer.gl.NEAREST_MIPMAP_LINEAR : renderer.gl.LINEAR,
+        magFilter = renderer.gl.LINEAR,
+    } = {}) {
+
+        if (! src || src === '') {
+            console.warn(`TextureLoader: No source provided`);
+            return new Texture();
+        }
+
+        const support = this.getSupportedExtensions();
+        let ext = 'none';
+
+        // If src is string, determine which format from the extension
+        if (typeof src === 'string') {
+            ext = src.split('.').pop().split('?')[0].toLowerCase();
+        }
+
+        // If src is object, use supported extensions and provided list to choose best option
+        // Get first supported match, so put in order of preference
+        if (typeof src === 'object') {
+            for (const prop in src) {
+                if (support.includes(prop.toLowerCase())) {
+                    ext = prop.toLowerCase();
+                    src = src[prop];
+                    break;
+                }
+            }
+        }
+
+        // Check cache for existing texture
+        const cacheID = src;// + renderer.id;
+        if (this.#cache[cacheID]) return this.#cache[cacheID];
+
+        let texture;
+        switch (ext) {
+            case 'ktx':
+            case 'pvrtc':
+            case 's3tc':
+            case 'etc':
+            case 'etc1':
+            case 'astc':
+                // Load compressed texture using KTX format
+                texture = new KTXTexture({
+                    src,
+                    wrapS,
+                    wrapT,
+                    anisotropy,
+                    minFilter,
+                    magFilter,
+                });
+                texture.loaded = loadKTX(src, texture);
+                break;
+            case 'webp':
+            case 'svg':
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+                texture = new Texture({
+                    wrapS,
+                    wrapT,
+                    anisotropy,
+                    format,
+                    internalFormat,
+                    generateMipmaps,
+                    minFilter,
+                    magFilter,
+                    premultiplyAlpha,
+                    unpackAlignment,
+                    flipY,
+                });
+                texture.loaded = loadImage(src, texture, flipY);
+                break;
+            default:
+                console.warn(`TextureLoader: Format not supported - '${ext}'`);
+                texture = new Texture();
+        }
+
+        texture.ext = ext;
+        this.#cache[cacheID] = texture;
+        return texture;
+    }
+
+    static getSupportedExtensions(logWarnings = false) {
+        if (this.#supportedExtensions.length) return this.#supportedExtensions;
+
+        const extensions = {
+            pvrtc: renderer.getExtension('WEBGL_compressed_texture_pvrtc', logWarnings),
+            s3tc: renderer.getExtension('WEBGL_compressed_texture_s3tc', logWarnings),
+            etc1: renderer.getExtension('WEBGL_compressed_texture_etc1', logWarnings),
+            astc: renderer.getExtension('WEBGL_compressed_texture_astc', logWarnings),
+            bc7: renderer.getExtension('EXT_texture_compression_bptc', logWarnings),
+        };
+
+        for (const ext in extensions) {
+            if (extensions[ext]) this.#supportedExtensions.push(ext);
+        }
+
+        // Check for WebP support
+        if (detectWebP()) this.#supportedExtensions.push('webp');
+
+        // Formats supported by all
+        this.#supportedExtensions.push('png', 'jpg', 'svg');
+
+        return this.#supportedExtensions;
+    }
+
+    static removeFromCache(texture) {
+        for (let url in this.#cache) {
+            if (this.#cache[url].uuid === texture.uuid) delete this.#cache[url];
+        }
+    }
+
+}
+
+/***** Internal *****/
+
+function detectWebP() {
+    return document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') == 0;
+}
+
+function powerOfTwo(value) {
+    // (width & (width - 1)) !== 0
+    return Math.log2(value) % 1 === 0;
+}
+
+function nameFromUrl(url) {
+    let imageName = new String(url.replace(/^.*[\\\/]/, ''));       // Filename only
+    imageName = imageName.replace(/\.[^/.]+$/, "");                 // Remove extension
+    return imageName;
+}
+
+function loadKTX(src, texture) {
+    return fetch(src)
+        .then((res) => res.arrayBuffer())
+        .then((buffer) => texture.parseBuffer(buffer));
+}
+
+function loadImage(src, texture, flipY) {
+    return decodeImage(src, flipY).then((imgBmp) => {
+        // // Catch non POT textures and update params to avoid errors
+        // if (! powerOfTwo(imgBmp.width) || ! powerOfTwo(imgBmp.height)) {
+        //     if (texture.generateMipmaps) texture.generateMipmaps = false;
+        //     if (texture.minFilter === renderer.gl.NEAREST_MIPMAP_LINEAR) texture.minFilter = renderer.gl.LINEAR;
+        //     if (texture.wrapS === renderer.gl.REPEAT) texture.wrapS = texture.wrapT = renderer.gl.CLAMP_TO_EDGE;
+        // }
+
+        texture.name = nameFromUrl(src);
+        texture.image = imgBmp;
+
+        // For createImageBitmap, close once uploaded
+        texture.onUpdate = () => {
+            if (imgBmp.close) imgBmp.close();
+            texture.onUpdate = null;
+        };
+
+        return imgBmp;
+    });
+}
+
+function decodeImage(src, flipY) {
+    return new Promise((resolve) => {
+        // Only chrome's implementation of createImageBitmap is fully supported
+        const isChrome = navigator.userAgent.toLowerCase().includes('chrome');
+        if (!!window.createImageBitmap && isChrome) {
+            fetch(src, { mode: 'cors' })
+                .then(response => response.blob())
+                .then(image => createImageBitmap(image, { imageOrientation: flipY ? 'flipY' : 'none', premultiplyAlpha: 'none' }))
+                .then(resolve);
+        } else {
+            const img = new Image();
+            img.crossOrigin = '';
+            img.src = src;
+            img.onload = () => resolve(img);
+        }
+    });
+}
+
+class AssetManager {
+
+    static #assets = {};
+
+    static assetType(asset) {
+        if (asset.isGeometry) return 'geometry';
+        if (asset.isTexture) return 'texture';
+        return 'asset';
+    }
+
+    static getLibrary(type) {
+        const library = [];
+        for (const [uuid, asset] of Object.entries(this.#assets)) {
+            if (AssetManager.assetType(asset) === type) library.push(asset);
+        }
+        return library;
+    }
+
+    /***** Add / Get / Remove *****/
+
+    static addAsset(assetOrArray) {
+        if (! assetOrArray) return;
+        const assetArray = (Array.isArray(assetOrArray)) ? assetOrArray : [ assetOrArray ];
+        for (let i = 0; i < assetArray.length; i++) {
+            const asset = assetArray[i];
+            if (! asset.uuid) continue;
+            if (! asset.name || asset.name === '') asset.name = asset.constructor.name;
+            this.#assets[asset.uuid] = asset;
+        }
+        return assetOrArray;
+    }
+
+    static getAsset(uuid) {
+        if (! uuid) return;
+        if (uuid.uuid) uuid = uuid.uuid;
+        return this.#assets[uuid];
+    }
+
+    static removeAsset(assetOrArray, flush = true) {
+        if (! assetOrArray) return;
+        const assetArray = (Array.isArray(assetOrArray)) ? assetOrArray : [ assetOrArray ];
+
+        for (let i = 0; i < assetArray.length; i++) {
+            const asset = assetArray[i];
+            if (this.#assets[asset.uuid]) {
+                // Remove textures from cache
+                if (asset.isTexture) TextureLoader.removeFromCache(asset);
+
+                // Flush & Delete
+                if (flush) asset.flush && asset.flush();
+                delete this.#assets[asset.uuid];
+            }
+        }
+    }
+
+    /***** JSON *****/
+
+    static clear() {
+        for (let uuid in _assets) {
+            AssetManager.removeAsset(_assets[uuid], true);
+        }
+    }
+
+    static fromJSON(json) {
+
+        // Clear Assets
+        AssetManager.clear();
+
+        // Add to Assets
+        function addLibraryToAssets(library) {
+            for (const [uuid, asset] of Object.entries(library)) {
+                AssetManager.addAsset(asset);
+            }
+        }
+
+        // // Load Assets
+		// const objectLoader = new THREE.ObjectLoader();
+		// const geometries = objectLoader.parseGeometries(json.geometries, {});
+		// const images = objectLoader.parseImages(json.images);
+		// const textures = objectLoader.parseTextures(json.textures, images);
+
+        // addLibraryToAssets(geometries);
+        // addLibraryToAssets(images);
+        // addLibraryToAssets(textures);
+
+    }
+
+    static toJSON(meta) {
+
+        const json = {};
+
+        // if (! meta) meta = {};
+        // if (! meta.geometries) meta.geometries = {};
+        // if (! meta.images) meta.images = {};
+        // if (! meta.textures) meta.textures = {};
+
+        // const stopRoot = {
+        //     images: {},
+        //     textures: {},
+        //     materials: {},
+        // };
+
+        // // Geometries
+        // const geometries = AssetManager.getLibrary('geometry');
+        // for (let i = 0; i < geometries.length; i++) {
+        //     const geometry = geometries[i];
+        //     if (! meta.geometries[geometry.uuid]) meta.geometries[geometry.uuid] = geometry.toJSON(meta);
+        // }
+
+        // // Textures
+        // const textures = AssetManager.getLibrary('texture');
+        // for (let i = 0; i < textures.length; i++) {
+        //     const texture = textures[i];
+        //     if (! meta.textures[texture.uuid]) meta.textures[texture.uuid] = texture.toJSON(meta);
+        // }
+
+        // // Add 'meta' caches to 'json' as arrays
+        // for (const library in meta) {
+        //     const valueArray = [];
+        //     for (const key in meta[library]) {
+        //         const data = meta[library][key];
+        //         delete data.metadata;
+        //         valueArray.push(data);
+        //     }
+        //     if (valueArray.length > 0) json[library] = valueArray;
+        // }
+
+        return json;
+    }
+
+}
+
+class Triangle extends Geometry {
+
+    constructor({
+        attributes = {}
+    } = {}) {
+        Object.assign(attributes, {
+            position: { size: 2, data: new Float32Array([ -1, -1, 3, -1, -1, 3 ]) },
+            uv: { size: 2, data: new Float32Array([ 0, 0, 2, 0, 0, 2 ]) },
+        });
+
+        super(attributes);
+    }
+
+}
+
+// TODO: Destroy render targets if size changed and exists
+
+class Post {
+
+    constructor({
+        width,
+        height,
+        dpr,
+        wrapS = renderer.gl.CLAMP_TO_EDGE,
+        wrapT = renderer.gl.CLAMP_TO_EDGE,
+        minFilter = renderer.gl.LINEAR,
+        magFilter = renderer.gl.LINEAR,
+        geometry = new Triangle(),
+        targetOnly = null,
+    } = {}) {
+
+        this.options = { wrapS, wrapT, minFilter, magFilter };
+
+        this.passes = [];
+
+        this.geometry = geometry;
+
+        this.uniform = { value: null };
+        this.targetOnly = targetOnly;
+
+        const fbo = (this.fbo = {
+            read: null,
+            write: null,
+            swap: () => {
+                let temp = fbo.read;
+                fbo.read = fbo.write;
+                fbo.write = temp;
+            },
+        });
+
+        this.resize({ width, height, dpr });
+    }
+
+    addPass({
+        vertex = defaultVertex$4,
+        fragment = defaultFragment$4,
+        uniforms = {},
+        textureUniform = 'tDiffuse',
+        enabled = true
+    } = {}) {
+        uniforms[textureUniform] = { value: this.fbo.read.texture };
+
+        const program = new Program({ vertex, fragment, uniforms });
+        const mesh = new Mesh({ geometry: this.geometry, program });
+
+        const pass = {
+            mesh,
+            program,
+            uniforms,
+            enabled,
+            textureUniform,
+        };
+
+        this.passes.push(pass);
+        return pass;
+    }
+
+    resize({ width, height, dpr } = {}) {
+        if (dpr) this.dpr = dpr;
+        if (width) {
+            this.width = width;
+            this.height = height || width;
+        }
+
+        dpr = this.dpr || renderer.dpr;
+        width = Math.floor((this.width || renderer.width) * dpr);
+        height = Math.floor((this.height || renderer.height) * dpr);
+
+        this.options.width = width;
+        this.options.height = height;
+
+        this.fbo.read = new RenderTarget(this.options);
+        this.fbo.write = new RenderTarget(this.options);
+    }
+
+    // Uses same arguments as renderer.render, with addition of optional texture passed in to avoid scene render
+    render({ scene, camera, texture, target = null, update = true, sort = true, frustumCull = true }) {
+        const enabledPasses = this.passes.filter((pass) => pass.enabled);
+
+        if (! texture) {
+            renderer.render({
+                scene,
+                camera,
+                target: enabledPasses.length || (! target && this.targetOnly) ? this.fbo.write : target,
+                update,
+                sort,
+                frustumCull,
+            });
+            this.fbo.swap();
+        }
+
+        enabledPasses.forEach((pass, i) => {
+            pass.mesh.program.uniforms[pass.textureUniform].value = ! i && texture ? texture : this.fbo.read.texture;
+            renderer.render({
+                scene: pass.mesh,
+                target: i === enabledPasses.length - 1 && (target || ! this.targetOnly) ? target : this.fbo.write,
+                clear: true,
+            });
+            this.fbo.swap();
+        });
+
+        this.uniform.value = this.fbo.read.texture;
+    }
+
+}
+
+/***** Internal *****/
+
+const defaultVertex$4 = /* glsl */ `
+    attribute vec2 uv;
+    attribute vec2 position;
+
+    varying vec2 vUv;
+
+    void main() {
+        vUv = uv;
+        gl_Position = vec4(position, 0, 1);
+    }
+`;
+
+const defaultFragment$4 = /* glsl */ `
+    precision highp float;
+
+    uniform sampler2D tDiffuse;
+    varying vec2 vUv;
+
+    void main() {
+        gl_FragColor = texture2D(tDiffuse, vUv);
+    }
+`;
 
 const EPSILON$1 = 0.000001;
 
@@ -5672,7 +6371,359 @@ class Vec2 extends Array {
 
 }
 
+// TODO: barycentric code shouldn't be here, but where?
+// TODO: SphereCast?
+
+const tempVec2a = new Vec2();
+const tempVec2b = new Vec2();
+const tempVec2c = new Vec2();
+
+const tempVec3a = new Vec3();
+const tempVec3b = new Vec3();
+const tempVec3c = new Vec3();
+const tempVec3d = new Vec3();
+const tempVec3e = new Vec3();
+const tempVec3f = new Vec3();
+const tempVec3g = new Vec3();
+const tempVec3h = new Vec3();
+const tempVec3i = new Vec3();
+const tempVec3j = new Vec3();
+const tempVec3k = new Vec3();
+
+const tempMat4$1 = new Mat4();
+
+class Raycast {
+
+    constructor() {
+        this.origin = new Vec3();
+        this.direction = new Vec3();
+    }
+
+    // Set ray from mouse unprojection
+    castMouse(camera, mouse = [ 0, 0 ]) {
+        if (camera.type === 'orthographic') {
+            // Set origin
+            // Since camera is orthographic, origin is not the camera position
+            const { left, right, bottom, top, zoom } = camera;
+            const x = left / zoom + ((right - left) / zoom) * (mouse[0] * 0.5 + 0.5);
+            const y = bottom / zoom + ((top - bottom) / zoom) * (mouse[1] * 0.5 + 0.5);
+            this.origin.set(x, y, 0);
+            this.origin.applyMatrix4(camera.worldMatrix);
+
+            // Set direction
+            // https://community.khronos.org/t/get-direction-from-transformation-matrix-or-quat/65502/2
+            this.direction.x = -camera.worldMatrix[8];
+            this.direction.y = -camera.worldMatrix[9];
+            this.direction.z = -camera.worldMatrix[10];
+        } else {
+            // Set origin
+            camera.worldMatrix.getTranslation(this.origin);
+
+            // Set direction
+            this.direction.set(mouse[0], mouse[1], 0.5);
+            camera.unproject(this.direction);
+            this.direction.sub(this.origin).normalize();
+        }
+    }
+
+    intersectBounds(meshes, { maxDistance, output = [] } = {}) {
+        if (! Array.isArray(meshes)) meshes = [ meshes ];
+
+        const invWorldMat4 = tempMat4$1;
+        const origin = tempVec3a;
+        const direction = tempVec3b;
+
+        const hits = output;
+        hits.length = 0;
+
+        meshes.forEach((mesh) => {
+
+            // Create bounds
+            if (! mesh.geometry.bounds || mesh.geometry.bounds.radius === Infinity) mesh.geometry.computeBoundingSphere();
+            const bounds = mesh.geometry.bounds;
+            invWorldMat4.inverse(mesh.worldMatrix);
+
+            // Get max distance locally
+            let localMaxDistance;
+            if (maxDistance) {
+                direction.copy(this.direction).scaleRotateMatrix4(invWorldMat4);
+                localMaxDistance = maxDistance * direction.len();
+            }
+
+            // Take world space ray and make it object space to align with bounding box
+            origin.copy(this.origin).applyMatrix4(invWorldMat4);
+            direction.copy(this.direction).transformDirection(invWorldMat4);
+
+            // Break out early if bounds too far away from origin
+            if (maxDistance) {
+                if (origin.distance(bounds.center) - bounds.radius > localMaxDistance) return;
+            }
+
+            let localDistance = 0;
+
+            // Check origin isn't inside bounds before testing intersection
+            if (mesh.geometry.raycast === 'sphere') {
+                if (origin.distance(bounds.center) > bounds.radius) {
+                    localDistance = this.intersectSphere(bounds, origin, direction);
+                    if (!localDistance) return;
+                }
+            } else {
+                if (
+                    origin.x < bounds.min.x ||
+                    origin.x > bounds.max.x ||
+                    origin.y < bounds.min.y ||
+                    origin.y > bounds.max.y ||
+                    origin.z < bounds.min.z ||
+                    origin.z > bounds.max.z
+                ) {
+                    localDistance = this.intersectBox(bounds, origin, direction);
+                    if (!localDistance) return;
+                }
+            }
+
+            if (maxDistance && localDistance > localMaxDistance) return;
+
+            // Create object on mesh to avoid generating lots of objects
+            if (! mesh.hit) mesh.hit = { localPoint: new Vec3(), point: new Vec3() };
+
+            mesh.hit.localPoint.copy(direction).multiply(localDistance).add(origin);
+            mesh.hit.point.copy(mesh.hit.localPoint).applyMatrix4(mesh.worldMatrix);
+            mesh.hit.distance = mesh.hit.point.distance(this.origin);
+
+            hits.push(mesh);
+        });
+
+        hits.sort((a, b) => a.hit.distance - b.hit.distance);
+        return hits;
+    }
+
+    intersectMeshes(meshes, { cullFace = true, maxDistance, includeUV = true, includeNormal = true, output = [] } = {}) {
+        // Test bounds first before testing geometry
+        const hits = this.intersectBounds(meshes, { maxDistance, output });
+        if (! hits.length) return hits;
+
+        const invWorldMat4 = tempMat4$1;
+        const origin = tempVec3a;
+        const direction = tempVec3b;
+        const a = tempVec3c;
+        const b = tempVec3d;
+        const c = tempVec3e;
+        const closestFaceNormal = tempVec3f;
+        const faceNormal = tempVec3g;
+        const barycoord = tempVec3h;
+        const uvA = tempVec2a;
+        const uvB = tempVec2b;
+        const uvC = tempVec2c;
+
+        for (let i = hits.length - 1; i >= 0; i--) {
+            const mesh = hits[i];
+            invWorldMat4.inverse(mesh.worldMatrix);
+
+            // Get max distance locally
+            let localMaxDistance;
+            if (maxDistance) {
+                direction.copy(this.direction).scaleRotateMatrix4(invWorldMat4);
+                localMaxDistance = maxDistance * direction.len();
+            }
+
+            // Take world space ray and make it object space to align with bounding box
+            origin.copy(this.origin).applyMatrix4(invWorldMat4);
+            direction.copy(this.direction).transformDirection(invWorldMat4);
+
+            let localDistance = 0;
+            let closestA, closestB, closestC;
+
+            const geometry = mesh.geometry;
+            const attributes = geometry.attributes;
+            const index = attributes.index;
+            const position = attributes.position;
+
+            const start = Math.max(0, geometry.drawRange.start);
+            const end = Math.min(index ? index.count : position.count, geometry.drawRange.start + geometry.drawRange.count);
+            const stride = position.stride ? position.stride / position.data.BYTES_PER_ELEMENT : position.size;
+
+            for (let j = start; j < end; j += 3) {
+                // Position attribute indices for each triangle
+                const ai = index ? index.data[j] : j;
+                const bi = index ? index.data[j + 1] : j + 1;
+                const ci = index ? index.data[j + 2] : j + 2;
+
+                a.fromArray(position.data, ai * stride);
+                b.fromArray(position.data, bi * stride);
+                c.fromArray(position.data, ci * stride);
+
+                const distance = this.intersectTriangle(a, b, c, cullFace, origin, direction, faceNormal);
+                if (! distance) continue;
+
+                // Too far away
+                if (maxDistance && distance > localMaxDistance) continue;
+
+                if (! localDistance || distance < localDistance) {
+                    localDistance = distance;
+                    closestA = ai;
+                    closestB = bi;
+                    closestC = ci;
+                    closestFaceNormal.copy(faceNormal);
+                }
+            }
+
+            if (! localDistance) hits.splice(i, 1);
+
+            // Update hit values from bounds-test
+            mesh.hit.localPoint.copy(direction).multiply(localDistance).add(origin);
+            mesh.hit.point.copy(mesh.hit.localPoint).applyMatrix4(mesh.worldMatrix);
+            mesh.hit.distance = mesh.hit.point.distance(this.origin);
+
+            // Add unique hit objects on mesh to avoid generating lots of objects
+            if (! mesh.hit.faceNormal) {
+                mesh.hit.localFaceNormal = new Vec3();
+                mesh.hit.faceNormal = new Vec3();
+                mesh.hit.uv = new Vec2();
+                mesh.hit.localNormal = new Vec3();
+                mesh.hit.normal = new Vec3();
+            }
+
+            // Add face normal data which is already computed
+            mesh.hit.localFaceNormal.copy(closestFaceNormal);
+            mesh.hit.faceNormal.copy(mesh.hit.localFaceNormal).transformDirection(mesh.worldMatrix);
+
+            // Optional data, opt out to optimise a bit if necessary
+            if (includeUV || includeNormal) {
+                // Calculate barycoords to find uv values at hit point
+                a.fromArray(position.data, closestA * 3);
+                b.fromArray(position.data, closestB * 3);
+                c.fromArray(position.data, closestC * 3);
+                this.getBarycoord(mesh.hit.localPoint, a, b, c, barycoord);
+            }
+
+            if (includeUV && attributes.uv) {
+                uvA.fromArray(attributes.uv.data, closestA * 2);
+                uvB.fromArray(attributes.uv.data, closestB * 2);
+                uvC.fromArray(attributes.uv.data, closestC * 2);
+                mesh.hit.uv.set(
+                    uvA.x * barycoord.x + uvB.x * barycoord.y + uvC.x * barycoord.z,
+                    uvA.y * barycoord.x + uvB.y * barycoord.y + uvC.y * barycoord.z
+                );
+            }
+
+            if (includeNormal && attributes.normal) {
+                a.fromArray(attributes.normal.data, closestA * 3);
+                b.fromArray(attributes.normal.data, closestB * 3);
+                c.fromArray(attributes.normal.data, closestC * 3);
+                mesh.hit.localNormal.set(
+                    a.x * barycoord.x + b.x * barycoord.y + c.x * barycoord.z,
+                    a.y * barycoord.x + b.y * barycoord.y + c.y * barycoord.z,
+                    a.z * barycoord.x + b.z * barycoord.y + c.z * barycoord.z
+                );
+
+                mesh.hit.normal.copy(mesh.hit.localNormal).transformDirection(mesh.worldMatrix);
+            }
+        }
+
+        hits.sort((a, b) => a.hit.distance - b.hit.distance);
+        return hits;
+    }
+
+    intersectSphere(sphere, origin = this.origin, direction = this.direction) {
+        const ray = tempVec3c;
+        ray.sub(sphere.center, origin);
+        const tca = ray.dot(direction);
+        const d2 = ray.dot(ray) - tca * tca;
+        const radius2 = sphere.radius * sphere.radius;
+        if (d2 > radius2) return 0;
+        const thc = Math.sqrt(radius2 - d2);
+        const t0 = tca - thc;
+        const t1 = tca + thc;
+        if (t0 < 0 && t1 < 0) return 0;
+        if (t0 < 0) return t1;
+        return t0;
+    }
+
+    // Ray AABB - Ray Axis aligned bounding box testing
+    intersectBox(box, origin = this.origin, direction = this.direction) {
+        let tmin, tmax, tYmin, tYmax, tZmin, tZmax;
+        const invdirx = 1 / direction.x;
+        const invdiry = 1 / direction.y;
+        const invdirz = 1 / direction.z;
+        const min = box.min;
+        const max = box.max;
+        tmin = ((invdirx >= 0 ? min.x : max.x) - origin.x) * invdirx;
+        tmax = ((invdirx >= 0 ? max.x : min.x) - origin.x) * invdirx;
+        tYmin = ((invdiry >= 0 ? min.y : max.y) - origin.y) * invdiry;
+        tYmax = ((invdiry >= 0 ? max.y : min.y) - origin.y) * invdiry;
+        if (tmin > tYmax || tYmin > tmax) return 0;
+        if (tYmin > tmin) tmin = tYmin;
+        if (tYmax < tmax) tmax = tYmax;
+        tZmin = ((invdirz >= 0 ? min.z : max.z) - origin.z) * invdirz;
+        tZmax = ((invdirz >= 0 ? max.z : min.z) - origin.z) * invdirz;
+        if (tmin > tZmax || tZmin > tmax) return 0;
+        if (tZmin > tmin) tmin = tZmin;
+        if (tZmax < tmax) tmax = tZmax;
+        if (tmax < 0) return 0;
+        return tmin >= 0 ? tmin : tmax;
+    }
+
+    intersectTriangle(a, b, c, backfaceCulling = true, origin = this.origin, direction = this.direction, normal = tempVec3g) {
+        // from https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
+        // which is from http://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
+        const edge1 = tempVec3h;
+        const edge2 = tempVec3i;
+        const diff = tempVec3j;
+        edge1.sub(b, a);
+        edge2.sub(c, a);
+        normal.cross(edge1, edge2);
+        let DdN = direction.dot(normal);
+        if (! DdN) return 0;
+        let sign;
+        if (DdN > 0) {
+            if (backfaceCulling) return 0;
+            sign = 1;
+        } else {
+            sign = -1;
+            DdN = -DdN;
+        }
+        diff.sub(origin, a);
+        let DdQxE2 = sign * direction.dot(edge2.cross(diff, edge2));
+        if (DdQxE2 < 0) return 0;
+        let DdE1xQ = sign * direction.dot(edge1.cross(diff));
+        if (DdE1xQ < 0) return 0;
+        if (DdQxE2 + DdE1xQ > DdN) return 0;
+        let QdN = -sign * diff.dot(normal);
+        if (QdN < 0) return 0;
+        return QdN / DdN;
+    }
+
+    getBarycoord(point, a, b, c, target = tempVec3h) {
+        // From https://github.com/mrdoob/three.js/blob/master/src/math/Triangle.js
+        // static / instance method to calculate barycentric coordinates
+        // based on: http://www.blackpawn.com/texts/pointinpoly/default.html
+        const v0 = tempVec3i;
+        const v1 = tempVec3j;
+        const v2 = tempVec3k;
+        v0.sub(c, a);
+        v1.sub(b, a);
+        v2.sub(point, a);
+        const dot00 = v0.dot(v0);
+        const dot01 = v0.dot(v1);
+        const dot02 = v0.dot(v2);
+        const dot11 = v1.dot(v1);
+        const dot12 = v1.dot(v2);
+        const denom = dot00 * dot11 - dot01 * dot01;
+        if (denom === 0) return target.set(-2, -1, -1);
+        const invDenom = 1 / denom;
+        const u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+        const v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+        return target.set(1 - u - v, v, u);
+    }
+
+}
+
 // Based from ThreeJS' OrbitControls class, rewritten using es6 with some additions and subtractions.
+
+// TODO: focus on target
+// TODO: abstract event handlers so can be fed from other sources
+// TODO: make scroll zoom more accurate than just >/< zero
+// TODO: be able to pass in new camera position
 
 const STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, DOLLY_PAN: 3 };
 
@@ -6015,7 +7066,7 @@ class Orbit {
             element.addEventListener('touchmove', onTouchMove, { passive: false });
         }
 
-        this.remove = function() {
+        this.flush = function() {
             element.removeEventListener('contextmenu', onContextMenu);
             element.removeEventListener('pointerdown', onMouseDown);
             element.removeEventListener('wheel', onMouseWheel);
@@ -6460,21 +7511,6 @@ class Torus extends Geometry {
 
 }
 
-class Triangle extends Geometry {
-
-    constructor({
-        attributes = {}
-    } = {}) {
-        Object.assign(attributes, {
-            position: { size: 2, data: new Float32Array([ -1, -1, 3, -1, -1, 3 ]) },
-            uv: { size: 2, data: new Float32Array([ 0, 0, 2, 0, 0, 2 ]) },
-        });
-
-        super(attributes);
-    }
-
-}
-
 const tmpVec3A = new Vec3();
 const tmpVec3B = new Vec3();
 const tmpVec3C = new Vec3();
@@ -6641,7 +7677,7 @@ class Vec4 extends Array {
     }
 
     normalize() {
-        normalize$2(this, this);
+        normalize$3(this, this);
         return this;
     }
 
@@ -6651,7 +7687,7 @@ class Vec4 extends Array {
     }
 
     dot(v) {
-        return dot$2(this, v);
+        return dot$3(this, v);
     }
 
     fromArray(a, o = 0) {
@@ -6763,7 +7799,7 @@ class InstancedMesh extends Mesh {
     }
 }
 
-class Standard extends Program {
+class Uber extends Program {
 
     #flatShading = false;
 
@@ -6776,8 +7812,8 @@ class Standard extends Program {
     #wireIntensity = 0.0;
 
     constructor({
-        texture = 0,
-        textureNormal = 0,
+        texture = new Texture(),
+        textureNormal = new Texture(),
 
         flatShading = false,
         normalIntensity = 0.0,
@@ -6820,8 +7856,8 @@ class Standard extends Program {
 
     rebuildProgram() {
         this.buildProgram({
-            vertex: Standard.vertex,
-            fragment: Standard.fragment,
+            vertex: defaultVertex$3,
+            fragment: defaultFragment$3,
             uniforms: {
                 tDiffuse: { value: this.#mapDiffuse },
                 uNormalIntensity: { value: this.#normalIntensity },
@@ -6989,7 +8025,7 @@ const defaultFragment$3 = /* glsl */ `#version 300 es
     }
 `;
 
-const tempMat4$1 = new Mat4();
+const tempMat4 = new Mat4();
 const identity = new Mat4();
 
 class GLTFSkin extends Mesh {
@@ -7049,8 +8085,8 @@ class GLTFSkin extends Mesh {
         // Update bone texture
         this.skeleton.joints.forEach((bone, i) => {
             // Find difference between current and bind pose
-            tempMat4$1.multiply(bone.worldMatrix, bone.bindInverse);
-            this.boneMatrices.set(tempMat4$1, i * 16);
+            tempMat4.multiply(bone.worldMatrix, bone.bindInverse);
+            this.boneMatrices.set(tempMat4, i * 16);
         });
         if (this.boneTexture) this.boneTexture.needsUpdate = true;
     }
@@ -7613,7 +8649,7 @@ class GLTFLoader {
                 extras, // optional
             }) => {
                 // TODO: materials
-                const program = new Standard();
+                const program = new Uber();
                 if (materialIndex !== undefined) {
                     program.gltfMaterial = materials[materialIndex];
                 }
@@ -7986,289 +9022,6 @@ class GLTFLoader {
     }
 }
 
-// TODO: Support cubemaps
-// Generate textures using https://github.com/TimvanScherpenzeel/texture-compressor
-
-class KTXTexture extends Texture {
-
-    constructor({
-        buffer,
-        wrapS = renderer.gl.CLAMP_TO_EDGE,
-        wrapT = renderer.gl.CLAMP_TO_EDGE,
-        anisotropy = 0,
-        minFilter,
-        magFilter
-    } = {}) {
-        super({
-            generateMipmaps: false,
-            wrapS,
-            wrapT,
-            anisotropy,
-            minFilter,
-            magFilter,
-        });
-
-        if (buffer) return this.parseBuffer(buffer);
-    }
-
-    parseBuffer(buffer) {
-        const ktx = new KhronosTextureContainer(buffer);
-        ktx.mipmaps.isCompressedTexture = true;
-
-        // Update texture
-        this.image = ktx.mipmaps;
-        this.internalFormat = ktx.glInternalFormat;
-        if (ktx.numberOfMipmapLevels > 1) {
-            if (this.minFilter === renderer.gl.LINEAR) this.minFilter = renderer.gl.NEAREST_MIPMAP_LINEAR;
-        } else {
-            if (this.minFilter === renderer.gl.NEAREST_MIPMAP_LINEAR) this.minFilter = renderer.gl.LINEAR;
-        }
-
-        // TODO: support cube maps
-        // ktx.numberOfFaces
-    }
-}
-
-function KhronosTextureContainer(buffer) {
-    const idCheck = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
-    const id = new Uint8Array(buffer, 0, 12);
-    for (let i = 0; i < id.length; i++) if (id[i] !== idCheck[i]) return console.error('File missing KTX identifier');
-
-    // TODO: Is this always 4? Tested: [android, macos]
-    const size = Uint32Array.BYTES_PER_ELEMENT;
-    const head = new DataView(buffer, 12, 13 * size);
-    const littleEndian = head.getUint32(0, true) === 0x04030201;
-    const glType = head.getUint32(1 * size, littleEndian);
-    if (glType !== 0) return console.warn('only compressed formats currently supported');
-    this.glInternalFormat = head.getUint32(4 * size, littleEndian);
-    let width = head.getUint32(6 * size, littleEndian);
-    let height = head.getUint32(7 * size, littleEndian);
-    this.numberOfFaces = head.getUint32(10 * size, littleEndian);
-    this.numberOfMipmapLevels = Math.max(1, head.getUint32(11 * size, littleEndian));
-    const bytesOfKeyValueData = head.getUint32(12 * size, littleEndian);
-
-    this.mipmaps = [];
-    let offset = 12 + 13 * 4 + bytesOfKeyValueData;
-    for (let level = 0; level < this.numberOfMipmapLevels; level++) {
-        const levelSize = new Int32Array(buffer, offset, 1)[0]; // size per face, since not supporting array cubemaps
-        offset += 4; // levelSize field
-        for (let face = 0; face < this.numberOfFaces; face++) {
-            const data = new Uint8Array(buffer, offset, levelSize);
-            this.mipmaps.push({ data, width, height });
-            offset += levelSize;
-            offset += 3 - ((levelSize + 3) % 4); // add padding for odd sized image
-        }
-        width = width >> 1;
-        height = height >> 1;
-    }
-}
-
-// For compressed textures, generate using https://github.com/TimvanScherpenzeel/texture-compressor
-
-let cache = {};
-const supportedExtensions = [];
-
-class TextureLoader {
-
-    static load({
-        src, // string or object of extension:src key-values
-        // {
-        //     pvrtc: '...ktx',
-        //     s3tc: '...ktx',
-        //     etc: '...ktx',
-        //     etc1: '...ktx',
-        //     astc: '...ktx',
-        //     webp: '...webp',
-        //     jpg: '...jpg',
-        //     png: '...png',
-        // }
-
-        // Only props relevant to KTXTexture
-        wrapS = renderer.gl.CLAMP_TO_EDGE,
-        wrapT = renderer.gl.CLAMP_TO_EDGE,
-        anisotropy = 0,
-
-        // For regular images
-        format = renderer.gl.RGBA,
-        internalFormat = format,
-        generateMipmaps = true,
-        minFilter = generateMipmaps ? renderer.gl.NEAREST_MIPMAP_LINEAR : renderer.gl.LINEAR,
-        magFilter = renderer.gl.LINEAR,
-        premultiplyAlpha = false,
-        unpackAlignment = 4,
-        flipY = true,
-    } = {}) {
-        const support = this.getSupportedExtensions();
-        let ext = 'none';
-
-        // If src is string, determine which format from the extension
-        if (typeof src === 'string') {
-            ext = src.split('.').pop().split('?')[0].toLowerCase();
-        }
-
-        // If src is object, use supported extensions and provided list to choose best option
-        // Get first supported match, so put in order of preference
-        if (typeof src === 'object') {
-            for (const prop in src) {
-                if (support.includes(prop.toLowerCase())) {
-                    ext = prop.toLowerCase();
-                    src = src[prop];
-                    break;
-                }
-            }
-        }
-
-        // Stringify props
-        const cacheID =
-            src +
-            wrapS +
-            wrapT +
-            anisotropy +
-            format +
-            internalFormat +
-            generateMipmaps +
-            minFilter +
-            magFilter +
-            premultiplyAlpha +
-            unpackAlignment +
-            flipY +
-            renderer.id;
-
-        // Check cache for existing texture
-        if (cache[cacheID]) return cache[cacheID];
-
-        let texture;
-        switch (ext) {
-            case 'ktx':
-            case 'pvrtc':
-            case 's3tc':
-            case 'etc':
-            case 'etc1':
-            case 'astc':
-                // Load compressed texture using KTX format
-                texture = new KTXTexture({
-                    src,
-                    wrapS,
-                    wrapT,
-                    anisotropy,
-                    minFilter,
-                    magFilter,
-                });
-                texture.loaded = this.loadKTX(src, texture);
-                break;
-            case 'webp':
-            case 'jpg':
-            case 'jpeg':
-            case 'png':
-                texture = new Texture({
-                    wrapS,
-                    wrapT,
-                    anisotropy,
-                    format,
-                    internalFormat,
-                    generateMipmaps,
-                    minFilter,
-                    magFilter,
-                    premultiplyAlpha,
-                    unpackAlignment,
-                    flipY,
-                });
-                texture.loaded = this.loadImage(src, texture, flipY);
-                break;
-            default:
-                console.warn('No supported format supplied');
-                texture = new Texture();
-        }
-
-        texture.ext = ext;
-        cache[cacheID] = texture;
-        return texture;
-    }
-
-    static getSupportedExtensions() {
-        if (supportedExtensions.length) return supportedExtensions;
-
-        const logWarnings = false;
-
-        const extensions = {
-            pvrtc: renderer.getExtension('WEBGL_compressed_texture_pvrtc', logWarnings),
-            s3tc: renderer.getExtension('WEBGL_compressed_texture_s3tc', logWarnings),
-            etc1: renderer.getExtension('WEBGL_compressed_texture_etc1', logWarnings),
-            astc: renderer.getExtension('WEBGL_compressed_texture_astc', logWarnings),
-            bc7: renderer.getExtension('EXT_texture_compression_bptc', logWarnings),
-        };
-
-        for (const ext in extensions) if (extensions[ext]) supportedExtensions.push(ext);
-
-        // Check for WebP support
-        if (detectWebP()) supportedExtensions.push('webp');
-
-        // Formats supported by all
-        supportedExtensions.push('png', 'jpg');
-
-        return supportedExtensions;
-    }
-
-    static loadKTX(src, texture) {
-        return fetch(src)
-            .then((res) => res.arrayBuffer())
-            .then((buffer) => texture.parseBuffer(buffer));
-    }
-
-    static loadImage(src, texture, flipY) {
-        return decodeImage(src, flipY).then((imgBmp) => {
-            // Catch non POT textures and update params to avoid errors
-            if (!powerOfTwo(imgBmp.width) || !powerOfTwo(imgBmp.height)) {
-                if (texture.generateMipmaps) texture.generateMipmaps = false;
-                if (texture.minFilter === renderer.gl.NEAREST_MIPMAP_LINEAR) texture.minFilter = renderer.gl.LINEAR;
-                if (texture.wrapS === renderer.gl.REPEAT) texture.wrapS = texture.wrapT = renderer.gl.CLAMP_TO_EDGE;
-            }
-
-            texture.image = imgBmp;
-
-            // For createImageBitmap, close once uploaded
-            texture.onUpdate = () => {
-                if (imgBmp.close) imgBmp.close();
-                texture.onUpdate = null;
-            };
-
-            return imgBmp;
-        });
-    }
-
-    static clearCache() {
-        cache = {};
-    }
-}
-
-function detectWebP() {
-    return document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') == 0;
-}
-
-function powerOfTwo(value) {
-    // (width & (width - 1)) !== 0
-    return Math.log2(value) % 1 === 0;
-}
-
-function decodeImage(src, flipY) {
-    return new Promise((resolve) => {
-        // Only chrome's implementation of createImageBitmap is fully supported
-        const isChrome = navigator.userAgent.toLowerCase().includes('chrome');
-        if (!!window.createImageBitmap && isChrome) {
-            fetch(src, { mode: 'cors' })
-                .then(r => r.blob())
-                .then(b => createImageBitmap(b, { imageOrientation: flipY ? 'flipY' : 'none', premultiplyAlpha: 'none' }))
-                .then(resolve);
-        } else {
-            const img = new Image();
-
-            img.crossOrigin = '';
-            img.src = src;
-            img.onload = () => resolve(img);
-        }
-    });
-}
-
 class Curve {
 
     constructor({
@@ -8447,14 +9200,146 @@ function getCubicBezierPoint(t, p0, c0, c1, p1) {
     return ret;
 }
 
+const tmp$1 = new Vec3();
+
+class Polygon {
+
+    static Circle({
+        point = new Vec3(0, 0, 0),
+        color = new Vec3(1, 1, 1),
+        outline = new Vec3(1, 0, 0),
+        radius = 1,
+        attributes = {},
+    } = {}) {
+
+        const count = 4;
+        const position = new Float32Array(count * 3);
+        const uv = new Float32Array(count * 2);
+        // const radius = new Float32Array(count * 1);
+        const index = new Uint16Array(6);
+        // const index = count > 65536 ? new Uint32Array(count) : new Uint16Array(count);
+
+        function setIndex(i, x, y, z, u, v) {
+            position[i * 3 + 0] = x;
+            position[i * 3 + 1] = y;
+            position[i * 3 + 2] = z;
+            uv[i * 2 + 0] = u;
+            uv[i * 2 + 1] = v;
+        }
+
+        setIndex(0, point.x, point.y, 0, -1, -1);
+        setIndex(1, point.x, point.y, 0, -1, +1);
+        setIndex(2, point.x, point.y, 0, +1, +1);
+        setIndex(3, point.x, point.y, 0, +1, -1);
+
+        index.set([ 0, 1, 2, 0, 2, 3 ]);
+
+        Object.assign(attributes, {
+            position: { size: 3, data: position },
+            uv: { size: 2, data: uv },
+            index: { data: index },
+        });
+
+        return new Geometry(attributes);
+    }
+
+    static FatSegment({
+        a = new Vec3(0, 0, 0),
+        b = new Vec3(0, 0, 0),
+        color = new Vec3(1, 1, 1),
+        outline = new Vec3(1, 0, 0),
+        radius = 1,
+        attributes = {},
+    } = {}) {
+
+        const count = 8;
+        const position = new Float32Array(count * 3);
+        const uv = new Float32Array(count * 2);
+        const index = new Uint16Array(18);
+
+        function setIndex(i, x, y, z, u, v) {
+            position[i * 3 + 0] = x;
+            position[i * 3 + 1] = y;
+            position[i * 3 + 2] = z;
+            uv[i * 2 + 0] = u;
+            uv[i * 2 + 1] = v;
+        }
+
+        const t = b.sub(a).normalize();
+
+        console.log(t);
+
+        setIndex(0, a.x, a.y, 0, (-t.x + t.y), (-t.x - t.y));
+	    setIndex(1, a.x, a.y, 0, (-t.x - t.y), (+t.x - t.y));
+	    setIndex(2, a.x, a.y, 0, (-0.0 + t.y), (-t.x + 0.0));
+	    setIndex(3, a.x, a.y, 0, (-0.0 - t.y), (+t.x + 0.0));
+	    setIndex(4, b.x, b.y, 0, (+0.0 + t.y), (-t.x - 0.0));
+	    setIndex(5, b.x, b.y, 0, (+0.0 - t.y), (+t.x - 0.0));
+	    setIndex(6, b.x, b.y, 0, (+t.x + t.y), (-t.x + t.y));
+	    setIndex(7, b.x, b.y, 0, (+t.x - t.y), (+t.x + t.y));
+
+        index.set([ 0, 1, 2, 1, 3, 2, /**/ 2, 3, 4, 3, 5, 4, /**/ 4, 5, 6, 5, 7, 6 ]);
+
+        Object.assign(attributes, {
+            position: { size: 3, data: position },
+            uv: { size: 2, data: uv },
+            index: { data: index },
+        });
+
+        return new Geometry(attributes);
+    }
+
+}
+
+/***** Internal *****/
+
+const defaultVertex$2 = /* glsl */ `#version 300 es
+    precision highp float;
+
+    in vec3 position;
+    in vec2 uv;
+    in float radius;
+
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    out vec2 vUv;
+
+    void main() {
+        vUv = uv;
+
+        vec3 smoothPosition = vec3(position.xy + (uv * radius), 0);
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(smoothPosition, 1.0);
+    }
+`;
+
+const defaultFragment$2 = /* glsl */ `#version 300 es
+    precision highp float;
+
+    uniform vec3 uColor;
+    uniform vec3 uOutline;
+    uniform float uAlpha;
+
+    in vec2 vUv;
+
+    layout(location = 0) out highp vec4 pc_fragColor;
+
+    void main() {
+
+
+        pc_fragColor = vec4(uColor, 1.0);
+    }
+`;
+
 const tmp = new Vec3();
 
 class Polyline {
 
     constructor({
         points,                         // Array of Vec3s
-        vertex = defaultVertex$2,
-        fragment = defaultFragment$2,
+        vertex = defaultVertex$1,
+        fragment = defaultFragment$1,
         uniforms = {},
         attributes = {},                // For passing in custom attribs
     } = {}) {
@@ -8556,7 +9441,7 @@ class Polyline {
 
 /***** Internal *****/
 
-const defaultVertex$2 = /* glsl */ `
+const defaultVertex$1 = /* glsl */ `
     precision highp float;
 
     attribute vec3 position;
@@ -8607,7 +9492,7 @@ const defaultVertex$2 = /* glsl */ `
     }
 `;
 
-const defaultFragment$2 = /* glsl */ `
+const defaultFragment$1 = /* glsl */ `
     precision highp float;
 
     uniform vec3 uColor;
@@ -8633,8 +9518,8 @@ class Sprite extends Mesh {
             Sprite.#program = new Program({
                 cullFace: null,
                 transparent: true,
-                vertex: defaultVertex$1,
-                fragment: defaultFragment$1,
+                vertex: defaultVertex,
+                fragment: defaultFragment,
                 uniforms: {
                     tDiffuse: { value: texture },
                 },
@@ -8691,7 +9576,7 @@ class Sprite extends Mesh {
 
 /***** Internal *****/
 
-const defaultVertex$1 = /* glsl */ `#version 300 es
+const defaultVertex = /* glsl */ `#version 300 es
     in vec2 uv;
     in vec3 position;
     in vec3 normal;
@@ -8717,7 +9602,7 @@ const defaultVertex$1 = /* glsl */ `#version 300 es
     }
 `;
 
-const defaultFragment$1 = /* glsl */ `#version 300 es
+const defaultFragment = /* glsl */ `#version 300 es
     precision highp float;
 
     uniform sampler2D tDiffuse;
@@ -8741,60 +9626,6 @@ const defaultFragment$1 = /* glsl */ `#version 300 es
         pc_fragColor = vec4(diffuse, alpha);
     }
 `;
-
-// fuzzyFloat()
-// isPowerOf2()
-// triangleArea()
-
-/**
- * Compares two decimal numbers to see if they're almost the same
- *
- * @param {Number} a
- * @param {Number} b
- * @param {Number} tolerance
- * @returns {Boolean}
- */
-function fuzzyFloat(a, b, tolerance = 0.001) {
-    return ((a < (b + tolerance)) && (a > (b - tolerance)));
-}
-
-/**
- * Determins if value is a power of 2
- *
- * @param {Number} value number to check
- * @returns {Boolean} is value power of 2?
- */
-function isPowerOf2(value) {
-    return (value & (value - 1)) === 0;
-}
-
-/**
- * Computes the area of a triangle defined by 3 points (points as arrays [x, y, z])
- *
- * @param {Vec3} a
- * @param {Vec3} b
- * @param {Vec3} c
- * @returns {Number} area of the triangle
- */
-const triangleArea = (function() {
-    const v0 = [ 0, 0, 0 ];
-    const v1 = [ 0, 0, 0 ];
-    const vc = [ 0, 0, 0 ];
-
-    return function(a, b, c) {
-        subtract$3(v0, c, b);
-        subtract$3(v1, a, b);
-        cross$1(vc, v0, v1);
-        return (length$3(vc) * 0.5);
-    };
-})();
-
-var MathUtils$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    fuzzyFloat: fuzzyFloat,
-    isPowerOf2: isPowerOf2,
-    triangleArea: triangleArea
-});
 
 // cleanAttributes()
 // computeVertexNormals()
@@ -9153,7 +9984,7 @@ class WireMesh extends Mesh {
 
         toNonIndexed(geometry);
 
-        const program = new Standard({
+        const program = new Uber({
             tint: wireColor,
             tintIntensity: wireTint,
         });
@@ -9166,142 +9997,6 @@ class WireMesh extends Mesh {
     }
 
 }
-
-// TODO: Destroy render targets if size changed and exists
-
-class Post {
-
-    constructor({
-        width,
-        height,
-        dpr,
-        wrapS = renderer.gl.CLAMP_TO_EDGE,
-        wrapT = renderer.gl.CLAMP_TO_EDGE,
-        minFilter = renderer.gl.LINEAR,
-        magFilter = renderer.gl.LINEAR,
-        geometry = new Triangle(),
-        targetOnly = null,
-    } = {}) {
-
-        this.options = { wrapS, wrapT, minFilter, magFilter };
-
-        this.passes = [];
-
-        this.geometry = geometry;
-
-        this.uniform = { value: null };
-        this.targetOnly = targetOnly;
-
-        const fbo = (this.fbo = {
-            read: null,
-            write: null,
-            swap: () => {
-                let temp = fbo.read;
-                fbo.read = fbo.write;
-                fbo.write = temp;
-            },
-        });
-
-        this.resize({ width, height, dpr });
-    }
-
-    addPass({
-        vertex = defaultVertex,
-        fragment = defaultFragment,
-        uniforms = {},
-        textureUniform = 'tDiffuse',
-        enabled = true
-    } = {}) {
-        uniforms[textureUniform] = { value: this.fbo.read.texture };
-
-        const program = new Program({ vertex, fragment, uniforms });
-        const mesh = new Mesh({ geometry: this.geometry, program });
-
-        const pass = {
-            mesh,
-            program,
-            uniforms,
-            enabled,
-            textureUniform,
-        };
-
-        this.passes.push(pass);
-        return pass;
-    }
-
-    resize({ width, height, dpr } = {}) {
-        if (dpr) this.dpr = dpr;
-        if (width) {
-            this.width = width;
-            this.height = height || width;
-        }
-
-        dpr = this.dpr || renderer.dpr;
-        width = Math.floor((this.width || renderer.width) * dpr);
-        height = Math.floor((this.height || renderer.height) * dpr);
-
-        this.options.width = width;
-        this.options.height = height;
-
-        this.fbo.read = new RenderTarget(this.options);
-        this.fbo.write = new RenderTarget(this.options);
-    }
-
-    // Uses same arguments as renderer.render, with addition of optional texture passed in to avoid scene render
-    render({ scene, camera, texture, target = null, update = true, sort = true, frustumCull = true }) {
-        const enabledPasses = this.passes.filter((pass) => pass.enabled);
-
-        if (! texture) {
-            renderer.render({
-                scene,
-                camera,
-                target: enabledPasses.length || (! target && this.targetOnly) ? this.fbo.write : target,
-                update,
-                sort,
-                frustumCull,
-            });
-            this.fbo.swap();
-        }
-
-        enabledPasses.forEach((pass, i) => {
-            pass.mesh.program.uniforms[pass.textureUniform].value = ! i && texture ? texture : this.fbo.read.texture;
-            renderer.render({
-                scene: pass.mesh,
-                target: i === enabledPasses.length - 1 && (target || ! this.targetOnly) ? target : this.fbo.write,
-                clear: true,
-            });
-            this.fbo.swap();
-        });
-
-        this.uniform.value = this.fbo.read.texture;
-    }
-
-}
-
-/***** Internal *****/
-
-const defaultVertex = /* glsl */ `
-    attribute vec2 uv;
-    attribute vec2 position;
-
-    varying vec2 vUv;
-
-    void main() {
-        vUv = uv;
-        gl_Position = vec4(position, 0, 1);
-    }
-`;
-
-const defaultFragment = /* glsl */ `
-    precision highp float;
-
-    uniform sampler2D tDiffuse;
-    varying vec2 vUv;
-
-    void main() {
-        gl_FragColor = texture2D(tDiffuse, vUv);
-    }
-`;
 
 // https://www.khronos.org/registry/webgl/extensions/
 // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getParameter
@@ -9425,7 +10120,7 @@ class Capabilities {
 /***** Internal *****/
 
 function checkRenderTargetSupport(gl, internalFormat, format, type) {
-	// Create temp frame buffer and texture
+	// Create temp framebuffer and texture
 	const framebuffer = gl.createFramebuffer();
 	const texture = gl.createTexture();
 
@@ -9434,7 +10129,7 @@ function checkRenderTargetSupport(gl, internalFormat, format, type) {
 	gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
 	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
 
-	// Check frame buffer status
+	// Check framebuffer status
 	const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
 
 	// Clean up
@@ -9453,8 +10148,10 @@ class Clock {
 	#lastChecked = 0;
 	#deltaCount = 0;
 
-	constructor(autoStart = true) {
-        if (autoStart) this.start();
+	constructor(autoStart = true, msRewind = 0) {
+		if (autoStart) this.start();
+		this.#startTime -= msRewind;
+		this.#lastChecked -= msRewind;
 	}
 
 	start() {
@@ -9511,22 +10208,37 @@ class Clock {
 
 }
 
-class Debug {
+let _singleton = null;
 
-    static #singleton;
+class Debug {
 
     #startInternal;
     #stopInternal;
 
-    constructor(openFrame = true, openScene = false, openBuffers = false, openSystem = false) {
-        if (Debug.#singleton) return Debug.#singleton;
+    constructor(openFrame = false, openScene = false, openBuffers = false, openSystem = false) {
+        if (_singleton) return _singleton;
 
+        function checkState(key) {
+            const value = localStorage.getItem(key);
+            if (typeof value === 'string') {
+                if (value === 'undefined' || value === 'null' || value === 'false') return false;
+                return true;
+            }
+            return Boolean(value);
+        }
+
+        openFrame = openFrame || checkState('DebugFrame');
+        openScene = openScene || checkState('DebugScene');
+        openBuffers = openBuffers || checkState('DebugBuffers');
+        openSystem = openSystem || checkState('DebugSystem');
+
+        const buttonColor = getVariable('button-light') ?? '60, 60, 60';
         const backgroundColor = getVariable('background-light') ?? '32, 32, 32';
         const backgroundAlpha = getVariable('panel-transparency') ?? '1.0';
-        const textColor = getVariable('text') ?? '190, 190, 190';
+        const textColor = getVariable('text') ?? '170, 170, 170';
         const textLight = getVariable('text-light') ?? '225, 225, 225';
 
-        const styleSheet = document.createElement("style");
+        const styleSheet = document.createElement('style');
         styleSheet.innerText = `
             #EyeDebug {
                 position: absolute;
@@ -9536,14 +10248,71 @@ class Debug {
                 text-align: left;
                 left: 0;
                 bottom: 0;
+                margin: 0.25em;
+                padding: 0;
+                z-index: 1000; /* debug info */
+                background: transparent;
+            }
+
+            .EyeDiv {
                 margin: 0.35em;
+                margin-bottom: 0;
                 padding: 0.25em;
-                padding-left: 0.6em;
-                padding-right: 0.6em;
-                border-radius: 1em;
-                z-index: 10000;
-                color: rgb(${textColor});
+                border-radius: 0.71429em;
                 background-color: rgba(${backgroundColor}, ${backgroundAlpha});
+            }
+
+            .EyeButtonRow {
+                display: flex;
+                background: transparent;
+                margin: 0.35em;
+            }
+
+            .EyeDebugButton {
+                filter: grayscale(100%);
+                flex: 1 1 auto;
+                border-radius: 100%;
+                background-color: rgba(${backgroundColor}, ${backgroundAlpha});
+                min-height: 2em;
+                min-width: 2em;
+                margin-left: 0.2em;
+                margin-right: 0.2em;
+                padding-bottom: 0.05em;
+            }
+
+            .EyeDebugButton:hover {
+                filter: brightness(125%) grayscale(100%);
+                box-shadow:
+                    inset -2px 2px 2px -1px rgba(255, 255, 255, 0.2),
+                    inset 2px -2px 2px -1px rgba(0, 0, 0, 0.75);
+            }
+
+            .EyeDebugButton.Selected {
+                filter: brightness(100%);
+                box-shadow: none;
+            }
+
+            #ButtonFrame { border: solid 2px rgba(${buttonColor}, 0.7); }
+            #ButtonScene { border: solid 2px rgba(${buttonColor}, 0.7); }
+            #ButtonBuffers { border: solid 2px rgba(${buttonColor}, 0.7); }
+            #ButtonSystem { border: solid 2px rgba(${buttonColor}, 0.7); }
+
+            #FrameFrame, #ButtonFrame.Selected { border: solid 2px rgba(0, 180, 175, 0.75); }
+            #SceneFrame, #ButtonScene.Selected { border: solid 2px rgba(255, 113, 0, 0.75); }
+            #BuffersFrame, #ButtonBuffers.Selected { border: solid 2px rgba(255, 93, 0, 0.75); }
+            #SystemFrame, #ButtonSystem.Selected { border: solid 2px rgba(145, 223, 0, 0.75); }
+
+            .EyeDebugButton.Selected:hover {
+                filter: brightness(125%);
+            }
+
+            .EyeDebugButton:active {
+                filter: brightness(100%);
+                box-shadow:
+                    inset -1px 1px 3px 1px rgba(0, 0, 0, 0.75),
+                    inset  1px 1px 3px 1px rgba(0, 0, 0, 0.75),
+                    inset -1px -1px 3px 1px rgba(0, 0, 0, 0.75),
+                    inset  1px -1px 3px 1px rgba(0, 0, 0, 0.75);
             }
 
             .EyeDetails { /* closed */
@@ -9561,34 +10330,66 @@ class Debug {
                 min-width: 9em;
             }
 
-            .EyeSummary /* when closed */ {
-                padding: 0.2em 0;
-                margin-left: 0.1em;
-                margin-top: -0.05em;
-                margin-bottom: -0.05em;
+            .EyeHeader {
+                padding: 0.1em 0.3em;
+                padding-top: 0;
                 left: 0;
                 width: 100%;
+                margin: 0;
                 font-size: 0.9em;
             }
 
-            .EyeDetails[open] .EyeSummary {
-                margin: 0;
-                font-size: 1.1em;
-            }
+            #FrameHeader { color: #00b4af; }
+            #SceneHeader { color: #ff7100; }
+            #BuffersHeader { color: #d8007f; }
+            #SystemHeader { color: #75b300; }
 
             .EyeRow {
                 display: flex;
                 justify-content: space-between;
-                padding: 0.2em;
+                padding: 0.1em;
                 padding-left: 0.3em;
                 padding-right: 0.3em;
-                width: 95%;
-                font-size: 0.9em;
+                width: 100%;
+                font-size: 0.8em;
+                color: rgba(${textColor}, 0.8);
             }
 
             .EyeInfo, .EyeInfo > * {
                 font-size: inherit;
                 color: rgb(${textLight});
+            }
+
+            .Light {
+                font-size: 12px;
+                color: #a5f300;
+            }
+
+            .EyeImageHolder {
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                margin: auto;
+                max-width: 1.35em;
+                max-height: 1.35em;
+                /* filter: drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.25)); */
+            }
+
+            .ColorIcon {
+                filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 150deg));
+            }
+
+            .ColorComplement {
+                filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 0deg));
+            }
+
+            .RotateColorize1 {
+                filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 270deg));
+            }
+
+            .RotateColorize2 {
+                filter: brightness(65%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 35deg));
             }
         `;
         document.head.appendChild(styleSheet);
@@ -9596,36 +10397,131 @@ class Debug {
         const dom = document.createElement('div');
         dom.id = 'EyeDebug';
         dom.innerHTML = `
-            <details class="EyeDetails"${(openFrame) ? ' open="true"' : ''}>
-            <summary class="EyeSummary">Frame</summary>
-            <div class="EyeRow">FPS<span class="EyeInfo"><span id="EyeFps">0</span> fps</span></div>
-            <div class="EyeRow">One Frame<span class="EyeInfo"><span id="EyeFrame">0</span> ms</span></div>
-            <div class="EyeRow">Max FPS<span class="EyeInfo">~ <span id="EyeMaxFps">0</span> fps</span></div>
-            </details>
-            <details class="EyeDetails"${(openScene) ? ' open="true"' : ''}>
-            <summary class="EyeSummary">Scene</summary>
-            <div class="EyeRow">Draw Calls <span class="EyeInfo" id="EyeDrawCalls">0</span></div>
-            <div class="EyeRow">Objects <span class="EyeInfo" id="EyeObjects">0</span></div>
-            <div class="EyeRow">Lights <span class="EyeInfo" id="EyeLights">0</span></div>
-            <div class="EyeRow">Vertices <span class="EyeInfo" id="EyeVertices">0</span></div>
-            <div class="EyeRow">Triangles <span class="EyeInfo" id="EyeTriangles">0</span></div>
-            </details>
-            <details class="EyeDetails"${(openBuffers) ? ' open="true"' : ''}>
-            <summary class="EyeSummary">Buffers</summary>
-            <div class="EyeRow">Programs <span class="EyeInfo" id="EyePrograms">0</span></div>
-            <div class="EyeRow">Geometries <span class="EyeInfo" id="EyeGeometries">0</span></div>
-            <div class="EyeRow">Textures <span class="EyeInfo" id="EyeTextures">0</span></div>
-            </details>
-            <details class="EyeDetails"${(openSystem) ? ' open="true"' : ''}>
-            <summary class="EyeSummary">System</summary>
-            <div class="EyeRow">Memory <span class="EyeInfo"><span id="EyeMemory">?</span> mb</span></div>
-            </details>
+            <div class="EyeDiv" id="FrameFrame">
+                <div class="EyeHeader" id="FrameHeader">Frame</div>
+                <div class="EyeRow">FPS<span class="EyeInfo" id="EyeFps">?</span></div>
+                <div class="EyeRow">Render<span class="EyeInfo" id="EyeRender">?</span></div>
+                <div class="EyeRow">Max<span class="EyeInfo" id="EyeMax">?</span></div>
+                <div class="EyeRow">Draws <span class="EyeInfo" id="EyeDraws">?</span></div>
+                </div>
+            </div>
+
+            <div class="EyeDiv" id="SceneFrame">
+                <div class="EyeHeader" id="SceneHeader">Scene</div>
+                <div class="EyeRow">Objects <span class="EyeInfo" id="EyeObjects">?</span></div>
+                <div class="EyeRow">Lights <span class="EyeInfo" id="EyeLights">?</span></div>
+                <div class="EyeRow">Vertices <span class="EyeInfo" id="EyeVertices">?</span></div>
+                <div class="EyeRow">Triangles <span class="EyeInfo" id="EyeTriangles">?</span></div>
+                </details>
+            </div>
+
+            <div class="EyeDiv" id="BuffersFrame">
+                <div class="EyeHeader" id="BuffersHeader">Buffers</div>
+                <div class="EyeRow">Programs <span class="EyeInfo" id="EyePrograms">?</span></div>
+                <div class="EyeRow">Geometries <span class="EyeInfo" id="EyeGeometries">?</span></div>
+                <div class="EyeRow">Textures <span class="EyeInfo" id="EyeTextures">?</span></div>
+                </details>
+            </div>
+
+            <div class="EyeDiv" id="SystemFrame">
+                <div class="EyeHeader" id="SystemHeader">System</div>
+                <div class="EyeRow">Memory <span class="EyeInfo" id="EyeMemory">?</span></div>
+                </details>
+            </div>
+
+            <div class="EyeButtonRow">
+                <button class="EyeDebugButton" id="ButtonFrame">
+                    <div class="EyeImageHolder"><div class="ColorIcon">
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M256,31c-123.431,0 -225,101.569 -225,225c0,123.431 101.569,225 225,225c123.431,0 225,-101.569 225,-225c-0.146,-123.376 -101.624,-224.854 -225,-225Zm0,409.091c-100.989,-0 -184.091,-83.102 -184.091,-184.091c0,-100.989 83.102,-184.091 184.091,-184.091c100.989,0 184.091,83.102 184.091,184.091c-0.123,100.943 -83.148,183.968 -184.091,184.091Z" style="fill:#c0c0c0;fill-rule:nonzero;"/><path d="M276.455,247.532l-0,-114.259c-0,-11.221 -9.234,-20.455 -20.455,-20.455c-11.221,0 -20.455,9.234 -20.455,20.455l0,122.727c0.002,5.422 2.159,10.628 5.994,14.461l61.363,61.364c3.812,3.682 8.91,5.742 14.21,5.742c11.221,-0 20.455,-9.234 20.455,-20.455c-0,-5.3 -2.06,-10.398 -5.742,-14.21l-55.37,-55.37Z" style="fill:#c0c0c0;fill-rule:nonzero;"/></svg>
+                    </div></div>
+                </button>
+
+                <button class="EyeDebugButton" id="ButtonScene">
+                    <div class="EyeImageHolder"><div class="ColorComplement">
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M334.107,33.245c0.002,0.001 0.004,0.003 0.005,0.005c0.01,0.008 0.02,0.018 0.03,0.027c0.045,0.037 0.091,0.077 0.138,0.12l0.325,0.299c0.021,0.019 0.043,0.039 0.064,0.059l0.311,0.298c0.019,0.018 0.038,0.036 0.056,0.054c-0,0 99.995,99.996 100,100c0.034,0.035 0.068,0.071 0.102,0.108c0.023,0.025 0.044,0.049 0.065,0.074l0.269,0.269c0.053,0.053 0.106,0.109 0.157,0.168c0.008,0.009 0.238,0.275 0.238,0.275c0.011,0.012 0.022,0.025 0.033,0.037c1.108,1.231 2.022,2.574 2.77,3.968c1.586,2.939 2.473,6.295 2.473,9.851l-0,303.061c-0,7.983 -3.171,15.639 -8.816,21.284l-1.397,1.396c-6.02,6.02 -14.184,9.402 -22.698,9.402l-305.293,-0c-7.983,-0 -15.639,-3.171 -21.283,-8.816l-1.397,-1.397c-6.02,-6.02 -9.402,-14.184 -9.402,-22.698l0,-391.007c0,-7.983 3.171,-15.639 8.816,-21.284l1.397,-1.396c6.02,-6.02 14.184,-9.402 22.698,-9.402l216.518,-0c3.556,-0 6.912,0.887 9.851,2.473c1.395,0.748 2.739,1.663 3.97,2.772Zm101.336,106.169c0.402,-0.301 0.73,-0.705 0.942,-1.183c0.333,-0.75 0.338,-1.586 0.047,-2.322c0.443,1.224 -0.397,2.318 -1.268,3.069c0.095,0.144 0.188,0.29 0.279,0.436Zm-97.3,-8.414l39.028,-0l-39.028,-39.029l-0,39.029Zm-35.714,5.804l-0,-70.09l-192.858,0l0,378.572l292.858,-0l-0,-278.572l-70.918,0c-7.187,0 -14.08,-2.855 -19.163,-7.937l-1.396,-1.397c-5.458,-5.457 -8.523,-12.859 -8.523,-20.576Z" style="fill:#c0c0c0;"/></svg>
+                    </div></div>
+                </button>
+
+                <button class="EyeDebugButton" id="ButtonBuffers">
+                    <div class="EyeImageHolder"><div class="RotateColorize1">
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 185 185" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><g><path d="M164.233,130.955c3.418,5.92 3.418,12.99 0,18.911c-3.418,5.92 -9.541,9.456 -16.378,9.456l-111.131,-0c-6.836,-0 -12.958,-3.534 -16.377,-9.455c-3.419,-5.922 -3.419,-12.992 -0,-18.912l55.565,-96.242c3.418,-5.921 9.541,-9.456 16.378,-9.456c6.837,0 12.959,3.534 16.378,9.455l55.565,96.243Zm-126.283,8.748l108.68,0l-54.34,-94.119l-54.34,94.119Z" style="fill:#c0c0c0;"/></g></svg>
+                    </div></div>
+                </button>
+
+                <button class="EyeDebugButton" id="ButtonSystem">
+                    <div class="EyeImageHolder"><div class="RotateColorize2">
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><g id="_02"><path d="M416,156l-20,-0l0,-40c0,-10.972 -9.028,-20 -20,-20c-10.972,0 -20,9.028 -20,20l0,40l-80,-0l0,-40c0,-10.972 -9.028,-20 -20,-20c-10.972,0 -20,9.028 -20,20l0,40l-80,-0l-0,-40c-0,-10.972 -9.028,-20 -20,-20c-10.972,0 -20,9.028 -20,20l-0,40l-20,-0c-21.943,-0 -40,18.057 -40,40l-0,120c-0,21.943 18.057,40 40,40l20,-0l-0,40c-0,10.972 9.028,20 20,20c10.972,-0 20,-9.028 20,-20l-0,-40l80,-0l0,40c0,10.972 9.028,20 20,20c10.972,-0 20,-9.028 20,-20l0,-40l80,-0l0,40c0,10.972 9.028,20 20,20c10.972,-0 20,-9.028 20,-20l0,-40l20,-0c21.943,-0 40,-18.057 40,-40l0,-120c0,-21.943 -18.057,-40 -40,-40Zm-320,160l-0,-120l320,0l0,120l-320,0Z" style="fill:#c0c0c0;fill-rule:nonzero;"/></g></svg>
+                    </div></div>
+                </button>
+            </div>
         `;
         document.body.appendChild(dom);
 
+        const frameFrame = document.getElementById('FrameFrame');
+        const sceneFrame = document.getElementById('SceneFrame');
+        const buffersFrame = document.getElementById('BuffersFrame');
+        const systemFrame = document.getElementById('SystemFrame');
+
+        const buttonFrame = document.getElementById('ButtonFrame');
+        const buttonScene = document.getElementById('ButtonScene');
+        const buttonBuffers = document.getElementById('ButtonBuffers');
+        const buttonSystem = document.getElementById('ButtonSystem');
+
+        buttonFrame.setAttribute('tooltip', 'Frame');
+        buttonScene.setAttribute('tooltip', 'Scene');
+        buttonBuffers.setAttribute('tooltip', 'Buffers');
+        buttonSystem.setAttribute('tooltip', 'System');
+
+        function toggleFrame(frame, button, open, storageKey) {
+            if (open) {
+                frame.style.display = '';
+                button.classList.add('Selected');
+            } else {
+                frame.style.display = 'none';
+                button.classList.remove('Selected');
+            }
+            localStorage.setItem(storageKey, open);
+        }
+
+        buttonFrame.addEventListener('click', () => {
+            openFrame = ! openFrame;
+            toggleFrame(frameFrame, buttonFrame, openFrame, 'DebugFrame');
+        });
+
+        buttonScene.addEventListener('click', () => {
+            openScene = ! openScene;
+            toggleFrame(sceneFrame, buttonScene, openScene, 'DebugScene');
+        });
+
+        buttonBuffers.addEventListener('click', () => {
+            openBuffers = ! openBuffers;
+            toggleFrame(buffersFrame, buttonBuffers, openBuffers, 'DebugBuffers');
+        });
+
+        buttonSystem.addEventListener('click', () => {
+            openSystem = ! openSystem;
+            toggleFrame(systemFrame, buttonSystem, openSystem, 'DebugSystem');
+        });
+
+        toggleFrame(frameFrame, buttonFrame, openFrame, 'DebugFrame');
+        toggleFrame(sceneFrame, buttonScene, openScene, 'DebugScene');
+        toggleFrame(buffersFrame, buttonBuffers, openBuffers, 'DebugBuffers');
+        toggleFrame(systemFrame, buttonSystem, openSystem, 'DebugSystem');
+
         const domFps = document.getElementById('EyeFps');
-        const domFrame = document.getElementById('EyeFrame');
-        const domMax = document.getElementById('EyeMaxFps');
+        const domRender = document.getElementById('EyeRender');
+        const domMax = document.getElementById('EyeMax');
+        const domDraws = document.getElementById('EyeDraws');
+
+        const domObjects = document.getElementById('EyeObjects');
+        const domLights = document.getElementById('EyeLights');
+        const domVertices = document.getElementById('EyeVertices');
+        const domTriangles = document.getElementById('EyeTriangles');
+
+        const domPrograms = document.getElementById('EyePrograms');
+        const domGeometries = document.getElementById('EyeGeometries');
+        const domTextures = document.getElementById('EyeTextures');
+
         const domMem = document.getElementById('EyeMemory');
 
         const frameClock = new Clock();
@@ -9633,6 +10529,7 @@ class Debug {
 
         this.#startInternal = function() {
             frameClock.start();
+            renderer.drawCallCount = 0;
         };
 
         this.#stopInternal = function() {
@@ -9640,26 +10537,55 @@ class Debug {
 
             const elapsed = elapsedClock.getElapsedTime();
             if (elapsed > 1) {
-                // Actual Fps
+                // Actual fps
                 const fps = elapsedClock.count() / elapsed;
-                if (domFps) domFps.textContent = `${fps.toFixed(1)}`;
+                if (domFps) domFps.textContent = `${fps.toFixed(1)} fps`;
                 elapsedClock.reset();
 
                 // Average time of actual rendering frames
                 const frameAvg = frameClock.averageDelta();
-                if (domFrame) domFrame.textContent = `${frameAvg.toFixed(2)}`;
-                if (domMax) domMax.textContent = `${Math.floor(1000 / frameAvg)}`;
+                if (domRender) domRender.textContent = `${frameAvg.toFixed(2)} ms`;
+                if (domMax) domMax.textContent = `~ ${Math.floor(1000 / frameAvg)} fps`;
                 frameClock.reset();
 
-                // Memory Usage
+                // Draw call count
+                if (domDraws) domDraws.textContent = `${renderer.drawCallCount}`;
+
+                // Memory usage
                 if (domMem && performance.memory) {
                     const memory = performance.memory.usedJSHeapSize / 1048576;
-                    domMem.textContent = `${memory.toFixed(2)}`;
+                    domMem.textContent = `${memory.toFixed(2)} mb`;
                 }
+
+                // Scene Info
+                let objects = 0, vertices = 0, triangles = 0, lights = 0;
+                const scene = renderer.lastScene;
+                if (scene && scene.isTransform) {
+                    scene.traverseVisible((object) => {
+                        objects++;
+                        if (object.isLight) lights++;
+                        if (object.isMesh && object.geometry) {
+                            const geometry = object.geometry;
+                            vertices += geometry.attributes.position.count;
+                            const instance = (geometry.isInstanced) ? geometry.instancedCount : 1;
+                            if (geometry.attributes.index) triangles += (geometry.attributes.index.count / 3) * instance;
+                            else triangles += (geometry.attributes.position.count / 3) * instance;
+                        }
+                    });
+                }
+                domObjects.textContent = `${objects}`;
+                domLights.textContent = `${lights}`;
+                domVertices.textContent = `${vertices}`;
+                domTriangles.textContent = `${triangles.toFixed(0)}`;
+
+                domPrograms.textContent = `${renderer.info.programs}`;
+                domGeometries.textContent = `${renderer.info.geometries}`;
+                domTextures.textContent = `${renderer.info.textures}`;
             }
+
         };
 
-        Debug.#singleton = this;
+        _singleton = this;
     }
 
     startFrame() {
@@ -9696,373 +10622,12 @@ function setVariable(variable, valueAsString) {
     rootElement.style.setProperty(variable, valueAsString);
 }
 
-// TODO: barycentric code shouldn't be here, but where?
-
-const tempVec2a = new Vec2();
-const tempVec2b = new Vec2();
-const tempVec2c = new Vec2();
-
-const tempVec3a = new Vec3();
-const tempVec3b = new Vec3();
-const tempVec3c = new Vec3();
-const tempVec3d = new Vec3();
-const tempVec3e = new Vec3();
-const tempVec3f = new Vec3();
-const tempVec3g = new Vec3();
-const tempVec3h = new Vec3();
-const tempVec3i = new Vec3();
-const tempVec3j = new Vec3();
-const tempVec3k = new Vec3();
-
-const tempMat4 = new Mat4();
-
-class Raycast {
-
-    constructor() {
-        this.origin = new Vec3();
-        this.direction = new Vec3();
-    }
-
-    // Set ray from mouse unprojection
-    castMouse(camera, mouse = [ 0, 0 ]) {
-        if (camera.type === 'orthographic') {
-            // Set origin
-            // Since camera is orthographic, origin is not the camera position
-            const { left, right, bottom, top, zoom } = camera;
-            const x = left / zoom + ((right - left) / zoom) * (mouse[0] * 0.5 + 0.5);
-            const y = bottom / zoom + ((top - bottom) / zoom) * (mouse[1] * 0.5 + 0.5);
-            this.origin.set(x, y, 0);
-            this.origin.applyMatrix4(camera.worldMatrix);
-
-            // Set direction
-            // https://community.khronos.org/t/get-direction-from-transformation-matrix-or-quat/65502/2
-            this.direction.x = -camera.worldMatrix[8];
-            this.direction.y = -camera.worldMatrix[9];
-            this.direction.z = -camera.worldMatrix[10];
-        } else {
-            // Set origin
-            camera.worldMatrix.getTranslation(this.origin);
-
-            // Set direction
-            this.direction.set(mouse[0], mouse[1], 0.5);
-            camera.unproject(this.direction);
-            this.direction.sub(this.origin).normalize();
-        }
-    }
-
-    intersectBounds(meshes, { maxDistance, output = [] } = {}) {
-        if (! Array.isArray(meshes)) meshes = [ meshes ];
-
-        const invWorldMat4 = tempMat4;
-        const origin = tempVec3a;
-        const direction = tempVec3b;
-
-        const hits = output;
-        hits.length = 0;
-
-        meshes.forEach((mesh) => {
-
-            // Create bounds
-            if (! mesh.geometry.bounds || mesh.geometry.bounds.radius === Infinity) mesh.geometry.computeBoundingSphere();
-            const bounds = mesh.geometry.bounds;
-            invWorldMat4.inverse(mesh.worldMatrix);
-
-            // Get max distance locally
-            let localMaxDistance;
-            if (maxDistance) {
-                direction.copy(this.direction).scaleRotateMatrix4(invWorldMat4);
-                localMaxDistance = maxDistance * direction.len();
-            }
-
-            // Take world space ray and make it object space to align with bounding box
-            origin.copy(this.origin).applyMatrix4(invWorldMat4);
-            direction.copy(this.direction).transformDirection(invWorldMat4);
-
-            // Break out early if bounds too far away from origin
-            if (maxDistance) {
-                if (origin.distance(bounds.center) - bounds.radius > localMaxDistance) return;
-            }
-
-            let localDistance = 0;
-
-            // Check origin isn't inside bounds before testing intersection
-            if (mesh.geometry.raycast === 'sphere') {
-                if (origin.distance(bounds.center) > bounds.radius) {
-                    localDistance = this.intersectSphere(bounds, origin, direction);
-                    if (!localDistance) return;
-                }
-            } else {
-                if (
-                    origin.x < bounds.min.x ||
-                    origin.x > bounds.max.x ||
-                    origin.y < bounds.min.y ||
-                    origin.y > bounds.max.y ||
-                    origin.z < bounds.min.z ||
-                    origin.z > bounds.max.z
-                ) {
-                    localDistance = this.intersectBox(bounds, origin, direction);
-                    if (!localDistance) return;
-                }
-            }
-
-            if (maxDistance && localDistance > localMaxDistance) return;
-
-            // Create object on mesh to avoid generating lots of objects
-            if (! mesh.hit) mesh.hit = { localPoint: new Vec3(), point: new Vec3() };
-
-            mesh.hit.localPoint.copy(direction).multiply(localDistance).add(origin);
-            mesh.hit.point.copy(mesh.hit.localPoint).applyMatrix4(mesh.worldMatrix);
-            mesh.hit.distance = mesh.hit.point.distance(this.origin);
-
-            hits.push(mesh);
-        });
-
-        hits.sort((a, b) => a.hit.distance - b.hit.distance);
-        return hits;
-    }
-
-    intersectMeshes(meshes, { cullFace = true, maxDistance, includeUV = true, includeNormal = true, output = [] } = {}) {
-        // Test bounds first before testing geometry
-        const hits = this.intersectBounds(meshes, { maxDistance, output });
-        if (! hits.length) return hits;
-
-        const invWorldMat4 = tempMat4;
-        const origin = tempVec3a;
-        const direction = tempVec3b;
-        const a = tempVec3c;
-        const b = tempVec3d;
-        const c = tempVec3e;
-        const closestFaceNormal = tempVec3f;
-        const faceNormal = tempVec3g;
-        const barycoord = tempVec3h;
-        const uvA = tempVec2a;
-        const uvB = tempVec2b;
-        const uvC = tempVec2c;
-
-        for (let i = hits.length - 1; i >= 0; i--) {
-            const mesh = hits[i];
-            invWorldMat4.inverse(mesh.worldMatrix);
-
-            // Get max distance locally
-            let localMaxDistance;
-            if (maxDistance) {
-                direction.copy(this.direction).scaleRotateMatrix4(invWorldMat4);
-                localMaxDistance = maxDistance * direction.len();
-            }
-
-            // Take world space ray and make it object space to align with bounding box
-            origin.copy(this.origin).applyMatrix4(invWorldMat4);
-            direction.copy(this.direction).transformDirection(invWorldMat4);
-
-            let localDistance = 0;
-            let closestA, closestB, closestC;
-
-            const geometry = mesh.geometry;
-            const attributes = geometry.attributes;
-            const index = attributes.index;
-            const position = attributes.position;
-
-            const start = Math.max(0, geometry.drawRange.start);
-            const end = Math.min(index ? index.count : position.count, geometry.drawRange.start + geometry.drawRange.count);
-            const stride = position.stride ? position.stride / position.data.BYTES_PER_ELEMENT : position.size;
-
-            for (let j = start; j < end; j += 3) {
-                // Position attribute indices for each triangle
-                const ai = index ? index.data[j] : j;
-                const bi = index ? index.data[j + 1] : j + 1;
-                const ci = index ? index.data[j + 2] : j + 2;
-
-                a.fromArray(position.data, ai * stride);
-                b.fromArray(position.data, bi * stride);
-                c.fromArray(position.data, ci * stride);
-
-                const distance = this.intersectTriangle(a, b, c, cullFace, origin, direction, faceNormal);
-                if (! distance) continue;
-
-                // Too far away
-                if (maxDistance && distance > localMaxDistance) continue;
-
-                if (! localDistance || distance < localDistance) {
-                    localDistance = distance;
-                    closestA = ai;
-                    closestB = bi;
-                    closestC = ci;
-                    closestFaceNormal.copy(faceNormal);
-                }
-            }
-
-            if (! localDistance) hits.splice(i, 1);
-
-            // Update hit values from bounds-test
-            mesh.hit.localPoint.copy(direction).multiply(localDistance).add(origin);
-            mesh.hit.point.copy(mesh.hit.localPoint).applyMatrix4(mesh.worldMatrix);
-            mesh.hit.distance = mesh.hit.point.distance(this.origin);
-
-            // Add unique hit objects on mesh to avoid generating lots of objects
-            if (! mesh.hit.faceNormal) {
-                mesh.hit.localFaceNormal = new Vec3();
-                mesh.hit.faceNormal = new Vec3();
-                mesh.hit.uv = new Vec2();
-                mesh.hit.localNormal = new Vec3();
-                mesh.hit.normal = new Vec3();
-            }
-
-            // Add face normal data which is already computed
-            mesh.hit.localFaceNormal.copy(closestFaceNormal);
-            mesh.hit.faceNormal.copy(mesh.hit.localFaceNormal).transformDirection(mesh.worldMatrix);
-
-            // Optional data, opt out to optimise a bit if necessary
-            if (includeUV || includeNormal) {
-                // Calculate barycoords to find uv values at hit point
-                a.fromArray(position.data, closestA * 3);
-                b.fromArray(position.data, closestB * 3);
-                c.fromArray(position.data, closestC * 3);
-                this.getBarycoord(mesh.hit.localPoint, a, b, c, barycoord);
-            }
-
-            if (includeUV && attributes.uv) {
-                uvA.fromArray(attributes.uv.data, closestA * 2);
-                uvB.fromArray(attributes.uv.data, closestB * 2);
-                uvC.fromArray(attributes.uv.data, closestC * 2);
-                mesh.hit.uv.set(
-                    uvA.x * barycoord.x + uvB.x * barycoord.y + uvC.x * barycoord.z,
-                    uvA.y * barycoord.x + uvB.y * barycoord.y + uvC.y * barycoord.z
-                );
-            }
-
-            if (includeNormal && attributes.normal) {
-                a.fromArray(attributes.normal.data, closestA * 3);
-                b.fromArray(attributes.normal.data, closestB * 3);
-                c.fromArray(attributes.normal.data, closestC * 3);
-                mesh.hit.localNormal.set(
-                    a.x * barycoord.x + b.x * barycoord.y + c.x * barycoord.z,
-                    a.y * barycoord.x + b.y * barycoord.y + c.y * barycoord.z,
-                    a.z * barycoord.x + b.z * barycoord.y + c.z * barycoord.z
-                );
-
-                mesh.hit.normal.copy(mesh.hit.localNormal).transformDirection(mesh.worldMatrix);
-            }
-        }
-
-        hits.sort((a, b) => a.hit.distance - b.hit.distance);
-        return hits;
-    }
-
-    intersectSphere(sphere, origin = this.origin, direction = this.direction) {
-        const ray = tempVec3c;
-        ray.sub(sphere.center, origin);
-        const tca = ray.dot(direction);
-        const d2 = ray.dot(ray) - tca * tca;
-        const radius2 = sphere.radius * sphere.radius;
-        if (d2 > radius2) return 0;
-        const thc = Math.sqrt(radius2 - d2);
-        const t0 = tca - thc;
-        const t1 = tca + thc;
-        if (t0 < 0 && t1 < 0) return 0;
-        if (t0 < 0) return t1;
-        return t0;
-    }
-
-    // Ray AABB - Ray Axis aligned bounding box testing
-    intersectBox(box, origin = this.origin, direction = this.direction) {
-        let tmin, tmax, tYmin, tYmax, tZmin, tZmax;
-        const invdirx = 1 / direction.x;
-        const invdiry = 1 / direction.y;
-        const invdirz = 1 / direction.z;
-        const min = box.min;
-        const max = box.max;
-        tmin = ((invdirx >= 0 ? min.x : max.x) - origin.x) * invdirx;
-        tmax = ((invdirx >= 0 ? max.x : min.x) - origin.x) * invdirx;
-        tYmin = ((invdiry >= 0 ? min.y : max.y) - origin.y) * invdiry;
-        tYmax = ((invdiry >= 0 ? max.y : min.y) - origin.y) * invdiry;
-        if (tmin > tYmax || tYmin > tmax) return 0;
-        if (tYmin > tmin) tmin = tYmin;
-        if (tYmax < tmax) tmax = tYmax;
-        tZmin = ((invdirz >= 0 ? min.z : max.z) - origin.z) * invdirz;
-        tZmax = ((invdirz >= 0 ? max.z : min.z) - origin.z) * invdirz;
-        if (tmin > tZmax || tZmin > tmax) return 0;
-        if (tZmin > tmin) tmin = tZmin;
-        if (tZmax < tmax) tmax = tZmax;
-        if (tmax < 0) return 0;
-        return tmin >= 0 ? tmin : tmax;
-    }
-
-    intersectTriangle(a, b, c, backfaceCulling = true, origin = this.origin, direction = this.direction, normal = tempVec3g) {
-        // from https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
-        // which is from http://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
-        const edge1 = tempVec3h;
-        const edge2 = tempVec3i;
-        const diff = tempVec3j;
-        edge1.sub(b, a);
-        edge2.sub(c, a);
-        normal.cross(edge1, edge2);
-        let DdN = direction.dot(normal);
-        if (! DdN) return 0;
-        let sign;
-        if (DdN > 0) {
-            if (backfaceCulling) return 0;
-            sign = 1;
-        } else {
-            sign = -1;
-            DdN = -DdN;
-        }
-        diff.sub(origin, a);
-        let DdQxE2 = sign * direction.dot(edge2.cross(diff, edge2));
-        if (DdQxE2 < 0) return 0;
-        let DdE1xQ = sign * direction.dot(edge1.cross(diff));
-        if (DdE1xQ < 0) return 0;
-        if (DdQxE2 + DdE1xQ > DdN) return 0;
-        let QdN = -sign * diff.dot(normal);
-        if (QdN < 0) return 0;
-        return QdN / DdN;
-    }
-
-    getBarycoord(point, a, b, c, target = tempVec3h) {
-        // From https://github.com/mrdoob/three.js/blob/master/src/math/Triangle.js
-        // static / instance method to calculate barycentric coordinates
-        // based on: http://www.blackpawn.com/texts/pointinpoly/default.html
-        const v0 = tempVec3i;
-        const v1 = tempVec3j;
-        const v2 = tempVec3k;
-        v0.sub(c, a);
-        v1.sub(b, a);
-        v2.sub(point, a);
-        const dot00 = v0.dot(v0);
-        const dot01 = v0.dot(v1);
-        const dot02 = v0.dot(v2);
-        const dot11 = v1.dot(v1);
-        const dot12 = v1.dot(v2);
-        const denom = dot00 * dot11 - dot01 * dot01;
-        if (denom === 0) return target.set(-2, -1, -1);
-        const invDenom = 1 / denom;
-        const u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-        const v = (dot00 * dot12 - dot01 * dot02) * invDenom;
-        return target.set(1 - u - v, v, u);
-    }
-
-}
-
 /**
  * @description EyeGL
- * @about       Fast WebGL 2 graphics library built for games.
+ * @about       WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
- * @license     MIT - Copyright (c) 2022-2023 Stephens Nunnally and Scidian Studios
+ * @license     MIT - Copyright (c) 2023 Stephens Nunnally
  * @source      https://github.com/onsightengine/eyegl
  */
 
-/***** Unused *****/
-
-// export { Animation } from './extras/Animation.js';
-// export { AxesHelper } from './extras/helpers/AxesHelper.js';
-// export { BasisManager } from './extras/BasisManager.js';
-// export { FaceNormalsHelper } from './extras/helpers/FaceNormalsHelper.js';
-// export { Flowmap } from './extras/Flowmap.js';
-// export { GPGPU } from './extras/GPGPU.js';
-// export { GridHelper } from './extras/helpers/GridHelper.js';
-// export { Path } from './extras/Path/Path.js';
-// export { Shadow } from './extras/Shadow.js';
-// export { Skin } from './extras/Skin.js';
-// export { Text } from './extras/Text.js';
-// export { VertexNormalsHelper } from './extras/helpers/VertexNormalsHelper.js';
-
-export { Box, Camera, Capabilities, Clock, Color, ColorFunc$1 as ColorFunc, Curve, Cylinder, Debug, Euler, EulerFunc$1 as EulerFunc, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, InstancedMesh, KTXTexture, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Plane, Polyline, Post, Program, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Sprite, Standard, Texture, TextureLoader, Torus, Transform, Triangle, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };
+export { AssetManager, Box, Camera, Capabilities, Clock, Color, ColorFunc$1 as ColorFunc, Curve, Cylinder, Debug, Euler, EulerFunc$1 as EulerFunc, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, InstancedMesh, KTXTexture, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Plane, Polygon, Polyline, Post, Program, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Sprite, Texture, TextureLoader, Torus, Transform, Triangle, Uber, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };

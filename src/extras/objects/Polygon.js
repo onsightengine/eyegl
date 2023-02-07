@@ -8,8 +8,6 @@ import { Vec3 } from '../../math/Vec3.js';
 
 const tmp = new Vec3();
 
-// seee https://github.com/slembcke/Chipmunk2D/blob/master/demo/ChipmunkDebugDraw.c
-
 class Polygon {
 
     static Circle({
