@@ -165,7 +165,6 @@ class Debug {
                 margin: auto;
                 max-width: 1.35em;
                 max-height: 1.35em;
-                /* filter: drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.25)); */
             }
 
             .ColorIcon {
