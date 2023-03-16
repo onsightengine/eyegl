@@ -36,7 +36,7 @@ class Debug {
                 position: absolute;
                 display: flex;
                 flex-direction: column;
-                justify-contents: left;
+                justify-content: left;
                 text-align: left;
                 left: 0;
                 bottom: 0;
@@ -47,6 +47,8 @@ class Debug {
             }
 
             .EyeDiv {
+                user-select: none;
+                pointer-events: none;
                 margin: 0.35em;
                 margin-bottom: 0;
                 padding: 0.25em;

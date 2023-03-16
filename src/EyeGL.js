@@ -33,6 +33,7 @@ export { Plane } from './extras/geometries/Plane.js';
 export { Sphere } from './extras/geometries/Sphere.js';
 export { Torus } from './extras/geometries/Torus.js';
 export { Triangle } from './extras/geometries/Triangle.js';
+export { Tube } from './extras/geometries/Tube.js';
 
 // Loaders
 export { GLTFAnimation } from './extras/loaders/GLTFAnimation.js';
@@ -48,6 +49,13 @@ export { Polygon } from './extras/objects/Polygon.js';
 export { Polyline } from './extras/objects/Polyline.js';
 export { Sprite } from './extras/objects/Sprite.js';
 export { WireMesh } from './extras/objects/WireMesh.js';
+
+// Path
+export { BaseSegment } from './extras/path/BaseSegment.js';
+export { CubicBezierSegment } from './extras/path/CubicBezierSegment.js';
+export { LineSegment } from './extras/path/LineSegment.js';
+export { Path } from './extras/path/Path.js';
+export { QuadraticBezierSegment } from './extras/path/QuadraticBezierSegment.js';
 
 // Programs
 export { Uber } from './extras/programs/Uber.js';

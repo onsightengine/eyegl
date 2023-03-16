@@ -205,6 +205,10 @@ class Geometry {
             this.updateAttribute(this.attributes.index);
         }
 
+        // For drawElements, offset needs to be multiple of type size
+        let indexBytesPerElement = 2;
+        if (this.attributes.index && this.attributes.index.type === gl.UNSIGNED_INT) indexBytesPerElement = 4;
+
         // Check if program bound attributes need updating
         program.attributeLocations.forEach((location, { name }) => {
             const attr = this.attributes[name];
@@ -217,7 +221,7 @@ class Geometry {
                     mode,
                     this.drawRange.count,
                     this.attributes.index.type,
-                    this.attributes.index.offset + this.drawRange.start * 2,
+                    this.attributes.index.offset + this.drawRange.start * indexBytesPerElement,
                     this.instancedCount,
                 );
             } else {
@@ -225,7 +229,12 @@ class Geometry {
             }
         } else {
             if (this.attributes.index) {
-                gl.drawElements(mode, this.drawRange.count, this.attributes.index.type, this.attributes.index.offset + this.drawRange.start * 2);
+                gl.drawElements(
+                    mode,
+                    this.drawRange.count,
+                    this.attributes.index.type,
+                    this.attributes.index.offset + this.drawRange.start * indexBytesPerElement
+                );
             } else {
                 gl.drawArrays(mode, this.drawRange.start, this.drawRange.count);
             }
@@ -241,7 +250,7 @@ class Geometry {
         if (! attr) attr = this.getPosition();
         if (! attr) return;
         const array = attr.data;
-        const stride = attr.stride ? attr.stride / array.BYTES_PER_ELEMENT : attr.size;
+        const stride = attr.size;
 
         if (! this.bounds) {
             this.bounds = {
@@ -284,7 +293,7 @@ class Geometry {
         if (! attr) attr = this.getPosition();
         if (! attr) return;
         const array = attr.data;
-        const stride = attr.stride ? attr.stride / array.BYTES_PER_ELEMENT : attr.size;
+        const stride = attr.size;
 
         if (! this.bounds) this.computeBoundingBox(attr);
 

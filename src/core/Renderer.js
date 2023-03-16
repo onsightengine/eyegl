@@ -151,7 +151,7 @@ class Renderer {
             this.gl.canvas.width = width * this.dpr;
             this.gl.canvas.height = height * this.dpr;
 
-            if (updateStyle) {
+            if (updateStyle && this.gl.canvas.style) {
                 this.gl.canvas.style.width = width + 'px';
                 this.gl.canvas.style.height = height + 'px';
             }
