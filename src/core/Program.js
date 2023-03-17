@@ -148,7 +148,8 @@ class Program {
         }
         this.attributeOrder = locations.join('');
 
-        console.log(this.attributeOrder);
+        // // DEBUG
+        // console.log(this.attributeOrder);
     }
 
     setBlendFunc(src, dst, srcAlpha, dstAlpha) {

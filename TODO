@@ -4,17 +4,17 @@
 //
 // ----------------------------------------------------------------------------------
 
+Sprite Shader:
+    - Texture Atlas / Texture Merging:
+        https://github.com/mapbox/potpack
+        https://github.com/oguzeroglu/TextureMerger
+
 Polygons:
     - Chipmunk Debug Draw, https://github.com/slembcke/Chipmunk2D/blob/master/demo/ChipmunkDebugDraw.c
     - Two.js, https://two.js.org/
 
 Program Management:
     - Shader Chunks
-
-Sprite Shader:
-    - Texture Atlas / Texture Merging:
-        https://github.com/mapbox/potpack
-        https://github.com/oguzeroglu/TextureMerger
 
 Uber Shader:
     - lighting

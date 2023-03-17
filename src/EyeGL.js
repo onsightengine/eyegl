@@ -43,6 +43,7 @@ export { KTXTexture } from './extras/loaders/KTXTexture.js';
 export { TextureLoader } from './extras/loaders/TextureLoader.js'
 
 // Objects
+export { Billboard } from './extras/objects/Billboard.js';
 export { Curve } from './extras/objects/Curve.js';
 export { InstancedMesh } from './extras/objects/InstancedMesh.js';
 export { Polygon } from './extras/objects/Polygon.js';

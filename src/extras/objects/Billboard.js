@@ -2,7 +2,7 @@ import { Mesh } from '../../core/Mesh.js';
 import { Plane } from '../geometries/Plane.js';
 import { Program } from '../../core/Program.js';
 
-class Sprite extends Mesh {
+class Billboard extends Mesh {
 
     static #geometry;
     static #program;
@@ -10,9 +10,9 @@ class Sprite extends Mesh {
     constructor({
         texture,
     } = {}) {
-        if (! Sprite.#geometry) Sprite.#geometry = new Plane();
-        if (! Sprite.#program) {
-            Sprite.#program = new Program({
+        if (! Billboard.#geometry) Billboard.#geometry = new Plane();
+        if (! Billboard.#program) {
+            Billboard.#program = new Program({
                 cullFace: null,
                 transparent: true,
                 vertex: defaultVertex,
@@ -24,10 +24,10 @@ class Sprite extends Mesh {
         }
 
         super({
-            geometry: Sprite.#geometry,
-            program: Sprite.#program,
+            geometry: Billboard.#geometry,
+            program: Billboard.#program,
         });
-        this.isSprite = true;
+        this.isBillboard = true;
 
         this.texture = texture;
     }
@@ -71,7 +71,7 @@ class Sprite extends Mesh {
 
 }
 
-export { Sprite };
+export { Billboard };
 
 /***** Internal *****/
 

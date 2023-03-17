@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>EyeGL • Atlas</title>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
+        <link rel="icon" type="image/png" href="../../files/logo/favicon.png" />
+        <link href="../main.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="Info">Atlas</div>
+        <div class="Credits">Icons by Freepik - <a href="https://www.flaticon.com/">Flaticon</a></div>
+
+        <script language="JavaScript" src="../imports.js"></script>
+
+        <script type="module">
+            import * as EYE from 'eyegl';
+            import { Gooey } from 'osui';
+
+            const renderer = new EYE.Renderer({});
+            const gl = renderer.gl;
+            document.body.appendChild(gl.canvas);
+
+            const camera = new EYE.Camera({ fov: 35 });
+            camera.position.set(25, 25, -50);
+            camera.lookAt([0, 0, 0]);
+
+            const controls = new EYE.Orbit(camera);
+
+            function resize() {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+            }
+            window.addEventListener('resize', resize, false);
+            resize();
+
+            const params = {
+                count: 1000,
+            };
+
+            const gui = new Gooey().opacity(0.8);
+            const folder1 = gui.addFolder('Parameters');
+            folder1.add(params, 'count', 1000, 50000, 1000, 0).onFinishChange(() => buildScene(params.count));
+
+            const assets = new EYE.Assets();
+            const dragon = assets.load('../../files/sprites/dragon.png');
+            const unicorn = assets.load('../../files/sprites/unicorn.png');
+            const kraken = assets.load('../../files/sprites/kraken.png');
+
+            let scene;
+            function buildScene(count) {
+                scene = new EYE.Transform();
+                for (let i = 0; i < count; i++) {
+                    let texture;
+                    const img = Math.floor(Math.random() * 3);
+                    switch (img) {
+                        case 0: texture = dragon; break;
+                        case 1: texture = unicorn; break;
+                        case 2: texture = kraken; break;
+                    }
+                    const sprite = new EYE.Sprite({ texture });
+                    sprite.position.set(
+                        (Math.random() * 20) - 10,
+                        (Math.random() * 20) - 10,
+                        (Math.random() * 20) - 10,
+                    );
+                    scene.addChild(sprite);
+                }
+            }
+            buildScene(params.count);
+
+            const debug = new EYE.Debug();
+            requestAnimationFrame(update);
+            function update(t) {
+                debug.startFrame();
+                controls.update();
+
+                renderer.render({ scene, camera });
+
+                debug.endFrame();
+                requestAnimationFrame(update);
+            }
+
+        </script>
+    </body>
+</html>

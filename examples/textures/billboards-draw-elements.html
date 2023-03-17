@@ -43,20 +43,13 @@
             const folder1 = gui.addFolder('Parameters');
             folder1.add(params, 'count', 1000, 50000, 1000, 0).onFinishChange(() => buildScene(params.count));
 
-            const assets = new EYE.Assets();
-            // const dragon = EYE.TextureLoader.load({ src: '../../files/sprites/dragon.png' });
-            // const unicorn = EYE.TextureLoader.load({ src: '../../files/sprites/unicorn.png' });
-            // const kraken = EYE.TextureLoader.load({ src: '../../files/sprites/kraken.png' });
-            const dragon = assets.load('../../files/sprites/dragon.png');
-            const unicorn = assets.load('../../files/sprites/unicorn.png');
-            const kraken = assets.load('../../files/sprites/kraken.png');
+            const dragon = EYE.TextureLoader.load({ src: '../../files/sprites/dragon.png' });
+            const unicorn = EYE.TextureLoader.load({ src: '../../files/sprites/unicorn.png' });
+            const kraken = EYE.TextureLoader.load({ src: '../../files/sprites/kraken.png' });
 
             let scene;
-
             function buildScene(count) {
                 scene = new EYE.Transform();
-
-                // add new meshes
                 for (let i = 0; i < count; i++) {
                     let texture;
                     const img = Math.floor(Math.random() * 3);
@@ -65,28 +58,27 @@
                         case 1: texture = unicorn; break;
                         case 2: texture = kraken; break;
                     }
-
-                    const sprite = new EYE.Sprite({ texture });
-                    sprite.position.set(
+                    const billboard = new EYE.Billboard({ texture });
+                    billboard.position.set(
                         (Math.random() * 20) - 10,
                         (Math.random() * 20) - 10,
                         (Math.random() * 20) - 10,
                     );
-
-                    scene.addChild(sprite);
+                    scene.addChild(billboard);
                 }
             }
-
             buildScene(params.count);
 
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
-                requestAnimationFrame(update);
                 debug.startFrame();
                 controls.update();
+
                 renderer.render({ scene, camera });
+
                 debug.endFrame();
+                requestAnimationFrame(update);
             }
 
         </script>
