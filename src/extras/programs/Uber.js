@@ -1,6 +1,12 @@
 import { Program } from '../../core/Program.js';
 import { Texture } from '../../core/Texture.js';
 
+let _texture;
+function emptyTexture() {
+    if (! _texture || ! _texture.isTexture) _texture = new Texture();
+    return _texture;
+}
+
 class Uber extends Program {
 
     #flatShading = false;
@@ -14,8 +20,8 @@ class Uber extends Program {
     #wireIntensity = 0.0;
 
     constructor({
-        texture = new Texture(),
-        textureNormal = new Texture(),
+        texture = emptyTexture(),
+        textureNormal = emptyTexture(),
 
         flatShading = false,
         normalIntensity = 0.0,
