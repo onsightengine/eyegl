@@ -25,7 +25,6 @@ class Assets {
     /********** ACCESS **********/
 
     add(/* assets, seperated by commas */) {
-        console.log(arguments);
         for (let i = 0; i < arguments.length; i++) {
             const asset = arguments[i];
             if (! asset || ! asset.uuid) continue;
