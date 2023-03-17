@@ -26,6 +26,9 @@ class TextureLoader {
         anisotropy = 0,
         minFilter = generateMipmaps ? renderer.gl.NEAREST_MIPMAP_LINEAR : renderer.gl.LINEAR,
         magFilter = renderer.gl.LINEAR,
+
+        // Callback
+        onLoad = function() {},
     } = {}) {
         if (! src || src === '') {
             console.warn(`TextureLoader: No source provided`);
@@ -71,7 +74,10 @@ class TextureLoader {
                     minFilter,
                     magFilter,
                 });
-                texture.loaded = loadKTX(src, texture);
+                loadKTX(src, ext, texture).then(() => {
+                    texture.loaded = true;
+                    onLoad();
+                });
                 break;
             case 'webp':
             case 'jpg':
@@ -92,7 +98,10 @@ class TextureLoader {
                     unpackAlignment,
                     flipY,
                 });
-                texture.loaded = loadImage(src, texture, flipY);
+                loadImage(src, ext, texture, flipY).then(() => {
+                    texture.loaded = true;
+                    onLoad();
+                });
                 break;
             default:
                 console.warn(`TextureLoader: Format not supported - '${ext}'`);
@@ -155,48 +164,44 @@ function nameFromUrl(url) {
     return imageName;
 }
 
-async function loadKTX(src, texture) {
+async function loadKTX(src, ext, texture) {
     return fetch(src)
         .then((res) => res.arrayBuffer())
         .then((buffer) => texture.parseBuffer(buffer));
 }
 
-async function loadImage(src, texture, flipY) {
-    return decodeImage(src, flipY).then((imgBmp) => {
-        // // Catch non POT textures and update params to avoid errors
-        // if (! powerOfTwo(imgBmp.width) || ! powerOfTwo(imgBmp.height)) {
-        //     if (texture.generateMipmaps) texture.generateMipmaps = false;
-        //     if (texture.minFilter === renderer.gl.NEAREST_MIPMAP_LINEAR) texture.minFilter = renderer.gl.LINEAR;
-        //     if (texture.wrapS === renderer.gl.REPEAT) texture.wrapS = texture.wrapT = renderer.gl.CLAMP_TO_EDGE;
-        // }
+async function loadImage(src, ext, texture, flipY) {
+    const isSvg = (ext === 'svg');
+    const isChrome = navigator.userAgent.toLowerCase().includes('chrome');
+    const tryImageBitmap = !!window.createImageBitmap && isChrome && !isSvg;
+    return new Promise((resolve, reject) => {
+        //if (tryImageBitmap) decodeImageBitmap();
+        //else
+        decodeImage();
 
+        function decodeImage() {
+            const image = new Image();
+            image.crossOrigin = '';
+            image.src = src;
+            image.onload = () => resolve(image);
+        }
+
+        function decodeImageBitmap() {
+            fetch(src, { mode: 'cors' })
+                .then(response => response.blob(), decodeImage)
+                .then(image => createImageBitmap(image, { imageOrientation: flipY ? 'flipY' : 'none', premultiplyAlpha: 'none' }), decodeImage)
+                .then(resolve, decodeImage);
+        }
+    }).then((image) => {
         texture.name = nameFromUrl(src);
-        texture.image = imgBmp;
+        texture.image = image;
 
-        // For createImageBitmap, close once uploaded
+        // For image bitmap ('createImageBitmap'), close once uploaded
         texture.onUpdate = () => {
-            if (imgBmp.close) imgBmp.close();
+            if (image.close) image.close();
             texture.onUpdate = null;
         };
 
-        return imgBmp;
-    });
-}
-
-function decodeImage(src, flipY) {
-    return new Promise((resolve) => {
-        // Only chrome's implementation of createImageBitmap is fully supported
-        const isChrome = navigator.userAgent.toLowerCase().includes('chrome');
-        if (!!window.createImageBitmap && isChrome) {
-            fetch(src, { mode: 'cors' })
-                .then(response => response.blob())
-                .then(image => createImageBitmap(image, { imageOrientation: flipY ? 'flipY' : 'none', premultiplyAlpha: 'none' }))
-                .then(resolve);
-        } else {
-            const img = new Image();
-            img.crossOrigin = '';
-            img.src = src;
-            img.onload = () => resolve(img);
-        }
+        return image;
     });
 }

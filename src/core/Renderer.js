@@ -342,7 +342,6 @@ class Renderer {
         update = true,
         clear = true,
     } = {}) {
-
         if (! target) {
             this.bindFramebuffer();         // to screen
             this.setViewport(this.width * this.dpr, this.height * this.dpr);

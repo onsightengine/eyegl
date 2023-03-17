@@ -42,12 +42,8 @@
                 magFilter: gl.NEAREST,
             });
 
-            // Create render target framebuffer
-            // NOTE: RenderTarget uses canvas size by default, doesn't auto resize. To resize, re-create
-            const target = new EYE.RenderTarget({
-                width: 512,
-                height: 512,
-            });
+            // Render target
+            const target = new EYE.RenderTarget({ width: 512, height: 512 });
 
             const program = new EYE.Uber({ texture: texture });
             const targetProgram = new EYE.Uber({ texture: target.texture });

@@ -92,12 +92,12 @@
             document.body.appendChild(gl.canvas);
 
             const camera = new EYE.Camera({ fov: 15, position: [0, 0, 10] });
+            const target = new EYE.RenderTarget();
 
-            let target;
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
-                target = new EYE.RenderTarget();
+                target.setSize(gl.canvas.width, gl.canvas.height);
             }
             window.addEventListener('resize', resize);
             resize();
