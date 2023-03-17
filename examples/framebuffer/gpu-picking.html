@@ -90,10 +90,8 @@
             const renderer = new EYE.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
-            gl.clearColor(0, 0, 0, 0);
 
-            const camera = new EYE.Camera({ fov: 15 });
-            camera.position.z = 10;
+            const camera = new EYE.Camera({ fov: 15, position: [0, 0, 10] });
 
             let target;
             function resize() {
@@ -181,11 +179,11 @@
 
             // Render
 
+            gl.clearColor(0, 0, 0, 0);
+
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
-
             function update(t) {
-                requestAnimationFrame(update);
                 debug.startFrame();
 
                 const time = t * 0.001;
@@ -229,6 +227,7 @@
                 renderer.render({ scene, camera });
 
                 debug.endFrame();
+                requestAnimationFrame(update);
             }
 
         </script>

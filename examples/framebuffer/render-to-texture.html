@@ -22,17 +22,11 @@
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new EYE.Camera({ fov: 35 });
-            camera.position.set(0, 1, 5);
-            camera.lookAt([0, 0, 0]);
-
-            const targetCamera = new EYE.Camera({ fov: 35 });
-            targetCamera.position.set(0, 1, 5);
-            targetCamera.lookAt([0, 0, 0]);
+            const camera = new EYE.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
+            const targetCamera = new EYE.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
-                camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
                 targetCamera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
             }
             window.addEventListener('resize', resize, false);

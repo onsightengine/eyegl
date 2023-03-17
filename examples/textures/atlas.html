@@ -22,18 +22,12 @@
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new EYE.Camera({ fov: 35 });
-            camera.position.set(0, 1, 5);
-            camera.lookAt([0, 0, 0]);
-
-            const targetCamera = new EYE.Camera({ fov: 35 });
-            targetCamera.position.set(0, 1, 5);
-            targetCamera.lookAt([0, 0, 0]);
+            const sceneCamera = new EYE.Camera({ fov: 35, position: [0, 0, 5], lookAt: [0, 0, 0] });
+            const atlasCamera = new EYE.Camera({ fov: 35, position: [0, 0, 5], lookAt: [0, 0, 0] });
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
-                camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
-                targetCamera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+                sceneCamera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
             }
             window.addEventListener('resize', resize, false);
             resize();
@@ -43,36 +37,33 @@
             const unicorn = assets.load('../../files/sprites/unicorn.png');
             const kraken = assets.load('../../files/sprites/kraken.png');
 
-            const geometry = new EYE.Box();
-            // NOTE: RenderTarget uses canvas size by default, doesn't auto resize. To resize, re-create
-            const target = new EYE.RenderTarget({ width: 512, height: 512 });
+            let atlas;
+            function buildAtlas(width, height) {
+                atlas = new EYE.RenderTarget({ width, height });
+                atlasCamera.perspective({ aspect: width / height });
+            }
+            buildAtlas(512, 512);
 
-            const program = new EYE.Uber({ texture: dragon });
-            const targetProgram = new EYE.Uber({ texture: target.texture });
+            const atlasProgram = new EYE.Uber({ texture: dragon, cullFace: null });
+            const atlasBox = new EYE.Mesh({ geometry: new EYE.Plane(), program: atlasProgram });
 
-            const mesh = new EYE.Mesh({ geometry, program });
-            const targetMesh = new EYE.Mesh({ geometry, program: targetProgram });
+            const sceneProgram = new EYE.Uber({ texture: atlas.texture });
+            const sceneBox = new EYE.Mesh({ geometry: new EYE.Box(), program: sceneProgram });
 
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 debug.startFrame();
 
-                mesh.rotation.y -= 0.02;
-                targetMesh.rotation.y -= 0.005;
-                targetMesh.rotation.x -= 0.01;
-
-                // Set background for first render to target
+                // Render Atlas
                 gl.clearColor(0.15, 0.05, 0.2, 1);
+                renderer.render({ scene: atlasBox, camera: atlasCamera, target: atlas });
 
-                // Add target property to render call
-                renderer.render({ scene: mesh, camera, target });
-
-                // Change to final background
+                // Render Scene
+                sceneBox.rotation.y -= 0.003;
+                sceneBox.rotation.x -= 0.005;
                 gl.clearColor(0, 0, 0, 0);
-
-                // Omit target to render to canvas
-                renderer.render({ scene: targetMesh, camera: targetCamera });
+                renderer.render({ scene: sceneBox, camera: sceneCamera });
 
                 debug.endFrame();
                 requestAnimationFrame(update);

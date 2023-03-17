@@ -34,7 +34,7 @@ class Plane extends Geometry {
         super(attributes);
     }
 
-    static buildPlane(position, normal, uv, index, width, height, depth, wSegs, hSegs, u = 0, v = 1, w = 2, uDir = -1, vDir = -1, i = 0, ii = 0) {
+    static buildPlane(position, normal, uv, index, width, height, depth, wSegs, hSegs, u = 0, v = 1, w = 2, uDir = 1, vDir = -1, i = 0, ii = 0) {
         const io = i;
         const segW = width / wSegs;
         const segH = height / hSegs;

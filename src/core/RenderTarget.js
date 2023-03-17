@@ -145,6 +145,13 @@ class RenderTarget {
 
         renderer.bindFramebuffer({ target: this.target });
     }
+
+    flush() {
+
+        // TODO
+
+    }
+
 }
 
 export { RenderTarget };

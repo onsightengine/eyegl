@@ -19,7 +19,10 @@ class Camera extends Transform {
         right,
         bottom,
         top,
-        zoom = 1
+        zoom = 1,
+        // Starting
+        position,
+        lookAt,
     } = {}) {
         super();
         this.isCamera = true;
@@ -33,8 +36,14 @@ class Camera extends Transform {
 
         // Use orthographic if left/right set, else default to perspective camera
         this.type = (left || right) ? 'orthographic' : 'perspective';
-        if (this.type === 'orthographic') this.orthographic();
-        else this.perspective();
+        if (this.type === 'orthographic') {
+            this.orthographic();
+        } else {
+            this.perspective();
+        }
+
+        if (Array.isArray(position)) this.position.set(position);
+        if (Array.isArray(lookAt)) this.lookAt(lookAt);
     }
 
     perspective({
