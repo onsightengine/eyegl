@@ -22,9 +22,9 @@ class Program {
         depthWrite = true,
         depthFunc = renderer.gl.LESS,
     } = {}) {
-        if (! renderer) console.error(`Program.constructor: Renderer not found`);
-        if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
-        if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
+        if (! renderer) console.error(`Program: Renderer not found`);
+        if (! vertex) console.warn('Program: Vertex shader not supplied');
+        if (! fragment) console.warn('Program: Fragment shader not supplied');
         const gl = renderer.gl;
 
         this.uuid = uuid();

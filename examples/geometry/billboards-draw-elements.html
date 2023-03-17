@@ -43,9 +43,13 @@
             const folder1 = gui.addFolder('Parameters');
             folder1.add(params, 'count', 1000, 50000, 1000, 0).onFinishChange(() => buildScene(params.count));
 
-            const dragon = EYE.TextureLoader.load({ src: '../../files/sprites/dragon.png' });
-            const unicorn = EYE.TextureLoader.load({ src: '../../files/sprites/unicorn.png' });
-            const kraken = EYE.TextureLoader.load({ src: '../../files/sprites/kraken.png' });
+            const assets = new EYE.Assets();
+            // const dragon = EYE.TextureLoader.load({ src: '../../files/sprites/dragon.png' });
+            // const unicorn = EYE.TextureLoader.load({ src: '../../files/sprites/unicorn.png' });
+            // const kraken = EYE.TextureLoader.load({ src: '../../files/sprites/kraken.png' });
+            const dragon = assets.load('../../files/sprites/dragon.png');
+            const unicorn = assets.load('../../files/sprites/unicorn.png');
+            const kraken = assets.load('../../files/sprites/kraken.png');
 
             let scene;
 

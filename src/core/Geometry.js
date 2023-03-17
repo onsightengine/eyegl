@@ -10,7 +10,7 @@ let _idGenerator = 1;
 class Geometry {
 
     constructor(attributes = {}) {
-        if (! renderer) console.error(`Geometry.constructor: Renderer not found`);
+        if (! renderer) console.error(`Geometry: Renderer not found`);
 
         this.isGeometry = true;
 

@@ -29,7 +29,7 @@ class Texture {
         width, // used for RenderTargets or Data Textures
         height = width,
     } = {}) {
-        if (! renderer) console.error(`Texture.constructor: Renderer not found`);
+        if (! renderer) console.error(`Texture: Renderer not found`);
         const gl = renderer.gl;
 
         this.isTexture = true;

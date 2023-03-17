@@ -19,7 +19,7 @@ export { Transform } from './core/Transform.js';
 
 /***** Extras *****/
 
-export { AssetManager } from './extras/AssetManager.js';
+export { Assets } from './extras/Assets.js';
 export { Post } from './extras/Post.js';
 export { Raycast } from './extras/Raycast.js';
 

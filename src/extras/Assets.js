@@ -1,44 +1,77 @@
-import { TextureLoader } from '../extras/loaders/TextureLoader.js';
+import { TextureLoader } from './loaders/TextureLoader.js';
 
-class AssetManager {
+class Assets {
 
-    static #assets = {};
+    #assets = {};
 
-    static assetType(asset) {
-        if (asset.isGeometry) return 'geometry';
-        if (asset.isTexture) return 'texture';
-        return 'asset';
-    }
+    constructor() {}
 
-    static getLibrary(type) {
+    /********** LIBRARY **********/
+
+    library(type) {
+        function assetType(asset) {
+            if (asset.isGeometry) return 'geometry';
+            if (asset.isTexture) return 'texture';
+            return 'asset';
+        }
+
         const library = [];
         for (const [uuid, asset] of Object.entries(this.#assets)) {
-            if (AssetManager.assetType(asset) === type) library.push(asset);
+            if (assetType(asset) === type) library.push(asset);
         }
         return library;
     }
 
-    /***** Add / Get / Remove *****/
+    /********** ACCESS **********/
 
-    static addAsset(assetOrArray) {
-        if (! assetOrArray) return;
-        const assetArray = (Array.isArray(assetOrArray)) ? assetOrArray : [ assetOrArray ];
-        for (let i = 0; i < assetArray.length; i++) {
-            const asset = assetArray[i];
-            if (! asset.uuid) continue;
+    add(/* assets, seperated by commas */) {
+        console.log(arguments);
+        for (let i = 0; i < arguments.length; i++) {
+            const asset = arguments[i];
+            if (! asset || ! asset.uuid) continue;
             if (! asset.name || asset.name === '') asset.name = asset.constructor.name;
             this.#assets[asset.uuid] = asset;
         }
-        return assetOrArray;
     }
 
-    static getAsset(uuid) {
+    get(uuid) {
         if (! uuid) return;
         if (uuid.uuid) uuid = uuid.uuid;
         return this.#assets[uuid];
     }
 
-    static removeAsset(assetOrArray, flush = true) {
+    load(src, attributes = {}) {
+        if (typeof src !== 'string') {
+            console.warn('Assets.load: Source not provided');
+            return;
+        }
+
+        let asset;
+        const ext = src.split('.').pop().split('?')[0].toLowerCase();
+        switch (ext) {
+            // Texture
+            case 'ktx':
+            case 'pvrtc':
+            case 's3tc':
+            case 'etc':
+            case 'etc1':
+            case 'astc':
+            case 'webp':
+            case 'svg':
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+                const args = Object.assign({ src }, attributes);
+                asset = TextureLoader.load(args);
+                break;
+            default:
+                asset = undefined;
+        }
+        if (asset) this.add(asset);
+        return asset;
+    }
+
+    remove(assetOrArray, flush = true) {
         if (! assetOrArray) return;
         const assetArray = (Array.isArray(assetOrArray)) ? assetOrArray : [ assetOrArray ];
 
@@ -55,23 +88,23 @@ class AssetManager {
         }
     }
 
-    /***** JSON *****/
+    /********** JSON **********/
 
-    static clear() {
+    clear() {
         for (let uuid in _assets) {
-            AssetManager.removeAsset(_assets[uuid], true);
+            this.removeAsset(_assets[uuid], true);
         }
     }
 
-    static fromJSON(json) {
+    fromJSON(json) {
 
         // Clear Assets
-        AssetManager.clear()
+        this.clear()
 
         // Add to Assets
         function addLibraryToAssets(library) {
             for (const [uuid, asset] of Object.entries(library)) {
-                AssetManager.addAsset(asset);
+                this.addAsset(asset);
             }
         }
 
@@ -87,7 +120,7 @@ class AssetManager {
 
     }
 
-    static toJSON(meta) {
+    toJSON(meta) {
 
         const json = {};
 
@@ -103,14 +136,14 @@ class AssetManager {
         // };
 
         // // Geometries
-        // const geometries = AssetManager.getLibrary('geometry');
+        // const geometries = Assets.library('geometry');
         // for (let i = 0; i < geometries.length; i++) {
         //     const geometry = geometries[i];
         //     if (! meta.geometries[geometry.uuid]) meta.geometries[geometry.uuid] = geometry.toJSON(meta);
         // }
 
         // // Textures
-        // const textures = AssetManager.getLibrary('texture');
+        // const textures = Assets.library('texture');
         // for (let i = 0; i < textures.length; i++) {
         //     const texture = textures[i];
         //     if (! meta.textures[texture.uuid]) meta.textures[texture.uuid] = texture.toJSON(meta);
@@ -132,4 +165,4 @@ class AssetManager {
 
 }
 
-export { AssetManager };
+export { Assets };
