@@ -18,61 +18,65 @@
             import * as EYE from 'eyegl';
             import { Gooey } from 'osui';
 
-            const renderer = new EYE.Renderer({ dpr: 2 });
+            const renderer = new EYE.Renderer({});
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
             const camera = new EYE.Camera({ fov: 35 });
-            camera.position.set(0, 1, 5);
+            camera.position.set(25, 25, -50);
             camera.lookAt([0, 0, 0]);
 
-            const targetCamera = new EYE.Camera({ fov: 35 });
-            targetCamera.position.set(0, 1, 5);
-            targetCamera.lookAt([0, 0, 0]);
+            const controls = new EYE.Orbit(camera);
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
-                targetCamera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
             }
             window.addEventListener('resize', resize, false);
             resize();
+
+            const params = {
+                count: 1000,
+            };
+
+            const gui = new Gooey().opacity(0.8);
+            const folder1 = gui.addFolder('Parameters');
+            folder1.add(params, 'count', 1000, 50000, 1000, 0).onFinishChange(() => buildScene(params.count));
 
             const assets = new EYE.Assets();
             const dragon = assets.load('../../files/sprites/dragon.png');
             const unicorn = assets.load('../../files/sprites/unicorn.png');
             const kraken = assets.load('../../files/sprites/kraken.png');
 
-            const geometry = new EYE.Box();
-            // NOTE: RenderTarget uses canvas size by default, doesn't auto resize. To resize, re-create
-            const target = new EYE.RenderTarget({ width: 512, height: 512 });
-
-            const program = new EYE.Uber({ texture: dragon });
-            const targetProgram = new EYE.Uber({ texture: target.texture });
-
-            const mesh = new EYE.Mesh({ geometry, program });
-            const targetMesh = new EYE.Mesh({ geometry, program: targetProgram });
+            let scene;
+            function buildScene(count) {
+                scene = new EYE.Transform();
+                for (let i = 0; i < count; i++) {
+                    let texture;
+                    const img = Math.floor(Math.random() * 3);
+                    switch (img) {
+                        case 0: texture = dragon; break;
+                        case 1: texture = unicorn; break;
+                        case 2: texture = kraken; break;
+                    }
+                    const sprite = new EYE.Sprite({ texture });
+                    sprite.position.set(
+                        (Math.random() * 20) - 10,
+                        (Math.random() * 20) - 10,
+                        (Math.random() * 20) - 10,
+                    );
+                    scene.addChild(sprite);
+                }
+            }
+            buildScene(params.count);
 
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 debug.startFrame();
+                controls.update();
 
-                mesh.rotation.y -= 0.02;
-                targetMesh.rotation.y -= 0.005;
-                targetMesh.rotation.x -= 0.01;
-
-                // Set background for first render to target
-                gl.clearColor(0.15, 0.05, 0.2, 1);
-
-                // Add target property to render call
-                renderer.render({ scene: mesh, camera, target });
-
-                // Change to final background
-                gl.clearColor(0, 0, 0, 0);
-
-                // Omit target to render to canvas
-                renderer.render({ scene: targetMesh, camera: targetCamera });
+                renderer.render({ scene, camera });
 
                 debug.endFrame();
                 requestAnimationFrame(update);

@@ -32,8 +32,7 @@
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
-
-                // Only update aspect of target camera, as first scene will be drawn to a square render target
+                camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
                 targetCamera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
             }
             window.addEventListener('resize', resize, false);
@@ -49,8 +48,8 @@
                 magFilter: gl.NEAREST,
             });
 
-            // Create render target framebuffer.
-            // Uses canvas size by default and doesn't automatically resize. To resize, re-create target.
+            // Create render target framebuffer
+            // NOTE: RenderTarget uses canvas size by default, doesn't auto resize. To resize, re-create
             const target = new EYE.RenderTarget({
                 width: 512,
                 height: 512,
@@ -62,9 +61,10 @@
             const mesh = new EYE.Mesh({ geometry, program });
             const targetMesh = new EYE.Mesh({ geometry, program: targetProgram });
 
+            const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
-                requestAnimationFrame(update);
+                debug.startFrame();
 
                 mesh.rotation.y -= 0.02;
                 targetMesh.rotation.y -= 0.005;
@@ -81,6 +81,9 @@
 
                 // Omit target to render to canvas
                 renderer.render({ scene: targetMesh, camera: targetCamera });
+
+                debug.endFrame();
+                requestAnimationFrame(update);
             }
 
         </script>
