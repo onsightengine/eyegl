@@ -40,47 +40,57 @@
             // Atlas
             const atlas = new EYE.RenderTarget();
             let atlasNeedsUpdate = false;
-            function updateAtlas() {
-                setTimeout(() => atlasNeedsUpdate = true, 100);
-            }
+            function updateAtlas() { atlasNeedsUpdate = true; }
             function buildAtlas() {
-                atlasNeedsUpdate = false;
-                // Resize
-                let aWidth = 1028;
-                let aHeight = 1028;
-                let startX = 0;
-                let startY = 0;
-                atlas.setSize(aWidth, aHeight);
-                atlasCamera.orthographic({
-                    left: aWidth / -2,
-                    right: aWidth / 2,
-                    top: aHeight / 2,
-                    bottom: aHeight / -2,
-                });
                 // Clear
                 gl.clearColor(0.15, 0.05, 0.2, 1);
                 let firstDraw = true;
-                // Render
+
+                // Packing
                 const textures = assets.library('texture');
-                console.log(textures);
+                const boxes = [];
                 for (let i = 0; i < textures.length; i++) {
                     const texture = textures[i];
-                    if (! texture.loaded) {
-                        // atlasNeedsUpdate = true;
-                        continue;
-                    }
-                    const tWidth = texture.image.width;
-                    const tHeight = texture.image.height;
-                    atlasBox.scale.x = tWidth;
-                    atlasBox.scale.y = tHeight;
-                    atlasBox.position.x = (aWidth / -2) + ((tWidth / 2) + (tWidth * i));
-                    atlasBox.position.y = (aHeight / 2) - (tHeight / 2);
+                    if (!texture.loaded || !texture.image.width || !texture.image.height) continue;
+                    boxes.push({
+                        w: texture.image.width,
+                        h: texture.image.height,
+                        texture: texture,
+                    });
+                }
+                const atlasData = EYE.Potpack.pack(boxes);
+                console.log(atlasData);
+                console.log(boxes);
+
+                const major = Math.max(atlasData.w, atlasData.h);
+                atlasData.w = major;
+                atlasData.h = major;
+
+                // Resize
+                atlas.setSize(atlasData.w, atlasData.h);
+                atlasCamera.orthographic({
+                    left: atlasData.w / -2,
+                    right: atlasData.w / 2,
+                    top: atlasData.h / 2,
+                    bottom: atlasData.h / -2,
+                });
+
+                // Render
+                for (let i = 0; i < boxes.length; i++) {
+                    const box = boxes[i];
+                    const texture = box.texture;
+                    atlasBox.scale.x = box.w;
+                    atlasBox.scale.y = box.h;
+                    atlasBox.position.x = (atlasData.w / -2) + box.x + (box.w / 2);
+                    atlasBox.position.y = (atlasData.h / 2) - box.y - (box.h / 2);;
                     atlasProgram.uniforms.tDiffuse.value = texture;
                     renderer.render({ scene: atlasBox, camera: atlasCamera, target: atlas, clear: false});// firstDraw });
                     firstDraw = false;
                 }
+
                 // Update Uniform
                 sceneProgram.uniforms.tDiffuse.value = atlas.texture;
+                atlasNeedsUpdate = false;
             }
 
             // Assets

@@ -196,7 +196,7 @@ const defaultFragment = /* glsl */ `#version 300 es
         vec4 tex = texture(tDiffuse, vUv);
         alpha *= tex.a;
 
-        vec3 light = normalize(vec3(sin(uTime), 1.0, cos(uTime)));
+        vec3 light = vec3(0.0);//normalize(vec3(sin(uTime), 1.0, cos(uTime)));
         float shading = dot(normal, light) * 0.25;
 
         vec3 diffuse = tex.rgb + shading;

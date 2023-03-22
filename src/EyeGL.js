@@ -89,3 +89,7 @@ export * as QuatFunc from './math/functions/QuatFunc.js';
 export * as Vec2Func from './math/functions/Vec2Func.js';
 export * as Vec3Func from './math/functions/Vec3Func.js';
 export * as Vec4Func from './math/functions/Vec4Func.js';
+
+/***** External *****/
+
+export { Potpack } from './libs/Potpack.js';
