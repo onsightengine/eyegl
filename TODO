@@ -5,8 +5,12 @@
 // ----------------------------------------------------------------------------------
 
 Sprite Shader:
-    - Texture Atlas / Texture Merging:
-        https://github.com/mapbox/potpack
+    - Texture Atlas:
+        - Leftover textures:
+            - Switch from potpack to bin-packing
+                https://github.com/mapbox/potpack
+                https://github.com/jakesgordon/bin-packing
+    - Texture Merging:
         https://github.com/oguzeroglu/TextureMerger
 
 Polygons:

@@ -58,7 +58,7 @@
                         texture: texture,
                     });
                 }
-                const atlasData = EYE.Potpack.pack(boxes);
+                const atlasData = EYE.Potpack.pack(boxes); // NOTE: re-orders 'boxes' array, adds 'x', 'y'
                 console.log(atlasData);
                 console.log(boxes);
 
