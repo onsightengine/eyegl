@@ -92,4 +92,4 @@ export * as Vec4Func from './math/functions/Vec4Func.js';
 
 /***** External *****/
 
-export { Potpack } from './libs/Potpack.js';
+export { Packer } from './libs/Packer.js';

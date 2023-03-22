@@ -38,7 +38,16 @@
             const atlasBox = new EYE.Mesh({ geometry: new EYE.Plane(), program: atlasProgram });
 
             // Atlas
+            const atlasWidth = 2048;
+            const atlasHeight = 2048;
             const atlas = new EYE.RenderTarget();
+            atlas.setSize(atlasWidth,atlasHeight);
+            atlasCamera.orthographic({
+                left: atlasWidth / -2, right: atlasWidth / 2,
+                top: atlasHeight / 2, bottom: atlasHeight / -2,
+            });
+
+            // Packing
             let atlasNeedsUpdate = false;
             function updateAtlas() { atlasNeedsUpdate = true; }
             function buildAtlas() {
@@ -46,7 +55,7 @@
                 gl.clearColor(0.15, 0.05, 0.2, 1);
                 let firstDraw = true;
 
-                // Packing
+                // Textures
                 const textures = assets.library('texture');
                 const boxes = [];
                 for (let i = 0; i < textures.length; i++) {
@@ -58,22 +67,14 @@
                         texture: texture,
                     });
                 }
-                const atlasData = EYE.Potpack.pack(boxes); // NOTE: re-orders 'boxes' array, adds 'x', 'y'
-                console.log(atlasData);
-                console.log(boxes);
 
-                const major = Math.max(atlasData.w, atlasData.h);
-                atlasData.w = major;
-                atlasData.h = major;
-
-                // Resize
-                atlas.setSize(atlasData.w, atlasData.h);
-                atlasCamera.orthographic({
-                    left: atlasData.w / -2,
-                    right: atlasData.w / 2,
-                    top: atlasData.h / 2,
-                    bottom: atlasData.h / -2,
-                });
+                // Sort
+                boxes.sort((a, b) => { return Math.max(b.w, b.h) - Math.max(a.w, a.h); });
+                boxes.sort((a, b) => { return Math.min(b.w, b.h) - Math.min(a.w, a.h); });
+                boxes.sort((a, b) => { return b.h - a.h; });
+                boxes.sort((a, b) => { return b.w - a.w; });
+                const packer = new EYE.Packer(atlasWidth, atlasHeight);
+                packer.fit(boxes);
 
                 // Render
                 for (let i = 0; i < boxes.length; i++) {
@@ -81,8 +82,8 @@
                     const texture = box.texture;
                     atlasBox.scale.x = box.w;
                     atlasBox.scale.y = box.h;
-                    atlasBox.position.x = (atlasData.w / -2) + box.x + (box.w / 2);
-                    atlasBox.position.y = (atlasData.h / 2) - box.y - (box.h / 2);;
+                    atlasBox.position.x = (atlasWidth / -2) + box.fit.x + (box.w / 2);
+                    atlasBox.position.y = (atlasHeight / 2) - box.fit.y - (box.h / 2);;
                     atlasProgram.uniforms.tDiffuse.value = texture;
                     renderer.render({ scene: atlasBox, camera: atlasCamera, target: atlas, clear: false});// firstDraw });
                     firstDraw = false;
