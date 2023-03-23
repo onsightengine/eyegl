@@ -30,7 +30,7 @@ class TextureLoader {
         // Callback
         onLoad = function() {},
     } = {}) {
-        if (! src || src === '') {
+        if (!src || src === '') {
             console.warn(`TextureLoader: No source provided`);
             return new Texture();
         }

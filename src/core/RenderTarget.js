@@ -79,7 +79,7 @@ class RenderTarget {
             gl.framebufferTexture2D(this.target, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
         } else {
             // Render buffers
-            if (depth && ! stencil) {
+            if (depth && !stencil) {
                 this.depthBuffer = gl.createRenderbuffer();
                 gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthBuffer);
                 gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);

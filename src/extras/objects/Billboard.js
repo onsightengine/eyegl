@@ -10,8 +10,8 @@ class Billboard extends Mesh {
     constructor({
         texture,
     } = {}) {
-        if (! Billboard.#geometry) Billboard.#geometry = new Plane();
-        if (! Billboard.#program) {
+        if (!Billboard.#geometry) Billboard.#geometry = new Plane();
+        if (!Billboard.#program) {
             Billboard.#program = new Program({
                 cullFace: null,
                 transparent: true,
@@ -36,7 +36,7 @@ class Billboard extends Mesh {
         // Set camera uniforms
         if (camera) {
             // Add empty matrix uniforms to program if unset
-            if (! this.program.uniforms.modelMatrix) {
+            if (!this.program.uniforms.modelMatrix) {
                 Object.assign(this.program.uniforms, {
                     modelMatrix: { value: null },
                     viewMatrix: { value: null },

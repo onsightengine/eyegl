@@ -96,7 +96,7 @@ export class Mat4 extends Array {
     }
 
     multiply(ma, mb) {
-        if (! ma.length) {
+        if (!ma.length) {
             Mat4Func.multiplyScalar(this, this, ma);
         } else if (mb) {
             Mat4Func.multiply(this, ma, mb);

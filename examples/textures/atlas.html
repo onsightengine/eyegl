@@ -32,14 +32,14 @@
             resize();
 
             // Meshes
-            const sceneProgram = new EYE.Uber({});
+            const sceneProgram = new EYE.Uber({ cullFace: null });
             const sceneBox = new EYE.Mesh({ geometry: new EYE.Box(), program: sceneProgram });
             const atlasProgram = new EYE.Uber({});
             const atlasBox = new EYE.Mesh({ geometry: new EYE.Plane(), program: atlasProgram });
 
             // Atlas
-            const atlasWidth = 2048;
-            const atlasHeight = 2048;
+            const atlasWidth = 512;
+            const atlasHeight = 512;
             const atlas = new EYE.RenderTarget();
             atlas.setSize(atlasWidth,atlasHeight);
             atlasCamera.orthographic({
@@ -79,13 +79,17 @@
                 // Render
                 for (let i = 0; i < boxes.length; i++) {
                     const box = boxes[i];
+                    if (!box.fit) {
+                        console.log(box);
+                        continue;
+                    }
                     const texture = box.texture;
                     atlasBox.scale.x = box.w;
                     atlasBox.scale.y = box.h;
                     atlasBox.position.x = (atlasWidth / -2) + box.fit.x + (box.w / 2);
                     atlasBox.position.y = (atlasHeight / 2) - box.fit.y - (box.h / 2);;
                     atlasProgram.uniforms.tDiffuse.value = texture;
-                    renderer.render({ scene: atlasBox, camera: atlasCamera, target: atlas, clear: false});// firstDraw });
+                    renderer.render({ scene: atlasBox, camera: atlasCamera, target: atlas, clear: firstDraw });
                     firstDraw = false;
                 }
 

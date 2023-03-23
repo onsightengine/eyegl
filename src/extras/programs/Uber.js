@@ -3,7 +3,7 @@ import { Texture } from '../../core/Texture.js';
 
 let _texture;
 function emptyTexture() {
-    if (! _texture || ! _texture.isTexture) _texture = new Texture();
+    if (!_texture || !_texture.isTexture) _texture = new Texture();
     return _texture;
 }
 

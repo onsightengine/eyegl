@@ -87,11 +87,11 @@ class Post {
     render({ scene, camera, texture, target = null, update = true, sort = true, frustumCull = true }) {
         const enabledPasses = this.passes.filter((pass) => pass.enabled);
 
-        if (! texture) {
+        if (!texture) {
             renderer.render({
                 scene,
                 camera,
-                target: enabledPasses.length || (! target && this.targetOnly) ? this.fbo.write : target,
+                target: enabledPasses.length || (!target && this.targetOnly) ? this.fbo.write : target,
                 update,
                 sort,
                 frustumCull,
@@ -100,10 +100,10 @@ class Post {
         }
 
         enabledPasses.forEach((pass, i) => {
-            pass.mesh.program.uniforms[pass.textureUniform].value = ! i && texture ? texture : this.fbo.read.texture;
+            pass.mesh.program.uniforms[pass.textureUniform].value = !i && texture ? texture : this.fbo.read.texture;
             renderer.render({
                 scene: pass.mesh,
-                target: i === enabledPasses.length - 1 && (target || ! this.targetOnly) ? target : this.fbo.write,
+                target: i === enabledPasses.length - 1 && (target || !this.targetOnly) ? target : this.fbo.write,
                 clear: true,
             });
             this.fbo.swap();

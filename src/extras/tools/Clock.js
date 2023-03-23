@@ -40,7 +40,7 @@ class Clock {
 
 	/** Returns delta time (time since last getDeltaTime() call) */
 	getDeltaTime() {
-		if (! this.#running) return 0;
+		if (!this.#running) return 0;
 
         const newTime = _timer.now();
         const dt = (newTime - this.#lastChecked) / 1000;

@@ -22,9 +22,9 @@ class Program {
         depthWrite = true,
         depthFunc = renderer.gl.LESS,
     } = {}) {
-        if (! renderer) console.error(`Program: Renderer not found`);
-        if (! vertex) console.warn('Program: Vertex shader not supplied');
-        if (! fragment) console.warn('Program: Fragment shader not supplied');
+        if (!renderer) console.error(`Program: Renderer not found`);
+        if (!vertex) console.warn('Program: Vertex shader not supplied');
+        if (!fragment) console.warn('Program: Fragment shader not supplied');
         const gl = renderer.gl;
 
         this.uuid = uuid();
@@ -103,7 +103,7 @@ class Program {
         gl.attachShader(this.program, vertexShader);
         gl.attachShader(this.program, fragmentShader);
         gl.linkProgram(this.program);
-        if (! gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+        if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
             return console.warn(gl.getProgramInfoLog(this.program));
         }
 
@@ -191,7 +191,7 @@ class Program {
 
         // Avoid gl call if program already in use
         const programActive = (renderer.state.currentProgram === this.id);
-        if (! programActive) {
+        if (!programActive) {
             gl.useProgram(this.program);
             renderer.state.currentProgram = this.id;
         }
@@ -213,7 +213,7 @@ class Program {
                 name += `[${activeUniform.structIndex}].${activeUniform.structProperty}`;
             }
 
-            if (! uniform) {
+            if (!uniform) {
                 return warn(`Active uniform ${name} has not been supplied`);
             }
 
@@ -327,7 +327,7 @@ function flatten(a) {
     if (valueLen === undefined) return a;
     const length = arrayLen * valueLen;
     let value = _arrayCacheF32[length];
-    if (! value) _arrayCacheF32[length] = value = new Float32Array(length);
+    if (!value) _arrayCacheF32[length] = value = new Float32Array(length);
     for (let i = 0; i < arrayLen; i++) value.set(a[i], i * valueLen);
     return value;
 }

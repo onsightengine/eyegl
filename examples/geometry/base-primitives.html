@@ -149,7 +149,7 @@
             function logVisibleGeometry() {
                 for (const key in meshes) {
                     if (params.indexed && meshes[key].visible) console.log(meshes[key]);
-                    if (! params.indexed && meshesNon[key].visible) console.log(meshesNon[key]);
+                    if (!params.indexed && meshesNon[key].visible) console.log(meshesNon[key]);
                 }
             }
 
@@ -157,7 +157,7 @@
                 let mesh = undefined;
                 for (const key in meshes) {
                     meshes[key].visible = (params.indexed && params.type === key);
-                    meshesNon[key].visible = (! params.indexed && params.type === key);
+                    meshesNon[key].visible = (!params.indexed && params.type === key);
                     if (meshes[key].visible) mesh = meshes[key];
                     if (meshesNon[key].visible) mesh = meshesNon[key];
                 }

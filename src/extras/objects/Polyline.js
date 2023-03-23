@@ -52,11 +52,11 @@ class Polyline {
         // Populate dynamic buffers
         this.updateGeometry();
 
-        if (! uniforms.uResolution) this.resolution = uniforms.uResolution = { value: new Vec2() };
-        if (! uniforms.uDPR) this.dpr = uniforms.uDPR = { value: 1 };
-        if (! uniforms.uThickness) this.thickness = uniforms.uThickness = { value: 1 };
-        if (! uniforms.uColor) this.color = uniforms.uColor = { value: new Color('#000') };
-        if (! uniforms.uMiter) this.miter = uniforms.uMiter = { value: 1 };
+        if (!uniforms.uResolution) this.resolution = uniforms.uResolution = { value: new Vec2() };
+        if (!uniforms.uDPR) this.dpr = uniforms.uDPR = { value: 1 };
+        if (!uniforms.uThickness) this.thickness = uniforms.uThickness = { value: 1 };
+        if (!uniforms.uColor) this.color = uniforms.uColor = { value: new Color('#000') };
+        if (!uniforms.uMiter) this.miter = uniforms.uMiter = { value: 1 };
 
         // Set size uniforms' values
         this.resize();
@@ -75,7 +75,7 @@ class Polyline {
             p.toArray(this.position, i * 3 * 2);
             p.toArray(this.position, i * 3 * 2 + 3);
 
-            if (! i) {
+            if (!i) {
                 // If first point, calculate prev using the distance to 2nd point
                 tmp.copy(p)
                     .sub(this.points[i + 1])

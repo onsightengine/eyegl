@@ -70,7 +70,7 @@ class Renderer {
 
         // WebGL2 Context
         gl = canvas.getContext('webgl2', attributes);
-        if (! gl) console.error('Renderer: Unable to create WebGL 2 context');
+        if (!gl) console.error('Renderer: Unable to create WebGL 2 context');
         this.gl = gl;
 
         // GLOBAL: So all classes have access to internal state functions
@@ -135,8 +135,8 @@ class Renderer {
     }
 
     getExtension(name, logWarning = false) {
-        if (! this.extensions[name]) this.extensions[name] = this.gl.getExtension(name);
-        if (! this.extensions[name] && logWarning) {
+        if (!this.extensions[name]) this.extensions[name] = this.gl.getExtension(name);
+        if (!this.extensions[name] && logWarning) {
             console.warn(`Renderer.getExtension: ${name} extension not supported.`);
         }
         return this.extensions[name];
@@ -292,9 +292,9 @@ class Renderer {
         // Get visible objects
         let renderList = [];
         scene.traverse((node) => {
-            if (! node.visible) return true; /* stop traversing children (all children become invisible) */
-            if (! node.draw) return;
-            if (frustumCull && node.frustumCulled && camera && ! camera.frustumIntersectsMesh(node)) return;
+            if (!node.visible) return true; /* stop traversing children (all children become invisible) */
+            if (!node.draw) return;
+            if (frustumCull && node.frustumCulled && camera && !camera.frustumIntersectsMesh(node)) return;
             renderList.push(node);
         });
 
@@ -306,7 +306,7 @@ class Renderer {
 
             renderList.forEach((node) => {
                 // Split into the 3 render groups
-                if (! node.program.transparent) {
+                if (!node.program.transparent) {
                     opaque.push(node);
                 } else if (node.program.depthTest) {
                     transparent.push(node);
@@ -317,7 +317,7 @@ class Renderer {
                 node.zDepth = 0;
 
                 // Only calculate z-depth if renderOrder unset and depthTest is true
-                if (node.renderOrder !== 0 || ! node.program.depthTest || ! camera) return;
+                if (node.renderOrder !== 0 || !node.program.depthTest || !camera) return;
 
                 // Update z-depth
                 node.worldMatrix.getTranslation(_tempVec3);
@@ -342,7 +342,7 @@ class Renderer {
         update = true,
         clear = true,
     } = {}) {
-        if (! target) {
+        if (!target) {
             this.bindFramebuffer();         // to screen
             this.setViewport(this.width * this.dpr, this.height * this.dpr);
         } else {
@@ -352,7 +352,7 @@ class Renderer {
 
         if (clear) {
             // Ensure depth buffer writing is enabled so it can be cleared
-            if (this.depth && (! target || target.depth)) {
+            if (this.depth && (!target || target.depth)) {
                 this.enable(this.gl.DEPTH_TEST);
                 this.setDepthMask(true);
             }

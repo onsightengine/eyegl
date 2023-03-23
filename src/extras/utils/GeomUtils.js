@@ -67,7 +67,7 @@ export function cleanAttributes(geometry) {
  */
 export function computeVertexNormals(geometry) {
     const positionAttribute = geometry.getPosition();
-    if (! positionAttribute) return;
+    if (!positionAttribute) return;
 
     const positions = positionAttribute.data;
     const normals = new Float32Array(positions.length);
@@ -83,10 +83,10 @@ export function computeVertexNormals(geometry) {
     function addPositionHashes(position, normal) {
         const hash = hashFromVector(position);
 
-        if (! countHashes[hash]) countHashes[hash] = 0;
+        if (!countHashes[hash]) countHashes[hash] = 0;
         countHashes[hash]++;
 
-        if (! positionNormals[hash]) positionNormals[hash] = new Vec3();
+        if (!positionNormals[hash]) positionNormals[hash] = new Vec3();
         positionNormals[hash].add(normal);
     }
 
@@ -154,7 +154,7 @@ export function computeVertexNormals(geometry) {
  */
 export function toIndexed(geometry, ignoreAttributes = []) {
     const positionAttribute = geometry.getPosition();
-    if (! positionAttribute) return;
+    if (!positionAttribute) return;
     if (geometry.attributes.index) toNonIndexed(geometry);
 
     const attributes = geometry.attributes;
@@ -164,7 +164,7 @@ export function toIndexed(geometry, ignoreAttributes = []) {
     const keys = [];
     for (const key in attributes) {
         arrays[key] = [];
-        if (! ignoreAttributes.includes(key) || key === 'position') keys.push(key);
+        if (!ignoreAttributes.includes(key) || key === 'position') keys.push(key);
     }
 
     // Process vertices
@@ -182,7 +182,7 @@ export function toIndexed(geometry, ignoreAttributes = []) {
                 for (let j = 0; j < attributes[key].size; j++) {
                     let current = attribute.data[(currentIndex * attribute.size) + j];
                     let compare = arrays[key][(indices[idx] * attribute.size) + j];
-                    if (! fuzzyFloat(current, compare, 0.0001)) {//EPSILON)) {
+                    if (!fuzzyFloat(current, compare, 0.0001)) {//EPSILON)) {
                         matchingKey = false;
                         break;
                     }
@@ -239,7 +239,7 @@ export function toIndexed(geometry, ignoreAttributes = []) {
  * @returns non-indexed geometry
  */
 export function toNonIndexed(geometry) {
-    if (! geometry.attributes.index) toIndexed(geometry);
+    if (!geometry.attributes.index) toIndexed(geometry);
 
     function convertBufferAttribute(attribute, indices) {
         const itemSize = attribute.size;

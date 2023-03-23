@@ -11,7 +11,7 @@ class Mesh extends Transform {
         frustumCulled = true,
         renderOrder = 0
     } = {}) {
-        if (! renderer) console.error(`Mesh: Renderer not found`);
+        if (!renderer) console.error(`Mesh: Renderer not found`);
 
         super();
         this.isMesh = true;
@@ -45,7 +45,7 @@ class Mesh extends Transform {
         // Set camera uniforms
         if (camera) {
             // Add empty matrix uniforms to program if unset
-            if (! this.program.uniforms.modelMatrix) {
+            if (!this.program.uniforms.modelMatrix) {
                 Object.assign(this.program.uniforms, {
                     modelMatrix: { value: null },
                     viewMatrix: { value: null },

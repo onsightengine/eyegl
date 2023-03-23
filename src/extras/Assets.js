@@ -27,14 +27,14 @@ class Assets {
     add(/* assets, seperated by commas */) {
         for (let i = 0; i < arguments.length; i++) {
             const asset = arguments[i];
-            if (! asset || ! asset.uuid) continue;
-            if (! asset.name || asset.name === '') asset.name = asset.constructor.name;
+            if (!asset || !asset.uuid) continue;
+            if (!asset.name || asset.name === '') asset.name = asset.constructor.name;
             this.#assets[asset.uuid] = asset;
         }
     }
 
     get(uuid) {
-        if (! uuid) return;
+        if (!uuid) return;
         if (uuid.uuid) uuid = uuid.uuid;
         return this.#assets[uuid];
     }
@@ -71,7 +71,7 @@ class Assets {
     }
 
     remove(assetOrArray, flush = true) {
-        if (! assetOrArray) return;
+        if (!assetOrArray) return;
         const assetArray = (Array.isArray(assetOrArray)) ? assetOrArray : [ assetOrArray ];
 
         for (let i = 0; i < assetArray.length; i++) {
@@ -123,10 +123,10 @@ class Assets {
 
         const json = {};
 
-        // if (! meta) meta = {};
-        // if (! meta.geometries) meta.geometries = {};
-        // if (! meta.images) meta.images = {};
-        // if (! meta.textures) meta.textures = {};
+        // if (!meta) meta = {};
+        // if (!meta.geometries) meta.geometries = {};
+        // if (!meta.images) meta.images = {};
+        // if (!meta.textures) meta.textures = {};
 
         // const stopRoot = {
         //     images: {},
@@ -138,14 +138,14 @@ class Assets {
         // const geometries = Assets.library('geometry');
         // for (let i = 0; i < geometries.length; i++) {
         //     const geometry = geometries[i];
-        //     if (! meta.geometries[geometry.uuid]) meta.geometries[geometry.uuid] = geometry.toJSON(meta);
+        //     if (!meta.geometries[geometry.uuid]) meta.geometries[geometry.uuid] = geometry.toJSON(meta);
         // }
 
         // // Textures
         // const textures = Assets.library('texture');
         // for (let i = 0; i < textures.length; i++) {
         //     const texture = textures[i];
-        //     if (! meta.textures[texture.uuid]) meta.textures[texture.uuid] = texture.toJSON(meta);
+        //     if (!meta.textures[texture.uuid]) meta.textures[texture.uuid] = texture.toJSON(meta);
         // }
 
         // // Add 'meta' caches to 'json' as arrays

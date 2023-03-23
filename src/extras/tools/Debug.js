@@ -277,22 +277,22 @@ class Debug {
         }
 
         buttonFrame.addEventListener('click', () => {
-            openFrame = ! openFrame;
+            openFrame = !openFrame;
             toggleFrame(frameFrame, buttonFrame, openFrame, 'DebugFrame');
         });
 
         buttonScene.addEventListener('click', () => {
-            openScene = ! openScene;
+            openScene = !openScene;
             toggleFrame(sceneFrame, buttonScene, openScene, 'DebugScene');
         });
 
         buttonBuffers.addEventListener('click', () => {
-            openBuffers = ! openBuffers;
+            openBuffers = !openBuffers;
             toggleFrame(buffersFrame, buttonBuffers, openBuffers, 'DebugBuffers');
         });
 
         buttonSystem.addEventListener('click', () => {
-            openSystem = ! openSystem;
+            openSystem = !openSystem;
             toggleFrame(systemFrame, buttonSystem, openSystem, 'DebugSystem');
         });
 
@@ -403,7 +403,7 @@ export { Debug };
  */
 function getVariable(variable) {
     variable = String(variable);
-    if (! variable.startsWith('--')) variable = '--' + variable;
+    if (!variable.startsWith('--')) variable = '--' + variable;
     const rootElement = document.querySelector(':root');
     const value = getComputedStyle(rootElement).getPropertyValue(variable);
     return ((value === '') ? undefined : value);
@@ -412,7 +412,7 @@ function getVariable(variable) {
 /** Sets a CSS variable by name, hyphens optional */
 function setVariable(variable, valueAsString) {
     variable = String(variable);
-    if (! variable.startsWith('--')) variable = '--' + variable;
+    if (!variable.startsWith('--')) variable = '--' + variable;
     const rootElement = document.querySelector(':root');
     rootElement.style.setProperty(variable, valueAsString);
 }

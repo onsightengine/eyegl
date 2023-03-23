@@ -43,7 +43,7 @@ class Transform {
 			for (let i = 0; i < arguments.length; i++) this.addChild(arguments[i]);
 			return this;
 		}
-        if (! child || child === this) return this;
+        if (!child || child === this) return this;
 		if (child.parent) {
             if (child.parent === this) return this;
             child.parent.removeChild(child);
@@ -58,7 +58,7 @@ class Transform {
 			for (let i = 0; i < arguments.length; i++) this.removeChild(arguments[i]);
 			return this;
 		}
-        if (! child || child === this) return this;
+        if (!child || child === this) return this;
         const index = this.children.indexOf(child);
         if (index !== -1) {
             child.parent = null;
@@ -95,13 +95,13 @@ class Transform {
     }
 
     traverseVisible(callback) {
-		if (! this.visible) return;
+		if (!this.visible) return;
         callback(this);
         for (let i = 0, l = this.children.length; i < l; i++) this.children[i].traverseVisible(callback);
 	}
 
     traverseAncestors(callback) {
-		if (! this.parent) return;
+		if (!this.parent) return;
 		callback(this.parent);
 		this.parent.traverseAncestors(callback);
 	}

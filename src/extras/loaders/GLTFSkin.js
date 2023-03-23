@@ -25,7 +25,7 @@ export class GLTFSkin extends Mesh {
     createBoneTexture() {
         const gl = renderer.gl;
 
-        if (! this.skeleton.joints.length) return;
+        if (!this.skeleton.joints.length) return;
         const size = Math.max(4, Math.pow(2, Math.ceil(Math.log(Math.sqrt(this.skeleton.joints.length * 4)) / Math.LN2)));
         this.boneMatrices = new Float32Array(size * size * 4);
         this.boneTextureSize = size;
@@ -69,7 +69,7 @@ export class GLTFSkin extends Mesh {
     }
 
     draw({ camera } = {}) {
-        if (! this.program.uniforms.boneTexture) {
+        if (!this.program.uniforms.boneTexture) {
             Object.assign(this.program.uniforms, {
                 boneTexture: { value: this.boneTexture },
                 boneTextureSize: { value: this.boneTextureSize },

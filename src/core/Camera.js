@@ -107,7 +107,7 @@ class Camera extends Transform {
     }
 
     updateFrustum() {
-        if (! this.frustum) {
+        if (!this.frustum) {
             this.frustum = [ new Vec3(), new Vec3(), new Vec3(), new Vec3(), new Vec3(), new Vec3() ];
         }
 
@@ -127,13 +127,13 @@ class Camera extends Transform {
     }
 
     frustumIntersectsMesh(node, worldMatrix = node.worldMatrix) {
-        // ??add?? if (! node.geometry) return true;
+        // ??add?? if (!node.geometry) return true;
 
         // If no geometry, or no position attribute, treat as frustumCulled false
-        if (! node.geometry.attributes.position) return true;
+        if (!node.geometry.attributes.position) return true;
 
-        if (! node.geometry.bounds || node.geometry.bounds.radius === Infinity) node.geometry.computeBoundingSphere();
-        if (! node.geometry.bounds) return true;
+        if (!node.geometry.bounds || node.geometry.bounds.radius === Infinity) node.geometry.computeBoundingSphere();
+        if (!node.geometry.bounds) return true;
 
         const center = _tempVec3a;
         center.copy(node.geometry.bounds.center);

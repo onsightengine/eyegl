@@ -29,7 +29,7 @@ class Texture {
         width, // used for RenderTargets or Data Textures
         height = width,
     } = {}) {
-        if (! renderer) console.error(`Texture: Renderer not found`);
+        if (!renderer) console.error(`Texture: Renderer not found`);
         const gl = renderer.gl;
 
         this.isTexture = true;
@@ -85,7 +85,7 @@ class Texture {
 
     update(textureUnit = 0) {
         const gl = renderer.gl;
-        const needsUpdate = ! (this.image === this.store.image && ! this.needsUpdate);
+        const needsUpdate = this.needsUpdate || this.image !== this.store.image;
 
         // Make sure that texture is bound to its texture unit
         if (needsUpdate || renderer.glState.textureUnits[textureUnit] !== this.id) {
@@ -94,7 +94,7 @@ class Texture {
             this.bind();
         }
 
-        if (! needsUpdate) return;
+        if (!needsUpdate) return;
         this.needsUpdate = false;
 
         if (this.flipY !== renderer.glState.flipY) {

@@ -23,7 +23,7 @@ const NAMES = {
 export function hexToRGB(hex) {
     if (hex.length === 4) hex = hex[0] + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
     const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (! rgb) console.warn(`ColorFunc.hexToRGB: Unable to convert hex string ${hex} to rgb values`);
+    if (!rgb) console.warn(`ColorFunc.hexToRGB: Unable to convert hex string ${hex} to rgb values`);
     return [ parseInt(rgb[1], 16) / 255, parseInt(rgb[2], 16) / 255, parseInt(rgb[3], 16) / 255 ];
 }
 
@@ -59,7 +59,7 @@ export function parseColor(color) {
     }
 
     // Number (16711680)
-    if (! isNaN(color)) return numberToRGB(color);
+    if (!isNaN(color)) return numberToRGB(color);
 
     // Hex String (#ff0000)
     if (color[0] === '#') return hexToRGB(color);

@@ -20,7 +20,7 @@ class InstancedMesh extends Mesh {
         this.instanceRenderList = null;
 
         // Get instanced mesh
-        if (! this.geometry.attributes.instanceMatrix) {
+        if (!this.geometry.attributes.instanceMatrix) {
             const name = this.name ?? '';
             console.error(`InstanceMesh.addFrustumCull: Mesh "${name}" missing instanceMatrix attribute, unable to frustum cull`);
         }
@@ -51,7 +51,7 @@ class InstancedMesh extends Mesh {
             // Frustum cull transforms each frame - pass world matrix
             this.instanceRenderList = [];
             this.instanceTransforms.forEach((transform) => {
-                if (! camera.frustumIntersectsMesh(this, transform.worldMatrix)) return;
+                if (!camera.frustumIntersectsMesh(this, transform.worldMatrix)) return;
                 this.instanceRenderList.push(transform);
             });
 

@@ -10,8 +10,8 @@ class Sprite extends Mesh {
     constructor({
         texture,
     } = {}) {
-        if (! Sprite.#geometry) Sprite.#geometry = new Plane();
-        if (! Sprite.#program) {
+        if (!Sprite.#geometry) Sprite.#geometry = new Plane();
+        if (!Sprite.#program) {
             Sprite.#program = new Program({
                 cullFace: null,
                 transparent: true,
@@ -36,7 +36,7 @@ class Sprite extends Mesh {
         // Set camera uniforms
         if (camera) {
             // Add empty matrix uniforms to program if unset
-            if (! this.program.uniforms.modelMatrix) {
+            if (!this.program.uniforms.modelMatrix) {
                 Object.assign(this.program.uniforms, {
                     modelMatrix: { value: null },
                     viewMatrix: { value: null },

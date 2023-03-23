@@ -38,7 +38,7 @@ class Orbit {
         minDistance = 0,
         maxDistance = Infinity,
     } = {}) {
-        if (! element) {
+        if (!element) {
             if (window.renderer) element = renderer.gl.canvas;
             else element = document.body;
         }
@@ -228,7 +228,7 @@ class Orbit {
         }
 
         const onMouseDown = (event) => {
-            if (! this.enabled) return;
+            if (!this.enabled) return;
 
             switch (event.button) {
                 case this.mouseButtons.ORBIT:
@@ -255,7 +255,7 @@ class Orbit {
         };
 
         const onMouseMove = (event) => {
-            if (! this.enabled) return;
+            if (!this.enabled) return;
 
             switch (state) {
                 case STATE.ROTATE:

@@ -87,7 +87,7 @@ export class GLTFLoader {
             console.warn('GLTFLoader.parse: Only GLTF >=2.0 supported. Attempting to parse.');
         }
 
-        if (desc.extensionsRequired?.includes('KHR_texture_basisu') && ! this.basisManager)
+        if (desc.extensionsRequired?.includes('KHR_texture_basisu') && !this.basisManager)
             console.warn('GLTFLoader.parse:  KHR_texture_basisu extension required but no manager supplied. Use .setBasisManager()');
 
         // Load buffers async

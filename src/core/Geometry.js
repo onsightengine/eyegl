@@ -10,7 +10,7 @@ let _idGenerator = 1;
 class Geometry {
 
     constructor(attributes = {}) {
-        if (! renderer) console.error(`Geometry: Renderer not found`);
+        if (!renderer) console.error(`Geometry: Renderer not found`);
 
         this.isGeometry = true;
 
@@ -49,8 +49,8 @@ class Geometry {
     // }
 
     addAttribute(key, attr) {
-        if (! attr) return console.warn(`Geometry.addAttribute: Attribute for '${key}' missing`);
-        if (! attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
+        if (!attr) return console.warn(`Geometry.addAttribute: Attribute for '${key}' missing`);
+        if (!attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
         const gl = renderer.gl;
 
         // Unbind current VAO so that new buffers don't get added to active mesh
@@ -65,7 +65,7 @@ class Geometry {
         // Set options
         attr.key = key;
         attr.size = attr.size || 1;
-        if (! attr.type) {
+        if (!attr.type) {
             switch (attr.data.constructor) {
                 case Float32Array: attr.type = gl.FLOAT; break;
                 case Uint16Array: attr.type = gl.UNSIGNED_SHORT; break;
@@ -83,7 +83,7 @@ class Geometry {
         attr.usage = attr.usage || gl.STATIC_DRAW;
 
         // Push data to buffer
-        if (! attr.buffer) this.updateAttribute(attr);
+        if (!attr.buffer) this.updateAttribute(attr);
 
         // Update geometry counts - if indexed, ignore regular attributes
         if (attr.divisor) {
@@ -95,7 +95,7 @@ class Geometry {
             this.instancedCount = attr.count * attr.divisor;
         } else if (key === 'index') {
             this.drawRange.count = attr.count;
-        } else if (! this.attributes.index) {
+        } else if (!this.attributes.index) {
             this.drawRange.count = Math.max(this.drawRange.count, attr.count);
         }
     }
@@ -111,7 +111,7 @@ class Geometry {
         const gl = renderer.gl;
 
         // New Buffer
-        if (! attr.buffer) {
+        if (!attr.buffer) {
             attr.buffer = gl.createBuffer();
             gl.bindBuffer(attr.target, attr.buffer);
             gl.bufferData(attr.target, attr.data, attr.usage);
@@ -130,7 +130,7 @@ class Geometry {
         // Link all attributes to program using gl.vertexAttribPointer
         program.attributeLocations.forEach((location, { name, type }) => {
             // Missing a required shader attribute
-            if (! this.attributes[name]) {
+            if (!this.attributes[name]) {
                 console.warn(`Geometry.bindAttributes: Active attribute '${name}' not being supplied`);
                 return;
             }
@@ -189,7 +189,7 @@ class Geometry {
         // Make sure current geometry attributes are bound
         if (renderer.currentGeometry !== `${this.id}_${program.attributeOrder}`) {
             // Need to create vertex array object, bind attribute buffers
-            if (! this.VAOs[program.attributeOrder]) {
+            if (!this.VAOs[program.attributeOrder]) {
                 this.VAOs[program.attributeOrder] = gl.createVertexArray();
                 gl.bindVertexArray(this.VAOs[program.attributeOrder]);
                 this.bindAttributes(program);
@@ -247,12 +247,12 @@ class Geometry {
     /***** Bounding Box *****/
 
     computeBoundingBox(attr) {
-        if (! attr) attr = this.getPosition();
-        if (! attr) return;
+        if (!attr) attr = this.getPosition();
+        if (!attr) return;
         const array = attr.data;
         const stride = attr.size;
 
-        if (! this.bounds) {
+        if (!this.bounds) {
             this.bounds = {
                 min: new Vec3(),
                 max: new Vec3(),
@@ -290,12 +290,12 @@ class Geometry {
     }
 
     computeBoundingSphere(attr) {
-        if (! attr) attr = this.getPosition();
-        if (! attr) return;
+        if (!attr) attr = this.getPosition();
+        if (!attr) return;
         const array = attr.data;
         const stride = attr.size;
 
-        if (! this.bounds) this.computeBoundingBox(attr);
+        if (!this.bounds) this.computeBoundingBox(attr);
 
         let maxRadiusSq = 0;
         for (let i = 0, l = array.length; i < l; i += stride) {
