@@ -6,7 +6,8 @@
 
 Sprite Shader:
     - Texture Atlas:
-        - Adjustable edge pixel buffer
+        - Check for atlas max size (from Capabilities)
+        - Store image coordinates
     - Improve ImageLoader / Assets.images:
 
 Polygons:

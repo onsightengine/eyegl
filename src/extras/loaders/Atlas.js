@@ -7,15 +7,12 @@ class Atlas {
 
     #images = [];
 
-    constructor({
-        width = 2048,
-        height = 2048,
-        border = 1,
-    } = {}) {
+    constructor(width = 2048, height = 2048, border = 2) {
         const gl = renderer.gl;
 
         this.width = width;
         this.height = height;
+        this.border = border;
         this.length = 1;
         this.texture = new Texture({
             image: [],
@@ -33,8 +30,8 @@ class Atlas {
             const image = this.#images[i];
             if (!image.complete || !image.naturalWidth || !image.naturalHeight) continue;
             boxes.push({
-                w: image.width,
-                h: image.height,
+                w: image.width + (this.border * 2),
+                h: image.height + (this.border * 2),
                 image: image,
             });
         }
@@ -61,7 +58,14 @@ class Atlas {
             for (let i = 0; i < boxes.length; i++) {
                 const box = boxes[i];
                 if (!box.fit) continue;
-                _ctx.drawImage(box.image, box.fit.x, box.fit.y, box.w, box.h);
+                _ctx.fillStyle = `rgb(${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)})`;
+                _ctx.fillRect(box.fit.x, box.fit.y, box.w, box.h);
+                _ctx.drawImage(box.image,
+                    box.fit.x + this.border,
+                    box.fit.y + this.border,
+                    box.w - (this.border * 2),
+                    box.h - (this.border * 2)
+                );
             }
 
             // Atlas
