@@ -156,63 +156,32 @@ class Texture {
 
             // Texture Array
             if (this.target === gl.TEXTURE_2D_ARRAY) {
-                console.log(this.image, this.width, this.height);
-
+                // Prep
                 if (!Array.isArray(this.image)) this.image = [ this.image ];
-                const depth = this.image.length;
-                const pixelCount = this.width * this.height;
-                const pixels = new Uint8Array(pixelCount * depth * 4);
-
-                // Canvas used for copying
                 if (!_canvas) _canvas = document.createElement('canvas');
-                if (! _ctx) _ctx = _canvas.getContext("2d", { willReadFrequently: true });
+                if (!_ctx) _ctx = _canvas.getContext('2d', { willReadFrequently: true });
                 _canvas.width = this.width;
                 _canvas.height = this.height;
-
-                // IMAGE
-                // Copy all images
+                const pixels = new Uint8Array(this.width * this.height * this.image.length * 4);
+                // Copy Images
                 let index = 0;
                 for (let i = 0; i < this.image.length; i++) {
                     _ctx.drawImage(this.image[i], 0, 0);
                     const imageData = _ctx.getImageData(0, 0, this.width, this.height);
-                    const imagePixels = new Uint8Array(imageData.data.buffer);
-                    for (let j = 0; j < pixelCount * 4; j += 4) {
-                        pixels[index + 0] = imagePixels[j + 0]; // red
-                        pixels[index + 1] = imagePixels[j + 1]; // green
-                        pixels[index + 2] = imagePixels[j + 2]; // blue
-                        pixels[index + 3] = imagePixels[j + 3]; // alpha
+                    for (let j = 0; j < this.width * this.height * 4; j += 4) {
+                        pixels[index + 0] = imageData.data[j + 0]; // red
+                        pixels[index + 1] = imageData.data[j + 1]; // green
+                        pixels[index + 2] = imageData.data[j + 2]; // blue
+                        pixels[index + 3] = imageData.data[j + 3]; // alpha
                         index += 4;
                     }
                 }
-
-                // RENDER TARGET
-                // // Copy all images
-                // let index = 0;
-                // for (let i = 0; i < this.image.length; i++) {
-                //     // Read pixel data from target
-                //     const imagePixels = new Uint8Array(pixelCount * 4);
-                //     renderer.bindFramebuffer(this.image[i]);
-                //     renderer.gl.readPixels(
-                //         0, 0, this.width, this.height,
-                //         gl.RGBA,            // format
-                //         gl.UNSIGNED_BYTE,   // type
-                //         imagePixels
-                //     );
-                //     // Copy to Sampler2DArray
-                //     for (let j = 0; j < pixelCount * 4; j += 4) {
-                //         pixels[index + 0] = imagePixels[j + 0]; // red
-                //         pixels[index + 1] = imagePixels[j + 1]; // green
-                //         pixels[index + 2] = imagePixels[j + 2]; // blue
-                //         pixels[index + 3] = imagePixels[j + 3]; // alpha
-                //         index += 4;
-                //     }
-                // }
-
+                // Create Texture Array
                 gl.texImage3D(
                     gl.TEXTURE_2D_ARRAY,
                     this.level,
                     this.internalFormat,
-                    this.width, this.height, depth,
+                    this.width, this.height, this.image.length,
                     0,
                     this.format,
                     this.type,

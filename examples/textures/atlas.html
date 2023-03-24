@@ -104,14 +104,12 @@
                     firstDraw = false;
                 }
 
-                // Update Uniform
-                // OLD: sceneProgram.uniforms.tDiffuse.value = atlas1.texture;
+                // OLD: Update Uniform (using single Texture)
+                // sceneProgram.uniforms.tDiffuse.value = atlas1.texture;
 
-
-                // Images from Render Targets
+                // NEW: Update Uniform (images from RenderTargets)
                 _canvas.width = atlasWidth;
                 _canvas.height = atlasHeight;
-
                 const imagePixels = new Uint8Array(atlasWidth * atlasHeight * 4);
 
                 renderer.bindFramebuffer(atlas1);
@@ -129,7 +127,6 @@
                 image2.src = _canvas.toDataURL();
 
                 const array = new EYE.Texture({
-                    // image: [ atlas1, atlas2 ],
                     image: [ image1, image2 ],
                     target: gl.TEXTURE_2D_ARRAY,
                 });
