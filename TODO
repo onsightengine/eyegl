@@ -8,8 +8,8 @@ Sprite Shader:
     - Texture Atlas:
         - Texture array
         - Adjustable edge pixel buffer
-    - Texture Merging:
-        https://github.com/oguzeroglu/TextureMerger
+    https://github.com/WebGLSamples/WebGL2Samples/blob/master/samples/texture_2d_array.html
+    https://github.com/oguzeroglu/TextureMerger
 
 Polygons:
     - Chipmunk Debug Draw, https://github.com/slembcke/Chipmunk2D/blob/master/demo/ChipmunkDebugDraw.c
@@ -39,7 +39,7 @@ TypeScript:
 // ----------------------------------------------------------------------------------
 
 WebGL Reference:
-    - ogl, three, picogl, redgl, twgl, webglfundamentals
+    - ogl (current with 03/21/23), three, picogl, redgl, twgl, webglfundamentals
 
 Optimization:
     - General:

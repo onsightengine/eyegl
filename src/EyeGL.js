@@ -59,6 +59,7 @@ export { Path } from './extras/path/Path.js';
 export { QuadraticBezierSegment } from './extras/path/QuadraticBezierSegment.js';
 
 // Programs
+export { TextureArray } from './extras/programs/TextureArray.js';
 export { Uber } from './extras/programs/Uber.js';
 
 // Tools

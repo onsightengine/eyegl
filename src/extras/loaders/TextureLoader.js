@@ -171,37 +171,14 @@ async function loadKTX(src, ext, texture) {
 }
 
 async function loadImage(src, ext, texture, flipY) {
-    const isSvg = (ext === 'svg');
-    const isChrome = navigator.userAgent.toLowerCase().includes('chrome');
-    const tryImageBitmap = !!window.createImageBitmap && isChrome && !isSvg;
     return new Promise((resolve, reject) => {
-        //if (tryImageBitmap) decodeImageBitmap();
-        //else
-        decodeImage();
-
-        function decodeImage() {
-            const image = new Image();
-            image.crossOrigin = '';
-            image.src = src;
-            image.onload = () => resolve(image);
-        }
-
-        function decodeImageBitmap() {
-            fetch(src, { mode: 'cors' })
-                .then(response => response.blob(), decodeImage)
-                .then(image => createImageBitmap(image, { imageOrientation: flipY ? 'flipY' : 'none', premultiplyAlpha: 'none' }), decodeImage)
-                .then(resolve, decodeImage);
-        }
+        const image = new Image();
+        image.crossOrigin = '';
+        image.src = src;
+        image.onload = () => resolve(image);
     }).then((image) => {
         texture.name = nameFromUrl(src);
         texture.image = image;
-
-        // For image bitmap ('createImageBitmap'), close once uploaded
-        texture.onUpdate = () => {
-            if (image.close) image.close();
-            texture.onUpdate = null;
-        };
-
         return image;
     });
 }

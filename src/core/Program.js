@@ -281,35 +281,38 @@ function setUniform(gl, type, location, value) {
         renderer.state.uniformLocations.set(location, value);
     }
 
+    // TYPES, https://registry.khronos.org/webgl/specs/latest/1.0/#DOM-WebGLActiveInfo-type
     switch (type) {
-        case 5126:
-            return value.length ? gl.uniform1fv(location, value) : gl.uniform1f(location, value); // FLOAT
-        case 35664:
-            return gl.uniform2fv(location, value); // FLOAT_VEC2
-        case 35665:
-            return gl.uniform3fv(location, value); // FLOAT_VEC3
-        case 35666:
-            return gl.uniform4fv(location, value); // FLOAT_VEC4
-        case 35670: // BOOL
-        case 5124: // INT
-        case 35678: // SAMPLER_2D
-        case 35680:
-            return value.length ? gl.uniform1iv(location, value) : gl.uniform1i(location, value); // SAMPLER_CUBE
-        case 35671: // BOOL_VEC2
-        case 35667:
-            return gl.uniform2iv(location, value); // INT_VEC2
-        case 35672: // BOOL_VEC3
-        case 35668:
-            return gl.uniform3iv(location, value); // INT_VEC3
-        case 35673: // BOOL_VEC4
-        case 35669:
-            return gl.uniform4iv(location, value); // INT_VEC4
-        case 35674:
-            return gl.uniformMatrix2fv(location, false, value); // FLOAT_MAT2
-        case 35675:
-            return gl.uniformMatrix3fv(location, false, value); // FLOAT_MAT3
-        case 35676:
-            return gl.uniformMatrix4fv(location, false, value); // FLOAT_MAT4
+        case 5126: // FLOAT
+            if (value.length) return gl.uniform1fv(location, value);
+            return gl.uniform1f(location, value);
+        case 35664: // FLOAT_VEC2       0x8B50
+            return gl.uniform2fv(location, value);
+        case 35665: // FLOAT_VEC3       0x8B51
+            return gl.uniform3fv(location, value);
+        case 35666: // FLOAT_VEC4       0x8B52
+            return gl.uniform4fv(location, value);
+        case 35667: // INT_VEC2         0x8B53
+        case 35671: // BOOL_VEC2        0x8B57
+            return gl.uniform2iv(location, value);
+        case 35668: // INT_VEC3         0x8B54
+        case 35672: // BOOL_VEC3        0x8B58
+            return gl.uniform3iv(location, value);
+        case 35669: // INT_VEC4         0x8B55
+        case 35673: // BOOL_VEC4        0x8B59
+            return gl.uniform4iv(location, value);
+        case 35674: // FLOAT_MAT2       0x8B5A
+            return gl.uniformMatrix2fv(location, false, value);
+        case 35675: // FLOAT_MAT3       0x8B5B
+            return gl.uniformMatrix3fv(location, false, value);
+        case 35676: // FLOAT_MAT4       0x8B5C
+            return gl.uniformMatrix4fv(location, false, value);
+        case 5124:  // INT
+        case 35670: // BOOL             0x8B56
+        case 35678: // SAMPLER_2D       0x8B5E
+        case 35680: // SAMPLER_CUBE     0x8B60
+            if (value.length) return gl.uniform1iv(location, value); /* is array */
+            return gl.uniform1i(location, value); /* not array */
     }
 }
 

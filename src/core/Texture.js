@@ -6,6 +6,7 @@ import { uuid } from '../extras/utils/MathUtils.js';
 // TODO: support non-compressed mipmaps uploads
 
 const _emptyPixel = new Uint8Array(4);
+let _canvas, _ctx;
 let _idGenerator = 1;
 
 class Texture {
@@ -23,7 +24,7 @@ class Texture {
         magFilter = renderer.gl.LINEAR,
         premultiplyAlpha = false,
         unpackAlignment = 4,
-        flipY = target == renderer.gl.TEXTURE_2D ? true : false,
+        flipY = (target == renderer.gl.TEXTURE_2D) ? true : false,
         anisotropy = 0,
         level = 0,
         width, // used for RenderTargets or Data Textures
@@ -83,7 +84,7 @@ class Texture {
         renderer.glState.textureUnits[renderer.glState.activeTextureUnit] = this.id;
     }
 
-    update(textureUnit = 0) {
+    update(textureUnit = 0 /* gl.TEXTURE0 */) {
         const gl = renderer.gl;
         const needsUpdate = this.needsUpdate || this.image !== this.store.image;
 
@@ -141,14 +142,84 @@ class Texture {
             this.state.anisotropy = this.anisotropy;
         }
 
+        // Image(s) Loaded
         if (this.image) {
-            if (this.image.width) {
+            if (Array.isArray(this.image) && this.image.length > 0) {
+                if (this.image[0].width) {
+                    this.width = this.image[0].width;
+                    this.height = this.image[0].height;
+                }
+            } else if (this.image.width) {
                 this.width = this.image.width;
                 this.height = this.image.height;
             }
 
-            if (this.target === gl.TEXTURE_CUBE_MAP) {
-                // For cube maps
+            // Texture Array
+            if (this.target === gl.TEXTURE_2D_ARRAY) {
+                console.log(this.image, this.width, this.height);
+
+                if (!Array.isArray(this.image)) this.image = [ this.image ];
+                const depth = this.image.length;
+                const pixelCount = this.width * this.height;
+                const pixels = new Uint8Array(pixelCount * depth * 4);
+
+                // Canvas used for copying
+                if (!_canvas) _canvas = document.createElement('canvas');
+                if (! _ctx) _ctx = _canvas.getContext("2d", { willReadFrequently: true });
+                _canvas.width = this.width;
+                _canvas.height = this.height;
+
+                // IMAGE
+                // Copy all images
+                let index = 0;
+                for (let i = 0; i < this.image.length; i++) {
+                    _ctx.drawImage(this.image[i], 0, 0);
+                    const imageData = _ctx.getImageData(0, 0, this.width, this.height);
+                    const imagePixels = new Uint8Array(imageData.data.buffer);
+                    for (let j = 0; j < pixelCount * 4; j += 4) {
+                        pixels[index + 0] = imagePixels[j + 0]; // red
+                        pixels[index + 1] = imagePixels[j + 1]; // green
+                        pixels[index + 2] = imagePixels[j + 2]; // blue
+                        pixels[index + 3] = imagePixels[j + 3]; // alpha
+                        index += 4;
+                    }
+                }
+
+                // RENDER TARGET
+                // // Copy all images
+                // let index = 0;
+                // for (let i = 0; i < this.image.length; i++) {
+                //     // Read pixel data from target
+                //     const imagePixels = new Uint8Array(pixelCount * 4);
+                //     renderer.bindFramebuffer(this.image[i]);
+                //     renderer.gl.readPixels(
+                //         0, 0, this.width, this.height,
+                //         gl.RGBA,            // format
+                //         gl.UNSIGNED_BYTE,   // type
+                //         imagePixels
+                //     );
+                //     // Copy to Sampler2DArray
+                //     for (let j = 0; j < pixelCount * 4; j += 4) {
+                //         pixels[index + 0] = imagePixels[j + 0]; // red
+                //         pixels[index + 1] = imagePixels[j + 1]; // green
+                //         pixels[index + 2] = imagePixels[j + 2]; // blue
+                //         pixels[index + 3] = imagePixels[j + 3]; // alpha
+                //         index += 4;
+                //     }
+                // }
+
+                gl.texImage3D(
+                    gl.TEXTURE_2D_ARRAY,
+                    this.level,
+                    this.internalFormat,
+                    this.width, this.height, depth,
+                    0,
+                    this.format,
+                    this.type,
+                    pixels
+                );
+            // Cube Map
+            } else if (this.target === gl.TEXTURE_CUBE_MAP) {
                 for (let i = 0; i < 6; i++) {
                     gl.texImage2D(
                         gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
@@ -159,11 +230,20 @@ class Texture {
                         this.image[i]
                     );
                 }
+            // Data
             } else if (ArrayBuffer.isView(this.image)) {
-                // Data texture
-                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, this.image);
+                gl.texImage2D(
+                    this.target,
+                    this.level,
+                    this.internalFormat,
+                    this.width, this.height,
+                    0,
+                    this.format,
+                    this.type,
+                    this.image
+                );
+            // Compressed
             } else if (this.image.isCompressedTexture) {
-                // Compressed texture
                 for (let level = 0; level < this.image.length; level++) {
                     gl.compressedTexImage2D(
                         this.target,
@@ -175,19 +255,24 @@ class Texture {
                         this.image[level].data
                     );
                 }
+            // Standard
             } else {
-                // Regular texture
                 gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, this.image);
             }
 
-            if (this.generateMipmaps) {
-                gl.generateMipmap(this.target);
-            }
+            // Mipmaps
+            if (this.generateMipmaps) gl.generateMipmap(this.target);
 
             // Callback for when data is pushed to GPU
             if (this.onUpdate) this.onUpdate();
+
+        // No Image
         } else {
-            if (this.target === gl.TEXTURE_CUBE_MAP) {
+            // Texture Array
+            if (this.target === gl.TEXTURE_2D_ARRAY) {
+                gl.texImage3D(this.target, 0, gl.RGBA, 1, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
+            // Cube Map
+            } else if (this.target === gl.TEXTURE_CUBE_MAP) {
                 // Upload empty pixel for each side while no image to avoid errors while image or video loading
                 for (let i = 0; i < 6; i++) {
                     gl.texImage2D(
@@ -202,15 +287,18 @@ class Texture {
                         _emptyPixel
                     );
                 }
+            // Render Target
             } else if (this.width) {
                 // Image intentionally left null for RenderTarget
                 gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
+            // Standard
             } else {
                 // Upload empty pixel if no image to avoid errors while image or video loading
                 gl.texImage2D(this.target, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
             }
         }
 
+        // Store
         this.store.image = this.image;
     }
 
