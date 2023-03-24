@@ -39,7 +39,7 @@ class Assets {
         return this.#assets[uuid];
     }
 
-    load(src, attributes = {}) {
+    load(src, options = {}) {
         if (typeof src !== 'string') {
             console.warn('Assets.load: Source not provided');
             return;
@@ -48,19 +48,14 @@ class Assets {
         let asset;
         const ext = src.split('.').pop().split('?')[0].toLowerCase();
         switch (ext) {
-            // Texture
-            case 'ktx':
-            case 'pvrtc':
-            case 's3tc':
-            case 'etc':
-            case 'etc1':
-            case 'astc':
+            // Image
             case 'webp':
-            case 'svg':
             case 'jpg':
             case 'jpeg':
             case 'png':
-                const args = Object.assign({ src }, attributes);
+            case 'gif':
+            case 'svg':
+                const args = Object.assign({ src }, options);
                 asset = TextureLoader.load(args);
                 break;
             default:

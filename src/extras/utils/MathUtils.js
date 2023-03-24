@@ -26,7 +26,10 @@ export function fuzzyFloat(a, b, tolerance = 0.001) {
  * @returns {Boolean} is value power of 2?
  */
 export function isPowerOf2(value) {
+    // // OPTION: And
     return (value & (value - 1)) === 0;
+    // OPTION: Log2
+    // return Math.log2(value) % 1 === 0;
 }
 
 /**
