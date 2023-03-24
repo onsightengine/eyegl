@@ -36,6 +36,7 @@ export { Triangle } from './extras/geometries/Triangle.js';
 export { Tube } from './extras/geometries/Tube.js';
 
 // Loaders
+export { Atlas } from './extras/loaders/Atlas.js';
 export { GLTFAnimation } from './extras/loaders/GLTFAnimation.js';
 export { GLTFLoader } from './extras/loaders/GLTFLoader.js';
 export { GLTFSkin } from './extras/loaders/GLTFSkin.js';

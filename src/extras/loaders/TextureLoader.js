@@ -19,7 +19,7 @@ class TextureLoader {
         premultiplyAlpha = false,
         unpackAlignment = 4,
         flipY = true,
-        onLoad, /* loaded callback */
+        onLoad, /* on load callback */
     } = {}) {
         if (!src || src === '') {
             console.warn(`TextureLoader: No source provided`);
@@ -65,10 +65,7 @@ class TextureLoader {
                 });
                 const nameFromUrl = new String(src.replace(/^.*[\\\/]/, ''));   /* filename only */
                 texture.name = nameFromUrl.replace(/\.[^/.]+$/, );              /* remove extension */
-                texture.image = ImageLoader.load(src, () => {
-                    texture.loaded = true;
-                    if (typeof onLoad === 'function') onLoad();
-                });
+                texture.image = ImageLoader.load(src, onLoad);
                 break;
             default:
                 console.warn(`TextureLoader: Format not supported - '.${ext}'`);

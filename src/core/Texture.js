@@ -1,7 +1,7 @@
 import { uuid } from '../extras/utils/MathUtils.js';
 
 // TODO: delete (flush)  texture
-// TODO: use texSubImage2D for updates (video or when loaded)
+// TODO: use texSubImage2D for updates (video or onLoad)
 // TODO: need? encoding = linearEncoding
 // TODO: support non-compressed mipmaps uploads
 
@@ -61,7 +61,6 @@ class Texture {
 
         this.store = {
             image: null,
-            loaded: false,
         };
 
         // Alias for state store to avoid redundant calls for global state
@@ -87,9 +86,7 @@ class Texture {
 
     update(textureUnit = 0 /* gl.TEXTURE0 */) {
         const gl = renderer.gl;
-        let needsUpdate = this.needsUpdate;
-        needsUpdate = needsUpdate || this.image !== this.store.image;
-        needsUpdate = needsUpdate || this.loaded !== this.store.loaded;
+        let needsUpdate = this.needsUpdate || this.image !== this.store.image;
 
         // Make sure that texture is bound to its texture unit
         if (needsUpdate || renderer.glState.textureUnits[textureUnit] !== this.id) {
@@ -137,38 +134,43 @@ class Texture {
             this.state.anisotropy = this.anisotropy;
         }
 
-        // Image(s) Loaded
-        if (this.loaded) {
-            if (Array.isArray(this.image) && this.image.length > 0) {
-                if (this.image[0].width) {
-                    this.width = this.image[0].width;
-                    this.height = this.image[0].height;
-                }
-            } else if (this.image.width) {
-                this.width = this.image.width;
-                this.height = this.image.height;
+        // Check for loaded image(s)
+        let loaded = false;
+        const images = Array.isArray(this.image) ? this.image : [ this.image ];
+        for (let i = 0; i < images.length; i++) {
+            const image = images[i];
+            if (image && image.complete) {
+                this.width = image.width;
+                this.height = image.height;
+                loaded = true;
+                break;
             }
+        }
 
+        // Image(s) Loaded
+        if (loaded) {
             // Texture Array
             if (this.target === gl.TEXTURE_2D_ARRAY) {
-                // Prep
-                if (!Array.isArray(this.image)) this.image = [ this.image ];
+                // Copy Images
                 if (!_canvas) _canvas = document.createElement('canvas');
                 if (!_ctx) _ctx = _canvas.getContext('2d', { willReadFrequently: true });
                 _canvas.width = this.width;
                 _canvas.height = this.height;
-                const pixels = new Uint8Array(this.width * this.height * this.image.length * 4);
-                // Copy Images
+                const pixels = new Uint8Array(this.width * this.height * images.length * 4);
                 let index = 0;
-                for (let i = 0; i < this.image.length; i++) {
-                    _ctx.drawImage(this.image[i], 0, 0);
-                    const imageData = _ctx.getImageData(0, 0, this.width, this.height);
-                    for (let j = 0; j < this.width * this.height * 4; j += 4) {
-                        pixels[index + 0] = imageData.data[j + 0]; // red
-                        pixels[index + 1] = imageData.data[j + 1]; // green
-                        pixels[index + 2] = imageData.data[j + 2]; // blue
-                        pixels[index + 3] = imageData.data[j + 3]; // alpha
-                        index += 4;
+                for (let i = 0; i < images.length; i++) {
+                    const image = images[i];
+                    if (image && image.complete) {
+                        _ctx.clearRect(0, 0, this.width, this.height);
+                        _ctx.drawImage(images[i], 0, 0);
+                        const imageData = _ctx.getImageData(0, 0, this.width, this.height);
+                        for (let j = 0; j < this.width * this.height * 4; j += 4) {
+                            pixels[index + 0] = imageData.data[j + 0]; // red
+                            pixels[index + 1] = imageData.data[j + 1]; // green
+                            pixels[index + 2] = imageData.data[j + 2]; // blue
+                            pixels[index + 3] = imageData.data[j + 3]; // alpha
+                            index += 4;
+                        }
                     }
                 }
                 // Create Texture Array
@@ -176,7 +178,7 @@ class Texture {
                     gl.TEXTURE_2D_ARRAY,
                     this.level,
                     this.internalFormat,
-                    this.width, this.height, this.image.length,
+                    this.width, this.height, images.length,
                     0,
                     this.format,
                     this.type,
@@ -185,17 +187,18 @@ class Texture {
             // Cube Map
             } else if (this.target === gl.TEXTURE_CUBE_MAP) {
                 for (let i = 0; i < 6; i++) {
+                    if (!images[i].complete) continue;
                     gl.texImage2D(
                         gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
                         this.level,
                         this.internalFormat,
                         this.format,
                         this.type,
-                        this.image[i]
+                        images[i]
                     );
                 }
             // Data
-            } else if (ArrayBuffer.isView(this.image)) {
+            } else if (ArrayBuffer.isView(images[0])) {
                 gl.texImage2D(
                     this.target,
                     this.level,
@@ -204,34 +207,31 @@ class Texture {
                     0,
                     this.format,
                     this.type,
-                    this.image
+                    images[0]
                 );
             // Compressed
-            } else if (this.image.isCompressedTexture) {
-                for (let level = 0; level < this.image.length; level++) {
+            } else if (images[0].isCompressedTexture) {
+                for (let level = 0; level < images[0].length; level++) {
                     gl.compressedTexImage2D(
                         this.target,
                         level,
                         this.internalFormat,
-                        this.image[level].width,
-                        this.image[level].height,
+                        images[0][level].width,
+                        images[0][level].height,
                         0,
-                        this.image[level].data
+                        images[0][level].data
                     );
                 }
             // Standard
             } else {
-                gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, this.image);
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, images[0]);
             }
 
             // Mipmaps
             if (this.generateMipmaps) gl.generateMipmap(this.target);
 
             // Callback for when data is pushed to GPU
-            if (this.onUpdate) this.onUpdate();
-
-            // Store
-            this.store.loaded = true;;
+            if (typeof this.onUpdate === 'function') this.onUpdate();
         // No Image
         } else {
             // Texture Array
@@ -241,17 +241,7 @@ class Texture {
             } else if (this.target === gl.TEXTURE_CUBE_MAP) {
                 // Upload empty pixel for each side while no image to avoid errors while image or video loading
                 for (let i = 0; i < 6; i++) {
-                    gl.texImage2D(
-                        gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                        0,
-                        gl.RGBA,
-                        1,
-                        1,
-                        0,
-                        gl.RGBA,
-                        gl.UNSIGNED_BYTE,
-                        _emptyPixel
-                    );
+                    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
                 }
             // Render Target
             } else if (this.width) {

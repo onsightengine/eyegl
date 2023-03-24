@@ -18,10 +18,6 @@
             import * as EYE from 'eyegl';
             import { Gooey } from 'osui';
 
-            // Locals
-            const _canvas = document.createElement('canvas');
-            const _ctx = _canvas.getContext('2d');
-
             // Init
             const renderer = new EYE.Renderer({ dpr: 2 });
             const gl = renderer.gl;
@@ -37,114 +33,18 @@
 
             // Meshes
             const sceneProgram = new EYE.TextureArray();
-            const atlasProgram = new EYE.Uber();
             const sceneBox = new EYE.Mesh({ geometry: new EYE.Box(), program: sceneProgram });
-            const atlasBox = new EYE.Mesh({ geometry: new EYE.Plane(), program: atlasProgram });
 
             // Atlas
-            const atlasWidth = 512;
-            const atlasHeight = 512;
-            const atlas1 = new EYE.RenderTarget();
-            const atlas2 = new EYE.RenderTarget();
-            atlas1.setSize(atlasWidth,atlasHeight);
-            atlas2.setSize(atlasWidth,atlasHeight);
-            atlasCamera.orthographic({
-                left: atlasWidth / -2, right: atlasWidth / 2,
-                top: atlasHeight / 2, bottom: atlasHeight / -2,
+            const atlas = new EYE.Atlas({ width: 400, height: 400, border: 1 });
+            const shapes = EYE.ImageLoader.load('../../files/sprites/shapes.png', () => {
+                setTimeout(() => atlas.add(shapes), 2000);
             });
-
-            // Packing
-            let atlasNeedsUpdate = false;
-            function updateAtlas() { atlasNeedsUpdate = true; }
-            function buildAtlas() {
-                let firstDraw = true;
-
-                // Textures
-                const textures = assets.library('texture');
-                const boxes = [];
-                for (let i = 0; i < textures.length; i++) {
-                    const texture = textures[i];
-                    if (!texture.loaded || !texture.image.width || !texture.image.height) continue;
-                    boxes.push({
-                        w: texture.image.width,
-                        h: texture.image.height,
-                        texture: texture,
-                    });
-                }
-
-                // Sort
-                boxes.sort((a, b) => { return Math.max(b.w, b.h) - Math.max(a.w, a.h); });
-                boxes.sort((a, b) => { return Math.min(b.w, b.h) - Math.min(a.w, a.h); });
-                boxes.sort((a, b) => { return b.h - a.h; });
-                boxes.sort((a, b) => { return b.w - a.w; });
-                const packer = new EYE.Packer(atlasWidth, atlasHeight);
-                packer.fit(boxes);
-
-                // Render
-                for (let i = 0; i < boxes.length; i++) {
-                    const box = boxes[i];
-                    if (!box.fit) {
-                        console.log(box);
-                        continue;
-                    }
-                    const texture = box.texture;
-                    atlasBox.scale.x = box.w;
-                    atlasBox.scale.y = box.h;
-                    atlasBox.position.x = (atlasWidth / -2) + box.fit.x + (box.w / 2);
-                    atlasBox.position.y = (atlasHeight / 2) - box.fit.y - (box.h / 2);;
-                    atlasProgram.uniforms.tDiffuse.value = texture;
-                    gl.clearColor(0.2, 0.0, 0.2, 1);
-                    renderer.render({ scene: atlasBox, camera: atlasCamera, target: atlas1, clear: firstDraw });
-                    gl.clearColor(0.0, 0.2, 0.2, 1);
-                    renderer.render({ scene: atlasBox, camera: atlasCamera, target: atlas2, clear: firstDraw });
-                    firstDraw = false;
-                }
-
-                // OLD: Update Uniform (using single Texture)
-                // sceneProgram.uniforms.tDiffuse.value = atlas1.texture;
-
-                // NEW: Update Uniform (images from RenderTargets)
-                _canvas.width = atlasWidth;
-                _canvas.height = atlasHeight;
-                const imagePixels = new Uint8Array(atlasWidth * atlasHeight * 4);
-
-                renderer.bindFramebuffer(atlas1);
-                renderer.gl.readPixels(0, 0, atlasWidth, atlasHeight, gl.RGBA, gl.UNSIGNED_BYTE, imagePixels);
-                const imageData1 = new ImageData(new Uint8ClampedArray(imagePixels), atlasWidth, atlasHeight);
-                _ctx.putImageData(imageData1, 0, 0);
-                const image1 = new Image();
-                image1.src = _canvas.toDataURL();
-                image1.onload = () => addImageToAtlas(image1);
-
-                renderer.bindFramebuffer(atlas2);
-                renderer.gl.readPixels(0, 0, atlasWidth, atlasHeight, gl.RGBA, gl.UNSIGNED_BYTE, imagePixels);
-                const imageData2 = new ImageData(new Uint8ClampedArray(imagePixels), atlasWidth, atlasHeight);
-                _ctx.putImageData(imageData2, 0, 0);
-                const image2 = new Image();
-                image2.src = _canvas.toDataURL();
-                image2.onload = () => addImageToAtlas(image2);
-
-                const images = [];
-                const array = new EYE.Texture({ image: images, target: gl.TEXTURE_2D_ARRAY });
-                sceneProgram.uniforms.tDiffuse.value = array;
-
-                function addImageToAtlas(image) {
-                    images.push(image);
-                    array.loaded = true;
-                    array.needsUpate = true;
-                }
-
-                // Reset Flag
-                atlasNeedsUpdate = false;
-            }
-
-            // Assets
-            const assets = new EYE.Assets();
-            const shapes = assets.load('../../files/sprites/shapes.png', { onLoad: updateAtlas });
-            const dragon = assets.load('../../files/sprites/dragon.png', { onLoad: updateAtlas });
-            const unicorn = assets.load('../../files/sprites/unicorn.png', { onLoad: updateAtlas });
-            const kraken = assets.load('../../files/sprites/kraken.png', { onLoad: updateAtlas });
-            const physics = assets.load('../../files/sprites/physics.svg', { onLoad: updateAtlas });
+            const dragon = EYE.ImageLoader.load('../../files/sprites/dragon.png', () => atlas.add(dragon));
+            const unicorn = EYE.ImageLoader.load('../../files/sprites/unicorn.png', () => atlas.add(unicorn));
+            const kraken = EYE.ImageLoader.load('../../files/sprites/kraken.png', () => atlas.add(kraken));
+            const physics = EYE.ImageLoader.load('../../files/sprites/physics.svg', () => atlas.add(physics));
+            sceneProgram.uniforms.tDiffuse.value = atlas.texture;
 
             // Render
             const debug = new EYE.Debug();
@@ -156,13 +56,12 @@
                 // Start Frame
                 debug.startFrame();
 
-                // Update Atlas
-                if (atlasNeedsUpdate) buildAtlas();
-
                 // Layer
                 if (performance.now() - timer > 1000) {
                     sceneProgram.uniforms.uLayer.value++;
-                    if (sceneProgram.uniforms.uLayer.value > 1) sceneProgram.uniforms.uLayer.value = 0;
+                    if (sceneProgram.uniforms.uLayer.value > atlas.length - 1) {
+                        sceneProgram.uniforms.uLayer.value = 0;
+                    }
                     timer = performance.now();
                 }
 

@@ -6,11 +6,8 @@
 
 Sprite Shader:
     - Texture Atlas:
-        - Auto creation of multiple atlases and sizes
-        - Replace loading from textures to images loading directly onto atlas?
         - Adjustable edge pixel buffer
-    https://github.com/WebGLSamples/WebGL2Samples/blob/master/samples/texture_2d_array.html
-    https://github.com/oguzeroglu/TextureMerger
+    - Improve ImageLoader / Assets.images:
 
 Polygons:
     - Chipmunk Debug Draw, https://github.com/slembcke/Chipmunk2D/blob/master/demo/ChipmunkDebugDraw.c
