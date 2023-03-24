@@ -1,3 +1,4 @@
+import { ImageLoader } from './ImageLoader.js';
 import { Texture } from '../../core/Texture.js';
 
 class TextureLoader {
@@ -18,7 +19,7 @@ class TextureLoader {
         premultiplyAlpha = false,
         unpackAlignment = 4,
         flipY = true,
-        onLoad = function() {}, /* callback */
+        onLoad, /* loaded callback */
     } = {}) {
         if (!src || src === '') {
             console.warn(`TextureLoader: No source provided`);
@@ -52,21 +53,25 @@ class TextureLoader {
             case 'gif':
             case 'svg':
                 texture = new Texture({
-                    format, internalFormat,
+                    format,
+                    internalFormat,
                     generateMipmaps,
-                    wrapS, wrapT, anisotropy,
+                    wrapS, wrapT,
+                    anisotropy,
                     minFilter, magFilter,
                     premultiplyAlpha,
                     unpackAlignment,
                     flipY,
                 });
-                loadImage(src, ext, texture, flipY).then(() => {
+                const nameFromUrl = new String(src.replace(/^.*[\\\/]/, ''));   /* filename only */
+                texture.name = nameFromUrl.replace(/\.[^/.]+$/, );              /* remove extension */
+                texture.image = ImageLoader.load(src, () => {
                     texture.loaded = true;
-                    onLoad();
+                    if (typeof onLoad === 'function') onLoad();
                 });
                 break;
             default:
-                console.warn(`TextureLoader: Format not supported - '${ext}'`);
+                console.warn(`TextureLoader: Format not supported - '.${ext}'`);
                 texture = new Texture();
         }
 
@@ -86,19 +91,3 @@ class TextureLoader {
 }
 
 export { TextureLoader };
-
-/***** Internal *****/
-
-async function loadImage(src, ext, texture, flipY) {
-    return new Promise((resolve, reject) => {
-        const image = new Image();
-        image.crossOrigin = '';
-        image.src = src;
-        image.onload = () => resolve(image);
-    }).then((image) => {
-        const nameFromUrl = new String(src.replace(/^.*[\\\/]/, ''));   /* filename only */
-        texture.name = nameFromUrl.replace(/\.[^/.]+$/, '');            /* remove extension */
-        texture.image = image;
-        return image;
-    });
-}

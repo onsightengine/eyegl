@@ -39,7 +39,8 @@ export { Tube } from './extras/geometries/Tube.js';
 export { GLTFAnimation } from './extras/loaders/GLTFAnimation.js';
 export { GLTFLoader } from './extras/loaders/GLTFLoader.js';
 export { GLTFSkin } from './extras/loaders/GLTFSkin.js';
-export { TextureLoader } from './extras/loaders/TextureLoader.js'
+export { ImageLoader } from './extras/loaders/ImageLoader.js';
+export { TextureLoader } from './extras/loaders/TextureLoader.js';
 
 // Objects
 export { Billboard } from './extras/objects/Billboard.js';

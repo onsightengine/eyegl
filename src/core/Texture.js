@@ -61,6 +61,7 @@ class Texture {
 
         this.store = {
             image: null,
+            loaded: false,
         };
 
         // Alias for state store to avoid redundant calls for global state
@@ -86,11 +87,12 @@ class Texture {
 
     update(textureUnit = 0 /* gl.TEXTURE0 */) {
         const gl = renderer.gl;
-        const needsUpdate = this.needsUpdate || this.image !== this.store.image;
+        let needsUpdate = this.needsUpdate;
+        needsUpdate = needsUpdate || this.image !== this.store.image;
+        needsUpdate = needsUpdate || this.loaded !== this.store.loaded;
 
         // Make sure that texture is bound to its texture unit
         if (needsUpdate || renderer.glState.textureUnits[textureUnit] !== this.id) {
-            // Set active texture unit to perform texture functions
             renderer.activeTexture(textureUnit);
             this.bind();
         }
@@ -102,37 +104,30 @@ class Texture {
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY);
             renderer.glState.flipY = this.flipY;
         }
-
         if (this.premultiplyAlpha !== renderer.glState.premultiplyAlpha) {
             gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
             renderer.glState.premultiplyAlpha = this.premultiplyAlpha;
         }
-
         if (this.unpackAlignment !== renderer.glState.unpackAlignment) {
             gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment);
             renderer.glState.unpackAlignment = this.unpackAlignment;
         }
-
         if (this.minFilter !== this.state.minFilter) {
             gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this.minFilter);
             this.state.minFilter = this.minFilter;
         }
-
         if (this.magFilter !== this.state.magFilter) {
             gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this.magFilter);
             this.state.magFilter = this.magFilter;
         }
-
         if (this.wrapS !== this.state.wrapS) {
             gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, this.wrapS);
             this.state.wrapS = this.wrapS;
         }
-
         if (this.wrapT !== this.state.wrapT) {
             gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, this.wrapT);
             this.state.wrapT = this.wrapT;
         }
-
         if (this.anisotropy && this.anisotropy !== this.state.anisotropy) {
             gl.texParameterf(
                 this.target,
@@ -143,7 +138,7 @@ class Texture {
         }
 
         // Image(s) Loaded
-        if (this.image) {
+        if (this.loaded) {
             if (Array.isArray(this.image) && this.image.length > 0) {
                 if (this.image[0].width) {
                     this.width = this.image[0].width;
@@ -235,6 +230,8 @@ class Texture {
             // Callback for when data is pushed to GPU
             if (this.onUpdate) this.onUpdate();
 
+            // Store
+            this.store.loaded = true;;
         // No Image
         } else {
             // Texture Array
