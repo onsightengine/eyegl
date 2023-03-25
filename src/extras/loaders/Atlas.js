@@ -41,6 +41,8 @@ class Atlas {
         const texture = this.texture;
         this.length = 0;
         do {
+            this.length++;
+
             // Sort
             boxes.sort((a, b) => { return Math.max(b.w, b.h) - Math.max(a.w, a.h); });
             boxes.sort((a, b) => { return Math.min(b.w, b.h) - Math.min(a.w, a.h); });
@@ -74,12 +76,10 @@ class Atlas {
             image.src = _canvas.toDataURL();
             image.onload = () => texture.needsUpdate = true;
 
-            // Clear
+            // Clear 'fit' Boxes
             for (let i = boxes.length - 1; i >= 0; i--) {
                 if (boxes[i].fit) boxes.splice(i, 1);
             }
-
-            this.length++;
         } while (boxes.length > 0);
     }
 

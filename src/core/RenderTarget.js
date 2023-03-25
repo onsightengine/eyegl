@@ -75,6 +75,7 @@ class RenderTarget {
                 internalFormat: gl.DEPTH_COMPONENT16,
                 type: gl.UNSIGNED_INT,
             });
+            console.log('Depth!');
             this.depthTexture.update();
             gl.framebufferTexture2D(this.target, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
         } else {

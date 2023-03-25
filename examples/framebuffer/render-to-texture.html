@@ -36,16 +36,22 @@
 
             // 2x2 data texture with 4 colors
             const texture = new EYE.Texture({
-                image: new Uint8Array([ 191, 25, 54, 255, 96, 18, 54, 255, 96, 18, 54, 255, 37, 13, 53, 255 ]),
+                image: new Uint8Array([
+                    255,   0,   0, 255,
+                      0, 255,   0, 255,
+                      0,   0, 255, 255,
+                    255,   0, 255, 255,
+                ]),
                 width: 2,
                 height: 2,
+                minFilter: gl.NEAREST,
                 magFilter: gl.NEAREST,
             });
 
+            const program = new EYE.Uber({ texture: texture });
+
             // Render target
             const target = new EYE.RenderTarget({ width: 512, height: 512 });
-
-            const program = new EYE.Uber({ texture: texture });
             const targetProgram = new EYE.Uber({ texture: target.texture });
 
             const mesh = new EYE.Mesh({ geometry, program });

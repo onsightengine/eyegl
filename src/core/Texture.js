@@ -11,6 +11,9 @@ let _idGenerator = 1;
 
 class Texture {
 
+    #image;
+    #loaded = false;
+
     constructor({
         image,
         target = renderer.gl.TEXTURE_2D,
@@ -59,10 +62,6 @@ class Texture {
         this.texture = gl.createTexture();
         renderer.info.textures++;
 
-        this.store = {
-            image: null,
-        };
-
         // Alias for state store to avoid redundant calls for global state
         renderer.glState = renderer.state;
 
@@ -73,6 +72,9 @@ class Texture {
         this.state.wrapS = gl.REPEAT;
         this.state.wrapT = gl.REPEAT;
         this.state.anisotropy = 0;
+
+        // Need update
+        this.needsUpdate = true;
     }
 
     bind() {
@@ -86,14 +88,53 @@ class Texture {
 
     update(textureUnit = 0 /* gl.TEXTURE0 */) {
         const gl = renderer.gl;
-        let needsUpdate = this.needsUpdate || this.image !== this.store.image;
+        const images = Array.isArray(this.image) ? this.image : [ this.image ];
 
-        // Make sure that texture is bound to its texture unit
+        // Need Update?
+        let needsUpdate = this.needsUpdate;
+        needsUpdate = this.needsUpdate || (this.image !== this.#image);
+
+        // Finished loading recently? Pixel source can be the following object types:
+        //  Uint8Array / Uint16Array / Uint32Array / Float32Array
+        //  ImageBitmap (TODO)
+        //  ImageData (TODO)
+        //  HTMLCanvasElement
+        //  HTMLImageElement
+        //  HTMLVideoElement
+        // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D
+        if (!this.#loaded) {
+            for (let i = 0; i < images.length; i++) {
+                const image = images[i];
+                if (!image) continue;
+                if (image instanceof Uint8Array ||
+                    image instanceof Uint16Array ||
+                    image instanceof Uint32Array ||
+                    image instanceof Float32Array) continue;
+                if (image instanceof HTMLImageElement && !image.complete) continue;
+                if (image instanceof HTMLImageElement ||
+                    image instanceof HTMLCanvasElement) {
+                    this.width = image.width;
+                    this.height = image.height;
+                    this.#loaded = true;
+                    needsUpdate = true;
+                } else if (image instanceof HTMLVideoElement) {
+                    this.generateMipmaps = false;
+                    if (this.minFilter === gl.NEAREST_MIPMAP_LINEAR) this.minFilter = gl.LINEAR;
+                    if (!this.width) this.width = image.videoWidth;
+                    if (!this.height) this.height = image.videoHeight;
+                    this.#loaded = true;
+                    needsUpdate = true;
+                }
+            }
+        }
+
+        // Make sure that texture is bound to it's texture unit
         if (needsUpdate || renderer.glState.textureUnits[textureUnit] !== this.id) {
             renderer.activeTexture(textureUnit);
             this.bind();
         }
 
+        // Update
         if (!needsUpdate) return;
         this.needsUpdate = false;
 
@@ -134,93 +175,53 @@ class Texture {
             this.state.anisotropy = this.anisotropy;
         }
 
-        // Check for loaded image(s)
-        let loaded = false;
-        const images = Array.isArray(this.image) ? this.image : [ this.image ];
-        for (let i = 0; i < images.length; i++) {
-            const image = images[i];
-            if (image && image.complete) {
-                this.width = image.width;
-                this.height = image.height;
-                loaded = true;
-                break;
-            }
-        }
-
         // Image(s) Loaded
-        if (loaded) {
+        if (this.#loaded) {
             // Texture Array
             if (this.target === gl.TEXTURE_2D_ARRAY) {
                 // Copy Images
-                if (!_canvas) _canvas = document.createElement('canvas');
-                if (!_ctx) _ctx = _canvas.getContext('2d', { willReadFrequently: true });
-                _canvas.width = this.width;
-                _canvas.height = this.height;
                 const pixels = new Uint8Array(this.width * this.height * images.length * 4);
                 let index = 0;
                 for (let i = 0; i < images.length; i++) {
                     const image = images[i];
-                    if (image && image.complete) {
-                        _ctx.clearRect(0, 0, this.width, this.height);
-                        _ctx.drawImage(images[i], 0, 0);
-                        const imageData = _ctx.getImageData(0, 0, this.width, this.height);
-                        for (let j = 0; j < this.width * this.height * 4; j += 4) {
-                            pixels[index + 0] = imageData.data[j + 0]; // red
-                            pixels[index + 1] = imageData.data[j + 1]; // green
-                            pixels[index + 2] = imageData.data[j + 2]; // blue
-                            pixels[index + 3] = imageData.data[j + 3]; // alpha
-                            index += 4;
-                        }
+                    if (!image) continue;
+                    let ctx;
+                    if (image instanceof HTMLCanvasElement) {
+                        ctx = image.getContext('2d');
+                    } else if (image instanceof HTMLImageElement && image.complete) {
+                        if (!_canvas) _canvas = document.createElement('canvas');
+                        if (!_ctx) _ctx = _canvas.getContext('2d', { willReadFrequently: true });
+                        _canvas.width = this.width;
+                        _canvas.height = this.height;
+                        ctx = _ctx;
+                        ctx.clearRect(0, 0, this.width, this.height);
+                        ctx.drawImage(images[i], 0, 0);
+                    }
+                    if (!ctx) continue;
+                    const imageData = ctx.getImageData(0, 0, this.width, this.height);
+                    for (let j = 0; j < this.width * this.height * 4; j += 4) {
+                        pixels[index + 0] = imageData.data[j + 0]; // red
+                        pixels[index + 1] = imageData.data[j + 1]; // green
+                        pixels[index + 2] = imageData.data[j + 2]; // blue
+                        pixels[index + 3] = imageData.data[j + 3]; // alpha
+                        index += 4;
                     }
                 }
                 // Create Texture Array
-                gl.texImage3D(
-                    gl.TEXTURE_2D_ARRAY,
-                    this.level,
-                    this.internalFormat,
-                    this.width, this.height, images.length,
-                    0,
-                    this.format,
-                    this.type,
-                    pixels
-                );
+                gl.texImage3D(gl.TEXTURE_2D_ARRAY, this.level, this.internalFormat, this.width, this.height, images.length, 0, this.format, this.type, pixels);
             // Cube Map
             } else if (this.target === gl.TEXTURE_CUBE_MAP) {
                 for (let i = 0; i < 6; i++) {
                     if (!images[i].complete) continue;
-                    gl.texImage2D(
-                        gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                        this.level,
-                        this.internalFormat,
-                        this.format,
-                        this.type,
-                        images[i]
-                    );
+                    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, this.level, this.internalFormat, this.format, this.type, images[i]);
                 }
             // Data
             } else if (ArrayBuffer.isView(images[0])) {
-                gl.texImage2D(
-                    this.target,
-                    this.level,
-                    this.internalFormat,
-                    this.width, this.height,
-                    0,
-                    this.format,
-                    this.type,
-                    images[0]
-                );
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, images[0]);
             // Compressed
             } else if (images[0].isCompressedTexture) {
                 for (let level = 0; level < images[0].length; level++) {
-                    gl.compressedTexImage2D(
-                        this.target,
-                        level,
-                        this.internalFormat,
-                        images[0][level].width,
-                        images[0][level].height,
-                        0,
-                        images[0][level].data
-                    );
+                    gl.compressedTexImage2D(this.target, level, this.internalFormat, images[0][level].width, images[0][level].height, 0, images[0][level].data);
                 }
             // Standard
             } else {
@@ -232,6 +233,7 @@ class Texture {
 
             // Callback for when data is pushed to GPU
             if (typeof this.onUpdate === 'function') this.onUpdate();
+
         // No Image
         } else {
             // Texture Array
@@ -244,18 +246,29 @@ class Texture {
                     gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
                 }
             // Render Target
-            } else if (this.width) {
+            } else if (!this.image && this.width) {
                 // Image intentionally left null for RenderTarget
                 gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
             // Standard
             } else {
-                // Upload empty pixel if no image to avoid errors while image or video loading
-                gl.texImage2D(this.target, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
+                const image = images[0];
+                if (image instanceof Uint8Array ||
+                    image instanceof Uint16Array ||
+                    image instanceof Uint32Array ||
+                    image instanceof Float32Array) {
+                    // Load array
+                    const w = this.width || 1;
+                    const h = this.height || 1;
+                    gl.texImage2D(this.target, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, image);
+                } else {
+                    // Upload empty pixel if no image to avoid errors while image or video loading
+                    gl.texImage2D(this.target, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
+                }
             }
         }
 
-        // Store
-        this.store.image = this.image;
+        // Save Last Known Image(s)
+        this.#image = this.image;
     }
 
     flush() {

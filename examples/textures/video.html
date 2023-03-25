@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>EyeGL • Video</title>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
+        <link rel="icon" type="image/png" href="../../files/logo/favicon.png" />
+        <link href="../main.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="Info">Video</div>
+
+        <script language="JavaScript" src="../imports.js"></script>
+
+        <script type="module">
+            import * as EYE from 'eyegl';
+            import { Gooey } from 'osui';
+
+            const renderer = new EYE.Renderer({ dpr: 2 });
+            const gl = renderer.gl;
+            document.body.appendChild(gl.canvas);
+            gl.clearColor(0, 0, 0, 0);
+
+            const camera = new EYE.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
+
+            function resize() {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+            }
+            window.addEventListener('resize', resize, false);
+            resize();
+
+            const videoGeometry = new EYE.Box({ width: 1.78, height: 1, depth: 1.78 });
+            const videoTexture = new EYE.Texture();
+
+            // Create video, check update loop to see when video is attached to texture
+            const video = document.createElement('video');
+            video.src = '../../files/video/scidian.mp4';
+            video.loop = true;
+            video.muted = true;
+            video.setAttribute('playsinline', 'playsinline');
+            video.play();
+
+            const videoProgram = new EYE.Uber({
+                cullFace: null,
+                texture: videoTexture,
+            });
+            const videoMesh = new EYE.Mesh({ geometry: videoGeometry, program: videoProgram });
+
+            const scene = new EYE.Transform();
+            videoMesh.setParent(scene);
+
+            // Render
+            const debug = new EYE.Debug();
+            requestAnimationFrame(update);
+            function update(t) {
+                debug.startFrame();
+
+                // Attach video and/or update texture when video is ready
+                if (video.readyState >= video.HAVE_ENOUGH_DATA) {
+                    if (!videoTexture.image) videoTexture.image = video;
+                    videoTexture.needsUpdate = true;
+                }
+
+                videoMesh.rotation.y += 0.003;
+                renderer.render({ scene, camera });
+
+                debug.endFrame();
+                requestAnimationFrame(update);
+            }
+
+        </script>
+    </body>
+</html>
