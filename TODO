@@ -5,10 +5,10 @@
 // ----------------------------------------------------------------------------------
 
 Sprite Shader:
+    - Improve ImageLoader / Assets.images:
     - Texture Atlas:
         - Check for atlas max size (from Capabilities)
         - Store image coordinates
-    - Improve ImageLoader / Assets.images:
 
 Polygons:
     - Chipmunk Debug Draw, https://github.com/slembcke/Chipmunk2D/blob/master/demo/ChipmunkDebugDraw.c

@@ -10,6 +10,7 @@
     </head>
     <body>
         <div class="Info">Video</div>
+        <div class="Credits">Film by Scidian Studios</div>
 
         <script language="JavaScript" src="../imports.js"></script>
 
@@ -31,8 +32,8 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const videoGeometry = new EYE.Box({ width: 1.78, height: 1, depth: 1.78 });
-            const videoTexture = new EYE.Texture();
+            const geometry = new EYE.Box({ width: 1.78, height: 1, depth: 1.78 });
+            const texture = new EYE.Texture();
 
             // Create video, check update loop to see when video is attached to texture
             const video = document.createElement('video');
@@ -42,14 +43,11 @@
             video.setAttribute('playsinline', 'playsinline');
             video.play();
 
-            const videoProgram = new EYE.Uber({
-                cullFace: null,
-                texture: videoTexture,
-            });
-            const videoMesh = new EYE.Mesh({ geometry: videoGeometry, program: videoProgram });
+            const program = new EYE.Uber({ texture });
+            const mesh = new EYE.Mesh({ geometry, program });
 
             const scene = new EYE.Transform();
-            videoMesh.setParent(scene);
+            mesh.setParent(scene);
 
             // Render
             const debug = new EYE.Debug();
@@ -59,11 +57,11 @@
 
                 // Attach video and/or update texture when video is ready
                 if (video.readyState >= video.HAVE_ENOUGH_DATA) {
-                    if (!videoTexture.image) videoTexture.image = video;
-                    videoTexture.needsUpdate = true;
+                    if (!texture.image) texture.image = video;
+                    texture.needsUpdate = true;
                 }
 
-                videoMesh.rotation.y += 0.003;
+                mesh.rotation.y += 0.003;
                 renderer.render({ scene, camera });
 
                 debug.endFrame();
