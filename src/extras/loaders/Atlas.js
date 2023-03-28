@@ -1,26 +1,33 @@
 import { Packer } from '../../libs/Packer.js';
 import { Texture } from '../../core/Texture.js';
 
+const MAX_SIZE = 4096;
+
 let _canvas, _ctx;
 
 class Atlas {
 
+    #boxes = [];
     #images = [];
+    #layers = 0;
+    #size = 1;
 
-    constructor(width = 2048, height = 2048, border = 2) {
+    constructor(border = 50) {
         const gl = renderer.gl;
 
-        this.width = width;
-        this.height = height;
         this.border = border;
-        this.length = 1;
         this.texture = new Texture({
             image: [],
             target: gl.TEXTURE_2D_ARRAY
         });
     }
 
+    length() {
+        return this.#layers;
+    }
+
     add(image) {
+        if (!image) return;
         if (this.#images.includes(image)) return;
         this.#images.push(image);
 
@@ -33,54 +40,98 @@ class Atlas {
                 w: image.width + (this.border * 2),
                 h: image.height + (this.border * 2),
                 image: image,
+                fit: undefined,
             });
         }
 
         // Pack
-        this.texture.image = [];
-        const texture = this.texture;
-        this.length = 0;
-        do {
-            this.length++;
-
+        this.#boxes.length = 0;
+        this.#layers = 0;
+        while (boxes.length > 0) {
             // Sort
             boxes.sort((a, b) => { return Math.max(b.w, b.h) - Math.max(a.w, a.h); });
             boxes.sort((a, b) => { return Math.min(b.w, b.h) - Math.min(a.w, a.h); });
             boxes.sort((a, b) => { return b.h - a.h; });
             boxes.sort((a, b) => { return b.w - a.w; });
-            const packer = new Packer(this.width, this.height);
-            packer.fit(boxes);
 
-            // Draw
-            if (!_canvas) _canvas = document.createElement('canvas');
-            if (!_ctx) _ctx = _canvas.getContext('2d');
-            _canvas.width = this.width;
-            _canvas.height = this.height;
-            _ctx.clearRect(0, 0, this.width, this.height);
-            for (let i = 0; i < boxes.length; i++) {
+            // Pack
+            let increaseSize;
+            do {
+                const packer = new Packer(this.#size, this.#size);
+                packer.fit(boxes);
+
+                // Increase Size
+                increaseSize = false;
+                if (this.#size < MAX_SIZE) {
+                    let allFit = true;
+                    for (let i = 0; i < boxes.length; i++) allFit = allFit && boxes[i].fit;
+                    if (!allFit) {
+                        increaseSize = true;
+                        this.#size = Math.min(this.#size + this.#size, MAX_SIZE);
+                    }
+                }
+                if (increaseSize) {
+                    for (let i = 0; i < boxes.length; i++) boxes[i].fit = undefined;
+                }
+            } while (increaseSize);
+
+            // Layer
+            for (let i = boxes.length - 1; i >= 0; i--) {
                 const box = boxes[i];
-                if (!box.fit) continue;
-                _ctx.fillStyle = `rgb(${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)})`;
-                _ctx.fillRect(box.fit.x, box.fit.y, box.w, box.h);
-                _ctx.drawImage(box.image,
-                    box.fit.x + this.border,
-                    box.fit.y + this.border,
+                if (box.fit) {
+                    const index = this.#images.indexOf(box.image);
+                    if (index < 0) continue;
+                    this.#boxes[index] = {
+                        x: box.fit.x,
+                        y: box.fit.y,
+                        w: box.w,
+                        h: box.h,
+                        image: box.image,
+                        layer: this.#layers,
+                    }
+                    boxes.splice(i, 1);
+                }
+            }
+
+            // Count
+            this.#layers++;
+        }
+
+        this.renderCanvas();
+    }
+
+    renderCanvas() {
+        if (!_canvas) _canvas = document.createElement('canvas');
+        if (!_ctx) _ctx = _canvas.getContext('2d');
+        const canvas = _canvas; //document.createElement('canvas');
+        const ctx = _ctx; //canvas.getContext('2d');
+        canvas.width = this.#size;
+        canvas.height = this.#size;
+
+        const texture = this.texture;
+        texture.image = [];
+        for (let i = 0; i < this.#layers; i++) {
+            // Draw
+            ctx.clearRect(0, 0, this.#size, this.#size);
+            for (let j = 0; j < this.#boxes.length; j++) {
+                const box = this.#boxes[j];
+                if (box.layer !== i) continue;
+                ctx.fillStyle = `rgb(${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)})`;
+                ctx.fillRect(box.x, box.y, box.w, box.h);
+                ctx.drawImage(box.image,
+                    box.x + this.border,
+                    box.y + this.border,
                     box.w - (this.border * 2),
                     box.h - (this.border * 2)
                 );
             }
 
             // Atlas
-            const image = new Image();
+            const image = new Image(this.#size, this.#size);
             texture.image.push(image);
-            image.src = _canvas.toDataURL();
+            image.src = canvas.toDataURL();
             image.onload = () => texture.needsUpdate = true;
-
-            // Clear 'fit' Boxes
-            for (let i = boxes.length - 1; i >= 0; i--) {
-                if (boxes[i].fit) boxes.splice(i, 1);
-            }
-        } while (boxes.length > 0);
+        }
     }
 
 }

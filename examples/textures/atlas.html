@@ -36,18 +36,13 @@
             const sceneBox = new EYE.Mesh({ geometry: new EYE.Box(), program: sceneProgram });
 
             // Atlas
-            const atlas = new EYE.Atlas(400, 400);
-            const shapes = EYE.ImageLoader.load('../../files/sprites/shapes.png', () => {
-                setTimeout(() => atlas.add(shapes), 2000);
-            });
+            const atlas = new EYE.Atlas();
             const dragon = EYE.ImageLoader.load('../../files/sprites/dragon.png', () => atlas.add(dragon));
             const unicorn = EYE.ImageLoader.load('../../files/sprites/unicorn.png', () => atlas.add(unicorn));
             const kraken = EYE.ImageLoader.load('../../files/sprites/kraken.png', () => atlas.add(kraken));
-            const physics = EYE.ImageLoader.load('../../files/sprites/physics.svg', () => {
-                atlas.add(physics);
-                atlas.add(physics);
-                atlas.add(physics);
-                atlas.add(physics);
+            const physics = EYE.ImageLoader.load('../../files/sprites/physics.svg', () => atlas.add(physics));
+            const shapes = EYE.ImageLoader.load('../../files/sprites/shapes.png', () => {
+                setTimeout(() => atlas.add(shapes), 1000);
             });
             sceneProgram.uniforms.tDiffuse.value = atlas.texture;
 
@@ -64,7 +59,7 @@
                 // Layer
                 if (performance.now() - timer > 1000) {
                     sceneProgram.uniforms.uLayer.value++;
-                    if (sceneProgram.uniforms.uLayer.value > atlas.length - 1) {
+                    if (sceneProgram.uniforms.uLayer.value > atlas.length() - 1) {
                         sceneProgram.uniforms.uLayer.value = 0;
                     }
                     timer = performance.now();

@@ -12,7 +12,6 @@ let _idGenerator = 1;
 class Texture {
 
     #image;
-    #loaded = false;
 
     constructor({
         image,
@@ -88,55 +87,49 @@ class Texture {
 
     update(textureUnit = 0 /* gl.TEXTURE0 */) {
         const gl = renderer.gl;
-        const images = Array.isArray(this.image) ? this.image : [ this.image ];
 
-        // Need Update?
-        let needsUpdate = this.needsUpdate;
-        needsUpdate = this.needsUpdate || (this.image !== this.#image);
-
-        // Finished loading recently? Pixel source can be the following object types:
-        //  Uint8Array / Uint16Array / Uint32Array / Float32Array
-        //  ImageBitmap (TODO)
-        //  ImageData (TODO)
-        //  HTMLCanvasElement
-        //  HTMLImageElement
-        //  HTMLVideoElement
-        // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D
-        if (!this.#loaded) {
-            for (let i = 0; i < images.length; i++) {
-                const image = images[i];
-                if (!image) continue;
-                if (image instanceof Uint8Array ||
-                    image instanceof Uint16Array ||
-                    image instanceof Uint32Array ||
-                    image instanceof Float32Array) continue;
-                if (image instanceof HTMLImageElement && !image.complete) continue;
-                if (image instanceof HTMLImageElement ||
-                    image instanceof HTMLCanvasElement) {
-                    this.width = image.width;
-                    this.height = image.height;
-                    this.#loaded = true;
-                    needsUpdate = true;
-                } else if (image instanceof HTMLVideoElement) {
-                    this.generateMipmaps = false;
-                    if (this.minFilter === gl.NEAREST_MIPMAP_LINEAR) this.minFilter = gl.LINEAR;
-                    if (!this.width) this.width = image.videoWidth;
-                    if (!this.height) this.height = image.videoHeight;
-                    this.#loaded = true;
-                    needsUpdate = true;
-                }
-            }
-        }
-
-        // Make sure that texture is bound to it's texture unit
-        if (needsUpdate || renderer.glState.textureUnits[textureUnit] !== this.id) {
+        // Update?
+        let needsUpdate = this.needsUpdate || (this.image !== this.#image);
+        let needsBind = needsUpdate || (renderer.glState.textureUnits[textureUnit] !== this.id);
+        if (needsBind) {
             renderer.activeTexture(textureUnit);
             this.bind();
         }
-
-        // Update
         if (!needsUpdate) return;
         this.needsUpdate = false;
+
+        // Pixel source can be of object type:
+        // - Uint8Array / Uint16Array / Uint32Array / Float32Array
+        // - ImageBitmap (TODO)
+        // - ImageData (TODO)
+        // - HTMLCanvasElement
+        // - HTMLImageElement
+        // - HTMLVideoElement
+        // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D
+        let loaded = false;
+        const images = Array.isArray(this.image) ? this.image : [ this.image ];
+        for (let i = 0; i < images.length; i++) {
+            const image = images[i];
+            if (!image) continue;
+            if (image instanceof Uint8Array ||
+                image instanceof Uint16Array ||
+                image instanceof Uint32Array ||
+                image instanceof Float32Array) continue;
+            if (image instanceof HTMLImageElement && !image.complete) continue;
+            if (image instanceof HTMLImageElement ||
+                image instanceof HTMLCanvasElement) {
+                this.width = image.width;
+                this.height = image.height;
+                loaded = true;
+            } else if (image instanceof HTMLVideoElement) {
+                this.generateMipmaps = false;
+                if (this.minFilter === gl.NEAREST_MIPMAP_LINEAR) this.minFilter = gl.LINEAR;
+                if (!this.width) this.width = image.videoWidth;
+                if (!this.height) this.height = image.videoHeight;
+                loaded = true;
+                break;
+            }
+        }
 
         if (this.flipY !== renderer.glState.flipY) {
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY);
@@ -176,7 +169,7 @@ class Texture {
         }
 
         // Image(s) Loaded
-        if (this.#loaded) {
+        if (loaded) {
             // Texture Array
             if (this.target === gl.TEXTURE_2D_ARRAY) {
                 // Copy Images
