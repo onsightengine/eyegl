@@ -53,6 +53,7 @@
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
+                requestAnimationFrame(update);
                 debug.startFrame();
 
                 // Attach video and/or update texture when video is ready
@@ -65,7 +66,6 @@
                 renderer.render({ scene, camera });
 
                 debug.endFrame();
-                requestAnimationFrame(update);
             }
 
         </script>

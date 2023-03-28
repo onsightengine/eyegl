@@ -65,7 +65,10 @@ class TextureLoader {
                 });
                 const nameFromUrl = new String(src.replace(/^.*[\\\/]/, ''));   /* filename only */
                 texture.name = nameFromUrl.replace(/\.[^/.]+$/, );              /* remove extension */
-                texture.image = ImageLoader.load(src, onLoad);
+                texture.image = ImageLoader.load(src, () => {
+                    texture.needsUpdate = true;
+                    if (typeof onLoad === 'function') onLoad();
+                });
                 break;
             default:
                 console.warn(`TextureLoader: Format not supported - '.${ext}'`);

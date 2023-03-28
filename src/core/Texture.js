@@ -87,6 +87,7 @@ class Texture {
 
     update(textureUnit = 0 /* gl.TEXTURE0 */) {
         const gl = renderer.gl;
+        const self = this;
 
         // Update?
         let needsUpdate = this.needsUpdate || (this.image !== this.#image);
@@ -107,28 +108,32 @@ class Texture {
         // - HTMLVideoElement
         // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D
         let loaded = false;
-        const images = Array.isArray(this.image) ? this.image : [ this.image ];
-        for (let i = 0; i < images.length; i++) {
-            const image = images[i];
-            if (!image) continue;
+        function checkImage(image) {
+            if (!image) return;
             if (image instanceof Uint8Array ||
                 image instanceof Uint16Array ||
                 image instanceof Uint32Array ||
-                image instanceof Float32Array) continue;
-            if (image instanceof HTMLImageElement && !image.complete) continue;
+                image instanceof Float32Array) return;
+            if (image instanceof HTMLImageElement && !image.complete) return;
             if (image instanceof HTMLImageElement ||
                 image instanceof HTMLCanvasElement) {
-                this.width = image.width;
-                this.height = image.height;
+                self.width = image.width;
+                self.height = image.height;
                 loaded = true;
             } else if (image instanceof HTMLVideoElement) {
-                this.generateMipmaps = false;
-                if (this.minFilter === gl.NEAREST_MIPMAP_LINEAR) this.minFilter = gl.LINEAR;
-                if (!this.width) this.width = image.videoWidth;
-                if (!this.height) this.height = image.videoHeight;
+                self.generateMipmaps = false;
+                if (self.minFilter === gl.NEAREST_MIPMAP_LINEAR) self.minFilter = gl.LINEAR;
+                if (!self.width) self.width = image.videoWidth;
+                if (!self.height) self.height = image.videoHeight;
                 loaded = true;
-                break;
             }
+        }
+
+        let images = this.image;
+        if (Array.isArray(images)) {
+            for (let i = 0; i < images.length; i++) checkImage(images[i]);
+        } else {
+            checkImage(images);
         }
 
         if (this.flipY !== renderer.glState.flipY) {
@@ -172,6 +177,8 @@ class Texture {
         if (loaded) {
             // Texture Array
             if (this.target === gl.TEXTURE_2D_ARRAY) {
+                images = Array.isArray(images) ? images : [ images ];
+
                 // Copy Images
                 const pixels = new Uint8Array(this.width * this.height * images.length * 4);
                 let index = 0;
@@ -209,16 +216,16 @@ class Texture {
                     gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, this.level, this.internalFormat, this.format, this.type, images[i]);
                 }
             // Data
-            } else if (ArrayBuffer.isView(images[0])) {
-                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, images[0]);
+            } else if (ArrayBuffer.isView(images)) {
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, images);
             // Compressed
-            } else if (images[0].isCompressedTexture) {
-                for (let level = 0; level < images[0].length; level++) {
-                    gl.compressedTexImage2D(this.target, level, this.internalFormat, images[0][level].width, images[0][level].height, 0, images[0][level].data);
+            } else if (images.isCompressedTexture) {
+                for (let level = 0; level < images.length; level++) {
+                    gl.compressedTexImage2D(this.target, level, this.internalFormat, images[level].width, images[level].height, 0, images[level].data);
                 }
             // Standard
             } else {
-                gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, images[0]);
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, images);
             }
 
             // Mipmaps
@@ -244,7 +251,7 @@ class Texture {
                 gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
             // Standard
             } else {
-                const image = images[0];
+                const image = images;
                 if (image instanceof Uint8Array ||
                     image instanceof Uint16Array ||
                     image instanceof Uint32Array ||

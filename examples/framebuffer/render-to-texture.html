@@ -60,6 +60,7 @@
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
+                requestAnimationFrame(update);
                 debug.startFrame();
 
                 mesh.rotation.y -= 0.02;
@@ -79,7 +80,6 @@
                 renderer.render({ scene: targetMesh, camera: targetCamera });
 
                 debug.endFrame();
-                requestAnimationFrame(update);
             }
 
         </script>

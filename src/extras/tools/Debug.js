@@ -16,7 +16,7 @@ class Debug {
                 if (value === 'undefined' || value === 'null' || value === 'false') return false;
                 return true;
             }
-            return Boolean(value);
+            return !!value;
         }
 
         openFrame = openFrame || checkState('DebugFrame');
@@ -320,6 +320,8 @@ class Debug {
         const frameClock = new Clock();
         const elapsedClock = new Clock();
 
+        /***** START / STOP ******/
+
         this.#startInternal = function() {
             frameClock.start();
             renderer.drawCallCount = 0;
@@ -330,24 +332,27 @@ class Debug {
 
             const elapsed = elapsedClock.getElapsedTime();
             if (elapsed > 1) {
+                // NOTE: Setting 'firstChild' sets actual 'Text' node itself and does not increase DOM Node count
+                // https://stackoverflow.com/questions/73253005/where-are-these-dom-nodes-coming-from-when-only-changing-innertext
+
                 // Actual fps
                 const fps = elapsedClock.count() / elapsed;
-                if (domFps) domFps.textContent = `${fps.toFixed(1)} fps`;
+                if (domFps) domFps.firstChild.textContent = `${fps.toFixed(1)} fps`;
                 elapsedClock.reset();
 
                 // Average time of actual rendering frames
                 const frameAvg = frameClock.averageDelta();
-                if (domRender) domRender.textContent = `${frameAvg.toFixed(2)} ms`;
-                if (domMax) domMax.textContent = `~ ${Math.floor(1000 / frameAvg)} fps`;
+                if (domRender) domRender.firstChild.textContent = `${frameAvg.toFixed(2)} ms`;
+                if (domMax) domMax.firstChild.textContent = `~ ${Math.floor(1000 / frameAvg)} fps`;
                 frameClock.reset();
 
                 // Draw call count
-                if (domDraws) domDraws.textContent = `${renderer.drawCallCount}`;
+                if (domDraws) domDraws.firstChild.textContent = `${renderer.drawCallCount}`;
 
                 // Memory usage
                 if (domMem && performance.memory) {
                     const memory = performance.memory.usedJSHeapSize / 1048576;
-                    domMem.textContent = `${memory.toFixed(2)} mb`;
+                    domMem.firstChild.textContent = `${memory.toFixed(2)} mb`;
                 }
 
                 // Scene Info
@@ -366,14 +371,15 @@ class Debug {
                         }
                     });
                 }
-                domObjects.textContent = `${objects}`;
-                domLights.textContent = `${lights}`;
-                domVertices.textContent = `${vertices}`;
-                domTriangles.textContent = `${triangles.toFixed(0)}`;
 
-                domPrograms.textContent = `${renderer.info.programs}`;
-                domGeometries.textContent = `${renderer.info.geometries}`;
-                domTextures.textContent = `${renderer.info.textures}`;
+                domObjects.firstChild.textContent = `${objects}`;
+                domLights.firstChild.textContent = `${lights}`;
+                domVertices.firstChild.textContent = `${vertices}`;
+                domTriangles.firstChild.textContent = `${triangles.toFixed(0)}`;
+
+                domPrograms.firstChild.textContent = `${renderer.info.programs}`;
+                domGeometries.firstChild.textContent = `${renderer.info.geometries}`;
+                domTextures.firstChild.textContent = `${renderer.info.textures}`;
             }
 
         };

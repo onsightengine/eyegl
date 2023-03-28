@@ -108,13 +108,13 @@
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
+                requestAnimationFrame(update);
                 debug.startFrame();
 
                 mesh.rotation.y += 0.003;
                 renderer.render({ scene, camera });
 
                 debug.endFrame();
-                requestAnimationFrame(update);
             }
 
         </script>

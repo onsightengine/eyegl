@@ -12,7 +12,7 @@ class Atlas {
     #layers = 0;
     #size = 1;
 
-    constructor(border = 50) {
+    constructor(border = 1) {
         const gl = renderer.gl;
 
         this.border = border;

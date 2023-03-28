@@ -184,6 +184,7 @@
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
+                requestAnimationFrame(update);
                 debug.startFrame();
 
                 const time = t * 0.001;
@@ -227,7 +228,6 @@
                 renderer.render({ scene, camera });
 
                 debug.endFrame();
-                requestAnimationFrame(update);
             }
 
         </script>

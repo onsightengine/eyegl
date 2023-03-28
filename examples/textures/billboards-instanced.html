@@ -164,6 +164,7 @@
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
             function update(t) {
+                requestAnimationFrame(update);
                 debug.startFrame();
                 controls.update();
 
@@ -220,8 +221,6 @@
                 camera.updateFrustum();
                 renderer.render({ scene: quad, camera });
                 debug.endFrame();
-
-                requestAnimationFrame(update);
             }
 
         </script>

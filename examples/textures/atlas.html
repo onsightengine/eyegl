@@ -46,14 +46,14 @@
             });
             sceneProgram.uniforms.tDiffuse.value = atlas.texture;
 
+            // Timer
+            let timer = performance.now();
+
             // Render
             const debug = new EYE.Debug();
             requestAnimationFrame(update);
-
-            let timer = performance.now();
-
             function update(t) {
-                // Start Frame
+                requestAnimationFrame(update);
                 debug.startFrame();
 
                 // Layer
@@ -73,7 +73,6 @@
 
                 // End Frame
                 debug.endFrame();
-                requestAnimationFrame(update);
             }
 
         </script>
