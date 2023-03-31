@@ -12,6 +12,7 @@ class Assets {
         function assetType(asset) {
             if (asset.isGeometry) return 'geometry';
             if (asset.isTexture) return 'texture';
+            if (asset.isImage) return 'image';
             return 'asset';
         }
 

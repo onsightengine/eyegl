@@ -6,7 +6,7 @@
 
 Sprite Shader:
     - Improve ImageLoader / Assets.images:
-    - Integreate with Sprite:
+    - Sprite class:
 
 Polygons:
     - Chipmunk Debug Draw, https://github.com/slembcke/Chipmunk2D/blob/master/demo/ChipmunkDebugDraw.c
@@ -25,9 +25,6 @@ Geometry Utility Functions (GeomUtils):
 Context Lost:
     - Do something about global 'window.renderer.gl', need to handle multiple renderers / gl contexts
   	- Continue in Renderer.initContext()
-
-TypeScript:
-    !! Convert to typescript?
 
 // ----------------------------------------------------------------------------------
 //
@@ -50,7 +47,7 @@ Optimization:
     - Reduce Draw Calls:
         - Instancing
         - Scene geometry baking / geometry merging
-            - THREE.BufferGeometryUtils.mergeBufferGeometries()
+            - THREE.BufferGeometryUtils.mergeGeometries()
                 https://github.com/mrdoob/three.js/blob/de7c36a30773aa7941c46516af71e6993a7640ea/examples/jsm/utils/BufferGeometryUtils.js#L113
         - Occlusion culling
             https://github.com/tsherif/webgl2examples/blob/master/occlusion.html

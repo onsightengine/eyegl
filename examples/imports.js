@@ -9,7 +9,3 @@ document.write(`
     }
     </script>
 `);
-
-(async () => {
-    await import('https://unpkg.com/es-module-shims@1.5.0/dist/es-module-shims.js');
-})();

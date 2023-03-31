@@ -15,7 +15,7 @@ class TextureArray extends Program {
 
     #normalIntensity = 0.0;
     #opacity = 1.0;
-    #tint = [ 1, 1, 1];
+    #tint = [ 1, 1, 1 ];
     #tintIntensity = 0.0;
     #wireIntensity = 0.0;
 
