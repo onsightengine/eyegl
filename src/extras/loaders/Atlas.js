@@ -1,3 +1,4 @@
+import { ImageLoader } from './ImageLoader.js';
 import { Packer } from '../../libs/Packer.js';
 import { Texture } from '../../core/Texture.js';
 
@@ -27,19 +28,34 @@ class Atlas {
     }
 
     add(image) {
+        const self = this;
         if (!image) return;
-        if (this.#images.includes(image)) return;
-        this.#images.push(image);
+
+        // Load from String
+        if (typeof image === 'string') image = ImageLoader.load(image);
+
+        // Add to Images
+        if (!this.#images.includes(image)) this.#images.push(image);
+
+        // Image Loaded?
+        if (!image.complete) {
+            const onload = image.onload;
+            image.onload = function() {
+                if (typeof onload === 'function') onload();
+                self.add(image);
+            }
+            return;
+        }
 
         // Boxes
         const boxes = [];
         for (let i = 0; i < this.#images.length; i++) {
-            const image = this.#images[i];
-            if (!image.complete || !image.naturalWidth || !image.naturalHeight) continue;
+            const img = this.#images[i];
+            if (!img.complete || !img.naturalWidth || !img.naturalHeight) continue;
             boxes.push({
-                w: image.width + (this.border * 2),
-                h: image.height + (this.border * 2),
-                image: image,
+                w: img.width + (this.border * 2),
+                h: img.height + (this.border * 2),
+                image: img,
                 fit: undefined,
             });
         }

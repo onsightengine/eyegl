@@ -36,12 +36,62 @@
             resize();
 
             const params = {
-                count: 1000,
+                count: 100,
             };
 
             const gui = new Gooey().opacity(0.8);
             const folder1 = gui.addFolder('Parameters');
-            folder1.add(params, 'count', 1000, 50000, 1000, 0).onFinishChange(() => buildScene(params.count));
+            folder1.add(params, 'count', 100, 500, 10, 0).onFinishChange(() => buildScene(params.count));
+
+//
+
+            // FROM ATLAS.HTML
+
+            // // Meshes
+            // const sceneProgram = new EYE.TextureArray();
+            // const sceneBox = new EYE.Mesh({ geometry: new EYE.Box(), program: sceneProgram });
+
+            // // Atlas
+            // const atlas = new EYE.Atlas();
+            // const dragon = EYE.ImageLoader.load('../../files/sprites/dragon.png', () => atlas.add(dragon));
+            // const unicorn = EYE.ImageLoader.load('../../files/sprites/unicorn.png', () => atlas.add(unicorn));
+            // const kraken = EYE.ImageLoader.load('../../files/sprites/kraken.png', () => atlas.add(kraken));
+            // const physics = EYE.ImageLoader.load('../../files/sprites/physics.svg', () => atlas.add(physics));
+            // const shapes = EYE.ImageLoader.load('../../files/sprites/shapes.png', () => {
+            //     setTimeout(() => atlas.add(shapes), 1000);
+            // });
+            // sceneProgram.uniforms.tDiffuse.value = atlas.texture;
+
+            // // Timer
+            // let timer = performance.now();
+
+            // // Render
+            // const debug = new EYE.Debug();
+            // requestAnimationFrame(update);
+            // function update(t) {
+            //     requestAnimationFrame(update);
+            //     debug.startFrame();
+
+            //     // Layer
+            //     if (performance.now() - timer > 1000) {
+            //         sceneProgram.uniforms.uLayer.value++;
+            //         if (sceneProgram.uniforms.uLayer.value > atlas.length() - 1) {
+            //             sceneProgram.uniforms.uLayer.value = 0;
+            //         }
+            //         timer = performance.now();
+            //     }
+
+            //     // Render Scene
+            //     gl.clearColor(0, 0, 0, 0);
+            //     sceneBox.rotation.y -= 0.004;
+            //     sceneBox.rotation.x -= 0.004;
+            //     renderer.render({ scene: sceneBox, camera: sceneCamera });
+
+            //     // End Frame
+            //     debug.endFrame();
+            // }
+
+//
 
             const assets = new EYE.Assets();
             const dragon = assets.load('../../files/sprites/dragon.png');

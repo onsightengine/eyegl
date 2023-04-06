@@ -37,13 +37,11 @@
 
             // Atlas
             const atlas = new EYE.Atlas();
-            const dragon = EYE.ImageLoader.load('../../files/sprites/dragon.png', () => atlas.add(dragon));
-            const unicorn = EYE.ImageLoader.load('../../files/sprites/unicorn.png', () => atlas.add(unicorn));
-            const kraken = EYE.ImageLoader.load('../../files/sprites/kraken.png', () => atlas.add(kraken));
-            const physics = EYE.ImageLoader.load('../../files/sprites/physics.svg', () => atlas.add(physics));
-            const shapes = EYE.ImageLoader.load('../../files/sprites/shapes.png', () => {
-                setTimeout(() => atlas.add(shapes), 1000);
-            });
+            atlas.add('../../files/sprites/dragon.png');
+            atlas.add('../../files/sprites/unicorn.png');
+            atlas.add('../../files/sprites/kraken.png');
+            atlas.add('../../files/sprites/physics.svg');
+            atlas.add('../../files/sprites/shapes.png');
             sceneProgram.uniforms.tDiffuse.value = atlas.texture;
 
             // Timer
