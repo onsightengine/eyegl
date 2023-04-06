@@ -4,8 +4,6 @@ import { Texture } from '../../core/Texture.js';
 
 const MAX_SIZE = 4096;
 
-let _canvas, _ctx;
-
 class Atlas {
 
     #boxes = [];
@@ -28,7 +26,6 @@ class Atlas {
     }
 
     add(image) {
-        const self = this;
         if (!image) return;
 
         // Load from String
@@ -39,6 +36,7 @@ class Atlas {
 
         // Image Loaded?
         if (!image.complete) {
+            const self = this;
             const onload = image.onload;
             image.onload = function() {
                 if (typeof onload === 'function') onload();
@@ -52,6 +50,7 @@ class Atlas {
         for (let i = 0; i < this.#images.length; i++) {
             const img = this.#images[i];
             if (!img.complete || !img.naturalWidth || !img.naturalHeight) continue;
+            if (img.naturalWidth > MAX_SIZE || img.naturalHeight > MAX_SIZE) continue;
             boxes.push({
                 w: img.width + (this.border * 2),
                 h: img.height + (this.border * 2),
@@ -113,43 +112,50 @@ class Atlas {
             this.#layers++;
         }
 
-        this.renderCanvas();
-    }
-
-    renderCanvas() {
-        if (!_canvas) _canvas = document.createElement('canvas');
-        if (!_ctx) _ctx = _canvas.getContext('2d');
-        const canvas = _canvas; //document.createElement('canvas');
-        const ctx = _ctx; //canvas.getContext('2d');
-        canvas.width = this.#size;
-        canvas.height = this.#size;
-
-        const texture = this.texture;
-        texture.image = [];
-        for (let i = 0; i < this.#layers; i++) {
-            // Draw
-            ctx.clearRect(0, 0, this.#size, this.#size);
-            for (let j = 0; j < this.#boxes.length; j++) {
-                const box = this.#boxes[j];
-                if (box.layer !== i) continue;
-                ctx.fillStyle = `rgb(${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)})`;
-                ctx.fillRect(box.x, box.y, box.w, box.h);
-                ctx.drawImage(box.image,
-                    box.x + this.border,
-                    box.y + this.border,
-                    box.w - (this.border * 2),
-                    box.h - (this.border * 2)
-                );
-            }
-
-            // Atlas
-            const image = new Image(this.#size, this.#size);
-            texture.image.push(image);
-            image.src = canvas.toDataURL();
-            image.onload = () => texture.needsUpdate = true;
-        }
+        renderCanvas(this, this.#size, this.#boxes);
     }
 
 }
 
 export { Atlas };
+
+/********** INTERNAL **********/
+
+let _canvas;
+let _ctx;
+
+function renderCanvas(atlas, size, boxes) {
+    if (!_canvas) _canvas = document.createElement('canvas');
+    if (!_ctx) _ctx = _canvas.getContext('2d');
+    const canvas = _canvas;
+    const ctx = _ctx;
+    canvas.width = size;
+    canvas.height = size;
+
+    const texture = atlas.texture;
+    texture.image = [];
+    for (let i = 0; i < atlas.length(); i++) {
+
+        // Draw
+        ctx.clearRect(0, 0, size, size);
+        for (let j = 0; j < boxes.length; j++) {
+            const box = boxes[j];
+            if (box.layer !== i) continue;
+            ctx.fillStyle = `rgb(${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)})`;
+            ctx.fillRect(box.x, box.y, box.w, box.h);
+            ctx.drawImage(box.image,
+                box.x + (atlas.border),
+                box.y + (atlas.border),
+                box.w - (atlas.border * 2),
+                box.h - (atlas.border * 2)
+            );
+        }
+
+        // Atlas
+        const image = new Image(size, size);
+        texture.image.push(image);
+        image.src = canvas.toDataURL();
+        image.onload = () => texture.needsUpdate = true;
+
+    }
+}
