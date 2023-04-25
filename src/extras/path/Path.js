@@ -3,7 +3,7 @@ import { Mat4 } from '../../math/Mat4.js';
 import { CubicBezierSegment } from './CubicBezierSegment.js';
 import { QuadraticBezierSegment } from './QuadraticBezierSegment.js';
 import { LineSegment } from './LineSegment.js';
-import { clamp, toDegrees, toRadian, mat4fromRotationSinCos, rotateNormalBinormal } from '../utils/PathUtils.js';
+import { clamp, toDegrees, toRadian, mat4fromRotationSinCos, rotateNormalBinormal } from './PathUtils.js';
 
 const tempVec3 = new Vec3();
 const tempMat4 = new Mat4();

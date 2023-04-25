@@ -1,7 +1,7 @@
 import { Geometry } from '../../core/Geometry.js';
 import { Vec3 } from '../../math/Vec3.js';
 import { calculateNormal } from '../../math/functions/Vec3Func.js';
-import { fuzzyFloat, triangleArea } from './MathUtils.js';
+import { fuzzyFloat, triangleArea } from '../../math/MathUtils.js';
 
 // cleanAttributes()
 // computeVertexNormals()

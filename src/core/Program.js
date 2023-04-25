@@ -1,4 +1,4 @@
-import { uuid } from '../extras/utils/MathUtils.js';
+import { uuid } from '../math/MathUtils.js';
 
 // TODO: upload empty texture if null ? maybe not
 // TODO: upload identity matrix if null ?

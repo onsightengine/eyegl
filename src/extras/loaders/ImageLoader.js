@@ -1,4 +1,4 @@
-import { uuid } from '../utils/MathUtils.js';
+import { uuid } from '../../math/MathUtils.js';
 
 class ImageLoader {
 

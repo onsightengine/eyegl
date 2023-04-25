@@ -1,4 +1,4 @@
-import { uuid } from '../extras/utils/MathUtils.js';
+import { uuid } from '../math/MathUtils.js';
 
 // TODO: delete (flush)  texture
 // TODO: use texSubImage2D for updates (video or onLoad)

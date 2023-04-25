@@ -146,6 +146,10 @@ div {
     color: white;
 }
 
+.WorkInProgress {
+    color: #dd1008;
+}
+
 /***** Icons *****/
 
 .SideIcon,

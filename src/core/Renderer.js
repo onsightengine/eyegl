@@ -1,5 +1,5 @@
 import { Color } from '../math/Color.js';
-import { uuid } from '../extras/utils/MathUtils.js';
+import { uuid } from '../math/MathUtils.js';
 import { Vec3 } from '../math/Vec3.js';
 
 // NOTE: Must use these methods manually

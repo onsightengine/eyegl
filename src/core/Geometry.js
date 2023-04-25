@@ -1,5 +1,5 @@
 import { normalize } from '../math/functions/Vec3Func.js';
-import { uuid } from '../extras/utils/MathUtils.js';
+import { uuid } from '../math/MathUtils.js';
 import { Vec3 } from '../math/Vec3.js';
 
 // TODO: fit in transform feedback

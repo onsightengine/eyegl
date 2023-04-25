@@ -8,6 +8,7 @@
 
 /***** Core *****/
 
+export { Assets } from './core/Assets.js';
 export { Camera } from './core/Camera.js';
 export { Geometry } from './core/Geometry.js';
 export { Mesh } from './core/Mesh.js';
@@ -19,7 +20,6 @@ export { Transform } from './core/Transform.js';
 
 /***** Extras *****/
 
-export { Assets } from './extras/Assets.js';
 export { Post } from './extras/Post.js';
 export { Raycast } from './extras/Raycast.js';
 
@@ -27,6 +27,7 @@ export { Raycast } from './extras/Raycast.js';
 export { Orbit } from './extras/controls/Orbit.js';
 
 // Geometries
+export * as GeomUtils from './extras/geometries/GeomUtils.js';
 export { Box } from './extras/geometries/Box.js';
 export { Cylinder } from './extras/geometries/Cylinder.js';
 export { Plane } from './extras/geometries/Plane.js';
@@ -68,12 +69,9 @@ export { Capabilities } from './extras/tools/Capabilities.js';
 export { Clock } from './extras/tools/Clock.js';
 export { Debug } from './extras/tools/Debug.js';
 
-// Utils
-export * as GeomUtils from './extras/utils/GeomUtils.js';
-export * as MathUtils from './extras/utils/MathUtils.js';
-
 /***** Math *****/
 
+export * as MathUtils from './math/MathUtils.js';
 export { Color } from './math/Color.js';
 export { Euler } from './math/Euler.js';
 export { Mat3 } from './math/Mat3.js';

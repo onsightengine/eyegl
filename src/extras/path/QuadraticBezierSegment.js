@@ -1,6 +1,6 @@
 import { BaseSegment } from './BaseSegment.js';
 import { Vec3 } from '../../math/Vec3.js';
-import { T_VALUES, C_VALUES } from '../utils/PathUtils.js';
+import { T_VALUES, C_VALUES } from './PathUtils.js';
 
 const tempVec3 = new Vec3();
 

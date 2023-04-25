@@ -1,4 +1,4 @@
-import * as Vec3Func from '../../math/functions/Vec3Func.js';
+import * as Vec3Func from './functions/Vec3Func.js';
 
 // fuzzyFloat()
 // isPowerOf2()

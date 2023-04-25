@@ -3,7 +3,7 @@ import { Program } from '../../core/Program.js';
 import { Geometry } from '../../core/Geometry.js';
 import { Vec3 } from '../../math/Vec3.js';
 
-import * as GeomUtils from '../utils/GeomUtils.js';
+import * as GeomUtils from '../geometries/GeomUtils.js';
 import { Uber } from '../programs/Uber.js';
 
 class WireMesh extends Mesh {

@@ -4,7 +4,7 @@ document.write(`
     {
         "imports": {
             "eyegl": "../../src/EyeGL.js",
-            "osui": "../../../osui/build/osui.module.js"
+            "osui": "../../src/libs/osui.module.js"
         }
     }
     </script>

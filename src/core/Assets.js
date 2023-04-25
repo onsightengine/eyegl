@@ -1,4 +1,4 @@
-import { TextureLoader } from './loaders/TextureLoader.js';
+import { TextureLoader } from '../extras/loaders/TextureLoader.js';
 
 class Assets {
 
