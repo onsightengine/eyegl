@@ -48,11 +48,11 @@
 
             /***** Testing context lost *****/
             document.addEventListener('keyup', (event) => {
-                switch (event.code) {
-                    case 'KeyL':
+                switch (event.key) {
+                    case 'l':
                         renderer.loseContext.loseContext();
                         return;
-                    case 'KeyR':
+                    case 'r':
                         renderer.loseContext.restoreContext();
                         return;
                 }
