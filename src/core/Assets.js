@@ -9,7 +9,7 @@ class Assets {
     /********** LIBRARY **********/
 
     library(type) {
-        function assetType(asset) {
+        function checkAssetType(asset) {
             if (asset.isGeometry) return 'geometry';
             if (asset.isTexture) return 'texture';
             if (asset.isImage) return 'image';
@@ -18,7 +18,7 @@ class Assets {
 
         const library = [];
         for (const [uuid, asset] of Object.entries(this.#assets)) {
-            if (assetType(asset) === type) library.push(asset);
+            if (checkAssetType(asset) === type) library.push(asset);
         }
         return library;
     }
