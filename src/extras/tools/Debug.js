@@ -42,7 +42,7 @@ class Debug {
                 bottom: 0;
                 margin: 0.25em;
                 padding: 0;
-                z-index: 1000; /* debug info */
+                z-index: 1000; /* Debug Info */
                 background: transparent;
             }
 
@@ -81,7 +81,7 @@ class Debug {
                     inset 2px -2px 2px -1px rgba(0, 0, 0, 0.75);
             }
 
-            .EyeDebugButton.Selected {
+            .EyeDebugButton.osui-selected {
                 filter: brightness(100%);
                 box-shadow: none;
             }
@@ -91,12 +91,12 @@ class Debug {
             #ButtonBuffers { border: solid 2px rgba(${buttonColor}, 0.7); }
             #ButtonSystem { border: solid 2px rgba(${buttonColor}, 0.7); }
 
-            #FrameFrame, #ButtonFrame.Selected { border: solid 2px rgba(0, 180, 175, 0.75); }
-            #SceneFrame, #ButtonScene.Selected { border: solid 2px rgba(255, 113, 0, 0.75); }
-            #BuffersFrame, #ButtonBuffers.Selected { border: solid 2px rgba(255, 93, 0, 0.75); }
-            #SystemFrame, #ButtonSystem.Selected { border: solid 2px rgba(145, 223, 0, 0.75); }
+            #FrameFrame, #ButtonFrame.osui-selected { border: solid 2px rgba(0, 180, 175, 0.75); }
+            #SceneFrame, #ButtonScene.osui-selected { border: solid 2px rgba(255, 113, 0, 0.75); }
+            #BuffersFrame, #ButtonBuffers.osui-selected { border: solid 2px rgba(255, 93, 0, 0.75); }
+            #SystemFrame, #ButtonSystem.osui-selected { border: solid 2px rgba(145, 223, 0, 0.75); }
 
-            .EyeDebugButton.Selected:hover {
+            .EyeDebugButton.osui-selected:hover {
                 filter: brightness(125%);
             }
 
@@ -177,11 +177,11 @@ class Debug {
                 filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 0deg));
             }
 
-            .RotateColorize1 {
+            .osui-rotate-colorize1 {
                 filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 270deg));
             }
 
-            .RotateColorize2 {
+            .osui-rotate-colorize2 {
                 filter: brightness(65%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 35deg));
             }
         `;
@@ -236,13 +236,13 @@ class Debug {
                 </button>
 
                 <button class="EyeDebugButton" id="ButtonBuffers">
-                    <div class="EyeImageHolder RotateColorize1">
+                    <div class="EyeImageHolder osui-rotate-colorize1">
                     <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M449.119,359.79c9.175,15.892 9.175,34.87 -0,50.764c-9.175,15.891 -25.611,25.382 -43.964,25.382l-298.311,0c-18.35,0 -34.783,-9.486 -43.961,-25.38c-9.177,-15.896 -9.177,-34.874 0,-50.766l149.154,-258.344c9.175,-15.893 25.611,-25.382 43.964,-25.382c18.353,-0 34.786,9.486 43.964,25.38l149.154,258.346Zm-338.984,23.483l291.732,-0l-145.866,-252.645l-145.866,252.645Z" style="fill:#c0c0c0;"/></svg>
                     </div>
                 </button>
 
                 <button class="EyeDebugButton" id="ButtonSystem">
-                    <div class="EyeImageHolder RotateColorize2">
+                    <div class="EyeImageHolder osui-rotate-colorize2">
                     <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M410.964,152.852c24.705,0 45.036,20.331 45.036,45.037l0,116.222c0,24.706 -20.331,45.037 -45.036,45.037l-13.075,-0l-0,32.445c-0,14.081 -11.586,25.666 -25.666,25.666c-14.081,0 -25.666,-11.585 -25.666,-25.666l-0,-32.445l-64.891,-0l-0,32.445c-0,14.081 -11.586,25.666 -25.666,25.666c-14.08,0 -25.666,-11.585 -25.666,-25.666l0,-32.445l-64.891,-0l0,32.445c0,14.081 -11.585,25.666 -25.666,25.666c-14.08,0 -25.666,-11.585 -25.666,-25.666l0,-32.445l-13.075,-0c-24.705,-0 -45.036,-20.331 -45.036,-45.037l0,-116.222c0,-24.706 20.331,-45.037 45.036,-45.037l13.075,0l0,-32.445c0,-14.081 11.586,-25.666 25.666,-25.666c14.081,-0 25.666,11.585 25.666,25.666l0,32.445l64.891,0l0,-32.445c0,-14.081 11.586,-25.666 25.666,-25.666c14.08,-0 25.666,11.585 25.666,25.666l-0,32.445l64.891,0l-0,-32.445c-0,-14.081 11.585,-25.666 25.666,-25.666c14.08,-0 25.666,11.585 25.666,25.666l-0,32.445l13.075,0Zm-303.632,154.964l297.336,-0l0,-103.632l-297.336,0l-0,103.632Z" style="fill:#c0c0c0;"/></svg>
                     </div>
                 </button>
@@ -268,10 +268,10 @@ class Debug {
         function toggleFrame(frame, button, open, storageKey) {
             if (open) {
                 frame.style.display = '';
-                button.classList.add('Selected');
+                button.classList.add('osui-selected');
             } else {
                 frame.style.display = 'none';
-                button.classList.remove('Selected');
+                button.classList.remove('osui-selected');
             }
             localStorage.setItem(storageKey, open);
         }
