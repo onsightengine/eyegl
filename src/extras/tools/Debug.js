@@ -330,6 +330,7 @@ class Debug {
         this.#stopInternal = function() {
             frameClock.stop();
 
+            elapsedClock.getDeltaTime();
             const elapsed = elapsedClock.getElapsedTime();
             if (elapsed > 1) {
                 // NOTE: Setting 'firstChild' sets actual 'Text' node itself and does not increase DOM Node count

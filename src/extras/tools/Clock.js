@@ -8,6 +8,10 @@ class Clock {
 	#lastChecked = 0;
 	#deltaCount = 0;
 
+	#frameTime = 0;
+	#frameCount = 0;
+	#lastFrameCount = 0;
+
 	constructor(autoStart = true, msRewind = 0) {
 		if (autoStart) this.start();
 		this.#startTime -= msRewind;
@@ -32,22 +36,34 @@ class Clock {
 		this.#deltaCount = 0;
 	}
 
-	/** Time between start() or reset() and now (if running) or stop() (if not running) */
+	/** Total time elapsed between start() / reset() and last time getDeltaTime() was called */
 	getElapsedTime() {
-		this.getDeltaTime();
 		return this.#elapsedTime;
 	}
 
 	/** Returns delta time (time since last getDeltaTime() call) */
 	getDeltaTime() {
-		if (!this.#running) return 0;
+		if (!this.#running) {
+			this.#lastFrameCount = 0;
+			return 0;
+		}
 
+		// Delta
         const newTime = _timer.now();
         const dt = (newTime - this.#lastChecked) / 1000;
         this.#lastChecked = newTime;
         this.#elapsedTime += dt;
-
 		this.#deltaCount++;
+
+		// Framerate
+		this.#frameTime += dt;
+		this.#frameCount++;
+		if (this.#frameTime > 1) {
+			this.#lastFrameCount = this.#frameCount;
+			this.#frameTime = 0;
+			this.#frameCount = 0;
+		}
+
 		return dt;
 	}
 
@@ -63,7 +79,12 @@ class Clock {
 
 	/** Average delta time since start (in ms) */
 	averageDelta() {
-		return (this.#elapsedTime * 1000) / this.#deltaCount;
+		const frameRate = 1 / this.#lastFrameCount;
+		return Math.min(1, frameRate);
+	}
+
+	fps() {
+		return this.#lastFrameCount;
 	}
 
 }
