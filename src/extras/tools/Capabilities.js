@@ -14,15 +14,15 @@ class Capabilities {
         this.maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
         this.maxVaryings = gl.getParameter(gl.MAX_VARYING_VECTORS);
         this.maxVertexUniforms = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
-	    this.maxFragmentUniforms = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
+        this.maxFragmentUniforms = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
 
-	    this.maxPrecision = 'lowp';
-		if (gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT).precision > 0 &&
-			gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision > 0
+        this.maxPrecision = 'lowp';
+        if (gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT).precision > 0 &&
+            gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision > 0
         ) this.maxPrecision = 'highp';
         else if (
             gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.MEDIUM_FLOAT).precision > 0 &&
-			gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_FLOAT).precision > 0
+            gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_FLOAT).precision > 0
         ) this.maxPrecision = 'mediump';
 
         // Textures
@@ -122,20 +122,20 @@ export { Capabilities };
 /***** Internal *****/
 
 function checkRenderTargetSupport(gl, internalFormat, format, type) {
-	// Create temp framebuffer and texture
-	const framebuffer = gl.createFramebuffer();
-	const texture = gl.createTexture();
+    // Create temp framebuffer and texture
+    const framebuffer = gl.createFramebuffer();
+    const texture = gl.createTexture();
 
-	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 2, 2, 0, format, type, null);
-	gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 2, 2, 0, format, type, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
 
-	// Check framebuffer status
-	const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    // Check framebuffer status
+    const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
 
-	// Clean up
-	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	gl.bindTexture(gl.TEXTURE_2D, null);
-	return (status === gl.FRAMEBUFFER_COMPLETE);
+    // Clean up
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    return (status === gl.FRAMEBUFFER_COMPLETE);
 };

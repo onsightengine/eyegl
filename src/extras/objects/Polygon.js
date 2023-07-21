@@ -76,13 +76,13 @@ class Polygon {
         console.log(t);
 
         setIndex(0, a.x, a.y, 0, (-t.x + t.y), (-t.x - t.y));
-	    setIndex(1, a.x, a.y, 0, (-t.x - t.y), (+t.x - t.y));
-	    setIndex(2, a.x, a.y, 0, (-0.0 + t.y), (-t.x + 0.0));
-	    setIndex(3, a.x, a.y, 0, (-0.0 - t.y), (+t.x + 0.0));
-	    setIndex(4, b.x, b.y, 0, (+0.0 + t.y), (-t.x - 0.0));
-	    setIndex(5, b.x, b.y, 0, (+0.0 - t.y), (+t.x - 0.0));
-	    setIndex(6, b.x, b.y, 0, (+t.x + t.y), (-t.x + t.y));
-	    setIndex(7, b.x, b.y, 0, (+t.x - t.y), (+t.x + t.y));
+        setIndex(1, a.x, a.y, 0, (-t.x - t.y), (+t.x - t.y));
+        setIndex(2, a.x, a.y, 0, (-0.0 + t.y), (-t.x + 0.0));
+        setIndex(3, a.x, a.y, 0, (-0.0 - t.y), (+t.x + 0.0));
+        setIndex(4, b.x, b.y, 0, (+0.0 + t.y), (-t.x - 0.0));
+        setIndex(5, b.x, b.y, 0, (+0.0 - t.y), (+t.x - 0.0));
+        setIndex(6, b.x, b.y, 0, (+t.x + t.y), (-t.x + t.y));
+        setIndex(7, b.x, b.y, 0, (+t.x - t.y), (+t.x + t.y));
 
         index.set([ 0, 1, 2, 1, 3, 2, /**/ 2, 3, 4, 3, 5, 4, /**/ 4, 5, 6, 5, 7, 6 ]);
 

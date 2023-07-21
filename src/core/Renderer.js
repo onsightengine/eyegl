@@ -114,7 +114,7 @@ class Renderer {
             self.maxAnisotropy = 0;
             if (self.extensions['EXT_texture_filter_anisotropic']) {
                 const extension = self.extensions['EXT_texture_filter_anisotropic'];
-			    this.maxAnisotropy = gl.getParameter(extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+                this.maxAnisotropy = gl.getParameter(extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
             }
         };
         initContext(this);

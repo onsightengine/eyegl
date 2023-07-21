@@ -24,7 +24,7 @@ Geometry Utility Functions (GeomUtils):
 
 Context Lost:
     - Do something about global 'window.renderer.gl', need to handle multiple renderers / gl contexts
-  	- Continue in Renderer.initContext()
+      - Continue in Renderer.initContext()
 
 // ----------------------------------------------------------------------------------
 //
@@ -41,7 +41,7 @@ Optimization:
     - Limit Sorting:
         - Dual depth peeling
             https://github.com/tsherif/webgl2examples/blob/master/oit-dual-depth-peeling.html
-	    - Weighted, blended order independent transparency
+        - Weighted, blended order independent transparency
             https://github.com/tsherif/webgl2examples/blob/master/oit.html
             https://github.com/stevinz/three-wboit
     - Reduce Draw Calls:
@@ -57,9 +57,9 @@ Optimization:
     - Speed Lighting:
         - Deferred / Forward+ Rendering
             https://github.com/tsherif/webgl2examples/blob/master/deferred.html
-      	    https://learnopengl.com/Advanced-Lighting/Deferred-Shading
-		    https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342
-      	    https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@6.5/manual/Forward-And-Deferred-Rendering.html
+              https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+            https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342
+              https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@6.5/manual/Forward-And-Deferred-Rendering.html
             https://discourse.threejs.org/t/dr-strangelight-or-how-i-learned-to-stop-worrying-and-love-the-cluster/23104
 
 Nanite:

@@ -59,14 +59,14 @@ class Program {
         const customDefines = generateDefines(defines);
 
         let prefixVertex = [
-			customDefines
-		].filter(filterEmptyLine).join('\n');
+            customDefines
+        ].filter(filterEmptyLine).join('\n');
         if (prefixVertex.length > 0) prefixVertex += '\n';
 
-		let prefixFragment = [
-			customDefines
-		].filter(filterEmptyLine).join('\n');
-		if (prefixFragment.length > 0) prefixFragment += '\n';
+        let prefixFragment = [
+            customDefines
+        ].filter(filterEmptyLine).join('\n');
+        if (prefixFragment.length > 0) prefixFragment += '\n';
 
         let vertexGlsl, fragmentGlsl;
         if (vertex.includes('#version 300 es')) {
@@ -363,15 +363,15 @@ function warn(message) {
  * @returns {String}
  */
 function generateDefines(defines) {
-	const chunks = [];
-	for (const name in defines) {
-		const value = defines[name];
-		if (value === false) continue;
-		chunks.push('#define ' + name + ' ' + value);
-	}
-	return chunks.join('\n');
+    const chunks = [];
+    for (const name in defines) {
+        const value = defines[name];
+        if (value === false) continue;
+        chunks.push('#define ' + name + ' ' + value);
+    }
+    return chunks.join('\n');
 }
 
 function filterEmptyLine(string) {
-	return string !== '';
+    return string !== '';
 }

@@ -104,10 +104,10 @@ class Assets {
         }
 
         // // Load Assets
-		// const objectLoader = new THREE.ObjectLoader();
-		// const geometries = objectLoader.parseGeometries(json.geometries, {});
-		// const images = objectLoader.parseImages(json.images);
-		// const textures = objectLoader.parseTextures(json.textures, images);
+        // const objectLoader = new THREE.ObjectLoader();
+        // const geometries = objectLoader.parseGeometries(json.geometries, {});
+        // const images = objectLoader.parseImages(json.images);
+        // const textures = objectLoader.parseTextures(json.textures, images);
 
         // addLibraryToAssets(geometries);
         // addLibraryToAssets(images);

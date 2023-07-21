@@ -1,8 +1,8 @@
 // Post Build Header
 function header() {
-	return {
-		renderChunk(code) {
-			return `/**
+    return {
+        renderChunk(code) {
+            return `/**
  * @description EyeGL
  * @about       Fast WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
