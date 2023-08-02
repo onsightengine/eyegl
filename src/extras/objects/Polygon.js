@@ -99,7 +99,7 @@ class Polygon {
 
 export { Polygon };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 const defaultVertex = /* glsl */ `#version 300 es
     precision highp float;

@@ -433,7 +433,7 @@ export const calculateNormal = (function() {
     };
 })();
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 /**
  * Compares two decimal numbers to see if they're almost the same

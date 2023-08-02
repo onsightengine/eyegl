@@ -400,7 +400,7 @@ class Debug {
 
 export { Debug };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 /**
  * Gets a CSS variable, hyphens optional, ex: getVariable('--tooltip-delay') or getVariable('tooltip-delay');

@@ -126,7 +126,7 @@ class Curve {
 
 export { Curve };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 const _a0 = new Vec3(), _a1 = new Vec3(), _a2 = new Vec3(), _a3 = new Vec3();
 

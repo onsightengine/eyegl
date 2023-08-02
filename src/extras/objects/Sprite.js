@@ -73,7 +73,7 @@ class Sprite extends Mesh {
 
 export { Sprite };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 const defaultVertex = /* glsl */ `#version 300 es
     in vec2 uv;

@@ -258,7 +258,7 @@ class Program {
 
 export { Program };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 function setUniform(gl, type, location, value) {
     value = value.length ? flatten(value) : value;

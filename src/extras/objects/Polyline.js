@@ -115,7 +115,7 @@ class Polyline {
 
 export { Polyline };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 const defaultVertex = /* glsl */ `
     precision highp float;

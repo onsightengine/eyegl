@@ -122,7 +122,7 @@ class Uber extends Program {
 
 export { Uber };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 const defaultVertex = /* glsl */ `#version 300 es
     in vec2 uv;

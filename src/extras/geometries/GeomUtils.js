@@ -268,7 +268,7 @@ export function toNonIndexed(geometry) {
     geometry.deleteAttribute(geometry.attributes.index);
 }
 
-/***** Internal ******/
+/******************** INTERNAL ********************/
 
 /**
  * Remove values (by index) from geometry.attributes

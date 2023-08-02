@@ -116,7 +116,7 @@ class Post {
 
 export { Post };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 const defaultVertex = /* glsl */ `
     attribute vec2 uv;

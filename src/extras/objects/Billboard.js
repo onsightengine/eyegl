@@ -73,7 +73,7 @@ class Billboard extends Mesh {
 
 export { Billboard };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 const defaultVertex = /* glsl */ `#version 300 es
     in vec2 uv;

@@ -119,7 +119,7 @@ class Atlas {
 
 export { Atlas };
 
-/********** INTERNAL **********/
+/******************** INTERNAL ********************/
 
 let _canvas;
 let _ctx;

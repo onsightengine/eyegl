@@ -119,7 +119,7 @@ class Capabilities {
 
 export { Capabilities };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 function checkRenderTargetSupport(gl, internalFormat, format, type) {
     // Create temp framebuffer and texture

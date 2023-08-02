@@ -123,7 +123,7 @@ class TextureArray extends Program {
 
 export { TextureArray };
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 const defaultVertex = /* glsl */ `#version 300 es
     in vec2 uv;
