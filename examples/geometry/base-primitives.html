@@ -162,11 +162,12 @@
                     if (meshesNon[key].visible) mesh = meshesNon[key];
                 }
                 if (mesh) {
-                    let info = `Mesh: ${params.type} - Indexed: ${params.indexed ? 'Yes' : 'No'}<br />`;
-                    if (params.indexed) info += `Indices: ${mesh.geometry.attributes.index.data.length}<br />`;
-                    info += `Positions: ${mesh.geometry.attributes.position.data.length}<br />`;
-                    info += `Normals: ${mesh.geometry.attributes.normal.data.length}<br />`;
-                    debugInfo.innerHTML = info;
+                    // \u000A is unicode literal for new line (equivalent to inserting '<br />' element)
+                    let info = `Mesh: ${params.type} - Indexed: ${params.indexed ? 'Yes' : 'No'}\u000A`;
+                    if (params.indexed) info += `Indices: ${mesh.geometry.attributes.index.data.length}\u000A`;
+                    info += `Positions: ${mesh.geometry.attributes.position.data.length}\u000A`;
+                    info += `Normals: ${mesh.geometry.attributes.normal.data.length}\u000A`;
+                    debugInfo.innerText = info;
                 }
             }
             setVisibleGeometry();

@@ -31,7 +31,7 @@ class Debug {
         const textLight = getVariable('text-light') ?? '225, 225, 225';
 
         const styleSheet = document.createElement('style');
-        styleSheet.innerText = `
+        styleSheet.textContent = `
             #EyeDebug {
                 position: absolute;
                 display: flex;
