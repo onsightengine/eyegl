@@ -41,7 +41,7 @@ class Atlas {
             image.onload = function() {
                 if (typeof onload === 'function') onload();
                 self.add(image);
-            }
+            };
             return;
         }
 

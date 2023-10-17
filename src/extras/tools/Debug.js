@@ -325,7 +325,7 @@ class Debug {
         this.#startInternal = function() {
             frameClock.start();
             renderer.drawCallCount = 0;
-        }
+        };
 
         this.#stopInternal = function() {
             frameClock.stop();
@@ -382,7 +382,6 @@ class Debug {
                 domGeometries.firstChild.textContent = `${renderer.info.geometries}`;
                 domTextures.firstChild.textContent = `${renderer.info.textures}`;
             }
-
         };
 
         _singleton = this;

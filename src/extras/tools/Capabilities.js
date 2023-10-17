@@ -112,7 +112,7 @@ class Capabilities {
                 ${gl.getSupportedExtensions().join('<br />')} <br />
                 </details>
             `;
-        }
+        };
     }
 
 }
