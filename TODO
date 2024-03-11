@@ -1,8 +1,6 @@
-// ----------------------------------------------------------------------------------
-//
-//                                --- TO DO ---
-//
-// ----------------------------------------------------------------------------------
+/**********************************************/
+/*                    TO DO                   */
+/**********************************************/
 
 Sprite Shader:
     - Improve ImageLoader / Assets.images:
@@ -26,11 +24,9 @@ Context Lost:
     - Do something about global 'window.renderer.gl', need to handle multiple renderers / gl contexts
       - Continue in Renderer.initContext()
 
-// ----------------------------------------------------------------------------------
-//
-//                          ENGINE OPTIMIZATION IDEAS
-//
-// ----------------------------------------------------------------------------------
+/**********************************************/
+/*          ENGINE OPTIMIZATION IDEAS         */
+/**********************************************/
 
 WebGL Reference:
     - ogl (current with 03/21/23), three, picogl, redgl, twgl, webglfundamentals

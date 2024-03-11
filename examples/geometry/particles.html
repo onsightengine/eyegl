@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Particles</title>
+        <title>SeaGL • Particles</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -14,8 +14,8 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as EYE from 'eyegl';
-            import { Gooey } from 'osui';
+            import * as SGL from 'seagl';
+            import { Gooey } from 'suey';
 
             const vertex = /* glsl */ `
                 attribute vec3 position;
@@ -70,12 +70,12 @@
                 }
             `;
 
-            const renderer = new EYE.Renderer({ depth: false });
+            const renderer = new SGL.Renderer({ depth: false });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new EYE.Camera({ fov: 15 });
+            const camera = new SGL.Camera({ fov: 15 });
             camera.position.z = 15;
 
             function resize() {
@@ -94,12 +94,12 @@
                 random.set([Math.random(), Math.random(), Math.random(), Math.random()], i * 4);
             }
 
-            const geometry = new EYE.Geometry({
+            const geometry = new SGL.Geometry({
                 position: { size: 3, data: position },
                 random: { size: 4, data: random },
             });
 
-            const program = new EYE.Program({
+            const program = new SGL.Program({
                 vertex,
                 fragment,
                 uniforms: {
@@ -110,9 +110,9 @@
             });
 
             // Make sure mode is gl.POINTS
-            const particles = new EYE.Mesh({ mode: gl.POINTS, geometry, program });
+            const particles = new SGL.Mesh({ mode: gl.POINTS, geometry, program });
 
-            const debug = new EYE.Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

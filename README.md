@@ -1,8 +1,8 @@
 <div align="center">
-<img src="./files/logo/eyegl256.png" alt="EyeGL Library"/>
+<img src="./files/logo/seagl256.png" alt="SeaGL Library"/>
 </div>
 
-# EyeGL
+# SeaGL
 
 WebGL 2 graphics library built for games.
 
@@ -10,7 +10,7 @@ WebGL 2 graphics library built for games.
 
 ## Status
 
-Under heavy development, more info to come...
+Under development, expect frequent breaking changes...
 
 <br />
 

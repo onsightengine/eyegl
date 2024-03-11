@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Billboards • Draw Elements</title>
+        <title>SeaGL • Billboards • Draw Elements</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -15,18 +15,18 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as EYE from 'eyegl';
-            import { Gooey } from 'osui';
+            import * as SGL from 'seagl';
+            import { Gooey } from 'suey';
 
-            const renderer = new EYE.Renderer({});
+            const renderer = new SGL.Renderer({});
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new EYE.Camera({ fov: 35 });
+            const camera = new SGL.Camera({ fov: 35 });
             camera.position.set(25, 25, -50);
             camera.lookAt([0, 0, 0]);
 
-            const controls = new EYE.Orbit(camera);
+            const controls = new SGL.Orbit(camera);
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -43,13 +43,13 @@
             const folder1 = gui.addFolder('Parameters');
             folder1.add(params, 'count', 1000, 50000, 1000, 0).onFinishChange(() => buildScene(params.count));
 
-            const dragon = EYE.TextureLoader.load({ src: '../../files/sprites/dragon.png' });
-            const unicorn = EYE.TextureLoader.load({ src: '../../files/sprites/unicorn.png' });
-            const kraken = EYE.TextureLoader.load({ src: '../../files/sprites/kraken.png' });
+            const dragon = SGL.TextureLoader.load({ src: '../../files/sprites/dragon.png' });
+            const unicorn = SGL.TextureLoader.load({ src: '../../files/sprites/unicorn.png' });
+            const kraken = SGL.TextureLoader.load({ src: '../../files/sprites/kraken.png' });
 
             let scene;
             function buildScene(count) {
-                scene = new EYE.Transform();
+                scene = new SGL.Transform();
                 for (let i = 0; i < count; i++) {
                     let texture;
                     const img = Math.floor(Math.random() * 3);
@@ -58,7 +58,7 @@
                         case 1: texture = unicorn; break;
                         case 2: texture = kraken; break;
                     }
-                    const billboard = new EYE.Billboard({ texture });
+                    const billboard = new SGL.Billboard({ texture });
                     billboard.position.set(
                         (Math.random() * 20) - 10,
                         (Math.random() * 20) - 10,
@@ -69,7 +69,7 @@
             }
             buildScene(params.count);
 
-            const debug = new EYE.Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

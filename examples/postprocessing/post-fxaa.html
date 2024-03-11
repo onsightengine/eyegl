@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Post FXAA (Fast Approximate Anti-Aliasing)</title>
+        <title>SeaGL • Post FXAA (Fast Approximate Anti-Aliasing)</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -14,8 +14,8 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as EYE from 'eyegl';
-            import { Gooey } from 'osui';
+            import * as SGL from 'seagl';
+            import { Gooey } from 'suey';
 
             const fragment = /* glsl */ `
                 precision highp float;
@@ -78,20 +78,20 @@
                 }
             `;
 
-            const renderer = new EYE.Renderer({ dpr: 1 });
+            const renderer = new SGL.Renderer({ dpr: 1 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new EYE.Camera({ fov: 35 });
+            const camera = new SGL.Camera({ fov: 35 });
             camera.position.set(0, 1, -5);
             camera.lookAt([ 0, 0, 0 ]);
 
             // Post copies the current renderer values (width, height, dpr) if none are passed in
-            const post = new EYE.Post();
+            const post = new SGL.Post();
 
             // Create uniform for pass
-            const resolution = { value: new EYE.Vec2() };
+            const resolution = { value: new SGL.Vec2() };
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -104,20 +104,20 @@
             window.addEventListener('resize', resize);
             resize();
 
-            const texture = EYE.TextureLoader.load({ src: '../../files/textures/uv-test-col.png' });
+            const texture = SGL.TextureLoader.load({ src: '../../files/textures/uv-test-col.png' });
 
-            const scene = new EYE.Transform();
-            const controls = new EYE.Orbit(camera);
+            const scene = new SGL.Transform();
+            const controls = new SGL.Orbit(camera);
 
-            const program = new EYE.Uber({
+            const program = new SGL.Uber({
                 normalIntensity: 1.0,
                 opacity: 1.0,
                 texture: texture,
                 transparent: true
             });
 
-            const geometry = new EYE.Box();
-            const mesh = new EYE.Mesh({ geometry, program });
+            const geometry = new SGL.Box();
+            const mesh = new SGL.Mesh({ geometry, program });
 
             // Add pass like you're creating a Program.
             // Then use the 'enabled' property to toggle the pass.
@@ -129,7 +129,7 @@
                 },
             });
 
-            const debug = new EYE.Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Video</title>
+        <title>SeaGL • Video</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -15,15 +15,15 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as EYE from 'eyegl';
-            import { Gooey } from 'osui';
+            import * as SGL from 'seagl';
+            import { Gooey } from 'suey';
 
-            const renderer = new EYE.Renderer({ dpr: 2 });
+            const renderer = new SGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new EYE.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
+            const camera = new SGL.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -32,8 +32,8 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const geometry = new EYE.Box({ width: 1.78, height: 1, depth: 1.78 });
-            const texture = new EYE.Texture();
+            const geometry = new SGL.Box({ width: 1.78, height: 1, depth: 1.78 });
+            const texture = new SGL.Texture();
 
             // Create video, check update loop to see when video is attached to texture
             const video = document.createElement('video');
@@ -43,14 +43,14 @@
             video.setAttribute('playsinline', 'playsinline');
             video.play();
 
-            const program = new EYE.Uber({ texture });
-            const mesh = new EYE.Mesh({ geometry, program });
+            const program = new SGL.Uber({ texture });
+            const mesh = new SGL.Mesh({ geometry, program });
 
-            const scene = new EYE.Transform();
+            const scene = new SGL.Transform();
             mesh.setParent(scene);
 
             // Render
-            const debug = new EYE.Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

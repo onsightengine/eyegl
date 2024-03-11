@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Atlas</title>
+        <title>SeaGL • Atlas</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -15,15 +15,15 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as EYE from 'eyegl';
-            import { Gooey } from 'osui';
+            import * as SGL from 'seagl';
+            import { Gooey } from 'suey';
 
             // Init
-            const renderer = new EYE.Renderer({ dpr: 2 });
+            const renderer = new SGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
-            const atlasCamera = new EYE.Camera({ near: -1, far: 1, left: -1, right: 1 });
-            const sceneCamera = new EYE.Camera({ fov: 35, position: [0, 0, 5], lookAt: [0, 0, 0] });
+            const atlasCamera = new SGL.Camera({ near: -1, far: 1, left: -1, right: 1 });
+            const sceneCamera = new SGL.Camera({ fov: 35, position: [0, 0, 5], lookAt: [0, 0, 0] });
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 sceneCamera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
@@ -32,11 +32,11 @@
             resize();
 
             // Meshes
-            const sceneProgram = new EYE.TextureArray();
-            const sceneBox = new EYE.Mesh({ geometry: new EYE.Box(), program: sceneProgram });
+            const sceneProgram = new SGL.TextureArray();
+            const sceneBox = new SGL.Mesh({ geometry: new SGL.Box(), program: sceneProgram });
 
             // Atlas
-            const atlas = new EYE.Atlas();
+            const atlas = new SGL.Atlas();
             atlas.add('../../files/sprites/dragon.png');
             atlas.add('../../files/sprites/unicorn.png');
             atlas.add('../../files/sprites/kraken.png');
@@ -48,7 +48,7 @@
             let timer = performance.now();
 
             // Render
-            const debug = new EYE.Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

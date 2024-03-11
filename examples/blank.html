@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Blank</title>
+        <title>SeaGL • Blank</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -15,8 +15,8 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as EYE from 'eyegl';
-            import { Gooey } from 'osui';
+            import * as SGL from 'seagl';
+            import { Gooey } from 'suey';
 
             // Gui
 
@@ -29,12 +29,12 @@
 
             // Setup
 
-            const renderer = new EYE.Renderer({ dpr: 2 });
+            const renderer = new SGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new EYE.Camera({ fov: 35 });
+            const camera = new SGL.Camera({ fov: 35 });
             camera.position.set(0, 0, -10);
             camera.lookAt([ 0, 0, 0 ]);
 
@@ -45,15 +45,15 @@
             window.addEventListener('resize', resize);
             resize();
 
-            const scene = new EYE.Transform();
-            const controls = new EYE.Orbit(camera);
+            const scene = new SGL.Transform();
+            const controls = new SGL.Orbit(camera);
 
             // Scene
 
             // ...
 
             // Render
-            const debug = new EYE.Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

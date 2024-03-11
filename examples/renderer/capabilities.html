@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Capabilities</title>
+        <title>SeaGL • Capabilities</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -15,11 +15,11 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as EYE from 'eyegl';
-            import { Gooey } from 'osui';
+            import * as SGL from 'seagl';
+            import { Gooey } from 'suey';
 
-            const renderer = new EYE.Renderer({});
-            const capabilities = new EYE.Capabilities(renderer);
+            const renderer = new SGL.Renderer({});
+            const capabilities = new SGL.Capabilities(renderer);
 
             document.querySelector('#Debug').innerHTML = capabilities.toHtml();
 

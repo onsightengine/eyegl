@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Full Screen Triangle</title>
+        <title>SeaGL • Full Screen Triangle</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -14,8 +14,8 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as EYE from 'eyegl';
-            import { Gooey } from 'osui';
+            import * as SGL from 'seagl';
+            import { Gooey } from 'suey';
 
             const vertex = /* glsl */ `
                 attribute vec2 uv;
@@ -43,7 +43,7 @@
                 }
             `;
 
-            const renderer = new EYE.Renderer();
+            const renderer = new SGL.Renderer();
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
@@ -65,20 +65,20 @@
             //         |__|_\                  |__|_\
             //   (-1, -1)   (3, -1)        (0, 0)   (2, 0)
 
-            const geometry = new EYE.Triangle();
+            const geometry = new SGL.Triangle();
 
-            const program = new EYE.Program({
+            const program = new SGL.Program({
                 vertex,
                 fragment,
                 uniforms: {
                     uTime: { value: 0 },
-                    uColor: { value: new EYE.Color(0.3, 0.2, 0.5) },
+                    uColor: { value: new SGL.Color(0.3, 0.2, 0.5) },
                 },
             });
 
-            const mesh = new EYE.Mesh({ geometry, program });
+            const mesh = new SGL.Mesh({ geometry, program });
 
-            const debug = new EYE.Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

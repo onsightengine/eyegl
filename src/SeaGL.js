@@ -1,9 +1,9 @@
 /**
- * @description EyeGL
+ * @description SeaGL
  * @about       WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
- * @license     MIT - Copyright (c) 2023 Stephens Nunnally
- * @source      https://github.com/scidian/eyegl
+ * @license     MIT - Copyright (c) 2024 Stephens Nunnally
+ * @source      https://github.com/salinityengine/seagl
  */
 
 /***** Core *****/

@@ -1,11 +1,1114 @@
 /**
- * @description EyeGL
+ * @description SeaGL
  * @about       Fast WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
- * @license     MIT - Copyright (c) 2021-2023 Stephens Nunnally
- * @source      https://github.com/onsightengine/eyegl
- * @version     v0.0.8
+ * @license     MIT - Copyright (c) 2024 Stephens Nunnally
+ * @source      https://github.com/salinityengine/seagl
+ * @version     v0.0.9
  */
+const EPSILON$5 = 0.000001;
+
+/**
+ * Calculates the length of a Vec3
+ *
+ * @param {Vec3} a vector to calculate length of
+ * @returns {Number} length of a
+ */
+function length$3(a) {
+    let x = a[0];
+    let y = a[1];
+    let z = a[2];
+    return Math.sqrt(x * x + y * y + z * z);
+}
+
+/**
+ * Copy the values from one Vec3 to another
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the source vector
+ * @returns {Vec3} out
+ */
+function copy$5(out, a) {
+    out[0] = a[0];
+    out[1] = a[1];
+    out[2] = a[2];
+    return out;
+}
+
+/**
+ * Set the components of a Vec3 to the given values
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Number} x X component
+ * @param {Number} y Y component
+ * @param {Number} z Z component
+ * @returns {Vec3} out
+ */
+function set$5(out, x, y, z) {
+    out[0] = x;
+    out[1] = y;
+    out[2] = z;
+    return out;
+}
+
+/**
+ * Adds two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function add$5(out, a, b) {
+    out[0] = a[0] + b[0];
+    out[1] = a[1] + b[1];
+    out[2] = a[2] + b[2];
+    return out;
+}
+
+/**
+ * Subtracts vector b from vector a
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function subtract$3(out, a, b) {
+    out[0] = a[0] - b[0];
+    out[1] = a[1] - b[1];
+    out[2] = a[2] - b[2];
+    return out;
+}
+
+/**
+ * Multiplies two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function multiply$4(out, a, b) {
+    out[0] = a[0] * b[0];
+    out[1] = a[1] * b[1];
+    out[2] = a[2] * b[2];
+    return out;
+}
+
+/**
+ * Divides two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function divide$1(out, a, b) {
+    out[0] = a[0] / b[0];
+    out[1] = a[1] / b[1];
+    out[2] = a[2] / b[2];
+    return out;
+}
+
+/**
+ * Scales a Vec3 by a scalar number
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to scale
+ * @param {Number} b amount to scale the vector by
+ * @returns {Vec3} out
+ */
+function scale$5(out, a, b) {
+    out[0] = a[0] * b;
+    out[1] = a[1] * b;
+    out[2] = a[2] * b;
+    return out;
+}
+
+/**
+ * Calculates the euclidian distance between two Vec3's
+ *
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Number} distance between a and b
+ */
+function distance$1(a, b) {
+    let x = b[0] - a[0];
+    let y = b[1] - a[1];
+    let z = b[2] - a[2];
+    return Math.sqrt(x * x + y * y + z * z);
+}
+
+/**
+ * Calculates the squared euclidian distance between two Vec3's
+ *
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Number} squared distance between a and b
+ */
+function squaredDistance$1(a, b) {
+    let x = b[0] - a[0];
+    let y = b[1] - a[1];
+    let z = b[2] - a[2];
+    return x * x + y * y + z * z;
+}
+
+/**
+ * Calculates the squared length of a Vec3
+ *
+ * @param {Vec3} a vector to calculate squared length of
+ * @returns {Number} squared length of a
+ */
+function squaredLength$1(a) {
+    let x = a[0];
+    let y = a[1];
+    let z = a[2];
+    return x * x + y * y + z * z;
+}
+
+/**
+ * Negates the components of a Vec3
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a vector to negate
+ * @returns {Vec3} out
+ */
+function negate$1(out, a) {
+    out[0] = -a[0];
+    out[1] = -a[1];
+    out[2] = -a[2];
+    return out;
+}
+
+/**
+ * Returns the inverse of the components of a Vec3
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a vector to invert
+ * @returns {Vec3} out
+ */
+function inverse$1(out, a) {
+    out[0] = 1.0 / a[0];
+    out[1] = 1.0 / a[1];
+    out[2] = 1.0 / a[2];
+    return out;
+}
+
+/**
+ * Normalize a Vec3
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a vector to normalize
+ * @returns {Vec3} out
+ */
+function normalize$3(out, a) {
+    let x = a[0];
+    let y = a[1];
+    let z = a[2];
+    let len = x * x + y * y + z * z;
+    if (len > 0) {
+        // TODO: evaluate use of glm_invsqrt here?
+        len = 1 / Math.sqrt(len);
+    }
+    out[0] = a[0] * len;
+    out[1] = a[1] * len;
+    out[2] = a[2] * len;
+    return out;
+}
+
+/**
+ * Calculates the dot product of two Vec3's
+ *
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Number} dot product of a and b
+ */
+function dot$3(a, b) {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+/**
+ * Computes the cross product of two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @returns {Vec3} out
+ */
+function cross$1(out, a, b) {
+    let ax = a[0], ay = a[1], az = a[2];
+    let bx = b[0], by = b[1], bz = b[2];
+
+    out[0] = ay * bz - az * by;
+    out[1] = az * bx - ax * bz;
+    out[2] = ax * by - ay * bx;
+    return out;
+}
+
+/**
+ * Performs a linear interpolation between two Vec3's
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the first operand
+ * @param {Vec3} b the second operand
+ * @param {Number} t interpolation amount between the two inputs
+ * @returns {Vec3} out
+ */
+function lerp$4(out, a, b, t) {
+    let ax = a[0];
+    let ay = a[1];
+    let az = a[2];
+    out[0] = ax + t * (b[0] - ax);
+    out[1] = ay + t * (b[1] - ay);
+    out[2] = az + t * (b[2] - az);
+    return out;
+}
+
+/**
+ * Transforms the Vec3 with a Mat4
+ * 4th vector component is implicitly '1'
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to transform
+ * @param {Mat4} m matrix to transform with
+ * @returns {Vec3} out
+ */
+function transformMat4$1(out, a, m) {
+    let x = a[0],
+        y = a[1],
+        z = a[2];
+    let w = m[3] * x + m[7] * y + m[11] * z + m[15];
+    w = w || 1.0;
+    out[0] = (m[0] * x + m[4] * y + m[8] * z + m[12]) / w;
+    out[1] = (m[1] * x + m[5] * y + m[9] * z + m[13]) / w;
+    out[2] = (m[2] * x + m[6] * y + m[10] * z + m[14]) / w;
+    return out;
+}
+
+/**
+ * Same as above but doesn't apply translation
+ * Useful for rays
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to transform
+ * @param {Mat4} m matrix to transform with
+ * @returns {Vec3} out
+ */
+function scaleRotateMat4(out, a, m) {
+    let x = a[0],
+        y = a[1],
+        z = a[2];
+    let w = m[3] * x + m[7] * y + m[11] * z + m[15];
+    w = w || 1.0;
+    out[0] = (m[0] * x + m[4] * y + m[8] * z) / w;
+    out[1] = (m[1] * x + m[5] * y + m[9] * z) / w;
+    out[2] = (m[2] * x + m[6] * y + m[10] * z) / w;
+    return out;
+}
+
+/**
+ * Transforms the Vec3 with a Mat3
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to transform
+ * @param {Mat3} m the 3x3 matrix to transform with
+ * @returns {Vec3} out
+ */
+function transformMat3$1(out, a, m) {
+    let x = a[0],
+        y = a[1],
+        z = a[2];
+    out[0] = x * m[0] + y * m[3] + z * m[6];
+    out[1] = x * m[1] + y * m[4] + z * m[7];
+    out[2] = x * m[2] + y * m[5] + z * m[8];
+    return out;
+}
+
+/**
+ * Transforms the Vec3 with a Quat
+ *
+ * @param {Vec3} out the receiving vector
+ * @param {Vec3} a the vector to transform
+ * @param {Quat} q quaternion to transform with
+ * @returns {Vec3} out
+ */
+function transformQuat(out, a, q) {
+    // benchmarks: https://jsperf.com/quaternion-transform-vec3-implementations-fixed
+    let x = a[0],
+        y = a[1],
+        z = a[2];
+    let qx = q[0],
+        qy = q[1],
+        qz = q[2],
+        qw = q[3];
+
+    let uvx = qy * z - qz * y;
+    let uvy = qz * x - qx * z;
+    let uvz = qx * y - qy * x;
+
+    let uuvx = qy * uvz - qz * uvy;
+    let uuvy = qz * uvx - qx * uvz;
+    let uuvz = qx * uvy - qy * uvx;
+
+    let w2 = qw * 2;
+    uvx *= w2;
+    uvy *= w2;
+    uvz *= w2;
+
+    uuvx *= 2;
+    uuvy *= 2;
+    uuvz *= 2;
+
+    out[0] = x + uvx + uuvx;
+    out[1] = y + uvy + uuvy;
+    out[2] = z + uvz + uuvz;
+    return out;
+}
+
+/**
+ * Get the angle between two 3D vectors
+ *
+ * @param {Vec3} a The first operand
+ * @param {Vec3} b The second operand
+ * @returns {Number} The angle in radians
+ */
+const angle = (function() {
+    const tempA = [ 0, 0, 0 ];
+    const tempB = [ 0, 0, 0 ];
+
+    return function(a, b) {
+        copy$5(tempA, a);
+        copy$5(tempB, b);
+
+        normalize$3(tempA, tempA);
+        normalize$3(tempB, tempB);
+
+        let cosine = dot$3(tempA, tempB);
+
+        if (cosine > 1.0) {
+            return 0;
+        } else if (cosine < -1.0) {
+            return Math.PI;
+        } else {
+            return Math.acos(cosine);
+        }
+    };
+})();
+
+/**
+ * Returns whether or not the vectors have exactly the same elements in the same position (when compared with ===)
+ *
+ * @param {Vec3} a The first vector
+ * @param {Vec3} b The second vector
+ * @returns {Boolean} True if the vectors are equal, false otherwise
+ */
+function exactEquals$1(a, b) {
+    return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
+}
+
+/**
+ * Returns whether the vectors have approximately the same values
+ *
+ * @param {Vec3} a
+ * @param {Vec3} b
+ * @param {Number} tolerance
+ * @returns {Boolean} True is vectors are equal +/- tolerance
+ */
+function fuzzyEquals(a, b, tolerance = 0.001) {
+    if (fuzzyFloat$1(a[0], b[0], tolerance) === false) return false;
+    if (fuzzyFloat$1(a[1], b[1], tolerance) === false) return false;
+    if (fuzzyFloat$1(a[2], b[2], tolerance) === false) return false;
+    return true;
+}
+
+/**
+ * Calculates the normal of a triangle
+ *
+ * @param {Vec3} out Vector which will store the normal
+ * @param {Vec3} a
+ * @param {Vec3} b
+ * @param {Vec3} c
+ */
+const calculateNormal = (function() {
+    const temp = [ 0, 0, 0 ];
+
+    return function(out, a, b, c) {
+        subtract$3(temp, a, b);
+        subtract$3(out, b, c);
+        cross$1(out, temp, out);
+        normalize$3(out, out);
+    };
+})();
+
+/******************** INTERNAL ********************/
+
+/**
+ * Compares two decimal numbers to see if they're almost the same
+ *
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} tolerance
+ * @returns {Boolean}
+ */
+function fuzzyFloat$1(a, b, tolerance = 0.001) {
+    return ((a < (b + tolerance)) && (a > (b - tolerance)));
+}
+
+var Vec3Func$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    add: add$5,
+    angle: angle,
+    calculateNormal: calculateNormal,
+    copy: copy$5,
+    cross: cross$1,
+    distance: distance$1,
+    divide: divide$1,
+    dot: dot$3,
+    exactEquals: exactEquals$1,
+    fuzzyEquals: fuzzyEquals,
+    inverse: inverse$1,
+    length: length$3,
+    lerp: lerp$4,
+    multiply: multiply$4,
+    negate: negate$1,
+    normalize: normalize$3,
+    scale: scale$5,
+    scaleRotateMat4: scaleRotateMat4,
+    set: set$5,
+    squaredDistance: squaredDistance$1,
+    squaredLength: squaredLength$1,
+    subtract: subtract$3,
+    transformMat3: transformMat3$1,
+    transformMat4: transformMat4$1,
+    transformQuat: transformQuat
+});
+
+// fuzzyFloat()
+// isPowerOf2()
+// triangleArea()
+// uuid()
+
+const _lut = [ '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d', '1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '2a', '2b', '2c', '2d', '2e', '2f', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '3a', '3b', '3c', '3d', '3e', '3f', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '4a', '4b', '4c', '4d', '4e', '4f', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '5a', '5b', '5c', '5d', '5e', '5f', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '6a', '6b', '6c', '6d', '6e', '6f', '70', '71', '72', '73', '74', '75', '76', '77', '78', '79', '7a', '7b', '7c', '7d', '7e', '7f', '80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '8a', '8b', '8c', '8d', '8e', '8f', '90', '91', '92', '93', '94', '95', '96', '97', '98', '99', '9a', '9b', '9c', '9d', '9e', '9f', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af', 'b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'ba', 'bb', 'bc', 'bd', 'be', 'bf', 'c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'ca', 'cb', 'cc', 'cd', 'ce', 'cf', 'd0', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'da', 'db', 'dc', 'dd', 'de', 'df', 'e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8', 'e9', 'ea', 'eb', 'ec', 'ed', 'ee', 'ef', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'fa', 'fb', 'fc', 'fd', 'fe', 'ff' ];
+
+/**
+ * Compares two decimal numbers to see if they're almost the same
+ *
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} tolerance
+ * @returns {Boolean}
+ */
+function fuzzyFloat(a, b, tolerance = 0.001) {
+    return ((a < (b + tolerance)) && (a > (b - tolerance)));
+}
+
+/**
+ * Determins if value is a power of 2
+ *
+ * @param {Number} value number to check
+ * @returns {Boolean} is value power of 2?
+ */
+function isPowerOf2(value) {
+    // // OPTION: And
+    return (value & (value - 1)) === 0;
+    // OPTION: Log2
+    // return Math.log2(value) % 1 === 0;
+}
+
+/**
+ * Computes the area of a triangle defined by 3 points (points as arrays [x, y, z])
+ *
+ * @param {Vec3} a
+ * @param {Vec3} b
+ * @param {Vec3} c
+ * @returns {Number} area of the triangle
+ */
+const triangleArea = (function() {
+    const v0 = [ 0, 0, 0 ];
+    const v1 = [ 0, 0, 0 ];
+    const vc = [ 0, 0, 0 ];
+
+    return function(a, b, c) {
+        subtract$3(v0, c, b);
+        subtract$3(v1, a, b);
+        cross$1(vc, v0, v1);
+        return (length$3(vc) * 0.5);
+    };
+})();
+
+/**
+ * Returns randomized UUID
+ *
+ * @returns {String} randomized UUID
+ */
+function uuid() {
+    if (window.crypto && window.crypto.randomUUID) return crypto.randomUUID();
+
+    // https://github.com/mrdoob/three.js/blob/dev/src/math/MathUtils.js
+    // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+    const d0 = Math.random() * 0xffffffff | 0;
+    const d1 = Math.random() * 0xffffffff | 0;
+    const d2 = Math.random() * 0xffffffff | 0;
+    const d3 = Math.random() * 0xffffffff | 0;
+    const uuid = _lut[ d0 & 0xff ] + _lut[ d0 >> 8 & 0xff ] + _lut[ d0 >> 16 & 0xff ] + _lut[ d0 >> 24 & 0xff ] + '-' +
+        _lut[ d1 & 0xff ] + _lut[ d1 >> 8 & 0xff ] + '-' + _lut[ d1 >> 16 & 0x0f | 0x40 ] + _lut[ d1 >> 24 & 0xff ] + '-' +
+        _lut[ d2 & 0x3f | 0x80 ] + _lut[ d2 >> 8 & 0xff ] + '-' + _lut[ d2 >> 16 & 0xff ] + _lut[ d2 >> 24 & 0xff ] +
+        _lut[ d3 & 0xff ] + _lut[ d3 >> 8 & 0xff ] + _lut[ d3 >> 16 & 0xff ] + _lut[ d3 >> 24 & 0xff ];
+    return uuid.toLowerCase(); // .toLowerCase() flattens concatenated strings to save heap memory space
+}
+
+var MathUtils$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    fuzzyFloat: fuzzyFloat,
+    isPowerOf2: isPowerOf2,
+    triangleArea: triangleArea,
+    uuid: uuid
+});
+
+class ImageLoader {
+
+    static load(src, onLoad) {
+        const image = new Image();
+        image.crossOrigin = '';
+        image.uuid = uuid();
+        image.src = src;
+        if (typeof onLoad === 'function') image.addEventListener('load', onLoad);
+        return image;
+    }
+
+}
+
+// TODO: delete (flush)  texture
+// TODO: use texSubImage2D for updates (video or onLoad)
+// TODO: need? encoding = linearEncoding
+// TODO: support non-compressed mipmaps uploads
+
+const _emptyPixel = new Uint8Array(4);
+let _canvas$1, _ctx$1;
+let _idGenerator$4 = 1;
+
+class Texture {
+
+    #image;
+
+    constructor({
+        image,
+        target = renderer.gl.TEXTURE_2D,
+        type = renderer.gl.UNSIGNED_BYTE,
+        format = renderer.gl.RGBA,
+        internalFormat = format,
+        wrapS = renderer.gl.CLAMP_TO_EDGE,
+        wrapT = renderer.gl.CLAMP_TO_EDGE,
+        generateMipmaps = true,
+        minFilter = generateMipmaps ? renderer.gl.NEAREST_MIPMAP_LINEAR : renderer.gl.LINEAR,
+        magFilter = renderer.gl.LINEAR,
+        premultiplyAlpha = false,
+        unpackAlignment = 4,
+        flipY = (target == renderer.gl.TEXTURE_2D) ? true : false,
+        anisotropy = 0,
+        level = 0,
+        width, // used for RenderTargets or Data Textures
+        height = width,
+    } = {}) {
+        if (!renderer) console.error(`Texture: Renderer not found`);
+        const gl = renderer.gl;
+
+        this.isTexture = true;
+
+        this.uuid = uuid();
+        this.id = _idGenerator$4++;
+
+        this.image = image;
+        this.target = target;
+        this.type = type;
+        this.format = format;
+        this.internalFormat = internalFormat;
+        this.wrapS = wrapS;
+        this.wrapT = wrapT;
+        this.generateMipmaps = generateMipmaps;
+        this.minFilter = minFilter;
+        this.magFilter = magFilter;
+        this.premultiplyAlpha = premultiplyAlpha;
+        this.unpackAlignment = unpackAlignment;
+        this.flipY = flipY;
+        this.anisotropy = Math.min(anisotropy, renderer.maxAnisotropy);
+        this.level = level;
+        this.width = width;
+        this.height = height;
+
+        this.texture = gl.createTexture();
+        renderer.info.textures++;
+
+        // Alias for state store to avoid redundant calls for global state
+        renderer.glState = renderer.state;
+
+        // State store to avoid redundant calls for per-texture state
+        this.state = {};
+        this.state.minFilter = gl.NEAREST_MIPMAP_LINEAR;
+        this.state.magFilter = gl.LINEAR;
+        this.state.wrapS = gl.REPEAT;
+        this.state.wrapT = gl.REPEAT;
+        this.state.anisotropy = 0;
+
+        // Need update
+        this.needsUpdate = true;
+    }
+
+    bind() {
+        // Already bound to active texture unit
+        if (renderer.glState.textureUnits[renderer.glState.activeTextureUnit] === this.id) return;
+
+        // Bind
+        renderer.gl.bindTexture(this.target, this.texture);
+        renderer.glState.textureUnits[renderer.glState.activeTextureUnit] = this.id;
+    }
+
+    update(textureUnit = 0 /* gl.TEXTURE0 */) {
+        const gl = renderer.gl;
+        const self = this;
+
+        // Update?
+        let needsUpdate = this.needsUpdate || (this.image !== this.#image);
+        let needsBind = needsUpdate || (renderer.glState.textureUnits[textureUnit] !== this.id);
+        if (needsBind) {
+            renderer.activeTexture(textureUnit);
+            this.bind();
+        }
+        if (!needsUpdate) return;
+        this.needsUpdate = false;
+
+        // Pixel source can be of object type:
+        // - Uint8Array / Uint16Array / Uint32Array / Float32Array
+        // - ImageBitmap (TODO)
+        // - ImageData (TODO)
+        // - HTMLCanvasElement
+        // - HTMLImageElement
+        // - HTMLVideoElement
+        // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D
+        let loaded = false;
+        function checkImage(image) {
+            if (!image) return;
+            if (image instanceof Uint8Array ||
+                image instanceof Uint16Array ||
+                image instanceof Uint32Array ||
+                image instanceof Float32Array) return;
+            if (image instanceof HTMLImageElement && !image.complete) return;
+            if (image instanceof HTMLImageElement ||
+                image instanceof HTMLCanvasElement) {
+                self.width = image.width;
+                self.height = image.height;
+                loaded = true;
+            } else if (image instanceof HTMLVideoElement) {
+                self.generateMipmaps = false;
+                if (self.minFilter === gl.NEAREST_MIPMAP_LINEAR) self.minFilter = gl.LINEAR;
+                if (!self.width) self.width = image.videoWidth;
+                if (!self.height) self.height = image.videoHeight;
+                loaded = true;
+            }
+        }
+
+        let images = this.image;
+        if (Array.isArray(images)) {
+            for (let i = 0; i < images.length; i++) checkImage(images[i]);
+        } else {
+            checkImage(images);
+        }
+
+        if (this.flipY !== renderer.glState.flipY) {
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY);
+            renderer.glState.flipY = this.flipY;
+        }
+        if (this.premultiplyAlpha !== renderer.glState.premultiplyAlpha) {
+            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
+            renderer.glState.premultiplyAlpha = this.premultiplyAlpha;
+        }
+        if (this.unpackAlignment !== renderer.glState.unpackAlignment) {
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment);
+            renderer.glState.unpackAlignment = this.unpackAlignment;
+        }
+        if (this.minFilter !== this.state.minFilter) {
+            gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this.minFilter);
+            this.state.minFilter = this.minFilter;
+        }
+        if (this.magFilter !== this.state.magFilter) {
+            gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this.magFilter);
+            this.state.magFilter = this.magFilter;
+        }
+        if (this.wrapS !== this.state.wrapS) {
+            gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, this.wrapS);
+            this.state.wrapS = this.wrapS;
+        }
+        if (this.wrapT !== this.state.wrapT) {
+            gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, this.wrapT);
+            this.state.wrapT = this.wrapT;
+        }
+        if (this.anisotropy && this.anisotropy !== this.state.anisotropy) {
+            gl.texParameterf(
+                this.target,
+                renderer.getExtension('EXT_texture_filter_anisotropic').TEXTURE_MAX_ANISOTROPY_EXT,
+                this.anisotropy
+            );
+            this.state.anisotropy = this.anisotropy;
+        }
+
+        // Image(s) Loaded
+        if (loaded) {
+            // Texture Array
+            if (this.target === gl.TEXTURE_2D_ARRAY) {
+                images = Array.isArray(images) ? images : [ images ];
+
+                // Copy Images
+                const pixels = new Uint8Array(this.width * this.height * images.length * 4);
+                let index = 0;
+                for (let i = 0; i < images.length; i++) {
+                    const image = images[i];
+                    if (!image) continue;
+                    let ctx;
+                    if (image instanceof HTMLCanvasElement) {
+                        ctx = image.getContext('2d');
+                    } else if (image instanceof HTMLImageElement && image.complete) {
+                        if (!_canvas$1) _canvas$1 = document.createElement('canvas');
+                        if (!_ctx$1) _ctx$1 = _canvas$1.getContext('2d', { willReadFrequently: true });
+                        _canvas$1.width = this.width;
+                        _canvas$1.height = this.height;
+                        ctx = _ctx$1;
+                        ctx.clearRect(0, 0, this.width, this.height);
+                        ctx.drawImage(images[i], 0, 0);
+                    }
+                    if (!ctx) continue;
+                    const imageData = ctx.getImageData(0, 0, this.width, this.height);
+                    for (let j = 0; j < this.width * this.height * 4; j += 4) {
+                        pixels[index + 0] = imageData.data[j + 0]; // red
+                        pixels[index + 1] = imageData.data[j + 1]; // green
+                        pixels[index + 2] = imageData.data[j + 2]; // blue
+                        pixels[index + 3] = imageData.data[j + 3]; // alpha
+                        index += 4;
+                    }
+                }
+                // Create Texture Array
+                gl.texImage3D(gl.TEXTURE_2D_ARRAY, this.level, this.internalFormat, this.width, this.height, images.length, 0, this.format, this.type, pixels);
+            // Cube Map
+            } else if (this.target === gl.TEXTURE_CUBE_MAP) {
+                for (let i = 0; i < 6; i++) {
+                    if (!images[i].complete) continue;
+                    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, this.level, this.internalFormat, this.format, this.type, images[i]);
+                }
+            // Data
+            } else if (ArrayBuffer.isView(images)) {
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, images);
+            // Compressed
+            } else if (images.isCompressedTexture) {
+                for (let level = 0; level < images.length; level++) {
+                    gl.compressedTexImage2D(this.target, level, this.internalFormat, images[level].width, images[level].height, 0, images[level].data);
+                }
+            // Standard
+            } else {
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, images);
+            }
+
+            // Mipmaps
+            if (this.generateMipmaps) gl.generateMipmap(this.target);
+
+            // Callback for when data is pushed to GPU
+            if (typeof this.onUpdate === 'function') this.onUpdate();
+
+        // No Image
+        } else {
+            // Texture Array
+            if (this.target === gl.TEXTURE_2D_ARRAY) {
+                gl.texImage3D(this.target, 0, gl.RGBA, 1, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
+            // Cube Map
+            } else if (this.target === gl.TEXTURE_CUBE_MAP) {
+                // Upload empty pixel for each side while no image to avoid errors while image or video loading
+                for (let i = 0; i < 6; i++) {
+                    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
+                }
+            // Render Target
+            } else if (!this.image && this.width) {
+                // Image intentionally left null for RenderTarget
+                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
+            // Standard
+            } else {
+                const image = images;
+                if (image instanceof Uint8Array ||
+                    image instanceof Uint16Array ||
+                    image instanceof Uint32Array ||
+                    image instanceof Float32Array) {
+                    // Load array
+                    const w = this.width || 1;
+                    const h = this.height || 1;
+                    gl.texImage2D(this.target, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, image);
+                } else {
+                    // Upload empty pixel if no image to avoid errors while image or video loading
+                    gl.texImage2D(this.target, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
+                }
+            }
+        }
+
+        // Save Last Known Image(s)
+        this.#image = this.image;
+    }
+
+    flush() {
+
+        // TODO
+
+        renderer.info.textures--;
+
+    }
+
+}
+
+class TextureLoader {
+
+    static #cache = {};
+    static #extensions = [ 'webp', 'jpg', 'jpeg', 'png', 'gif', 'svg' ];
+
+    static load({
+        src, /* i.e. src: './dragon.png' OR src: { jpg: 'dragon.jpg', png: 'dragon.png' } */
+        format = renderer.gl.RGBA,
+        internalFormat = format,
+        generateMipmaps = true,
+        wrapS = renderer.gl.CLAMP_TO_EDGE,
+        wrapT = renderer.gl.CLAMP_TO_EDGE,
+        anisotropy = 0,
+        minFilter = generateMipmaps ? renderer.gl.NEAREST_MIPMAP_LINEAR : renderer.gl.LINEAR,
+        magFilter = renderer.gl.LINEAR,
+        premultiplyAlpha = false,
+        unpackAlignment = 4,
+        flipY = true,
+        onLoad, /* on load callback */
+    } = {}) {
+        if (!src || src === '') {
+            console.warn(`TextureLoader: No source provided`);
+            return new Texture();
+        }
+
+        // Extension
+        let ext = 'unknown';
+        if (typeof src === 'string') {
+            ext = src.split('.').pop().split('?')[0].toLowerCase();
+        } else if (typeof src === 'object') {
+            for (const filetype in src) {
+                if (TextureLoader.#extensions.includes(filetype.toLowerCase())) {
+                    ext = filetype.toLowerCase();
+                    src = src[filetype];
+                    break;
+                }
+            }
+        }
+
+        // Check cache for existing texture
+        const cacheID = src;// + renderer.id;
+        if (TextureLoader.#cache[cacheID]) return TextureLoader.#cache[cacheID];
+
+        let texture;
+        switch (ext) {
+            case 'webp':
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'gif':
+            case 'svg':
+                texture = new Texture({
+                    format,
+                    internalFormat,
+                    generateMipmaps,
+                    wrapS, wrapT,
+                    anisotropy,
+                    minFilter, magFilter,
+                    premultiplyAlpha,
+                    unpackAlignment,
+                    flipY,
+                });
+                const nameFromUrl = new String(src.replace(/^.*[\\\/]/, ''));   /* filename only */
+                texture.name = nameFromUrl.replace(/\.[^/.]+$/, );              /* remove extension */
+                texture.image = ImageLoader.load(src, () => {
+                    texture.needsUpdate = true;
+                    if (typeof onLoad === 'function') onLoad();
+                });
+                break;
+            default:
+                console.warn(`TextureLoader: Format not supported - '.${ext}'`);
+                texture = new Texture();
+        }
+
+        texture.ext = ext;
+        TextureLoader.#cache[cacheID] = texture;
+        return texture;
+    }
+
+    static removeFromCache(texture) {
+        for (let url in TextureLoader.#cache) {
+            if (TextureLoader.#cache[url].uuid === texture.uuid) {
+                delete TextureLoader.#cache[url];
+            }
+        }
+    }
+
+}
+
+class Assets {
+
+    #assets = {};
+
+    constructor() {}
+
+    /********** LIBRARY **********/
+
+    library(type) {
+        function checkAssetType(asset) {
+            if (asset.isGeometry) return 'geometry';
+            if (asset.isTexture) return 'texture';
+            if (asset.isImage) return 'image';
+            return 'asset';
+        }
+
+        const library = [];
+        for (const [uuid, asset] of Object.entries(this.#assets)) {
+            if (checkAssetType(asset) === type) library.push(asset);
+        }
+        return library;
+    }
+
+    /********** ACCESS **********/
+
+    add(/* assets, seperated by commas */) {
+        for (let i = 0; i < arguments.length; i++) {
+            const asset = arguments[i];
+            if (!asset || !asset.uuid) continue;
+            if (!asset.name || asset.name === '') asset.name = asset.constructor.name;
+            this.#assets[asset.uuid] = asset;
+        }
+    }
+
+    get(uuid) {
+        if (!uuid) return;
+        if (uuid.uuid) uuid = uuid.uuid;
+        return this.#assets[uuid];
+    }
+
+    load(src, options = {}) {
+        if (typeof src !== 'string') {
+            console.warn('Assets.load: Source not provided');
+            return;
+        }
+
+        let asset;
+        const ext = src.split('.').pop().split('?')[0].toLowerCase();
+        switch (ext) {
+            // Image
+            case 'webp':
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'gif':
+            case 'svg':
+                const args = Object.assign({ src }, options);
+                asset = TextureLoader.load(args);
+                break;
+            default:
+                asset = undefined;
+        }
+        if (asset) this.add(asset);
+        return asset;
+    }
+
+    remove(assetOrArray, flush = true) {
+        if (!assetOrArray) return;
+        const assetArray = (Array.isArray(assetOrArray)) ? assetOrArray : [ assetOrArray ];
+
+        for (let i = 0; i < assetArray.length; i++) {
+            const asset = assetArray[i];
+            if (this.#assets[asset.uuid]) {
+                // Remove textures from cache
+                if (asset.isTexture) TextureLoader.removeFromCache(asset);
+
+                // Flush & Delete
+                if (flush) asset.flush && asset.flush();
+                delete this.#assets[asset.uuid];
+            }
+        }
+    }
+
+    /********** JSON **********/
+
+    clear() {
+        for (let uuid in _assets) {
+            this.removeAsset(_assets[uuid], true);
+        }
+    }
+
+    fromJSON(json) {
+
+        // Clear Assets
+        this.clear();
+
+        // Add to Assets
+        function addLibraryToAssets(library) {
+            for (const [uuid, asset] of Object.entries(library)) {
+                this.addAsset(asset);
+            }
+        }
+
+        // // Load Assets
+        // const objectLoader = new THREE.ObjectLoader();
+        // const geometries = objectLoader.parseGeometries(json.geometries, {});
+        // const images = objectLoader.parseImages(json.images);
+        // const textures = objectLoader.parseTextures(json.textures, images);
+
+        // addLibraryToAssets(geometries);
+        // addLibraryToAssets(images);
+        // addLibraryToAssets(textures);
+
+    }
+
+    toJSON(meta) {
+
+        const json = {};
+
+        // if (!meta) meta = {};
+        // if (!meta.geometries) meta.geometries = {};
+        // if (!meta.images) meta.images = {};
+        // if (!meta.textures) meta.textures = {};
+
+        // const stopRoot = {
+        //     images: {},
+        //     textures: {},
+        //     materials: {},
+        // };
+
+        // // Geometries
+        // const geometries = Assets.library('geometry');
+        // for (let i = 0; i < geometries.length; i++) {
+        //     const geometry = geometries[i];
+        //     if (!meta.geometries[geometry.uuid]) meta.geometries[geometry.uuid] = geometry.toJSON(meta);
+        // }
+
+        // // Textures
+        // const textures = Assets.library('texture');
+        // for (let i = 0; i < textures.length; i++) {
+        //     const texture = textures[i];
+        //     if (!meta.textures[texture.uuid]) meta.textures[texture.uuid] = texture.toJSON(meta);
+        // }
+
+        // // Add 'meta' caches to 'json' as arrays
+        // for (const library in meta) {
+        //     const valueArray = [];
+        //     for (const key in meta[library]) {
+        //         const data = meta[library][key];
+        //         delete data.metadata;
+        //         valueArray.push(data);
+        //     }
+        //     if (valueArray.length > 0) json[library] = valueArray;
+        // }
+
+        return json;
+    }
+
+}
+
 /**
  * Assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
  *
@@ -78,7 +1181,7 @@ var EulerFunc$1 = /*#__PURE__*/Object.freeze({
     fromRotationMatrix: fromRotationMatrix
 });
 
-const EPSILON$5 = 0.000001;
+const EPSILON$4 = 0.000001;
 
 /**
  * Copy the values from one Mat4 to another
@@ -87,7 +1190,7 @@ const EPSILON$5 = 0.000001;
  * @param {Mat4} a the source matrix
  * @returns {Mat4} out
  */
-function copy$5(out, a) {
+function copy$4(out, a) {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -113,7 +1216,7 @@ function copy$5(out, a) {
  * @param {Mat4} out the receiving matrix
  * @returns {Mat4} out
  */
-function set$5(out, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33) {
+function set$4(out, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33) {
     out[0] = m00;
     out[1] = m01;
     out[2] = m02;
@@ -325,7 +1428,7 @@ function determinant$1(a) {
  * @param {Mat4} b the second operand
  * @returns {Mat4} out
  */
-function multiply$4(out, a, b) {
+function multiply$3(out, a, b) {
     let a00 = a[0],
         a01 = a[1],
         a02 = a[2],
@@ -447,7 +1550,7 @@ function translate$1(out, a, v) {
  * @param {Vec3} v the Vec3 to scale the matrix by
  * @returns {Mat4} out
  **/
-function scale$5(out, a, v) {
+function scale$4(out, a, v) {
     let x = v[0],
         y = v[1],
         z = v[2];
@@ -493,7 +1596,7 @@ function rotate$1(out, a, rad, axis) {
     let b10, b11, b12;
     let b20, b21, b22;
 
-    if (Math.abs(len) < EPSILON$5) {
+    if (Math.abs(len) < EPSILON$4) {
         return null;
     }
 
@@ -939,7 +2042,7 @@ function targetTo(out, eye, target, up) {
  * @param {Mat4} b the second operand
  * @returns {Mat4} out
  */
-function add$5(out, a, b) {
+function add$4(out, a, b) {
     out[0] = a[0] + b[0];
     out[1] = a[1] + b[1];
     out[2] = a[2] + b[2];
@@ -967,7 +2070,7 @@ function add$5(out, a, b) {
  * @param {Mat4} b the second operand
  * @returns {Mat4} out
  */
-function subtract$3(out, a, b) {
+function subtract$2(out, a, b) {
     out[0] = a[0] - b[0];
     out[1] = a[1] - b[1];
     out[2] = a[2] - b[2];
@@ -1017,28 +2120,28 @@ function multiplyScalar$1(out, a, b) {
 
 var Mat4Func$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    copy: copy$5,
-    set: set$5,
-    identity: identity$3,
-    transpose: transpose$1,
-    invert: invert$2,
+    add: add$4,
+    copy: copy$4,
     determinant: determinant$1,
-    multiply: multiply$4,
-    translate: translate$1,
-    scale: scale$5,
-    rotate: rotate$1,
-    getTranslation: getTranslation,
-    getScaling: getScaling,
+    fromQuat: fromQuat$1,
+    fromRotationTranslationScale: fromRotationTranslationScale,
     getMaxScaleOnAxis: getMaxScaleOnAxis,
     getRotation: getRotation,
-    fromRotationTranslationScale: fromRotationTranslationScale,
-    fromQuat: fromQuat$1,
-    perspective: perspective,
+    getScaling: getScaling,
+    getTranslation: getTranslation,
+    identity: identity$3,
+    invert: invert$2,
+    multiply: multiply$3,
+    multiplyScalar: multiplyScalar$1,
     ortho: ortho,
+    perspective: perspective,
+    rotate: rotate$1,
+    scale: scale$4,
+    set: set$4,
+    subtract: subtract$2,
     targetTo: targetTo,
-    add: add$5,
-    subtract: subtract$3,
-    multiplyScalar: multiplyScalar$1
+    translate: translate$1,
+    transpose: transpose$1
 });
 
 class Mat4 extends Array {
@@ -1099,7 +2202,7 @@ class Mat4 extends Array {
 
     set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33) {
         if (m00.length) return this.copy(m00);
-        set$5(this, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
+        set$4(this, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
         return this;
     }
 
@@ -1114,15 +2217,35 @@ class Mat4 extends Array {
     }
 
     scale(v, m = this) {
-        scale$5(this, m, typeof v === 'number' ? [v, v, v] : v);
+        scale$4(this, m, typeof v === 'number' ? [v, v, v] : v);
+        return this;
+    }
+
+    add(ma, mb) {
+        if (mb) {
+            add$4(this, ma, mb);
+        } else {
+            add$4(this, this, ma);
+        }
+        return this;
+    }
+
+    sub(ma, mb) {
+        if (mb) {
+            subtract$2(this, ma, mb);
+        } else {
+            subtract$2(this, this, ma);
+        }
         return this;
     }
 
     multiply(ma, mb) {
-        if (mb) {
-            multiply$4(this, ma, mb);
+        if (!ma.length) {
+            multiplyScalar$1(this, this, ma);
+        } else if (mb) {
+            multiply$3(this, ma, mb);
         } else {
-            multiply$4(this, this, ma);
+            multiply$3(this, this, ma);
         }
         return this;
     }
@@ -1133,7 +2256,7 @@ class Mat4 extends Array {
     }
 
     copy(m) {
-        copy$5(this, m);
+        copy$4(this, m);
         return this;
     }
 
@@ -1239,7 +2362,7 @@ class Mat4 extends Array {
 
 }
 
-const tempMat4$2 = new Mat4();
+const tempMat4$3 = new Mat4();
 
 class Euler extends Array {
 
@@ -1307,8 +2430,15 @@ class Euler extends Array {
     }
 
     fromQuaternion(q, order = this.order) {
-        tempMat4$2.fromQuaternion(q);
-        return this.fromRotationMatrix(tempMat4$2, order);
+        tempMat4$3.fromQuaternion(q);
+        return this.fromRotationMatrix(tempMat4$3, order);
+    }
+
+    fromArray(a = [ 0, 0, 0 ], o = 0) {
+        this[0] = a[o];
+        this[1] = a[o + 1];
+        this[2] = a[o + 2];
+        return this;
     }
 
     toArray(a = [], o = 0) {
@@ -1320,7 +2450,7 @@ class Euler extends Array {
 
 }
 
-const EPSILON$4 = 0.000001;
+const EPSILON$3 = 0.000001;
 
 /**
  * Copy the values from one Vec4 to another
@@ -1329,7 +2459,7 @@ const EPSILON$4 = 0.000001;
  * @param {Vec4} a the source vector
  * @returns {Vec4} out
  */
-function copy$4(out, a) {
+function copy$3(out, a) {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -1347,7 +2477,7 @@ function copy$4(out, a) {
  * @param {Number} w W component
  * @returns {Vec4} out
  */
-function set$4(out, x, y, z, w) {
+function set$3(out, x, y, z, w) {
     out[0] = x;
     out[1] = y;
     out[2] = z;
@@ -1363,7 +2493,7 @@ function set$4(out, x, y, z, w) {
  * @param {Vec4} b the second operand
  * @returns {Vec4} out
  */
-function add$4(out, a, b) {
+function add$3(out, a, b) {
     out[0] = a[0] + b[0];
     out[1] = a[1] + b[1];
     out[2] = a[2] + b[2];
@@ -1379,7 +2509,7 @@ function add$4(out, a, b) {
  * @param {Number} b amount to scale the vector by
  * @returns {Vec4} out
  */
-function scale$4(out, a, b) {
+function scale$3(out, a, b) {
     out[0] = a[0] * b;
     out[1] = a[1] * b;
     out[2] = a[2] * b;
@@ -1393,7 +2523,7 @@ function scale$4(out, a, b) {
  * @param {Vec4} a vector to calculate length of
  * @returns {Number} length of a
  */
-function length$3(a) {
+function length$2(a) {
     let x = a[0];
     let y = a[1];
     let z = a[2];
@@ -1408,7 +2538,7 @@ function length$3(a) {
  * @param {Vec4} a vector to normalize
  * @returns {Vec4} out
  */
-function normalize$3(out, a) {
+function normalize$2(out, a) {
     let x = a[0];
     let y = a[1];
     let z = a[2];
@@ -1431,7 +2561,7 @@ function normalize$3(out, a) {
  * @param {Vec4} b the second operand
  * @returns {Number} dot product of a and b
  */
-function dot$3(a, b) {
+function dot$2(a, b) {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
 }
 
@@ -1458,14 +2588,14 @@ function lerp$3(out, a, b, t) {
 
 var Vec4Func$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    copy: copy$4,
-    set: set$4,
-    add: add$4,
-    scale: scale$4,
-    length: length$3,
-    normalize: normalize$3,
-    dot: dot$3,
-    lerp: lerp$3
+    add: add$3,
+    copy: copy$3,
+    dot: dot$2,
+    length: length$2,
+    lerp: lerp$3,
+    normalize: normalize$2,
+    scale: scale$3,
+    set: set$3
 });
 
 /**
@@ -1508,7 +2638,7 @@ function setAxisAngle(out, axis, rad) {
  * @param {Quat} b the second operand
  * @returns {Quat} out
  */
-function multiply$3(out, a, b) {
+function multiply$2(out, a, b) {
     let ax = a[0],
         ay = a[1],
         az = a[2],
@@ -1798,7 +2928,7 @@ function fromEuler(out, euler, order = 'YXZ') {
  * @returns {Quat} out
  * @function
  */
-const copy$3 = copy$4;
+const copy$2 = copy$3;
 
 /**
  * Set the components of a Quat to the given values
@@ -1811,7 +2941,7 @@ const copy$3 = copy$4;
  * @returns {Quat} out
  * @function
  */
-const set$3 = set$4;
+const set$2 = set$3;
 
 /**
  * Adds two Quat's
@@ -1822,7 +2952,7 @@ const set$3 = set$4;
  * @returns {Quat} out
  * @function
  */
-const add$3 = add$4;
+const add$2 = add$3;
 
 /**
  * Scales a Quat by a scalar Number
@@ -1833,7 +2963,7 @@ const add$3 = add$4;
  * @returns {Quat} out
  * @function
  */
-const scale$3 = scale$4;
+const scale$2 = scale$3;
 
 /**
  * Calculates the dot product of two Quat's
@@ -1843,7 +2973,7 @@ const scale$3 = scale$4;
  * @returns {Number} dot product of a and b
  * @function
  */
-const dot$2 = dot$3;
+const dot$1 = dot$2;
 
 /**
  * Performs a linear interpolation between two Quat's
@@ -1863,7 +2993,7 @@ const lerp$2 = lerp$3;
  * @param {Quat} a vector to calculate length of
  * @returns {Number} length of a
  */
-const length$2 = length$3;
+const length$1 = length$2;
 
 /**
  * Normalize a Quat
@@ -1873,29 +3003,29 @@ const length$2 = length$3;
  * @returns {Quat} out
  * @function
  */
-const normalize$2 = normalize$3;
+const normalize$1 = normalize$2;
 
 var QuatFunc$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
+    add: add$2,
+    conjugate: conjugate,
+    copy: copy$2,
+    dot: dot$1,
+    fromEuler: fromEuler,
+    fromMat3: fromMat3,
     identity: identity$2,
-    setAxisAngle: setAxisAngle,
-    multiply: multiply$3,
+    invert: invert$1,
+    length: length$1,
+    lerp: lerp$2,
+    multiply: multiply$2,
+    normalize: normalize$1,
     rotateX: rotateX,
     rotateY: rotateY,
     rotateZ: rotateZ,
-    slerp: slerp,
-    invert: invert$1,
-    conjugate: conjugate,
-    fromMat3: fromMat3,
-    fromEuler: fromEuler,
-    copy: copy$3,
-    set: set$3,
-    add: add$3,
-    scale: scale$3,
-    dot: dot$2,
-    lerp: lerp$2,
-    length: length$2,
-    normalize: normalize$2
+    scale: scale$2,
+    set: set$2,
+    setAxisAngle: setAxisAngle,
+    slerp: slerp
 });
 
 class Quat extends Array {
@@ -1950,7 +3080,7 @@ class Quat extends Array {
 
     set(x, y, z, w) {
         if (x.length) return this.copy(x);
-        set$3(this, x, y, z, w);
+        set$2(this, x, y, z, w);
         this.onChange();
         return this;
     }
@@ -1986,29 +3116,29 @@ class Quat extends Array {
     }
 
     copy(q) {
-        copy$3(this, q);
+        copy$2(this, q);
         this.onChange();
         return this;
     }
 
     normalize(q = this) {
-        normalize$2(this, q);
+        normalize$1(this, q);
         this.onChange();
         return this;
     }
 
     multiply(qA, qB) {
         if (qB) {
-            multiply$3(this, qA, qB);
+            multiply$2(this, qA, qB);
         } else {
-            multiply$3(this, this, qA);
+            multiply$2(this, this, qA);
         }
         this.onChange();
         return this;
     }
 
     dot(v) {
-        return dot$2(this, v);
+        return dot$1(this, v);
     }
 
     fromMatrix3(matrix3) {
@@ -2053,563 +3183,6 @@ class Quat extends Array {
 
 }
 
-const EPSILON$3 = 0.000001;
-
-/**
- * Calculates the length of a Vec3
- *
- * @param {Vec3} a vector to calculate length of
- * @returns {Number} length of a
- */
-function length$1(a) {
-    let x = a[0];
-    let y = a[1];
-    let z = a[2];
-    return Math.sqrt(x * x + y * y + z * z);
-}
-
-/**
- * Copy the values from one Vec3 to another
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the source vector
- * @returns {Vec3} out
- */
-function copy$2(out, a) {
-    out[0] = a[0];
-    out[1] = a[1];
-    out[2] = a[2];
-    return out;
-}
-
-/**
- * Set the components of a Vec3 to the given values
- *
- * @param {Vec3} out the receiving vector
- * @param {Number} x X component
- * @param {Number} y Y component
- * @param {Number} z Z component
- * @returns {Vec3} out
- */
-function set$2(out, x, y, z) {
-    out[0] = x;
-    out[1] = y;
-    out[2] = z;
-    return out;
-}
-
-/**
- * Adds two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function add$2(out, a, b) {
-    out[0] = a[0] + b[0];
-    out[1] = a[1] + b[1];
-    out[2] = a[2] + b[2];
-    return out;
-}
-
-/**
- * Subtracts vector b from vector a
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function subtract$2(out, a, b) {
-    out[0] = a[0] - b[0];
-    out[1] = a[1] - b[1];
-    out[2] = a[2] - b[2];
-    return out;
-}
-
-/**
- * Multiplies two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function multiply$2(out, a, b) {
-    out[0] = a[0] * b[0];
-    out[1] = a[1] * b[1];
-    out[2] = a[2] * b[2];
-    return out;
-}
-
-/**
- * Divides two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function divide$1(out, a, b) {
-    out[0] = a[0] / b[0];
-    out[1] = a[1] / b[1];
-    out[2] = a[2] / b[2];
-    return out;
-}
-
-/**
- * Scales a Vec3 by a scalar number
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to scale
- * @param {Number} b amount to scale the vector by
- * @returns {Vec3} out
- */
-function scale$2(out, a, b) {
-    out[0] = a[0] * b;
-    out[1] = a[1] * b;
-    out[2] = a[2] * b;
-    return out;
-}
-
-/**
- * Calculates the euclidian distance between two Vec3's
- *
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Number} distance between a and b
- */
-function distance$1(a, b) {
-    let x = b[0] - a[0];
-    let y = b[1] - a[1];
-    let z = b[2] - a[2];
-    return Math.sqrt(x * x + y * y + z * z);
-}
-
-/**
- * Calculates the squared euclidian distance between two Vec3's
- *
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Number} squared distance between a and b
- */
-function squaredDistance$1(a, b) {
-    let x = b[0] - a[0];
-    let y = b[1] - a[1];
-    let z = b[2] - a[2];
-    return x * x + y * y + z * z;
-}
-
-/**
- * Calculates the squared length of a Vec3
- *
- * @param {Vec3} a vector to calculate squared length of
- * @returns {Number} squared length of a
- */
-function squaredLength$1(a) {
-    let x = a[0];
-    let y = a[1];
-    let z = a[2];
-    return x * x + y * y + z * z;
-}
-
-/**
- * Negates the components of a Vec3
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a vector to negate
- * @returns {Vec3} out
- */
-function negate$1(out, a) {
-    out[0] = -a[0];
-    out[1] = -a[1];
-    out[2] = -a[2];
-    return out;
-}
-
-/**
- * Returns the inverse of the components of a Vec3
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a vector to invert
- * @returns {Vec3} out
- */
-function inverse$1(out, a) {
-    out[0] = 1.0 / a[0];
-    out[1] = 1.0 / a[1];
-    out[2] = 1.0 / a[2];
-    return out;
-}
-
-/**
- * Normalize a Vec3
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a vector to normalize
- * @returns {Vec3} out
- */
-function normalize$1(out, a) {
-    let x = a[0];
-    let y = a[1];
-    let z = a[2];
-    let len = x * x + y * y + z * z;
-    if (len > 0) {
-        // TODO: evaluate use of glm_invsqrt here?
-        len = 1 / Math.sqrt(len);
-    }
-    out[0] = a[0] * len;
-    out[1] = a[1] * len;
-    out[2] = a[2] * len;
-    return out;
-}
-
-/**
- * Calculates the dot product of two Vec3's
- *
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Number} dot product of a and b
- */
-function dot$1(a, b) {
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
-
-/**
- * Computes the cross product of two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @returns {Vec3} out
- */
-function cross$1(out, a, b) {
-    let ax = a[0], ay = a[1], az = a[2];
-    let bx = b[0], by = b[1], bz = b[2];
-
-    out[0] = ay * bz - az * by;
-    out[1] = az * bx - ax * bz;
-    out[2] = ax * by - ay * bx;
-    return out;
-}
-
-/**
- * Performs a linear interpolation between two Vec3's
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the first operand
- * @param {Vec3} b the second operand
- * @param {Number} t interpolation amount between the two inputs
- * @returns {Vec3} out
- */
-function lerp$1(out, a, b, t) {
-    let ax = a[0];
-    let ay = a[1];
-    let az = a[2];
-    out[0] = ax + t * (b[0] - ax);
-    out[1] = ay + t * (b[1] - ay);
-    out[2] = az + t * (b[2] - az);
-    return out;
-}
-
-/**
- * Transforms the Vec3 with a Mat4
- * 4th vector component is implicitly '1'
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to transform
- * @param {Mat4} m matrix to transform with
- * @returns {Vec3} out
- */
-function transformMat4$1(out, a, m) {
-    let x = a[0],
-        y = a[1],
-        z = a[2];
-    let w = m[3] * x + m[7] * y + m[11] * z + m[15];
-    w = w || 1.0;
-    out[0] = (m[0] * x + m[4] * y + m[8] * z + m[12]) / w;
-    out[1] = (m[1] * x + m[5] * y + m[9] * z + m[13]) / w;
-    out[2] = (m[2] * x + m[6] * y + m[10] * z + m[14]) / w;
-    return out;
-}
-
-/**
- * Same as above but doesn't apply translation
- * Useful for rays
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to transform
- * @param {Mat4} m matrix to transform with
- * @returns {Vec3} out
- */
-function scaleRotateMat4(out, a, m) {
-    let x = a[0],
-        y = a[1],
-        z = a[2];
-    let w = m[3] * x + m[7] * y + m[11] * z + m[15];
-    w = w || 1.0;
-    out[0] = (m[0] * x + m[4] * y + m[8] * z) / w;
-    out[1] = (m[1] * x + m[5] * y + m[9] * z) / w;
-    out[2] = (m[2] * x + m[6] * y + m[10] * z) / w;
-    return out;
-}
-
-/**
- * Transforms the Vec3 with a Mat3
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to transform
- * @param {Mat3} m the 3x3 matrix to transform with
- * @returns {Vec3} out
- */
-function transformMat3$1(out, a, m) {
-    let x = a[0],
-        y = a[1],
-        z = a[2];
-    out[0] = x * m[0] + y * m[3] + z * m[6];
-    out[1] = x * m[1] + y * m[4] + z * m[7];
-    out[2] = x * m[2] + y * m[5] + z * m[8];
-    return out;
-}
-
-/**
- * Transforms the Vec3 with a Quat
- *
- * @param {Vec3} out the receiving vector
- * @param {Vec3} a the vector to transform
- * @param {Quat} q quaternion to transform with
- * @returns {Vec3} out
- */
-function transformQuat(out, a, q) {
-    // benchmarks: https://jsperf.com/quaternion-transform-vec3-implementations-fixed
-    let x = a[0],
-        y = a[1],
-        z = a[2];
-    let qx = q[0],
-        qy = q[1],
-        qz = q[2],
-        qw = q[3];
-
-    let uvx = qy * z - qz * y;
-    let uvy = qz * x - qx * z;
-    let uvz = qx * y - qy * x;
-
-    let uuvx = qy * uvz - qz * uvy;
-    let uuvy = qz * uvx - qx * uvz;
-    let uuvz = qx * uvy - qy * uvx;
-
-    let w2 = qw * 2;
-    uvx *= w2;
-    uvy *= w2;
-    uvz *= w2;
-
-    uuvx *= 2;
-    uuvy *= 2;
-    uuvz *= 2;
-
-    out[0] = x + uvx + uuvx;
-    out[1] = y + uvy + uuvy;
-    out[2] = z + uvz + uuvz;
-    return out;
-}
-
-/**
- * Get the angle between two 3D vectors
- *
- * @param {Vec3} a The first operand
- * @param {Vec3} b The second operand
- * @returns {Number} The angle in radians
- */
-const angle = (function() {
-    const tempA = [ 0, 0, 0 ];
-    const tempB = [ 0, 0, 0 ];
-
-    return function(a, b) {
-        copy$2(tempA, a);
-        copy$2(tempB, b);
-
-        normalize$1(tempA, tempA);
-        normalize$1(tempB, tempB);
-
-        let cosine = dot$1(tempA, tempB);
-
-        if (cosine > 1.0) {
-            return 0;
-        } else if (cosine < -1.0) {
-            return Math.PI;
-        } else {
-            return Math.acos(cosine);
-        }
-    };
-})();
-
-/**
- * Returns whether or not the vectors have exactly the same elements in the same position (when compared with ===)
- *
- * @param {Vec3} a The first vector
- * @param {Vec3} b The second vector
- * @returns {Boolean} True if the vectors are equal, false otherwise
- */
-function exactEquals$1(a, b) {
-    return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
-}
-
-/**
- * Returns whether the vectors have approximately the same values
- *
- * @param {Vec3} a
- * @param {Vec3} b
- * @param {Number} tolerance
- * @returns {Boolean} True is vectors are equal +/- tolerance
- */
-function fuzzyEquals(a, b, tolerance = 0.001) {
-    if (fuzzyFloat$1(a[0], b[0], tolerance) === false) return false;
-    if (fuzzyFloat$1(a[1], b[1], tolerance) === false) return false;
-    if (fuzzyFloat$1(a[2], b[2], tolerance) === false) return false;
-    return true;
-}
-
-/**
- * Calculates the normal of a triangle
- *
- * @param {Vec3} out Vector which will store the normal
- * @param {Vec3} a
- * @param {Vec3} b
- * @param {Vec3} c
- */
-const calculateNormal = (function() {
-    const temp = [ 0, 0, 0 ];
-
-    return function(out, a, b, c) {
-        subtract$2(temp, a, b);
-        subtract$2(out, b, c);
-        cross$1(out, temp, out);
-        normalize$1(out, out);
-    };
-})();
-
-/***** Internal *****/
-
-/**
- * Compares two decimal numbers to see if they're almost the same
- *
- * @param {Number} a
- * @param {Number} b
- * @param {Number} tolerance
- * @returns {Boolean}
- */
-function fuzzyFloat$1(a, b, tolerance = 0.001) {
-    return ((a < (b + tolerance)) && (a > (b - tolerance)));
-}
-
-var Vec3Func$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    length: length$1,
-    copy: copy$2,
-    set: set$2,
-    add: add$2,
-    subtract: subtract$2,
-    multiply: multiply$2,
-    divide: divide$1,
-    scale: scale$2,
-    distance: distance$1,
-    squaredDistance: squaredDistance$1,
-    squaredLength: squaredLength$1,
-    negate: negate$1,
-    inverse: inverse$1,
-    normalize: normalize$1,
-    dot: dot$1,
-    cross: cross$1,
-    lerp: lerp$1,
-    transformMat4: transformMat4$1,
-    scaleRotateMat4: scaleRotateMat4,
-    transformMat3: transformMat3$1,
-    transformQuat: transformQuat,
-    angle: angle,
-    exactEquals: exactEquals$1,
-    fuzzyEquals: fuzzyEquals,
-    calculateNormal: calculateNormal
-});
-
-// fuzzyFloat()
-// isPowerOf2()
-// triangleArea()
-// uuid()
-
-const _lut = [ '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d', '1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '2a', '2b', '2c', '2d', '2e', '2f', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '3a', '3b', '3c', '3d', '3e', '3f', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '4a', '4b', '4c', '4d', '4e', '4f', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '5a', '5b', '5c', '5d', '5e', '5f', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '6a', '6b', '6c', '6d', '6e', '6f', '70', '71', '72', '73', '74', '75', '76', '77', '78', '79', '7a', '7b', '7c', '7d', '7e', '7f', '80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '8a', '8b', '8c', '8d', '8e', '8f', '90', '91', '92', '93', '94', '95', '96', '97', '98', '99', '9a', '9b', '9c', '9d', '9e', '9f', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af', 'b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'ba', 'bb', 'bc', 'bd', 'be', 'bf', 'c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'ca', 'cb', 'cc', 'cd', 'ce', 'cf', 'd0', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'da', 'db', 'dc', 'dd', 'de', 'df', 'e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8', 'e9', 'ea', 'eb', 'ec', 'ed', 'ee', 'ef', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'fa', 'fb', 'fc', 'fd', 'fe', 'ff' ];
-
-/**
- * Compares two decimal numbers to see if they're almost the same
- *
- * @param {Number} a
- * @param {Number} b
- * @param {Number} tolerance
- * @returns {Boolean}
- */
-function fuzzyFloat(a, b, tolerance = 0.001) {
-    return ((a < (b + tolerance)) && (a > (b - tolerance)));
-}
-
-/**
- * Determins if value is a power of 2
- *
- * @param {Number} value number to check
- * @returns {Boolean} is value power of 2?
- */
-function isPowerOf2(value) {
-    return (value & (value - 1)) === 0;
-}
-
-/**
- * Computes the area of a triangle defined by 3 points (points as arrays [x, y, z])
- *
- * @param {Vec3} a
- * @param {Vec3} b
- * @param {Vec3} c
- * @returns {Number} area of the triangle
- */
-const triangleArea = (function() {
-    const v0 = [ 0, 0, 0 ];
-    const v1 = [ 0, 0, 0 ];
-    const vc = [ 0, 0, 0 ];
-
-    return function(a, b, c) {
-        subtract$2(v0, c, b);
-        subtract$2(v1, a, b);
-        cross$1(vc, v0, v1);
-        return (length$1(vc) * 0.5);
-    };
-})();
-
-/**
- * Returns randomized UUID
- *
- * @returns {String} randomized UUID
- */
-function uuid() {
-    if (window.crypto && window.crypto.randomUUID) return crypto.randomUUID();
-
-    // https://github.com/mrdoob/three.js/blob/dev/src/math/MathUtils.js
-    // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
-    const d0 = Math.random() * 0xffffffff | 0;
-    const d1 = Math.random() * 0xffffffff | 0;
-    const d2 = Math.random() * 0xffffffff | 0;
-    const d3 = Math.random() * 0xffffffff | 0;
-    const uuid = _lut[ d0 & 0xff ] + _lut[ d0 >> 8 & 0xff ] + _lut[ d0 >> 16 & 0xff ] + _lut[ d0 >> 24 & 0xff ] + '-' +
-        _lut[ d1 & 0xff ] + _lut[ d1 >> 8 & 0xff ] + '-' + _lut[ d1 >> 16 & 0x0f | 0x40 ] + _lut[ d1 >> 24 & 0xff ] + '-' +
-        _lut[ d2 & 0x3f | 0x80 ] + _lut[ d2 >> 8 & 0xff ] + '-' + _lut[ d2 >> 16 & 0xff ] + _lut[ d2 >> 24 & 0xff ] +
-        _lut[ d3 & 0xff ] + _lut[ d3 >> 8 & 0xff ] + _lut[ d3 >> 16 & 0xff ] + _lut[ d3 >> 24 & 0xff ];
-    return uuid.toLowerCase(); // .toLowerCase() flattens concatenated strings to save heap memory space
-}
-
-var MathUtils$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    fuzzyFloat: fuzzyFloat,
-    isPowerOf2: isPowerOf2,
-    triangleArea: triangleArea,
-    uuid: uuid
-});
-
 class Vec3 extends Array {
 
     constructor(x = 0, y = x, z = x) {
@@ -2643,36 +3216,36 @@ class Vec3 extends Array {
 
     set(x, y = x, z = x) {
         if (x.length) return this.copy(x);
-        set$2(this, x, y, z);
+        set$5(this, x, y, z);
         return this;
     }
 
     copy(v) {
-        copy$2(this, v);
+        copy$5(this, v);
         return this;
     }
 
     add(va, vb) {
-        if (vb) add$2(this, va, vb);
-        else add$2(this, this, va);
+        if (vb) add$5(this, va, vb);
+        else add$5(this, this, va);
         return this;
     }
 
     sub(va, vb) {
-        if (vb) subtract$2(this, va, vb);
-        else subtract$2(this, this, va);
+        if (vb) subtract$3(this, va, vb);
+        else subtract$3(this, this, va);
         return this;
     }
 
     multiply(v) {
-        if (v.length) multiply$2(this, this, v);
-        else scale$2(this, this, v);
+        if (v.length) multiply$4(this, this, v);
+        else scale$5(this, this, v);
         return this;
     }
 
     divide(v) {
         if (v.length) divide$1(this, this, v);
-        else scale$2(this, this, 1 / v);
+        else scale$5(this, this, 1 / v);
         return this;
     }
 
@@ -2683,12 +3256,12 @@ class Vec3 extends Array {
 
     // Can't use 'length' as Array.prototype uses it
     len() {
-        return length$1(this);
+        return length$3(this);
     }
 
     distance(v) {
         if (v) return distance$1(this, v);
-        else return length$1(this);
+        else return length$3(this);
     }
 
     squaredLen() {
@@ -2712,17 +3285,17 @@ class Vec3 extends Array {
     }
 
     scale(multiplier) {
-        scale$2(this, this, multiplier);
+        scale$5(this, this, multiplier);
         return this;
     }
 
     normalize() {
-        normalize$1(this, this);
+        normalize$3(this, this);
         return this;
     }
 
     dot(v) {
-        return dot$1(this, v);
+        return dot$3(this, v);
     }
 
     equals(v) {
@@ -2758,7 +3331,7 @@ class Vec3 extends Array {
     }
 
     lerp(v, t) {
-        lerp$1(this, this, v, t);
+        lerp$4(this, this, v, t);
         return this;
     }
 
@@ -2799,7 +3372,7 @@ class Vec3 extends Array {
 
 }
 
-let _idGenerator$4 = 1;
+let _idGenerator$3 = 1;
 
 class Transform {
 
@@ -2807,7 +3380,7 @@ class Transform {
         this.isTransform = true;
 
         this.uuid = uuid();
-        this.id = _idGenerator$4++;
+        this.id = _idGenerator$3++;
 
         this.parent = null;
         this.children = [];
@@ -2835,11 +3408,11 @@ class Transform {
 
     addChild(child, /* child, child, ... */) {
         if (arguments.length > 1) {
-			for (let i = 0; i < arguments.length; i++) this.addChild(arguments[i]);
-			return this;
-		}
-        if (! child || child === this) return this;
-		if (child.parent) {
+            for (let i = 0; i < arguments.length; i++) this.addChild(arguments[i]);
+            return this;
+        }
+        if (!child || child === this) return this;
+        if (child.parent) {
             if (child.parent === this) return this;
             child.parent.removeChild(child);
         }
@@ -2850,10 +3423,10 @@ class Transform {
 
     removeChild(child) {
         if (arguments.length > 1) {
-			for (let i = 0; i < arguments.length; i++) this.removeChild(arguments[i]);
-			return this;
-		}
-        if (! child || child === this) return this;
+            for (let i = 0; i < arguments.length; i++) this.removeChild(arguments[i]);
+            return this;
+        }
+        if (!child || child === this) return this;
         const index = this.children.indexOf(child);
         if (index !== -1) {
             child.parent = null;
@@ -2890,16 +3463,16 @@ class Transform {
     }
 
     traverseVisible(callback) {
-		if (! this.visible) return;
+        if (!this.visible) return;
         callback(this);
         for (let i = 0, l = this.children.length; i < l; i++) this.children[i].traverseVisible(callback);
-	}
+    }
 
     traverseAncestors(callback) {
-		if (! this.parent) return;
-		callback(this.parent);
-		this.parent.traverseAncestors(callback);
-	}
+        if (!this.parent) return;
+        callback(this.parent);
+        this.parent.traverseAncestors(callback);
+    }
 
     decompose() {
         this.matrix.getTranslation(this.position);
@@ -2936,7 +3509,10 @@ class Camera extends Transform {
         right,
         bottom,
         top,
-        zoom = 1
+        zoom = 1,
+        // Starting
+        position,
+        lookAt,
     } = {}) {
         super();
         this.isCamera = true;
@@ -2950,8 +3526,14 @@ class Camera extends Transform {
 
         // Use orthographic if left/right set, else default to perspective camera
         this.type = (left || right) ? 'orthographic' : 'perspective';
-        if (this.type === 'orthographic') this.orthographic();
-        else this.perspective();
+        if (this.type === 'orthographic') {
+            this.orthographic();
+        } else {
+            this.perspective();
+        }
+
+        if (Array.isArray(position)) this.position.set(position);
+        if (Array.isArray(lookAt)) this.lookAt(lookAt);
     }
 
     perspective({
@@ -3015,7 +3597,7 @@ class Camera extends Transform {
     }
 
     updateFrustum() {
-        if (! this.frustum) {
+        if (!this.frustum) {
             this.frustum = [ new Vec3(), new Vec3(), new Vec3(), new Vec3(), new Vec3(), new Vec3() ];
         }
 
@@ -3035,13 +3617,13 @@ class Camera extends Transform {
     }
 
     frustumIntersectsMesh(node, worldMatrix = node.worldMatrix) {
-        // ??add?? if (! node.geometry) return true;
+        // ??add?? if (!node.geometry) return true;
 
         // If no geometry, or no position attribute, treat as frustumCulled false
-        if (! node.geometry.attributes.position) return true;
+        if (!node.geometry.attributes.position) return true;
 
-        if (! node.geometry.bounds || node.geometry.bounds.radius === Infinity) node.geometry.computeBoundingSphere();
-        if (! node.geometry.bounds) return true;
+        if (!node.geometry.bounds || node.geometry.bounds.radius === Infinity) node.geometry.computeBoundingSphere();
+        if (!node.geometry.bounds) return true;
 
         const center = _tempVec3a;
         center.copy(node.geometry.bounds.center);
@@ -3069,17 +3651,17 @@ class Camera extends Transform {
 // TODO: fit in transform feedback
 
 const _tempVec3$2 = new Vec3();
-let _idGenerator$3 = 1;
+let _idGenerator$2 = 1;
 
 class Geometry {
 
     constructor(attributes = {}) {
-        if (! renderer) console.error(`Geometry.constructor: Renderer not found`);
+        if (!renderer) console.error(`Geometry: Renderer not found`);
 
         this.isGeometry = true;
 
         this.uuid = uuid();
-        this.id = _idGenerator$3++;
+        this.id = _idGenerator$2++;
         this.attributes = {};
 
         this.VAOs = {}; /* store one VAO per program attribute locations order */
@@ -3113,8 +3695,8 @@ class Geometry {
     // }
 
     addAttribute(key, attr) {
-        if (! attr) return console.warn(`Geometry.addAttribute: Attribute for '${key}' missing`);
-        if (! attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
+        if (!attr) return console.warn(`Geometry.addAttribute: Attribute for '${key}' missing`);
+        if (!attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
         const gl = renderer.gl;
 
         // Unbind current VAO so that new buffers don't get added to active mesh
@@ -3129,7 +3711,7 @@ class Geometry {
         // Set options
         attr.key = key;
         attr.size = attr.size || 1;
-        if (! attr.type) {
+        if (!attr.type) {
             switch (attr.data.constructor) {
                 case Float32Array: attr.type = gl.FLOAT; break;
                 case Uint16Array: attr.type = gl.UNSIGNED_SHORT; break;
@@ -3147,7 +3729,7 @@ class Geometry {
         attr.usage = attr.usage || gl.STATIC_DRAW;
 
         // Push data to buffer
-        if (! attr.buffer) this.updateAttribute(attr);
+        if (!attr.buffer) this.updateAttribute(attr);
 
         // Update geometry counts - if indexed, ignore regular attributes
         if (attr.divisor) {
@@ -3159,7 +3741,7 @@ class Geometry {
             this.instancedCount = attr.count * attr.divisor;
         } else if (key === 'index') {
             this.drawRange.count = attr.count;
-        } else if (! this.attributes.index) {
+        } else if (!this.attributes.index) {
             this.drawRange.count = Math.max(this.drawRange.count, attr.count);
         }
     }
@@ -3175,7 +3757,7 @@ class Geometry {
         const gl = renderer.gl;
 
         // New Buffer
-        if (! attr.buffer) {
+        if (!attr.buffer) {
             attr.buffer = gl.createBuffer();
             gl.bindBuffer(attr.target, attr.buffer);
             gl.bufferData(attr.target, attr.data, attr.usage);
@@ -3194,7 +3776,7 @@ class Geometry {
         // Link all attributes to program using gl.vertexAttribPointer
         program.attributeLocations.forEach((location, { name, type }) => {
             // Missing a required shader attribute
-            if (! this.attributes[name]) {
+            if (!this.attributes[name]) {
                 console.warn(`Geometry.bindAttributes: Active attribute '${name}' not being supplied`);
                 return;
             }
@@ -3210,8 +3792,8 @@ class Geometry {
             if (type === 35676) numLoc = 4; // Mat4
 
             const size = attr.size / numLoc;
-            const stride = numLoc === 1 ? 0 : numLoc * numLoc * numLoc;
-            const offset = numLoc === 1 ? 0 : numLoc * numLoc;
+            const stride = numLoc === 1 ? 0 : numLoc * numLoc * 4;
+            const offset = numLoc === 1 ? 0 : numLoc * 4;
 
             for (let i = 0; i < numLoc; i++) {
                 gl.vertexAttribPointer(location + i, size, attr.type, attr.normalized, attr.stride + stride, attr.offset + i * offset);
@@ -3253,7 +3835,7 @@ class Geometry {
         // Make sure current geometry attributes are bound
         if (renderer.currentGeometry !== `${this.id}_${program.attributeOrder}`) {
             // Need to create vertex array object, bind attribute buffers
-            if (! this.VAOs[program.attributeOrder]) {
+            if (!this.VAOs[program.attributeOrder]) {
                 this.VAOs[program.attributeOrder] = gl.createVertexArray();
                 gl.bindVertexArray(this.VAOs[program.attributeOrder]);
                 this.bindAttributes(program);
@@ -3269,6 +3851,10 @@ class Geometry {
             this.updateAttribute(this.attributes.index);
         }
 
+        // For drawElements, offset needs to be multiple of type size
+        let indexBytesPerElement = 2;
+        if (this.attributes.index && this.attributes.index.type === gl.UNSIGNED_INT) indexBytesPerElement = 4;
+
         // Check if program bound attributes need updating
         program.attributeLocations.forEach((location, { name }) => {
             const attr = this.attributes[name];
@@ -3281,7 +3867,7 @@ class Geometry {
                     mode,
                     this.drawRange.count,
                     this.attributes.index.type,
-                    this.attributes.index.offset + this.drawRange.start * 2,
+                    this.attributes.index.offset + this.drawRange.start * indexBytesPerElement,
                     this.instancedCount,
                 );
             } else {
@@ -3289,7 +3875,12 @@ class Geometry {
             }
         } else {
             if (this.attributes.index) {
-                gl.drawElements(mode, this.drawRange.count, this.attributes.index.type, this.attributes.index.offset + this.drawRange.start * 2);
+                gl.drawElements(
+                    mode,
+                    this.drawRange.count,
+                    this.attributes.index.type,
+                    this.attributes.index.offset + this.drawRange.start * indexBytesPerElement
+                );
             } else {
                 gl.drawArrays(mode, this.drawRange.start, this.drawRange.count);
             }
@@ -3302,12 +3893,12 @@ class Geometry {
     /***** Bounding Box *****/
 
     computeBoundingBox(attr) {
-        if (! attr) attr = this.getPosition();
-        if (! attr) return;
+        if (!attr) attr = this.getPosition();
+        if (!attr) return;
         const array = attr.data;
-        const stride = attr.stride ? attr.stride / array.BYTES_PER_ELEMENT : attr.size;
+        const stride = attr.size;
 
-        if (! this.bounds) {
+        if (!this.bounds) {
             this.bounds = {
                 min: new Vec3(),
                 max: new Vec3(),
@@ -3345,12 +3936,12 @@ class Geometry {
     }
 
     computeBoundingSphere(attr) {
-        if (! attr) attr = this.getPosition();
-        if (! attr) return;
+        if (!attr) attr = this.getPosition();
+        if (!attr) return;
         const array = attr.data;
-        const stride = attr.stride ? attr.stride / array.BYTES_PER_ELEMENT : attr.size;
+        const stride = attr.size;
 
-        if (! this.bounds) this.computeBoundingBox(attr);
+        if (!this.bounds) this.computeBoundingBox(attr);
 
         let maxRadiusSq = 0;
         for (let i = 0, l = array.length; i < l; i += stride) {
@@ -3899,23 +4490,23 @@ function multiplyScalar(out, a, b) {
 
 var Mat3Func$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
+    add: add$1,
+    copy: copy$1,
+    determinant: determinant,
     fromMat4: fromMat4,
     fromQuat: fromQuat,
-    copy: copy$1,
-    set: set$1,
     identity: identity$1,
-    transpose: transpose,
     invert: invert,
-    determinant: determinant,
     multiply: multiply$1,
-    translate: translate,
-    rotate: rotate,
-    scale: scale$1,
+    multiplyScalar: multiplyScalar,
     normalFromMat4: normalFromMat4,
     projection: projection,
-    add: add$1,
+    rotate: rotate,
+    scale: scale$1,
+    set: set$1,
     subtract: subtract$1,
-    multiplyScalar: multiplyScalar
+    translate: translate,
+    transpose: transpose
 });
 
 class Mat3 extends Array {
@@ -4001,7 +4592,7 @@ class Mesh extends Transform {
         frustumCulled = true,
         renderOrder = 0
     } = {}) {
-        if (! renderer) console.error(`Mesh.constructor: Renderer not found`);
+        if (!renderer) console.error(`Mesh: Renderer not found`);
 
         super();
         this.isMesh = true;
@@ -4032,13 +4623,10 @@ class Mesh extends Transform {
     }
 
     draw({ camera } = {}) {
-        // Before render
-        this.beforeRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
-
         // Set camera uniforms
         if (camera) {
             // Add empty matrix uniforms to program if unset
-            if (! this.program.uniforms.modelMatrix) {
+            if (!this.program.uniforms.modelMatrix) {
                 Object.assign(this.program.uniforms, {
                     modelMatrix: { value: null },
                     viewMatrix: { value: null },
@@ -4060,6 +4648,9 @@ class Mesh extends Transform {
             this.program.uniforms.normalMatrix.value = this.normalMatrix;
         }
 
+        // Before render
+        this.beforeRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
+
         // Determine if faces need to be flipped (when mesh scaled negatively)
         const flipFaces = this.program.cullFace && this.worldMatrix.determinant() < 0;
 
@@ -4077,7 +4668,7 @@ class Mesh extends Transform {
 // TODO: sampler Cube
 
 const _arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
-let _idGenerator$2 = 1;
+let _idGenerator$1 = 1;
 
 class Program {
 
@@ -4094,13 +4685,13 @@ class Program {
         depthWrite = true,
         depthFunc = renderer.gl.LESS,
     } = {}) {
-        if (! renderer) console.error(`Program.constructor: Renderer not found`);
-        if (! vertex) console.warn('Program.constructor: Vertex shader not supplied');
-        if (! fragment) console.warn('Program.constructor: Fragment shader not supplied');
+        if (!renderer) console.error(`Program: Renderer not found`);
+        if (!vertex) console.warn('Program: Vertex shader not supplied');
+        if (!fragment) console.warn('Program: Fragment shader not supplied');
         const gl = renderer.gl;
 
         this.uuid = uuid();
-        this.id = _idGenerator$2++;
+        this.id = _idGenerator$1++;
         this.uniforms = uniforms;
 
         // Store program state
@@ -4131,14 +4722,14 @@ class Program {
         const customDefines = generateDefines(defines);
 
         let prefixVertex = [
-			customDefines
-		].filter(filterEmptyLine).join('\n');
+            customDefines
+        ].filter(filterEmptyLine).join('\n');
         if (prefixVertex.length > 0) prefixVertex += '\n';
 
-		let prefixFragment = [
-			customDefines
-		].filter(filterEmptyLine).join('\n');
-		if (prefixFragment.length > 0) prefixFragment += '\n';
+        let prefixFragment = [
+            customDefines
+        ].filter(filterEmptyLine).join('\n');
+        if (prefixFragment.length > 0) prefixFragment += '\n';
 
         let vertexGlsl, fragmentGlsl;
         if (vertex.includes('#version 300 es')) {
@@ -4175,7 +4766,7 @@ class Program {
         gl.attachShader(this.program, vertexShader);
         gl.attachShader(this.program, fragmentShader);
         gl.linkProgram(this.program);
-        if (! gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+        if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
             return console.warn(gl.getProgramInfoLog(this.program));
         }
 
@@ -4220,7 +4811,8 @@ class Program {
         }
         this.attributeOrder = locations.join('');
 
-        console.log(this.attributeOrder);
+        // // DEBUG
+        // console.log(this.attributeOrder);
     }
 
     setBlendFunc(src, dst, srcAlpha, dstAlpha) {
@@ -4262,7 +4854,7 @@ class Program {
 
         // Avoid gl call if program already in use
         const programActive = (renderer.state.currentProgram === this.id);
-        if (! programActive) {
+        if (!programActive) {
             gl.useProgram(this.program);
             renderer.state.currentProgram = this.id;
         }
@@ -4284,7 +4876,7 @@ class Program {
                 name += `[${activeUniform.structIndex}].${activeUniform.structProperty}`;
             }
 
-            if (! uniform) {
+            if (!uniform) {
                 return warn(`Active uniform ${name} has not been supplied`);
             }
 
@@ -4327,7 +4919,7 @@ class Program {
 
 }
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 function setUniform(gl, type, location, value) {
     value = value.length ? flatten(value) : value;
@@ -4350,35 +4942,38 @@ function setUniform(gl, type, location, value) {
         renderer.state.uniformLocations.set(location, value);
     }
 
+    // TYPES, https://registry.khronos.org/webgl/specs/latest/1.0/#DOM-WebGLActiveInfo-type
     switch (type) {
-        case 5126:
-            return value.length ? gl.uniform1fv(location, value) : gl.uniform1f(location, value); // FLOAT
-        case 35664:
-            return gl.uniform2fv(location, value); // FLOAT_VEC2
-        case 35665:
-            return gl.uniform3fv(location, value); // FLOAT_VEC3
-        case 35666:
-            return gl.uniform4fv(location, value); // FLOAT_VEC4
-        case 35670: // BOOL
-        case 5124: // INT
-        case 35678: // SAMPLER_2D
-        case 35680:
-            return value.length ? gl.uniform1iv(location, value) : gl.uniform1i(location, value); // SAMPLER_CUBE
-        case 35671: // BOOL_VEC2
-        case 35667:
-            return gl.uniform2iv(location, value); // INT_VEC2
-        case 35672: // BOOL_VEC3
-        case 35668:
-            return gl.uniform3iv(location, value); // INT_VEC3
-        case 35673: // BOOL_VEC4
-        case 35669:
-            return gl.uniform4iv(location, value); // INT_VEC4
-        case 35674:
-            return gl.uniformMatrix2fv(location, false, value); // FLOAT_MAT2
-        case 35675:
-            return gl.uniformMatrix3fv(location, false, value); // FLOAT_MAT3
-        case 35676:
-            return gl.uniformMatrix4fv(location, false, value); // FLOAT_MAT4
+        case 5126: // FLOAT
+            if (value.length) return gl.uniform1fv(location, value);
+            return gl.uniform1f(location, value);
+        case 35664: // FLOAT_VEC2       0x8B50
+            return gl.uniform2fv(location, value);
+        case 35665: // FLOAT_VEC3       0x8B51
+            return gl.uniform3fv(location, value);
+        case 35666: // FLOAT_VEC4       0x8B52
+            return gl.uniform4fv(location, value);
+        case 35667: // INT_VEC2         0x8B53
+        case 35671: // BOOL_VEC2        0x8B57
+            return gl.uniform2iv(location, value);
+        case 35668: // INT_VEC3         0x8B54
+        case 35672: // BOOL_VEC3        0x8B58
+            return gl.uniform3iv(location, value);
+        case 35669: // INT_VEC4         0x8B55
+        case 35673: // BOOL_VEC4        0x8B59
+            return gl.uniform4iv(location, value);
+        case 35674: // FLOAT_MAT2       0x8B5A
+            return gl.uniformMatrix2fv(location, false, value);
+        case 35675: // FLOAT_MAT3       0x8B5B
+            return gl.uniformMatrix3fv(location, false, value);
+        case 35676: // FLOAT_MAT4       0x8B5C
+            return gl.uniformMatrix4fv(location, false, value);
+        case 5124:  // INT
+        case 35670: // BOOL             0x8B56
+        case 35678: // SAMPLER_2D       0x8B5E
+        case 35680: // SAMPLER_CUBE     0x8B60
+            if (value.length) return gl.uniform1iv(location, value); /* is array */
+            return gl.uniform1i(location, value); /* not array */
     }
 }
 
@@ -4396,7 +4991,7 @@ function flatten(a) {
     if (valueLen === undefined) return a;
     const length = arrayLen * valueLen;
     let value = _arrayCacheF32[length];
-    if (! value) _arrayCacheF32[length] = value = new Float32Array(length);
+    if (!value) _arrayCacheF32[length] = value = new Float32Array(length);
     for (let i = 0; i < arrayLen; i++) value.set(a[i], i * valueLen);
     return value;
 }
@@ -4429,17 +5024,17 @@ function warn(message) {
  * @returns {String}
  */
 function generateDefines(defines) {
-	const chunks = [];
-	for (const name in defines) {
-		const value = defines[name];
-		if (value === false) continue;
-		chunks.push('#define ' + name + ' ' + value);
-	}
-	return chunks.join('\n');
+    const chunks = [];
+    for (const name in defines) {
+        const value = defines[name];
+        if (value === false) continue;
+        chunks.push('#define ' + name + ' ' + value);
+    }
+    return chunks.join('\n');
 }
 
 function filterEmptyLine(string) {
-	return string !== '';
+    return string !== '';
 }
 
 const NAMES = {
@@ -4467,7 +5062,7 @@ const NAMES = {
 function hexToRGB(hex) {
     if (hex.length === 4) hex = hex[0] + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
     const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (! rgb) console.warn(`ColorFunc.hexToRGB: Unable to convert hex string ${hex} to rgb values`);
+    if (!rgb) console.warn(`ColorFunc.hexToRGB: Unable to convert hex string ${hex} to rgb values`);
     return [ parseInt(rgb[1], 16) / 255, parseInt(rgb[2], 16) / 255, parseInt(rgb[3], 16) / 255 ];
 }
 
@@ -4503,7 +5098,7 @@ function parseColor(color) {
     }
 
     // Number (16711680)
-    if (! isNaN(color)) return numberToRGB(color);
+    if (!isNaN(color)) return numberToRGB(color);
 
     // Hex String (#ff0000)
     if (color[0] === '#') return hexToRGB(color);
@@ -4589,7 +5184,7 @@ class Color extends Array {
 // TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
 
 const _tempVec3$1 = new Vec3();
-let _idGenerator$1 = 1;
+let _idGenerator = 1;
 
 class Renderer {
 
@@ -4608,7 +5203,7 @@ class Renderer {
     } = {}) {
 
         this.uuid = uuid();
-        this.id = _idGenerator$1++;
+        this.id = _idGenerator++;
         this.dpr = dpr;
 
         this.color = true;
@@ -4646,7 +5241,7 @@ class Renderer {
 
         // WebGL2 Context
         gl = canvas.getContext('webgl2', attributes);
-        if (! gl) console.error('Renderer.constructor: Unable to create WebGL 2 context');
+        if (!gl) console.error('Renderer: Unable to create WebGL 2 context');
         this.gl = gl;
 
         // GLOBAL: So all classes have access to internal state functions
@@ -4690,7 +5285,7 @@ class Renderer {
             self.maxAnisotropy = 0;
             if (self.extensions['EXT_texture_filter_anisotropic']) {
                 const extension = self.extensions['EXT_texture_filter_anisotropic'];
-			    this.maxAnisotropy = gl.getParameter(extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+                this.maxAnisotropy = gl.getParameter(extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
             }
         };
         initContext(this);
@@ -4711,8 +5306,8 @@ class Renderer {
     }
 
     getExtension(name, logWarning = false) {
-        if (! this.extensions[name]) this.extensions[name] = this.gl.getExtension(name);
-        if (! this.extensions[name] && logWarning) {
+        if (!this.extensions[name]) this.extensions[name] = this.gl.getExtension(name);
+        if (!this.extensions[name] && logWarning) {
             console.warn(`Renderer.getExtension: ${name} extension not supported.`);
         }
         return this.extensions[name];
@@ -4727,7 +5322,7 @@ class Renderer {
             this.gl.canvas.width = width * this.dpr;
             this.gl.canvas.height = height * this.dpr;
 
-            if (updateStyle) {
+            if (updateStyle && this.gl.canvas.style) {
                 this.gl.canvas.style.width = width + 'px';
                 this.gl.canvas.style.height = height + 'px';
             }
@@ -4868,9 +5463,9 @@ class Renderer {
         // Get visible objects
         let renderList = [];
         scene.traverse((node) => {
-            if (! node.visible) return true; /* stop traversing children (all children become invisible) */
-            if (! node.draw) return;
-            if (frustumCull && node.frustumCulled && camera && ! camera.frustumIntersectsMesh(node)) return;
+            if (!node.visible) return true; /* stop traversing children (all children become invisible) */
+            if (!node.draw) return;
+            if (frustumCull && node.frustumCulled && camera && !camera.frustumIntersectsMesh(node)) return;
             renderList.push(node);
         });
 
@@ -4882,7 +5477,7 @@ class Renderer {
 
             renderList.forEach((node) => {
                 // Split into the 3 render groups
-                if (! node.program.transparent) {
+                if (!node.program.transparent) {
                     opaque.push(node);
                 } else if (node.program.depthTest) {
                     transparent.push(node);
@@ -4893,7 +5488,7 @@ class Renderer {
                 node.zDepth = 0;
 
                 // Only calculate z-depth if renderOrder unset and depthTest is true
-                if (node.renderOrder !== 0 || ! node.program.depthTest || ! camera) return;
+                if (node.renderOrder !== 0 || !node.program.depthTest || !camera) return;
 
                 // Update z-depth
                 node.worldMatrix.getTranslation(_tempVec3$1);
@@ -4918,8 +5513,7 @@ class Renderer {
         update = true,
         clear = true,
     } = {}) {
-
-        if (! target) {
+        if (!target) {
             this.bindFramebuffer();         // to screen
             this.setViewport(this.width * this.dpr, this.height * this.dpr);
         } else {
@@ -4929,7 +5523,7 @@ class Renderer {
 
         if (clear) {
             // Ensure depth buffer writing is enabled so it can be cleared
-            if (this.depth && (! target || target.depth)) {
+            if (this.depth && (!target || target.depth)) {
                 this.enable(this.gl.DEPTH_TEST);
                 this.setDepthMask(true);
             }
@@ -4970,230 +5564,6 @@ class Renderer {
         // Return list
         this.lastScene = scene;
         return renderList;
-    }
-
-}
-
-// TODO: delete (flush)  texture
-// TODO: use texSubImage2D for updates (video or when loaded)
-// TODO: need? encoding = linearEncoding
-// TODO: support non-compressed mipmaps uploads
-
-const _emptyPixel = new Uint8Array(4);
-let _idGenerator = 1;
-
-class Texture {
-
-    constructor({
-        image,
-        target = renderer.gl.TEXTURE_2D,
-        type = renderer.gl.UNSIGNED_BYTE,
-        format = renderer.gl.RGBA,
-        internalFormat = format,
-        wrapS = renderer.gl.CLAMP_TO_EDGE,
-        wrapT = renderer.gl.CLAMP_TO_EDGE,
-        generateMipmaps = true,
-        minFilter = generateMipmaps ? renderer.gl.NEAREST_MIPMAP_LINEAR : renderer.gl.LINEAR,
-        magFilter = renderer.gl.LINEAR,
-        premultiplyAlpha = false,
-        unpackAlignment = 4,
-        flipY = target == renderer.gl.TEXTURE_2D ? true : false,
-        anisotropy = 0,
-        level = 0,
-        width, // used for RenderTargets or Data Textures
-        height = width,
-    } = {}) {
-        if (! renderer) console.error(`Texture.constructor: Renderer not found`);
-        const gl = renderer.gl;
-
-        this.isTexture = true;
-
-        this.uuid = uuid();
-        this.id = _idGenerator++;
-
-        this.image = image;
-        this.target = target;
-        this.type = type;
-        this.format = format;
-        this.internalFormat = internalFormat;
-        this.wrapS = wrapS;
-        this.wrapT = wrapT;
-        this.generateMipmaps = generateMipmaps;
-        this.minFilter = minFilter;
-        this.magFilter = magFilter;
-        this.premultiplyAlpha = premultiplyAlpha;
-        this.unpackAlignment = unpackAlignment;
-        this.flipY = flipY;
-        this.anisotropy = Math.min(anisotropy, renderer.maxAnisotropy);
-        this.level = level;
-        this.width = width;
-        this.height = height;
-
-        this.texture = gl.createTexture();
-        renderer.info.textures++;
-
-        this.store = {
-            image: null,
-        };
-
-        // Alias for state store to avoid redundant calls for global state
-        renderer.glState = renderer.state;
-
-        // State store to avoid redundant calls for per-texture state
-        this.state = {};
-        this.state.minFilter = gl.NEAREST_MIPMAP_LINEAR;
-        this.state.magFilter = gl.LINEAR;
-        this.state.wrapS = gl.REPEAT;
-        this.state.wrapT = gl.REPEAT;
-        this.state.anisotropy = 0;
-    }
-
-    bind() {
-        // Already bound to active texture unit
-        if (renderer.glState.textureUnits[renderer.glState.activeTextureUnit] === this.id) return;
-
-        // Bind
-        renderer.gl.bindTexture(this.target, this.texture);
-        renderer.glState.textureUnits[renderer.glState.activeTextureUnit] = this.id;
-    }
-
-    update(textureUnit = 0) {
-        const gl = renderer.gl;
-        const needsUpdate = ! (this.image === this.store.image && ! this.needsUpdate);
-
-        // Make sure that texture is bound to its texture unit
-        if (needsUpdate || renderer.glState.textureUnits[textureUnit] !== this.id) {
-            // Set active texture unit to perform texture functions
-            renderer.activeTexture(textureUnit);
-            this.bind();
-        }
-
-        if (! needsUpdate) return;
-        this.needsUpdate = false;
-
-        if (this.flipY !== renderer.glState.flipY) {
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY);
-            renderer.glState.flipY = this.flipY;
-        }
-
-        if (this.premultiplyAlpha !== renderer.glState.premultiplyAlpha) {
-            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha);
-            renderer.glState.premultiplyAlpha = this.premultiplyAlpha;
-        }
-
-        if (this.unpackAlignment !== renderer.glState.unpackAlignment) {
-            gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment);
-            renderer.glState.unpackAlignment = this.unpackAlignment;
-        }
-
-        if (this.minFilter !== this.state.minFilter) {
-            gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this.minFilter);
-            this.state.minFilter = this.minFilter;
-        }
-
-        if (this.magFilter !== this.state.magFilter) {
-            gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this.magFilter);
-            this.state.magFilter = this.magFilter;
-        }
-
-        if (this.wrapS !== this.state.wrapS) {
-            gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, this.wrapS);
-            this.state.wrapS = this.wrapS;
-        }
-
-        if (this.wrapT !== this.state.wrapT) {
-            gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, this.wrapT);
-            this.state.wrapT = this.wrapT;
-        }
-
-        if (this.anisotropy && this.anisotropy !== this.state.anisotropy) {
-            gl.texParameterf(
-                this.target,
-                renderer.getExtension('EXT_texture_filter_anisotropic').TEXTURE_MAX_ANISOTROPY_EXT,
-                this.anisotropy
-            );
-            this.state.anisotropy = this.anisotropy;
-        }
-
-        if (this.image) {
-            if (this.image.width) {
-                this.width = this.image.width;
-                this.height = this.image.height;
-            }
-
-            if (this.target === gl.TEXTURE_CUBE_MAP) {
-                // For cube maps
-                for (let i = 0; i < 6; i++) {
-                    gl.texImage2D(
-                        gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                        this.level,
-                        this.internalFormat,
-                        this.format,
-                        this.type,
-                        this.image[i]
-                    );
-                }
-            } else if (ArrayBuffer.isView(this.image)) {
-                // Data texture
-                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, this.image);
-            } else if (this.image.isCompressedTexture) {
-                // Compressed texture
-                for (let level = 0; level < this.image.length; level++) {
-                    gl.compressedTexImage2D(
-                        this.target,
-                        level,
-                        this.internalFormat,
-                        this.image[level].width,
-                        this.image[level].height,
-                        0,
-                        this.image[level].data
-                    );
-                }
-            } else {
-                // Regular texture
-                gl.texImage2D(this.target, this.level, this.internalFormat, this.format, this.type, this.image);
-            }
-
-            if (this.generateMipmaps) {
-                gl.generateMipmap(this.target);
-            }
-
-            // Callback for when data is pushed to GPU
-            if (this.onUpdate) this.onUpdate();
-        } else {
-            if (this.target === gl.TEXTURE_CUBE_MAP) {
-                // Upload empty pixel for each side while no image to avoid errors while image or video loading
-                for (let i = 0; i < 6; i++) {
-                    gl.texImage2D(
-                        gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                        0,
-                        gl.RGBA,
-                        1,
-                        1,
-                        0,
-                        gl.RGBA,
-                        gl.UNSIGNED_BYTE,
-                        _emptyPixel
-                    );
-                }
-            } else if (this.width) {
-                // Image intentionally left null for RenderTarget
-                gl.texImage2D(this.target, this.level, this.internalFormat, this.width, this.height, 0, this.format, this.type, null);
-            } else {
-                // Upload empty pixel if no image to avoid errors while image or video loading
-                gl.texImage2D(this.target, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, _emptyPixel);
-            }
-        }
-
-        this.store.image = this.image;
-    }
-
-    flush() {
-
-        // TODO
-
-        renderer.info.textures--;
-
     }
 
 }
@@ -5273,11 +5643,12 @@ class RenderTarget {
                 internalFormat: gl.DEPTH_COMPONENT16,
                 type: gl.UNSIGNED_INT,
             });
+            console.log('Depth!');
             this.depthTexture.update();
             gl.framebufferTexture2D(this.target, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthTexture.texture, 0 /* level */);
         } else {
             // Render buffers
-            if (depth && ! stencil) {
+            if (depth && !stencil) {
                 this.depthBuffer = gl.createRenderbuffer();
                 gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthBuffer);
                 gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
@@ -5343,426 +5714,11 @@ class RenderTarget {
 
         renderer.bindFramebuffer({ target: this.target });
     }
-}
 
-// TODO: Support cubemaps
-// Generate textures using https://github.com/TimvanScherpenzeel/texture-compressor
+    flush() {
 
-class KTXTexture extends Texture {
+        // TODO
 
-    constructor({
-        buffer,
-        wrapS = renderer.gl.CLAMP_TO_EDGE,
-        wrapT = renderer.gl.CLAMP_TO_EDGE,
-        anisotropy = 0,
-        minFilter,
-        magFilter
-    } = {}) {
-        super({
-            generateMipmaps: false,
-            wrapS,
-            wrapT,
-            anisotropy,
-            minFilter,
-            magFilter,
-        });
-
-        if (buffer) return this.parseBuffer(buffer);
-    }
-
-    parseBuffer(buffer) {
-        const ktx = new KhronosTextureContainer(buffer);
-        ktx.mipmaps.isCompressedTexture = true;
-
-        // Update texture
-        this.image = ktx.mipmaps;
-        this.internalFormat = ktx.glInternalFormat;
-        if (ktx.numberOfMipmapLevels > 1) {
-            if (this.minFilter === renderer.gl.LINEAR) this.minFilter = renderer.gl.NEAREST_MIPMAP_LINEAR;
-        } else {
-            if (this.minFilter === renderer.gl.NEAREST_MIPMAP_LINEAR) this.minFilter = renderer.gl.LINEAR;
-        }
-
-        // TODO: support cube maps
-        // ktx.numberOfFaces
-    }
-}
-
-/***** Internal *****/
-
-function KhronosTextureContainer(buffer) {
-    const idCheck = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
-    const id = new Uint8Array(buffer, 0, 12);
-    for (let i = 0; i < id.length; i++) {
-        if (id[i] !== idCheck[i]) return console.error('KTXTexture: File missing KTX identifier');
-    }
-
-    // TODO: Is this always 4? Tested: [android, macos]
-    const size = Uint32Array.BYTES_PER_ELEMENT;
-    const head = new DataView(buffer, 12, 13 * size);
-    const littleEndian = head.getUint32(0, true) === 0x04030201;
-    const glType = head.getUint32(1 * size, littleEndian);
-    if (glType !== 0) return console.warn('KTXTexture: Only compressed formats currently supported.');
-    this.glInternalFormat = head.getUint32(4 * size, littleEndian);
-    let width = head.getUint32(6 * size, littleEndian);
-    let height = head.getUint32(7 * size, littleEndian);
-    this.numberOfFaces = head.getUint32(10 * size, littleEndian);
-    this.numberOfMipmapLevels = Math.max(1, head.getUint32(11 * size, littleEndian));
-    const bytesOfKeyValueData = head.getUint32(12 * size, littleEndian);
-
-    this.mipmaps = [];
-    let offset = 12 + 13 * 4 + bytesOfKeyValueData;
-    for (let level = 0; level < this.numberOfMipmapLevels; level++) {
-        const levelSize = new Int32Array(buffer, offset, 1)[0]; // size per face, since not supporting array cubemaps
-        offset += 4; // levelSize field
-        for (let face = 0; face < this.numberOfFaces; face++) {
-            const data = new Uint8Array(buffer, offset, levelSize);
-            this.mipmaps.push({ data, width, height });
-            offset += levelSize;
-            offset += 3 - ((levelSize + 3) % 4); // add padding for odd sized image
-        }
-        width = width >> 1;
-        height = height >> 1;
-    }
-}
-
-// For compressed textures, generate using https://github.com/TimvanScherpenzeel/texture-compressor
-
-class TextureLoader {
-
-    static #cache = {};
-    static #supportedExtensions = [];
-
-    static load({
-        src, // string or object of extension:src key-values
-        // {
-        //     pvrtc: '...ktx',
-        //     s3tc: '...ktx',
-        //     etc: '...ktx',
-        //     etc1: '...ktx',
-        //     astc: '...ktx',
-        //     webp: '...webp',
-        //     jpg: '...jpg',
-        //     png: '...png',
-        // }
-
-        // Properties for Texture only
-        format = renderer.gl.RGBA,
-        internalFormat = format,
-        generateMipmaps = true,
-        premultiplyAlpha = false,
-        unpackAlignment = 4,
-        flipY = true,
-
-        // Properties for Texture & KTXTexture
-        wrapS = renderer.gl.CLAMP_TO_EDGE,
-        wrapT = renderer.gl.CLAMP_TO_EDGE,
-        anisotropy = 0,
-        minFilter = generateMipmaps ? renderer.gl.NEAREST_MIPMAP_LINEAR : renderer.gl.LINEAR,
-        magFilter = renderer.gl.LINEAR,
-    } = {}) {
-
-        if (! src || src === '') {
-            console.warn(`TextureLoader: No source provided`);
-            return new Texture();
-        }
-
-        const support = this.getSupportedExtensions();
-        let ext = 'none';
-
-        // If src is string, determine which format from the extension
-        if (typeof src === 'string') {
-            ext = src.split('.').pop().split('?')[0].toLowerCase();
-        }
-
-        // If src is object, use supported extensions and provided list to choose best option
-        // Get first supported match, so put in order of preference
-        if (typeof src === 'object') {
-            for (const prop in src) {
-                if (support.includes(prop.toLowerCase())) {
-                    ext = prop.toLowerCase();
-                    src = src[prop];
-                    break;
-                }
-            }
-        }
-
-        // Check cache for existing texture
-        const cacheID = src;// + renderer.id;
-        if (this.#cache[cacheID]) return this.#cache[cacheID];
-
-        let texture;
-        switch (ext) {
-            case 'ktx':
-            case 'pvrtc':
-            case 's3tc':
-            case 'etc':
-            case 'etc1':
-            case 'astc':
-                // Load compressed texture using KTX format
-                texture = new KTXTexture({
-                    src,
-                    wrapS,
-                    wrapT,
-                    anisotropy,
-                    minFilter,
-                    magFilter,
-                });
-                texture.loaded = loadKTX(src, texture);
-                break;
-            case 'webp':
-            case 'svg':
-            case 'jpg':
-            case 'jpeg':
-            case 'png':
-                texture = new Texture({
-                    wrapS,
-                    wrapT,
-                    anisotropy,
-                    format,
-                    internalFormat,
-                    generateMipmaps,
-                    minFilter,
-                    magFilter,
-                    premultiplyAlpha,
-                    unpackAlignment,
-                    flipY,
-                });
-                texture.loaded = loadImage(src, texture, flipY);
-                break;
-            default:
-                console.warn(`TextureLoader: Format not supported - '${ext}'`);
-                texture = new Texture();
-        }
-
-        texture.ext = ext;
-        this.#cache[cacheID] = texture;
-        return texture;
-    }
-
-    static getSupportedExtensions(logWarnings = false) {
-        if (this.#supportedExtensions.length) return this.#supportedExtensions;
-
-        const extensions = {
-            pvrtc: renderer.getExtension('WEBGL_compressed_texture_pvrtc', logWarnings),
-            s3tc: renderer.getExtension('WEBGL_compressed_texture_s3tc', logWarnings),
-            etc1: renderer.getExtension('WEBGL_compressed_texture_etc1', logWarnings),
-            astc: renderer.getExtension('WEBGL_compressed_texture_astc', logWarnings),
-            bc7: renderer.getExtension('EXT_texture_compression_bptc', logWarnings),
-        };
-
-        for (const ext in extensions) {
-            if (extensions[ext]) this.#supportedExtensions.push(ext);
-        }
-
-        // Check for WebP support
-        if (detectWebP()) this.#supportedExtensions.push('webp');
-
-        // Formats supported by all
-        this.#supportedExtensions.push('png', 'jpg', 'svg');
-
-        return this.#supportedExtensions;
-    }
-
-    static removeFromCache(texture) {
-        for (let url in this.#cache) {
-            if (this.#cache[url].uuid === texture.uuid) delete this.#cache[url];
-        }
-    }
-
-}
-
-/***** Internal *****/
-
-function detectWebP() {
-    return document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') == 0;
-}
-
-function powerOfTwo(value) {
-    // (width & (width - 1)) !== 0
-    return Math.log2(value) % 1 === 0;
-}
-
-function nameFromUrl(url) {
-    let imageName = new String(url.replace(/^.*[\\\/]/, ''));       // Filename only
-    imageName = imageName.replace(/\.[^/.]+$/, "");                 // Remove extension
-    return imageName;
-}
-
-function loadKTX(src, texture) {
-    return fetch(src)
-        .then((res) => res.arrayBuffer())
-        .then((buffer) => texture.parseBuffer(buffer));
-}
-
-function loadImage(src, texture, flipY) {
-    return decodeImage(src, flipY).then((imgBmp) => {
-        // // Catch non POT textures and update params to avoid errors
-        // if (! powerOfTwo(imgBmp.width) || ! powerOfTwo(imgBmp.height)) {
-        //     if (texture.generateMipmaps) texture.generateMipmaps = false;
-        //     if (texture.minFilter === renderer.gl.NEAREST_MIPMAP_LINEAR) texture.minFilter = renderer.gl.LINEAR;
-        //     if (texture.wrapS === renderer.gl.REPEAT) texture.wrapS = texture.wrapT = renderer.gl.CLAMP_TO_EDGE;
-        // }
-
-        texture.name = nameFromUrl(src);
-        texture.image = imgBmp;
-
-        // For createImageBitmap, close once uploaded
-        texture.onUpdate = () => {
-            if (imgBmp.close) imgBmp.close();
-            texture.onUpdate = null;
-        };
-
-        return imgBmp;
-    });
-}
-
-function decodeImage(src, flipY) {
-    return new Promise((resolve) => {
-        // Only chrome's implementation of createImageBitmap is fully supported
-        const isChrome = navigator.userAgent.toLowerCase().includes('chrome');
-        if (!!window.createImageBitmap && isChrome) {
-            fetch(src, { mode: 'cors' })
-                .then(response => response.blob())
-                .then(image => createImageBitmap(image, { imageOrientation: flipY ? 'flipY' : 'none', premultiplyAlpha: 'none' }))
-                .then(resolve);
-        } else {
-            const img = new Image();
-            img.crossOrigin = '';
-            img.src = src;
-            img.onload = () => resolve(img);
-        }
-    });
-}
-
-class AssetManager {
-
-    static #assets = {};
-
-    static assetType(asset) {
-        if (asset.isGeometry) return 'geometry';
-        if (asset.isTexture) return 'texture';
-        return 'asset';
-    }
-
-    static getLibrary(type) {
-        const library = [];
-        for (const [uuid, asset] of Object.entries(this.#assets)) {
-            if (AssetManager.assetType(asset) === type) library.push(asset);
-        }
-        return library;
-    }
-
-    /***** Add / Get / Remove *****/
-
-    static addAsset(assetOrArray) {
-        if (! assetOrArray) return;
-        const assetArray = (Array.isArray(assetOrArray)) ? assetOrArray : [ assetOrArray ];
-        for (let i = 0; i < assetArray.length; i++) {
-            const asset = assetArray[i];
-            if (! asset.uuid) continue;
-            if (! asset.name || asset.name === '') asset.name = asset.constructor.name;
-            this.#assets[asset.uuid] = asset;
-        }
-        return assetOrArray;
-    }
-
-    static getAsset(uuid) {
-        if (! uuid) return;
-        if (uuid.uuid) uuid = uuid.uuid;
-        return this.#assets[uuid];
-    }
-
-    static removeAsset(assetOrArray, flush = true) {
-        if (! assetOrArray) return;
-        const assetArray = (Array.isArray(assetOrArray)) ? assetOrArray : [ assetOrArray ];
-
-        for (let i = 0; i < assetArray.length; i++) {
-            const asset = assetArray[i];
-            if (this.#assets[asset.uuid]) {
-                // Remove textures from cache
-                if (asset.isTexture) TextureLoader.removeFromCache(asset);
-
-                // Flush & Delete
-                if (flush) asset.flush && asset.flush();
-                delete this.#assets[asset.uuid];
-            }
-        }
-    }
-
-    /***** JSON *****/
-
-    static clear() {
-        for (let uuid in _assets) {
-            AssetManager.removeAsset(_assets[uuid], true);
-        }
-    }
-
-    static fromJSON(json) {
-
-        // Clear Assets
-        AssetManager.clear();
-
-        // Add to Assets
-        function addLibraryToAssets(library) {
-            for (const [uuid, asset] of Object.entries(library)) {
-                AssetManager.addAsset(asset);
-            }
-        }
-
-        // // Load Assets
-		// const objectLoader = new THREE.ObjectLoader();
-		// const geometries = objectLoader.parseGeometries(json.geometries, {});
-		// const images = objectLoader.parseImages(json.images);
-		// const textures = objectLoader.parseTextures(json.textures, images);
-
-        // addLibraryToAssets(geometries);
-        // addLibraryToAssets(images);
-        // addLibraryToAssets(textures);
-
-    }
-
-    static toJSON(meta) {
-
-        const json = {};
-
-        // if (! meta) meta = {};
-        // if (! meta.geometries) meta.geometries = {};
-        // if (! meta.images) meta.images = {};
-        // if (! meta.textures) meta.textures = {};
-
-        // const stopRoot = {
-        //     images: {},
-        //     textures: {},
-        //     materials: {},
-        // };
-
-        // // Geometries
-        // const geometries = AssetManager.getLibrary('geometry');
-        // for (let i = 0; i < geometries.length; i++) {
-        //     const geometry = geometries[i];
-        //     if (! meta.geometries[geometry.uuid]) meta.geometries[geometry.uuid] = geometry.toJSON(meta);
-        // }
-
-        // // Textures
-        // const textures = AssetManager.getLibrary('texture');
-        // for (let i = 0; i < textures.length; i++) {
-        //     const texture = textures[i];
-        //     if (! meta.textures[texture.uuid]) meta.textures[texture.uuid] = texture.toJSON(meta);
-        // }
-
-        // // Add 'meta' caches to 'json' as arrays
-        // for (const library in meta) {
-        //     const valueArray = [];
-        //     for (const key in meta[library]) {
-        //         const data = meta[library][key];
-        //         delete data.metadata;
-        //         valueArray.push(data);
-        //     }
-        //     if (valueArray.length > 0) json[library] = valueArray;
-        // }
-
-        return json;
     }
 
 }
@@ -5821,8 +5777,8 @@ class Post {
     }
 
     addPass({
-        vertex = defaultVertex$4,
-        fragment = defaultFragment$4,
+        vertex = defaultVertex$6,
+        fragment = defaultFragment$6,
         uniforms = {},
         textureUniform = 'tDiffuse',
         enabled = true
@@ -5866,11 +5822,11 @@ class Post {
     render({ scene, camera, texture, target = null, update = true, sort = true, frustumCull = true }) {
         const enabledPasses = this.passes.filter((pass) => pass.enabled);
 
-        if (! texture) {
+        if (!texture) {
             renderer.render({
                 scene,
                 camera,
-                target: enabledPasses.length || (! target && this.targetOnly) ? this.fbo.write : target,
+                target: enabledPasses.length || (!target && this.targetOnly) ? this.fbo.write : target,
                 update,
                 sort,
                 frustumCull,
@@ -5879,10 +5835,10 @@ class Post {
         }
 
         enabledPasses.forEach((pass, i) => {
-            pass.mesh.program.uniforms[pass.textureUniform].value = ! i && texture ? texture : this.fbo.read.texture;
+            pass.mesh.program.uniforms[pass.textureUniform].value = !i && texture ? texture : this.fbo.read.texture;
             renderer.render({
                 scene: pass.mesh,
-                target: i === enabledPasses.length - 1 && (target || ! this.targetOnly) ? target : this.fbo.write,
+                target: i === enabledPasses.length - 1 && (target || !this.targetOnly) ? target : this.fbo.write,
                 clear: true,
             });
             this.fbo.swap();
@@ -5893,9 +5849,9 @@ class Post {
 
 }
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
-const defaultVertex$4 = /* glsl */ `
+const defaultVertex$6 = /* glsl */ `
     attribute vec2 uv;
     attribute vec2 position;
 
@@ -5907,7 +5863,7 @@ const defaultVertex$4 = /* glsl */ `
     }
 `;
 
-const defaultFragment$4 = /* glsl */ `
+const defaultFragment$6 = /* glsl */ `
     precision highp float;
 
     uniform sampler2D tDiffuse;
@@ -6145,7 +6101,7 @@ function cross(a, b) {
  * @param {Number} t interpolation amount between the two inputs
  * @returns {Vec2} out
  */
-function lerp(out, a, b, t) {
+function lerp$1(out, a, b, t) {
     var ax = a[0],
         ay = a[1];
     out[0] = ax + t * (b[0] - ax);
@@ -6201,26 +6157,26 @@ function exactEquals(a, b) {
 
 var Vec2Func$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    copy: copy,
-    set: set,
     add: add,
-    subtract: subtract,
-    multiply: multiply,
-    divide: divide,
-    scale: scale,
-    distance: distance,
-    squaredDistance: squaredDistance,
-    length: length,
-    squaredLength: squaredLength,
-    negate: negate,
-    inverse: inverse,
-    normalize: normalize,
-    dot: dot,
+    copy: copy,
     cross: cross,
-    lerp: lerp,
+    distance: distance,
+    divide: divide,
+    dot: dot,
+    exactEquals: exactEquals,
+    inverse: inverse,
+    length: length,
+    lerp: lerp$1,
+    multiply: multiply,
+    negate: negate,
+    normalize: normalize,
+    scale: scale,
+    set: set,
+    squaredDistance: squaredDistance,
+    squaredLength: squaredLength,
+    subtract: subtract,
     transformMat3: transformMat3,
-    transformMat4: transformMat4,
-    exactEquals: exactEquals
+    transformMat4: transformMat4
 });
 
 class Vec2 extends Array {
@@ -6344,7 +6300,7 @@ class Vec2 extends Array {
     }
 
     lerp(v, a) {
-        lerp(this, this, v, a);
+        lerp$1(this, this, v, a);
         return this;
     }
 
@@ -6390,7 +6346,7 @@ const tempVec3i = new Vec3();
 const tempVec3j = new Vec3();
 const tempVec3k = new Vec3();
 
-const tempMat4$1 = new Mat4();
+const tempMat4$2 = new Mat4();
 
 class Raycast {
 
@@ -6427,9 +6383,9 @@ class Raycast {
     }
 
     intersectBounds(meshes, { maxDistance, output = [] } = {}) {
-        if (! Array.isArray(meshes)) meshes = [ meshes ];
+        if (!Array.isArray(meshes)) meshes = [ meshes ];
 
-        const invWorldMat4 = tempMat4$1;
+        const invWorldMat4 = tempMat4$2;
         const origin = tempVec3a;
         const direction = tempVec3b;
 
@@ -6439,7 +6395,7 @@ class Raycast {
         meshes.forEach((mesh) => {
 
             // Create bounds
-            if (! mesh.geometry.bounds || mesh.geometry.bounds.radius === Infinity) mesh.geometry.computeBoundingSphere();
+            if (!mesh.geometry.bounds || mesh.geometry.bounds.radius === Infinity) mesh.geometry.computeBoundingSphere();
             const bounds = mesh.geometry.bounds;
             invWorldMat4.inverse(mesh.worldMatrix);
 
@@ -6484,7 +6440,7 @@ class Raycast {
             if (maxDistance && localDistance > localMaxDistance) return;
 
             // Create object on mesh to avoid generating lots of objects
-            if (! mesh.hit) mesh.hit = { localPoint: new Vec3(), point: new Vec3() };
+            if (!mesh.hit) mesh.hit = { localPoint: new Vec3(), point: new Vec3() };
 
             mesh.hit.localPoint.copy(direction).multiply(localDistance).add(origin);
             mesh.hit.point.copy(mesh.hit.localPoint).applyMatrix4(mesh.worldMatrix);
@@ -6500,9 +6456,9 @@ class Raycast {
     intersectMeshes(meshes, { cullFace = true, maxDistance, includeUV = true, includeNormal = true, output = [] } = {}) {
         // Test bounds first before testing geometry
         const hits = this.intersectBounds(meshes, { maxDistance, output });
-        if (! hits.length) return hits;
+        if (!hits.length) return hits;
 
-        const invWorldMat4 = tempMat4$1;
+        const invWorldMat4 = tempMat4$2;
         const origin = tempVec3a;
         const direction = tempVec3b;
         const a = tempVec3c;
@@ -6540,7 +6496,7 @@ class Raycast {
 
             const start = Math.max(0, geometry.drawRange.start);
             const end = Math.min(index ? index.count : position.count, geometry.drawRange.start + geometry.drawRange.count);
-            const stride = position.stride ? position.stride / position.data.BYTES_PER_ELEMENT : position.size;
+            const stride = position.size;
 
             for (let j = start; j < end; j += 3) {
                 // Position attribute indices for each triangle
@@ -6553,12 +6509,12 @@ class Raycast {
                 c.fromArray(position.data, ci * stride);
 
                 const distance = this.intersectTriangle(a, b, c, cullFace, origin, direction, faceNormal);
-                if (! distance) continue;
+                if (!distance) continue;
 
                 // Too far away
                 if (maxDistance && distance > localMaxDistance) continue;
 
-                if (! localDistance || distance < localDistance) {
+                if (!localDistance || distance < localDistance) {
                     localDistance = distance;
                     closestA = ai;
                     closestB = bi;
@@ -6567,7 +6523,7 @@ class Raycast {
                 }
             }
 
-            if (! localDistance) hits.splice(i, 1);
+            if (!localDistance) hits.splice(i, 1);
 
             // Update hit values from bounds-test
             mesh.hit.localPoint.copy(direction).multiply(localDistance).add(origin);
@@ -6575,7 +6531,7 @@ class Raycast {
             mesh.hit.distance = mesh.hit.point.distance(this.origin);
 
             // Add unique hit objects on mesh to avoid generating lots of objects
-            if (! mesh.hit.faceNormal) {
+            if (!mesh.hit.faceNormal) {
                 mesh.hit.localFaceNormal = new Vec3();
                 mesh.hit.faceNormal = new Vec3();
                 mesh.hit.uv = new Vec2();
@@ -6673,7 +6629,7 @@ class Raycast {
         edge2.sub(c, a);
         normal.cross(edge1, edge2);
         let DdN = direction.dot(normal);
-        if (! DdN) return 0;
+        if (!DdN) return 0;
         let sign;
         if (DdN > 0) {
             if (backfaceCulling) return 0;
@@ -6755,7 +6711,7 @@ class Orbit {
         minDistance = 0,
         maxDistance = Infinity,
     } = {}) {
-        if (! element) {
+        if (!element) {
             if (window.renderer) element = renderer.gl.canvas;
             else element = document.body;
         }
@@ -6945,7 +6901,7 @@ class Orbit {
         }
 
         const onMouseDown = (event) => {
-            if (! this.enabled) return;
+            if (!this.enabled) return;
 
             switch (event.button) {
                 case this.mouseButtons.ORBIT:
@@ -6972,7 +6928,7 @@ class Orbit {
         };
 
         const onMouseMove = (event) => {
-            if (! this.enabled) return;
+            if (!this.enabled) return;
 
             switch (state) {
                 case STATE.ROTATE:
@@ -7083,6 +7039,352 @@ class Orbit {
 
 }
 
+// cleanAttributes()
+// computeVertexNormals()
+// toIndexed()
+// toNonIndexed()
+
+// TODO: mergeGeometries()
+
+const EPSILON = 0.000001;
+const POSITION_DECIMALS = 6;
+const POSITION_SHIFT = Math.pow(10, POSITION_DECIMALS);
+
+/**
+ * Cleans up geometry attributes:
+ * - removes zero size triangles
+ * - remove duplicate positions from indexed geometry
+ *
+ * @param {Geometry} geometry
+ */
+function cleanAttributes(geometry) {
+
+    // Temp Variables
+    const pA = new Vec3(), pB = new Vec3(), pC = new Vec3();
+    const vA = new Vec3(), vB = new Vec3(), vC = new Vec3();
+
+    // Remove zero sized triangles
+    if (geometry.attributes.position) {
+        // Indexed
+        if (geometry.attributes.index) {
+            const removeIndices = [];
+            const indices = geometry.attributes.index.data;
+            const positions = geometry.attributes.position.data;
+            for (let i = 0; i < indices.length; i += 3) {
+                pA.fromArray(positions, indices[i + 0] * 3);
+                pB.fromArray(positions, indices[i + 1] * 3);
+                pC.fromArray(positions, indices[i + 2] * 3);
+                const area = triangleArea(pA, pB, pC);
+                if (fuzzyFloat(area, 0.0, EPSILON)) removeIndices.push(i, i + 1, i + 2);
+            }
+            removeIndexValues(geometry, removeIndices);
+
+        // Non indexed
+        } else {
+            const removeIndices = [];
+            const positions = geometry.attributes.position.data;
+            for (let i = 0; i < positions.length; i += 9) {
+                const index = i / 3;
+                pA.fromArray(positions, i);
+                pB.fromArray(positions, i + 3);
+                pC.fromArray(positions, i + 6);
+                const area = triangleArea(pA, pB, pC);
+                if (fuzzyFloat(area, 0.0, EPSILON)) removeIndices.push(index, index + 1, index + 2);
+            }
+            removeIndexValues(geometry, removeIndices);
+        }
+    }
+}
+
+/**
+ * Calculates vertex normals based on position triangles
+ *
+ * @param {Geometry} geometry
+ */
+function computeVertexNormals(geometry) {
+    const positionAttribute = geometry.getPosition();
+    if (!positionAttribute) return;
+
+    const positions = positionAttribute.data;
+    const normals = new Float32Array(positions.length);
+    const countHashes = {};
+    const positionNormals = {};
+
+    // Temp Vec3s
+    const pA = new Vec3(), pB = new Vec3(), pC = new Vec3();
+    const nA = new Vec3(), nB = new Vec3(), nC = new Vec3();
+    const cb = new Vec3();
+
+    // Adds position hash to counter
+    function addPositionHashes(position, normal) {
+        const hash = hashFromVector(position);
+
+        if (!countHashes[hash]) countHashes[hash] = 0;
+        countHashes[hash]++;
+
+        if (!positionNormals[hash]) positionNormals[hash] = new Vec3();
+        positionNormals[hash].add(normal);
+    }
+
+    // Indexed, need to calculate smooth normals
+    if (geometry.attributes.index) {
+        const indices = geometry.attributes.index.data;
+
+        // Calculate normals for each triangle
+        for (let i = 0; i < indices.length; i += 3) {
+            const idx0 = indices[i + 0] * 3;
+            const idx1 = indices[i + 1] * 3;
+            const idx2 = indices[i + 2] * 3;
+            pA.fromArray(positions, idx0);
+            pB.fromArray(positions, idx1);
+            pC.fromArray(positions, idx2);
+            calculateNormal(cb, pA, pB, pC);
+            addPositionHashes(pA, cb);
+            addPositionHashes(pB, cb);
+            addPositionHashes(pC, cb);
+        }
+
+        // Divide normals by index counts
+        for (const hash in countHashes) {
+            positionNormals[hash].divide(countHashes[hash]).normalize();
+        }
+
+        // Set normals by position
+        for (let i = 0; i < normals.length; i += 3) {
+            pA.fromArray(positions, i);
+            const hash = hashFromVector(pA);
+            normals.set(positionNormals[hash], i);
+        }
+
+    // Non indexed, unique flat normal for each triangle
+    } else {
+        // Calculate normals for each triangle
+        for (let i = 0; i < positions.length; i += 9) {
+            pA.fromArray(positions, i + 0);
+            pB.fromArray(positions, i + 3);
+            pC.fromArray(positions, i + 6);
+            calculateNormal(cb, pA, pB, pC);
+            for (let j = 0; j < 3; j++) {
+                normals[i + (j * 3) + 0] = cb[0];
+                normals[i + (j * 3) + 1] = cb[1];
+                normals[i + (j * 3) + 2] = cb[2];
+            }
+        }
+    }
+
+    // Update attribute
+    if (geometry.attributes.normal) {
+        geometry.attributes.normal.data = normals;
+        geometry.attributes.normal.needsUpdate = true;
+    // Add attribute
+    } else {
+        geometry.addAttribute('normal', { size: 3, data: normals });
+    }
+}
+
+/**
+ * Converts geometry from non indexed to indexed, vertices that share data will be collapsed
+ *
+ * @param {Geometry} geometry
+ * @param {Array} ignoreAttributes attributes to ignore during vertex comparison (e.g. 'normal', 'uv', etc)
+ */
+function toIndexed(geometry, ignoreAttributes = []) {
+    const positionAttribute = geometry.getPosition();
+    if (!positionAttribute) return;
+    if (geometry.attributes.index) toNonIndexed(geometry);
+
+    const attributes = geometry.attributes;
+    const positions = attributes.position.data;
+    const indices = [];
+    const arrays = {};
+    const keys = [];
+    for (const key in attributes) {
+        arrays[key] = [];
+        if (!ignoreAttributes.includes(key) || key === 'position') keys.push(key);
+    }
+
+    // Process vertices
+    for (let i = 0; i < positions.length; i += 3) {
+        const currentIndex = i / 3;
+
+        // Check if exists
+        let foundVertex = -1;
+        for (let idx = 0; idx < indices.length; idx++) {
+            for (const key of keys) {
+                let matchingKey = true;
+
+                // Current values of attributes[key], compared to stored index values
+                const attribute = attributes[key];
+                for (let j = 0; j < attributes[key].size; j++) {
+                    let current = attribute.data[(currentIndex * attribute.size) + j];
+                    let compare = arrays[key][(indices[idx] * attribute.size) + j];
+                    if (!fuzzyFloat(current, compare, 0.0001)) {//EPSILON)) {
+                        matchingKey = false;
+                        break;
+                    }
+                }
+
+                if (matchingKey) {
+                    foundVertex = idx;
+                } else {
+                    foundVertex = -1;
+                    break;
+                }
+            }
+
+            if (foundVertex !== -1) break;
+        }
+
+        // Add Vertex
+        if (foundVertex === -1) {
+            for (const attributeName in attributes) {
+                const attribute = attributes[attributeName];
+                for (let j = 0; j < attribute.size; j++) {
+                    const current = attribute.data[(currentIndex * attribute.size) + j];
+                    arrays[attributeName].push(current);
+                }
+            }
+            indices.push((arrays['position'].length / 3) - 1);
+        } else {
+            indices.push(indices[foundVertex]);
+        }
+    };
+
+    // Replace non indexed attributes with new, indexed attributes
+    for (const attributeName in attributes) {
+        if (attributeName === 'index') continue;
+        const attribute = attributes[attributeName];
+        const itemSize = attribute.size;
+        const newAttribute = {
+            size: itemSize,
+            data: new attribute.data.constructor(arrays[attributeName])
+        };
+        geometry.deleteAttribute(attribute);
+        geometry.addAttribute(attributeName, newAttribute);
+    }
+
+    // Add index attribute
+    const indexData = (indices > 65536) ? new Uint32Array(indices) : new Uint16Array(indices);
+    geometry.addAttribute('index', { data: indexData });
+}
+
+/**
+ * Converts geometry from indexed to non indexed
+ *
+ * @param {Geometry} geometry
+ * @returns non-indexed geometry
+ */
+function toNonIndexed(geometry) {
+    if (!geometry.attributes.index) toIndexed(geometry);
+
+    function convertBufferAttribute(attribute, indices) {
+        const itemSize = attribute.size;
+        const array = attribute.data;
+        const array2 = new array.constructor(indices.length * itemSize);
+        let index = 0;
+        let index2 = 0;
+        for (let i = 0; i < indices.length; i++) {
+            index = indices[i] * itemSize;
+            for (let j = 0; j < itemSize; j++) {
+                array2[index2++] = array[index++];
+            }
+        }
+        return array2;
+    }
+
+    const indices = geometry.attributes.index.data;
+    const attributes = geometry.attributes;
+    for (const attributeName in attributes) {
+        if (attributeName === 'index') continue;
+        const attribute = attributes[attributeName];
+        const newAttribute = { size: attribute.size, data: convertBufferAttribute(attribute, indices) };
+        geometry.deleteAttribute(attribute);
+        geometry.addAttribute(attributeName, newAttribute);
+    }
+    geometry.deleteAttribute(geometry.attributes.index);
+}
+
+/******************** INTERNAL ********************/
+
+/**
+ * Remove values (by index) from geometry.attributes
+ *
+ * @param {Geometry} geometry geometry to remove indices from
+ * @param {Array} removeIndices array of integer index values to remove
+ * @returns
+ */
+function removeIndexValues(geometry, removeIndices = []) {
+    if (removeIndices.length === 0) return;
+
+    // Indexed (remove index only)
+    if (geometry.attributes.index) {
+        const attribute = geometry.attributes.index;
+        const array2 = [];
+        for (let i = 0; i < attribute.data.length; i++) {
+            if (removeIndices.includes(i)) continue;
+            array2.push(attribute.data[i]);
+        }
+        attribute.data = new attribute.data.constructor(array2);
+        attribute.needsUpdate = true;
+
+    // Non indexed (remove all attributes at index)
+    } else {
+        // Build new data array, only include un-skipped index values
+        for (const attributeName in geometry.attributes) {
+            const attribute = geometry.attributes[attributeName];
+            const array2 = [];
+            for (let i = 0; i < attribute.data.length; i += attribute.size) {
+                if (removeIndices.includes(i / attribute.size)) continue;
+                for (let j = 0; j < attribute.size; j++) array2.push(attribute.data[i + j]);
+            }
+            attribute.data = new attribute.data.constructor(array2);
+            attribute.needsUpdate = true;
+        }
+    }
+}
+
+/**
+ * Generates hash string from Number
+ *
+ * @param {*} num
+ * @param {*} shift
+ * @returns
+ */
+function hashFromNumber(num, shift = POSITION_SHIFT) {
+    let roundedNumber = round(num * shift);
+    if (roundedNumber == 0) roundedNumber = 0; /* prevent -0 (signed 0 can effect Math.atan2(), etc.) */
+    return `${roundedNumber}`;
+}
+
+/**
+ * Generates hash string from Vector3
+ *
+ * @param {Vec3} vector
+ * @param {*} shift
+ * @returns
+ */
+function hashFromVector(vector, shift = POSITION_SHIFT) {
+    return `${hashFromNumber(vector[0], shift)},${hashFromNumber(vector[1], shift)},${hashFromNumber(vector[2], shift)}`;
+}
+
+/**
+ * Rounds x to integer
+ *
+ * @param {Number} x
+ * @returns
+ */
+function round(x) {
+    return (x + ((x > 0) ? 0.5 : -0.5)) << 0;
+}
+
+var GeomUtils$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    cleanAttributes: cleanAttributes,
+    computeVertexNormals: computeVertexNormals,
+    toIndexed: toIndexed,
+    toNonIndexed: toNonIndexed
+});
+
 class Plane extends Geometry {
 
     constructor({
@@ -7117,7 +7419,7 @@ class Plane extends Geometry {
         super(attributes);
     }
 
-    static buildPlane(position, normal, uv, index, width, height, depth, wSegs, hSegs, u = 0, v = 1, w = 2, uDir = -1, vDir = -1, i = 0, ii = 0) {
+    static buildPlane(position, normal, uv, index, width, height, depth, wSegs, hSegs, u = 0, v = 1, w = 2, uDir = 1, vDir = -1, i = 0, ii = 0) {
         const io = i;
         const segW = width / wSegs;
         const segH = height / hSegs;
@@ -7435,6 +7737,7 @@ class Sphere extends Geometry {
 
 // https://github.com/mrdoob/three.js/blob/master/src/geometries/TorusGeometry.js
 
+
 class Torus extends Geometry {
 
     constructor({
@@ -7509,6 +7812,305 @@ class Torus extends Geometry {
         super(attributes);
     }
 
+}
+
+// helper variables
+const vertex = new Vec3();
+const normal = new Vec3();
+const uv = new Vec2();
+const point = new Vec3();
+
+class Tube extends Geometry {
+
+    constructor({
+        path,
+        radius = 1,
+        tubularSegments = 64,
+        radialSegments = 8,
+        closed = false,
+        attributes = {}
+    } = {}) {
+        super(attributes);
+
+        this.path = path;
+        this.radius = radius;
+        this.tubularSegments = tubularSegments;
+        this.radialSegments = radialSegments;
+        this.closed = closed;
+
+        this.frenetFrames = path.computeFrenetFrames(tubularSegments, closed);
+
+        const numVertices = (tubularSegments + 1) * (radialSegments + 1);
+        const numIndices = tubularSegments * radialSegments * 6;
+        this.positions = new Float32Array(numVertices * 3);
+        this.normals = new Float32Array(numVertices * 3);
+        this.uvs = new Float32Array(numVertices * 2);
+        this.indices = numVertices > 65536 ? new Uint32Array(numIndices) : new Uint16Array(numIndices);
+
+        // create buffer data
+        this.#generateAttributes();
+        this.#generateIndices();
+
+        this.addAttribute('position', { size: 3, data: this.positions });
+        this.addAttribute('normal', { size: 3, data: this.normals });
+        this.addAttribute('uv', { size: 2, data: this.uvs });
+        this.addAttribute('index', { size: 1, data: this.indices });
+    }
+
+    #generateAttributes() {
+        for (let i = 0; i <= this.tubularSegments; i++) {
+            let ci = i;
+            if (i === this.tubularSegments) {
+                // if the geometry is not closed, generate the last row of vertices and normals
+                // at the regular position on the given path
+                // if the geometry is closed, duplicate the first row of vertices and normals (uvs will differ)
+                ci = this.closed ? 0 : this.tubularSegments;
+            }
+
+            this.path.getPointAt(ci / this.tubularSegments, point);
+            // retrieve corresponding normal and binormal
+            const N = this.frenetFrames.normals[ci];
+            const B = this.frenetFrames.binormals[ci];
+
+            // generate normals and vertices for the current segment
+            for (let j = 0; j <= this.radialSegments; j++) {
+                const v = (j / this.radialSegments) * Math.PI * 2;
+                const sin = Math.sin(v);
+                const cos = -Math.cos(v);
+
+                const idx = i * (this.radialSegments + 1) + j;
+
+                // normal
+                normal.x = cos * N.x + sin * B.x;
+                normal.y = cos * N.y + sin * B.y;
+                normal.z = cos * N.z + sin * B.z;
+                // normal.normalize(); // ???
+                this.normals.set(normal, idx * 3);
+
+                // vertex
+                vertex.x = point.x + this.radius * normal.x;
+                vertex.y = point.y + this.radius * normal.y;
+                vertex.z = point.z + this.radius * normal.z;
+                this.positions.set(vertex, idx * 3);
+
+                // uv
+                uv.x = i / this.tubularSegments;
+                uv.y = j / this.radialSegments;
+                this.uvs.set(uv, idx * 2);
+            }
+        }
+    }
+
+    #generateIndices() {
+        for (let j = 1; j <= this.tubularSegments; j++) {
+            for (let i = 1; i <= this.radialSegments; i++) {
+                const a = (this.radialSegments + 1) * (j - 1) + (i - 1);
+                const b = (this.radialSegments + 1) * j + (i - 1);
+                const c = (this.radialSegments + 1) * j + i;
+                const d = (this.radialSegments + 1) * (j - 1) + i;
+
+                const idx = (j - 1) * this.radialSegments + (i - 1);
+                this.indices.set([ a, b, d, b, c, d ], idx * 6);
+            }
+        }
+    }
+
+}
+
+/**
+ * @description bin-packing
+ * @about       Binary tree based 2D bin-packing
+ * @author      jakesgordon
+ * @license     MIT - Copyright (c) 2016 Jake Gordon
+ * @source      https://github.com/jakesgordon/bin-packing
+ * @version:    Jan 4, 2016
+ */
+
+class Packer {
+
+    constructor(w, h) {
+        this.root = { x: 0, y: 0, w: w, h: h };
+    }
+
+    fit(blocks) {
+        let node, block;
+        for (let n = 0; n < blocks.length; n++) {
+            block = blocks[n];
+            node = this.findNode(this.root, block.w, block.h);
+            if (!node) continue;
+            block.fit = this.splitNode(node, block.w, block.h);
+        }
+    }
+
+    findNode(root, w, h) {
+        if (root.used) return (this.findNode(root.right, w, h) || this.findNode(root.down, w, h));
+        else if ((w <= root.w) && (h <= root.h)) return root;
+        else return null;
+    }
+
+    splitNode(node, w, h) {
+        node.used = true;
+        node.down  = { x: node.x,     y: node.y + h, w: node.w,     h: node.h - h };
+        node.right = { x: node.x + w, y: node.y,     w: node.w - w, h: h          };
+        return node;
+    }
+
+}
+
+const MAX_SIZE = 4096;
+
+class Atlas {
+
+    #boxes = [];
+    #images = [];
+    #layers = 0;
+    #size = 1;
+
+    constructor(border = 1) {
+        const gl = renderer.gl;
+
+        this.border = border;
+        this.texture = new Texture({
+            image: [],
+            target: gl.TEXTURE_2D_ARRAY
+        });
+    }
+
+    length() {
+        return this.#layers;
+    }
+
+    add(image) {
+        if (!image) return;
+
+        // Load from String
+        if (typeof image === 'string') image = ImageLoader.load(image);
+
+        // Add to Images
+        if (!this.#images.includes(image)) this.#images.push(image);
+
+        // Image Loaded?
+        if (!image.complete) {
+            const self = this;
+            const onload = image.onload;
+            image.onload = function() {
+                if (typeof onload === 'function') onload();
+                self.add(image);
+            };
+            return;
+        }
+
+        // Boxes
+        const boxes = [];
+        for (let i = 0; i < this.#images.length; i++) {
+            const img = this.#images[i];
+            if (!img.complete || !img.naturalWidth || !img.naturalHeight) continue;
+            if (img.naturalWidth > MAX_SIZE || img.naturalHeight > MAX_SIZE) continue;
+            boxes.push({
+                w: img.width + (this.border * 2),
+                h: img.height + (this.border * 2),
+                image: img,
+                fit: undefined,
+            });
+        }
+
+        // Pack
+        this.#boxes.length = 0;
+        this.#layers = 0;
+        while (boxes.length > 0) {
+            // Sort
+            boxes.sort((a, b) => { return Math.max(b.w, b.h) - Math.max(a.w, a.h); });
+            boxes.sort((a, b) => { return Math.min(b.w, b.h) - Math.min(a.w, a.h); });
+            boxes.sort((a, b) => { return b.h - a.h; });
+            boxes.sort((a, b) => { return b.w - a.w; });
+
+            // Pack
+            let increaseSize;
+            do {
+                const packer = new Packer(this.#size, this.#size);
+                packer.fit(boxes);
+
+                // Increase Size
+                increaseSize = false;
+                if (this.#size < MAX_SIZE) {
+                    let allFit = true;
+                    for (let i = 0; i < boxes.length; i++) allFit = allFit && boxes[i].fit;
+                    if (!allFit) {
+                        increaseSize = true;
+                        this.#size = Math.min(this.#size + this.#size, MAX_SIZE);
+                    }
+                }
+                if (increaseSize) {
+                    for (let i = 0; i < boxes.length; i++) boxes[i].fit = undefined;
+                }
+            } while (increaseSize);
+
+            // Layer
+            for (let i = boxes.length - 1; i >= 0; i--) {
+                const box = boxes[i];
+                if (box.fit) {
+                    const index = this.#images.indexOf(box.image);
+                    if (index < 0) continue;
+                    this.#boxes[index] = {
+                        x: box.fit.x,
+                        y: box.fit.y,
+                        w: box.w,
+                        h: box.h,
+                        image: box.image,
+                        layer: this.#layers,
+                    };
+                    boxes.splice(i, 1);
+                }
+            }
+
+            // Count
+            this.#layers++;
+        }
+
+        renderCanvas(this, this.#size, this.#boxes);
+    }
+
+}
+
+/******************** INTERNAL ********************/
+
+let _canvas;
+let _ctx;
+
+function renderCanvas(atlas, size, boxes) {
+    if (!_canvas) _canvas = document.createElement('canvas');
+    if (!_ctx) _ctx = _canvas.getContext('2d');
+    const canvas = _canvas;
+    const ctx = _ctx;
+    canvas.width = size;
+    canvas.height = size;
+
+    const texture = atlas.texture;
+    texture.image = [];
+    for (let i = 0; i < atlas.length(); i++) {
+
+        // Draw
+        ctx.clearRect(0, 0, size, size);
+        for (let j = 0; j < boxes.length; j++) {
+            const box = boxes[j];
+            if (box.layer !== i) continue;
+            ctx.fillStyle = `rgb(${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)})`;
+            ctx.fillRect(box.x, box.y, box.w, box.h);
+            ctx.drawImage(box.image,
+                box.x + (atlas.border),
+                box.y + (atlas.border),
+                box.w - (atlas.border * 2),
+                box.h - (atlas.border * 2)
+            );
+        }
+
+        // Atlas
+        const image = new Image(size, size);
+        texture.image.push(image);
+        image.src = canvas.toDataURL();
+        image.onload = () => texture.needsUpdate = true;
+
+    }
 }
 
 const tmpVec3A = new Vec3();
@@ -7665,29 +8267,29 @@ class Vec4 extends Array {
         this[3] = v;
     }
 
-    set(x, y, z, w) {
+    set(x, y = x, z = x, w = x) {
         if (x.length) return this.copy(x);
-        set$4(this, x, y, z, w);
+        set$3(this, x, y, z, w);
         return this;
     }
 
     copy(v) {
-        copy$4(this, v);
+        copy$3(this, v);
         return this;
     }
 
     normalize() {
-        normalize$3(this, this);
+        normalize$2(this, this);
         return this;
     }
 
     multiply(v) {
-        scale$4(this, this, v);
+        scale$3(this, this, v);
         return this;
     }
 
     dot(v) {
-        return dot$3(this, v);
+        return dot$2(this, v);
     }
 
     fromArray(a, o = 0) {
@@ -7731,7 +8333,7 @@ class InstancedMesh extends Mesh {
         this.instanceRenderList = null;
 
         // Get instanced mesh
-        if (! this.geometry.attributes.instanceMatrix) {
+        if (!this.geometry.attributes.instanceMatrix) {
             const name = this.name ?? '';
             console.error(`InstanceMesh.addFrustumCull: Mesh "${name}" missing instanceMatrix attribute, unable to frustum cull`);
         }
@@ -7762,7 +8364,7 @@ class InstancedMesh extends Mesh {
             // Frustum cull transforms each frame - pass world matrix
             this.instanceRenderList = [];
             this.instanceTransforms.forEach((transform) => {
-                if (! camera.frustumIntersectsMesh(this, transform.worldMatrix)) return;
+                if (!camera.frustumIntersectsMesh(this, transform.worldMatrix)) return;
                 this.instanceRenderList.push(transform);
             });
 
@@ -7799,6 +8401,12 @@ class InstancedMesh extends Mesh {
     }
 }
 
+let _texture$1;
+function emptyTexture$1() {
+    if (!_texture$1 || !_texture$1.isTexture) _texture$1 = new Texture();
+    return _texture$1;
+}
+
 class Uber extends Program {
 
     #flatShading = false;
@@ -7807,13 +8415,13 @@ class Uber extends Program {
 
     #normalIntensity = 0.0;
     #opacity = 1.0;
-    #tint = [ 1, 1, 1];
+    #tint = [ 1, 1, 1 ];
     #tintIntensity = 0.0;
     #wireIntensity = 0.0;
 
     constructor({
-        texture = new Texture(),
-        textureNormal = new Texture(),
+        texture = emptyTexture$1(),
+        textureNormal = emptyTexture$1(),
 
         flatShading = false,
         normalIntensity = 0.0,
@@ -7826,8 +8434,8 @@ class Uber extends Program {
     } = {}) {
         super({
             ...programProps,
-            vertex: defaultVertex$3,
-            fragment: defaultFragment$3,
+            vertex: defaultVertex$5,
+            fragment: defaultFragment$5,
             uniforms: {
                 tDiffuse: { value: texture },
                 tNormal: { value: textureNormal },
@@ -7856,8 +8464,8 @@ class Uber extends Program {
 
     rebuildProgram() {
         this.buildProgram({
-            vertex: defaultVertex$3,
-            fragment: defaultFragment$3,
+            vertex: defaultVertex$5,
+            fragment: defaultFragment$5,
             uniforms: {
                 tDiffuse: { value: this.#mapDiffuse },
                 uNormalIntensity: { value: this.#normalIntensity },
@@ -7912,9 +8520,9 @@ class Uber extends Program {
 
 }
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
-const defaultVertex$3 = /* glsl */ `#version 300 es
+const defaultVertex$5 = /* glsl */ `#version 300 es
     in vec2 uv;
     in vec3 position;
     in vec3 normal;
@@ -7945,7 +8553,7 @@ const defaultVertex$3 = /* glsl */ `#version 300 es
     }
 `;
 
-const defaultFragment$3 = /* glsl */ `#version 300 es
+const defaultFragment$5 = /* glsl */ `#version 300 es
     precision highp float;
 
     uniform float uNormalIntensity;
@@ -7986,7 +8594,7 @@ const defaultFragment$3 = /* glsl */ `#version 300 es
         vec4 tex = texture(tDiffuse, vUv);
         alpha *= tex.a;
 
-        vec3 light = normalize(vec3(sin(uTime), 1.0, cos(uTime)));
+        vec3 light = vec3(0.0);//normalize(vec3(sin(uTime), 1.0, cos(uTime)));
         float shading = dot(normal, light) * 0.25;
 
         vec3 diffuse = tex.rgb + shading;
@@ -8025,7 +8633,7 @@ const defaultFragment$3 = /* glsl */ `#version 300 es
     }
 `;
 
-const tempMat4 = new Mat4();
+const tempMat4$1 = new Mat4();
 const identity = new Mat4();
 
 class GLTFSkin extends Mesh {
@@ -8048,7 +8656,7 @@ class GLTFSkin extends Mesh {
     createBoneTexture() {
         const gl = renderer.gl;
 
-        if (! this.skeleton.joints.length) return;
+        if (!this.skeleton.joints.length) return;
         const size = Math.max(4, Math.pow(2, Math.ceil(Math.log(Math.sqrt(this.skeleton.joints.length * 4)) / Math.LN2)));
         this.boneMatrices = new Float32Array(size * size * 4);
         this.boneTextureSize = size;
@@ -8085,14 +8693,14 @@ class GLTFSkin extends Mesh {
         // Update bone texture
         this.skeleton.joints.forEach((bone, i) => {
             // Find difference between current and bind pose
-            tempMat4.multiply(bone.worldMatrix, bone.bindInverse);
-            this.boneMatrices.set(tempMat4, i * 16);
+            tempMat4$1.multiply(bone.worldMatrix, bone.bindInverse);
+            this.boneMatrices.set(tempMat4$1, i * 16);
         });
         if (this.boneTexture) this.boneTexture.needsUpdate = true;
     }
 
     draw({ camera } = {}) {
-        if (! this.program.uniforms.boneTexture) {
+        if (!this.program.uniforms.boneTexture) {
             Object.assign(this.program.uniforms, {
                 boneTexture: { value: this.boneTexture },
                 boneTextureSize: { value: this.boneTextureSize },
@@ -8189,7 +8797,7 @@ class GLTFLoader {
             console.warn('GLTFLoader.parse: Only GLTF >=2.0 supported. Attempting to parse.');
         }
 
-        if (desc.extensionsRequired?.includes('KHR_texture_basisu') && ! this.basisManager)
+        if (desc.extensionsRequired?.includes('KHR_texture_basisu') && !this.basisManager)
             console.warn('GLTFLoader.parse:  KHR_texture_basisu extension required but no manager supplied. Use .setBasisManager()');
 
         // Load buffers async
@@ -8730,17 +9338,36 @@ class GLTFLoader {
 
         // Parse data from joined buffers
         const TypeArray = TYPE_ARRAY[componentType];
-        const elementBytes = data.BYTES_PER_ELEMENT;
+        const elementBytes = TypeArray.BYTES_PER_ELEMENT;
         const componentStride = byteStride / elementBytes;
         const isInterleaved = !!byteStride && componentStride !== size;
 
-        // TODO: interleaved
-        // Convert data to typed array for various uses (bounding boxes, animation etc)
-        const newData = isInterleaved ? new TypeArray(data) : new TypeArray(data, byteOffset, count * size);
+        let filteredData;
+
+        // Convert data to typed array for various uses (bounding boxes, raycasting, animation, merging etc)
+        if (isInterleaved) {
+            // First convert entire buffer to type
+            const typedData = new TypeArray(data, byteOffset);
+            // TODO: add length to not copy entire buffer if can help it
+            // const typedData = new TypeArray(data, byteOffset, (count - 1) * componentStride)
+
+            // Create output with length
+            filteredData = new TypeArray(count * size);
+
+            // Add element by element
+            for (let i = 0; i < count; i++) {
+                const start = componentStride * i;
+                const end = start + size;
+                filteredData.set(typedData.slice(start, end), i * size);
+            }
+        } else {
+            // Simply a slice
+            filteredData = new TypeArray(data, byteOffset, count * size);
+        }
 
         // Return attribute data
         return {
-            data: newData,
+            data: filteredData,
             size,
             type: componentType,
             normalized,
@@ -9022,6 +9649,128 @@ class GLTFLoader {
     }
 }
 
+class Billboard extends Mesh {
+
+    static #geometry;
+    static #program;
+
+    constructor({
+        texture,
+    } = {}) {
+        if (!Billboard.#geometry) Billboard.#geometry = new Plane();
+        if (!Billboard.#program) {
+            Billboard.#program = new Program({
+                cullFace: null,
+                transparent: true,
+                vertex: defaultVertex$4,
+                fragment: defaultFragment$4,
+                uniforms: {
+                    tDiffuse: { value: texture },
+                },
+            });
+        }
+
+        super({
+            geometry: Billboard.#geometry,
+            program: Billboard.#program,
+        });
+        this.isBillboard = true;
+
+        this.texture = texture;
+    }
+
+    draw({ camera } = {}) {
+        // Set camera uniforms
+        if (camera) {
+            // Add empty matrix uniforms to program if unset
+            if (!this.program.uniforms.modelMatrix) {
+                Object.assign(this.program.uniforms, {
+                    modelMatrix: { value: null },
+                    viewMatrix: { value: null },
+                    modelViewMatrix: { value: null },
+                    normalMatrix: { value: null },
+                    projectionMatrix: { value: null },
+                    cameraPosition: { value: null },
+                });
+            }
+
+            // Set the matrix uniforms
+            this.program.uniforms.projectionMatrix.value = camera.projectionMatrix;
+            this.program.uniforms.cameraPosition.value = camera.worldPosition;
+            this.program.uniforms.viewMatrix.value = camera.viewMatrix;
+            this.modelViewMatrix.multiply(camera.viewMatrix, this.worldMatrix);
+            this.normalMatrix.getNormalMatrix(this.modelViewMatrix);
+            this.program.uniforms.modelMatrix.value = this.worldMatrix;
+            this.program.uniforms.modelViewMatrix.value = this.modelViewMatrix;
+            this.program.uniforms.normalMatrix.value = this.normalMatrix;
+        }
+
+        // Before render
+        this.beforeRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
+
+        this.program.uniforms.tDiffuse.value = this.texture;
+        this.program.use();
+        this.geometry.draw({ mode: this.mode, program: this.program });
+
+        // After render
+        this.afterRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
+    }
+
+}
+
+/******************** INTERNAL ********************/
+
+const defaultVertex$4 = /* glsl */ `#version 300 es
+    in vec2 uv;
+    in vec3 position;
+    in vec3 normal;
+
+    uniform mat3 normalMatrix;
+    uniform mat4 modelMatrix;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    out vec3 vNormal;
+    out vec2 vUv;
+
+    void main() {
+        vUv = uv;
+        vNormal = normalize(normalMatrix * normal);
+
+        vec4 mvPosition = modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
+        mvPosition.xy += position.xy;
+        gl_Position = projectionMatrix * mvPosition;
+
+        // vec3 pos = position;
+        // gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+    }
+`;
+
+const defaultFragment$4 = /* glsl */ `#version 300 es
+    precision highp float;
+
+    uniform sampler2D tDiffuse;
+
+    in vec2 vUv;
+
+    layout(location = 0) out highp vec4 pc_fragColor;
+
+    void main() {
+
+        // ----- Diffuse -----
+        vec4 tex = texture(tDiffuse, vUv);
+
+        vec3 diffuse = tex.rgb;
+        float alpha = tex.a;
+
+        // ----- Output -----
+        if (alpha < 0.01) discard;
+        diffuse *= alpha;
+
+        pc_fragColor = vec4(diffuse, alpha);
+    }
+`;
+
 class Curve {
 
     constructor({
@@ -9146,7 +9895,7 @@ class Curve {
 
 }
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 const _a0 = new Vec3(), _a1 = new Vec3(), _a2 = new Vec3(), _a3 = new Vec3();
 
@@ -9270,13 +10019,13 @@ class Polygon {
         console.log(t);
 
         setIndex(0, a.x, a.y, 0, (-t.x + t.y), (-t.x - t.y));
-	    setIndex(1, a.x, a.y, 0, (-t.x - t.y), (+t.x - t.y));
-	    setIndex(2, a.x, a.y, 0, (-0.0 + t.y), (-t.x + 0.0));
-	    setIndex(3, a.x, a.y, 0, (-0.0 - t.y), (+t.x + 0.0));
-	    setIndex(4, b.x, b.y, 0, (+0.0 + t.y), (-t.x - 0.0));
-	    setIndex(5, b.x, b.y, 0, (+0.0 - t.y), (+t.x - 0.0));
-	    setIndex(6, b.x, b.y, 0, (+t.x + t.y), (-t.x + t.y));
-	    setIndex(7, b.x, b.y, 0, (+t.x - t.y), (+t.x + t.y));
+        setIndex(1, a.x, a.y, 0, (-t.x - t.y), (+t.x - t.y));
+        setIndex(2, a.x, a.y, 0, (-0.0 + t.y), (-t.x + 0.0));
+        setIndex(3, a.x, a.y, 0, (-0.0 - t.y), (+t.x + 0.0));
+        setIndex(4, b.x, b.y, 0, (+0.0 + t.y), (-t.x - 0.0));
+        setIndex(5, b.x, b.y, 0, (+0.0 - t.y), (+t.x - 0.0));
+        setIndex(6, b.x, b.y, 0, (+t.x + t.y), (-t.x + t.y));
+        setIndex(7, b.x, b.y, 0, (+t.x - t.y), (+t.x + t.y));
 
         index.set([ 0, 1, 2, 1, 3, 2, /**/ 2, 3, 4, 3, 5, 4, /**/ 4, 5, 6, 5, 7, 6 ]);
 
@@ -9291,9 +10040,9 @@ class Polygon {
 
 }
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
-const defaultVertex$2 = /* glsl */ `#version 300 es
+const defaultVertex$3 = /* glsl */ `#version 300 es
     precision highp float;
 
     in vec3 position;
@@ -9314,7 +10063,7 @@ const defaultVertex$2 = /* glsl */ `#version 300 es
     }
 `;
 
-const defaultFragment$2 = /* glsl */ `#version 300 es
+const defaultFragment$3 = /* glsl */ `#version 300 es
     precision highp float;
 
     uniform vec3 uColor;
@@ -9338,8 +10087,8 @@ class Polyline {
 
     constructor({
         points,                         // Array of Vec3s
-        vertex = defaultVertex$1,
-        fragment = defaultFragment$1,
+        vertex = defaultVertex$2,
+        fragment = defaultFragment$2,
         uniforms = {},
         attributes = {},                // For passing in custom attribs
     } = {}) {
@@ -9378,11 +10127,11 @@ class Polyline {
         // Populate dynamic buffers
         this.updateGeometry();
 
-        if (! uniforms.uResolution) this.resolution = uniforms.uResolution = { value: new Vec2() };
-        if (! uniforms.uDPR) this.dpr = uniforms.uDPR = { value: 1 };
-        if (! uniforms.uThickness) this.thickness = uniforms.uThickness = { value: 1 };
-        if (! uniforms.uColor) this.color = uniforms.uColor = { value: new Color('#000') };
-        if (! uniforms.uMiter) this.miter = uniforms.uMiter = { value: 1 };
+        if (!uniforms.uResolution) this.resolution = uniforms.uResolution = { value: new Vec2() };
+        if (!uniforms.uDPR) this.dpr = uniforms.uDPR = { value: 1 };
+        if (!uniforms.uThickness) this.thickness = uniforms.uThickness = { value: 1 };
+        if (!uniforms.uColor) this.color = uniforms.uColor = { value: new Color('#000') };
+        if (!uniforms.uMiter) this.miter = uniforms.uMiter = { value: 1 };
 
         // Set size uniforms' values
         this.resize();
@@ -9401,7 +10150,7 @@ class Polyline {
             p.toArray(this.position, i * 3 * 2);
             p.toArray(this.position, i * 3 * 2 + 3);
 
-            if (! i) {
+            if (!i) {
                 // If first point, calculate prev using the distance to 2nd point
                 tmp.copy(p)
                     .sub(this.points[i + 1])
@@ -9439,9 +10188,9 @@ class Polyline {
     }
 }
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
-const defaultVertex$1 = /* glsl */ `
+const defaultVertex$2 = /* glsl */ `
     precision highp float;
 
     attribute vec3 position;
@@ -9492,7 +10241,7 @@ const defaultVertex$1 = /* glsl */ `
     }
 `;
 
-const defaultFragment$1 = /* glsl */ `
+const defaultFragment$2 = /* glsl */ `
     precision highp float;
 
     uniform vec3 uColor;
@@ -9513,13 +10262,13 @@ class Sprite extends Mesh {
     constructor({
         texture,
     } = {}) {
-        if (! Sprite.#geometry) Sprite.#geometry = new Plane();
-        if (! Sprite.#program) {
+        if (!Sprite.#geometry) Sprite.#geometry = new Plane();
+        if (!Sprite.#program) {
             Sprite.#program = new Program({
                 cullFace: null,
                 transparent: true,
-                vertex: defaultVertex,
-                fragment: defaultFragment,
+                vertex: defaultVertex$1,
+                fragment: defaultFragment$1,
                 uniforms: {
                     tDiffuse: { value: texture },
                 },
@@ -9536,13 +10285,10 @@ class Sprite extends Mesh {
     }
 
     draw({ camera } = {}) {
-        // Before render
-        this.beforeRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
-
         // Set camera uniforms
         if (camera) {
             // Add empty matrix uniforms to program if unset
-            if (! this.program.uniforms.modelMatrix) {
+            if (!this.program.uniforms.modelMatrix) {
                 Object.assign(this.program.uniforms, {
                     modelMatrix: { value: null },
                     viewMatrix: { value: null },
@@ -9564,6 +10310,9 @@ class Sprite extends Mesh {
             this.program.uniforms.normalMatrix.value = this.normalMatrix;
         }
 
+        // Before render
+        this.beforeRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
+
         this.program.uniforms.tDiffuse.value = this.texture;
         this.program.use();
         this.geometry.draw({ mode: this.mode, program: this.program });
@@ -9574,9 +10323,9 @@ class Sprite extends Mesh {
 
 }
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
-const defaultVertex = /* glsl */ `#version 300 es
+const defaultVertex$1 = /* glsl */ `#version 300 es
     in vec2 uv;
     in vec3 position;
     in vec3 normal;
@@ -9602,7 +10351,7 @@ const defaultVertex = /* glsl */ `#version 300 es
     }
 `;
 
-const defaultFragment = /* glsl */ `#version 300 es
+const defaultFragment$1 = /* glsl */ `#version 300 es
     precision highp float;
 
     uniform sampler2D tDiffuse;
@@ -9626,352 +10375,6 @@ const defaultFragment = /* glsl */ `#version 300 es
         pc_fragColor = vec4(diffuse, alpha);
     }
 `;
-
-// cleanAttributes()
-// computeVertexNormals()
-// toIndexed()
-// toNonIndexed()
-
-// TODO: mergeGeometries()
-
-const EPSILON = 0.000001;
-const POSITION_DECIMALS = 6;
-const POSITION_SHIFT = Math.pow(10, POSITION_DECIMALS);
-
-/**
- * Cleans up geometry attributes:
- * - removes zero size triangles
- * - remove duplicate positions from indexed geometry
- *
- * @param {Geometry} geometry
- */
-function cleanAttributes(geometry) {
-
-    // Temp Variables
-    const pA = new Vec3(), pB = new Vec3(), pC = new Vec3();
-    const vA = new Vec3(), vB = new Vec3(), vC = new Vec3();
-
-    // Remove zero sized triangles
-    if (geometry.attributes.position) {
-        // Indexed
-        if (geometry.attributes.index) {
-            const removeIndices = [];
-            const indices = geometry.attributes.index.data;
-            const positions = geometry.attributes.position.data;
-            for (let i = 0; i < indices.length; i += 3) {
-                pA.fromArray(positions, indices[i + 0] * 3);
-                pB.fromArray(positions, indices[i + 1] * 3);
-                pC.fromArray(positions, indices[i + 2] * 3);
-                const area = triangleArea(pA, pB, pC);
-                if (fuzzyFloat(area, 0.0, EPSILON)) removeIndices.push(i, i + 1, i + 2);
-            }
-            removeIndexValues(geometry, removeIndices);
-
-        // Non indexed
-        } else {
-            const removeIndices = [];
-            const positions = geometry.attributes.position.data;
-            for (let i = 0; i < positions.length; i += 9) {
-                const index = i / 3;
-                pA.fromArray(positions, i);
-                pB.fromArray(positions, i + 3);
-                pC.fromArray(positions, i + 6);
-                const area = triangleArea(pA, pB, pC);
-                if (fuzzyFloat(area, 0.0, EPSILON)) removeIndices.push(index, index + 1, index + 2);
-            }
-            removeIndexValues(geometry, removeIndices);
-        }
-    }
-}
-
-/**
- * Calculates vertex normals based on position triangles
- *
- * @param {Geometry} geometry
- */
-function computeVertexNormals(geometry) {
-    const positionAttribute = geometry.getPosition();
-    if (! positionAttribute) return;
-
-    const positions = positionAttribute.data;
-    const normals = new Float32Array(positions.length);
-    const countHashes = {};
-    const positionNormals = {};
-
-    // Temp Vec3s
-    const pA = new Vec3(), pB = new Vec3(), pC = new Vec3();
-    const nA = new Vec3(), nB = new Vec3(), nC = new Vec3();
-    const cb = new Vec3();
-
-    // Adds position hash to counter
-    function addPositionHashes(position, normal) {
-        const hash = hashFromVector(position);
-
-        if (! countHashes[hash]) countHashes[hash] = 0;
-        countHashes[hash]++;
-
-        if (! positionNormals[hash]) positionNormals[hash] = new Vec3();
-        positionNormals[hash].add(normal);
-    }
-
-    // Indexed, need to calculate smooth normals
-    if (geometry.attributes.index) {
-        const indices = geometry.attributes.index.data;
-
-        // Calculate normals for each triangle
-        for (let i = 0; i < indices.length; i += 3) {
-            const idx0 = indices[i + 0] * 3;
-            const idx1 = indices[i + 1] * 3;
-            const idx2 = indices[i + 2] * 3;
-            pA.fromArray(positions, idx0);
-            pB.fromArray(positions, idx1);
-            pC.fromArray(positions, idx2);
-            calculateNormal(cb, pA, pB, pC);
-            addPositionHashes(pA, cb);
-            addPositionHashes(pB, cb);
-            addPositionHashes(pC, cb);
-        }
-
-        // Divide normals by index counts
-        for (const hash in countHashes) {
-            positionNormals[hash].divide(countHashes[hash]).normalize();
-        }
-
-        // Set normals by position
-        for (let i = 0; i < normals.length; i += 3) {
-            pA.fromArray(positions, i);
-            const hash = hashFromVector(pA);
-            normals.set(positionNormals[hash], i);
-        }
-
-    // Non indexed, unique flat normal for each triangle
-    } else {
-        // Calculate normals for each triangle
-        for (let i = 0; i < positions.length; i += 9) {
-            pA.fromArray(positions, i + 0);
-            pB.fromArray(positions, i + 3);
-            pC.fromArray(positions, i + 6);
-            calculateNormal(cb, pA, pB, pC);
-            for (let j = 0; j < 3; j++) {
-                normals[i + (j * 3) + 0] = cb[0];
-                normals[i + (j * 3) + 1] = cb[1];
-                normals[i + (j * 3) + 2] = cb[2];
-            }
-        }
-    }
-
-    // Update attribute
-    if (geometry.attributes.normal) {
-        geometry.attributes.normal.data = normals;
-        geometry.attributes.normal.needsUpdate = true;
-    // Add attribute
-    } else {
-        geometry.addAttribute('normal', { size: 3, data: normals });
-    }
-}
-
-/**
- * Converts geometry from non indexed to indexed, vertices that share data will be collapsed
- *
- * @param {Geometry} geometry
- * @param {Array} ignoreAttributes attributes to ignore during vertex comparison (e.g. 'normal', 'uv', etc)
- */
-function toIndexed(geometry, ignoreAttributes = []) {
-    const positionAttribute = geometry.getPosition();
-    if (! positionAttribute) return;
-    if (geometry.attributes.index) toNonIndexed(geometry);
-
-    const attributes = geometry.attributes;
-    const positions = attributes.position.data;
-    const indices = [];
-    const arrays = {};
-    const keys = [];
-    for (const key in attributes) {
-        arrays[key] = [];
-        if (! ignoreAttributes.includes(key) || key === 'position') keys.push(key);
-    }
-
-    // Process vertices
-    for (let i = 0; i < positions.length; i += 3) {
-        const currentIndex = i / 3;
-
-        // Check if exists
-        let foundVertex = -1;
-        for (let idx = 0; idx < indices.length; idx++) {
-            for (const key of keys) {
-                let matchingKey = true;
-
-                // Current values of attributes[key], compared to stored index values
-                const attribute = attributes[key];
-                for (let j = 0; j < attributes[key].size; j++) {
-                    let current = attribute.data[(currentIndex * attribute.size) + j];
-                    let compare = arrays[key][(indices[idx] * attribute.size) + j];
-                    if (! fuzzyFloat(current, compare, 0.0001)) {//EPSILON)) {
-                        matchingKey = false;
-                        break;
-                    }
-                }
-
-                if (matchingKey) {
-                    foundVertex = idx;
-                } else {
-                    foundVertex = -1;
-                    break;
-                }
-            }
-
-            if (foundVertex !== -1) break;
-        }
-
-        // Add Vertex
-        if (foundVertex === -1) {
-            for (const attributeName in attributes) {
-                const attribute = attributes[attributeName];
-                for (let j = 0; j < attribute.size; j++) {
-                    const current = attribute.data[(currentIndex * attribute.size) + j];
-                    arrays[attributeName].push(current);
-                }
-            }
-            indices.push((arrays['position'].length / 3) - 1);
-        } else {
-            indices.push(indices[foundVertex]);
-        }
-    };
-
-    // Replace non indexed attributes with new, indexed attributes
-    for (const attributeName in attributes) {
-        if (attributeName === 'index') continue;
-        const attribute = attributes[attributeName];
-        const itemSize = attribute.size;
-        const newAttribute = {
-            size: itemSize,
-            data: new attribute.data.constructor(arrays[attributeName])
-        };
-        geometry.deleteAttribute(attribute);
-        geometry.addAttribute(attributeName, newAttribute);
-    }
-
-    // Add index attribute
-    const indexData = (indices > 65536) ? new Uint32Array(indices) : new Uint16Array(indices);
-    geometry.addAttribute('index', { data: indexData });
-}
-
-/**
- * Converts geometry from indexed to non indexed
- *
- * @param {Geometry} geometry
- * @returns non-indexed geometry
- */
-function toNonIndexed(geometry) {
-    if (! geometry.attributes.index) toIndexed(geometry);
-
-    function convertBufferAttribute(attribute, indices) {
-        const itemSize = attribute.size;
-        const array = attribute.data;
-        const array2 = new array.constructor(indices.length * itemSize);
-        let index = 0;
-        let index2 = 0;
-        for (let i = 0; i < indices.length; i++) {
-            index = indices[i] * itemSize;
-            for (let j = 0; j < itemSize; j++) {
-                array2[index2++] = array[index++];
-            }
-        }
-        return array2;
-    }
-
-    const indices = geometry.attributes.index.data;
-    const attributes = geometry.attributes;
-    for (const attributeName in attributes) {
-        if (attributeName === 'index') continue;
-        const attribute = attributes[attributeName];
-        const newAttribute = { size: attribute.size, data: convertBufferAttribute(attribute, indices) };
-        geometry.deleteAttribute(attribute);
-        geometry.addAttribute(attributeName, newAttribute);
-    }
-    geometry.deleteAttribute(geometry.attributes.index);
-}
-
-/***** Internal ******/
-
-/**
- * Remove values (by index) from geometry.attributes
- *
- * @param {Geometry} geometry geometry to remove indices from
- * @param {Array} removeIndices array of integer index values to remove
- * @returns
- */
-function removeIndexValues(geometry, removeIndices = []) {
-    if (removeIndices.length === 0) return;
-
-    // Indexed (remove index only)
-    if (geometry.attributes.index) {
-        const attribute = geometry.attributes.index;
-        const array2 = [];
-        for (let i = 0; i < attribute.data.length; i++) {
-            if (removeIndices.includes(i)) continue;
-            array2.push(attribute.data[i]);
-        }
-        attribute.data = new attribute.data.constructor(array2);
-        attribute.needsUpdate = true;
-
-    // Non indexed (remove all attributes at index)
-    } else {
-        // Build new data array, only include un-skipped index values
-        for (const attributeName in geometry.attributes) {
-            const attribute = geometry.attributes[attributeName];
-            const array2 = [];
-            for (let i = 0; i < attribute.data.length; i += attribute.size) {
-                if (removeIndices.includes(i / attribute.size)) continue;
-                for (let j = 0; j < attribute.size; j++) array2.push(attribute.data[i + j]);
-            }
-            attribute.data = new attribute.data.constructor(array2);
-            attribute.needsUpdate = true;
-        }
-    }
-}
-
-/**
- * Generates hash string from Number
- *
- * @param {*} num
- * @param {*} shift
- * @returns
- */
-function hashFromNumber(num, shift = POSITION_SHIFT) {
-    let roundedNumber = round(num * shift);
-    if (roundedNumber == 0) roundedNumber = 0; /* prevent -0 (signed 0 can effect Math.atan2(), etc.) */
-    return `${roundedNumber}`;
-}
-
-/**
- * Generates hash string from Vector3
- *
- * @param {Vec3} vector
- * @param {*} shift
- * @returns
- */
-function hashFromVector(vector, shift = POSITION_SHIFT) {
-    return `${hashFromNumber(vector[0], shift)},${hashFromNumber(vector[1], shift)},${hashFromNumber(vector[2], shift)}`;
-}
-
-/**
- * Rounds x to integer
- *
- * @param {Number} x
- * @returns
- */
-function round(x) {
-    return (x + ((x > 0) ? 0.5 : -0.5)) << 0;
-}
-
-var GeomUtils$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    cleanAttributes: cleanAttributes,
-    computeVertexNormals: computeVertexNormals,
-    toIndexed: toIndexed,
-    toNonIndexed: toNonIndexed
-});
 
 class WireMesh extends Mesh {
 
@@ -9998,6 +10401,880 @@ class WireMesh extends Mesh {
 
 }
 
+/** Abstract base class for path segments. This class contains common methods for all segments types. */
+class BaseSegment {
+
+    constructor() {
+        this._len = -1;
+        this.tiltStart = 0;
+        this.tiltEnd = 0;
+    }
+
+    /**
+     * Get segment length
+     *
+     * @returns {number} segment length
+     */
+    getLength() {
+        if (this._len < 0) {
+            this.updateLength();
+        }
+
+        return this._len;
+    }
+
+    /**
+     * Get tilt angle at t
+     *
+     * @param {number} t Distance at time t in range [0 .. 1]
+     * @returns {number} Tilt angle at t
+     */
+    getTiltAt(t) {
+        return this.tiltStart * (1 - t) * this.tiltEnd * t;
+    }
+
+    /**
+     * Creates a clone of this instance
+     *
+     * @returns {BaseSegment} cloned instance
+     */
+    clone() {
+        return new this.constructor().copy(this);
+    }
+
+    /**
+     * Copies another segment object to this instance
+     *
+     * @param {BaseSegment} source reference object
+     * @returns {BaseSegment} copy of source object
+     */
+    copy(source) {
+        this._len = source._len;
+        this.tiltStart = source.tiltStart;
+        this.tiltEnd = source.tiltEnd;
+        return this;
+    }
+
+}
+
+// from https://github.com/Pomax/bezierjs/blob/d19695f3cc3ce383cf38ce4643f467deca7edb92/src/utils.js#L26
+// Legendre-Gauss abscissae with n=24 (x_i values, defined at i=n as the roots of the nth order Legendre polynomial Pn(x))
+const T_VALUES = [
+    -0.0640568928626056260850430826247450385909, 0.0640568928626056260850430826247450385909, -0.1911188674736163091586398207570696318404,
+    0.1911188674736163091586398207570696318404, -0.3150426796961633743867932913198102407864, 0.3150426796961633743867932913198102407864,
+    -0.4337935076260451384870842319133497124524, 0.4337935076260451384870842319133497124524, -0.5454214713888395356583756172183723700107,
+    0.5454214713888395356583756172183723700107, -0.6480936519369755692524957869107476266696, 0.6480936519369755692524957869107476266696,
+    -0.7401241915785543642438281030999784255232, 0.7401241915785543642438281030999784255232, -0.8200019859739029219539498726697452080761,
+    0.8200019859739029219539498726697452080761, -0.8864155270044010342131543419821967550873, 0.8864155270044010342131543419821967550873,
+    -0.9382745520027327585236490017087214496548, 0.9382745520027327585236490017087214496548, -0.9747285559713094981983919930081690617411,
+    0.9747285559713094981983919930081690617411, -0.9951872199970213601799974097007368118745, 0.9951872199970213601799974097007368118745,
+];
+
+// Legendre-Gauss weights with n=24 (w_i values, defined by a function linked to in the Bezier primer article)
+const C_VALUES = [
+    0.1279381953467521569740561652246953718517, 0.1279381953467521569740561652246953718517, 0.1258374563468282961213753825111836887264,
+    0.1258374563468282961213753825111836887264, 0.121670472927803391204463153476262425607, 0.121670472927803391204463153476262425607,
+    0.1155056680537256013533444839067835598622, 0.1155056680537256013533444839067835598622, 0.1074442701159656347825773424466062227946,
+    0.1074442701159656347825773424466062227946, 0.0976186521041138882698806644642471544279, 0.0976186521041138882698806644642471544279,
+    0.086190161531953275917185202983742667185, 0.086190161531953275917185202983742667185, 0.0733464814110803057340336152531165181193,
+    0.0733464814110803057340336152531165181193, 0.0592985849154367807463677585001085845412, 0.0592985849154367807463677585001085845412,
+    0.0442774388174198061686027482113382288593, 0.0442774388174198061686027482113382288593, 0.0285313886289336631813078159518782864491,
+    0.0285313886289336631813078159518782864491, 0.0123412297999871995468056670700372915759, 0.0123412297999871995468056670700372915759,
+];
+
+/**
+ * Convert Degree To Radian
+ * @param {number} a Angle in Degrees
+ * @returns {number} a Angle in Radians
+ */
+const toRadian = (a) => (a * Math.PI) / 180;
+
+/**
+ * Convert Radian To Degree
+ * @param {number} a Angle in Radians
+ * @returns {number} a Angle in Radian
+ */
+const toDegrees = (a) => (180 * a) / Math.PI;
+
+const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
+const lerp = (t, v0, v1) => v0 * (t - 1) + v1 * t;
+
+/**
+ * Fills a rotation matrix with the given sine and cosine of the angle around the given axis
+ * This function helps to avoid inverse trigonometry
+ * @param {Mat4} out mat4 receiving operation result
+ * @param {Vec3} axis the axis to rotate around. Should be normalized
+ * @param {number} sin sine of rotation angle
+ * @param {number} cos cosine of rotation angle
+ * @returns {Mat4} out
+ */
+function mat4fromRotationSinCos(out, axis, sin, cos) {
+    const x = axis[0];
+    const y = axis[1];
+    const z = axis[2];
+    const t = 1 - cos;
+    
+    out[0] = x * x * t + cos;
+    out[1] = y * x * t + z * sin;
+    out[2] = z * x * t - y * sin;
+    out[3] = 0;
+    out[4] = x * y * t - z * sin;
+    out[5] = y * y * t + cos;
+    out[6] = z * y * t + x * sin;
+    out[7] = 0;
+    out[8] = x * z * t + y * sin;
+    out[9] = y * z * t - x * sin;
+    out[10] = z * z * t + cos;
+    out[11] = 0;
+    out[12] = 0;
+    out[13] = 0;
+    out[14] = 0;
+    out[15] = 1;
+    return out;
+}
+
+/**
+ * Rotates the normal and binormal around its tangent by the given angle.
+ *
+ * see: https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+ * @param {number} angle rotation angle
+ * @param {Vec3} norm unit normal vector
+ * @param {Vec3} binorm unit binormal vector
+ * @param {Vec3} outNorm optional normal output vector. If not present then normal vector changes in place
+ * @param {Vec3} outBinorm optional binormal output vector. If not present then binormal vector changes in place
+ */
+function rotateNormalBinormal(angle, norm, binorm, outNorm = norm, outBinorm = binorm) {
+    const s = Math.sin(angle);
+    const c = Math.cos(angle);
+
+    const nx = c * norm.x + s * binorm.x;
+    const ny = c * norm.y + s * binorm.y;
+    const nz = c * norm.z + s * binorm.z;
+
+    const bx = c * binorm.x - s * norm.x;
+    const by = c * binorm.y - s * norm.y;
+    const bz = c * binorm.z - s * norm.z;
+
+    outNorm.set(nx, ny, nz);
+    outBinorm.set(bx, by, bz);
+}
+
+const tempVec3$3 = new Vec3();
+
+function cubicBezier(t, p0, p1, p2, p3) {
+    const k = 1 - t;
+    // prettier-ignore
+    return (
+        (k * k * k * p0) +
+        (3 * k * k * t * p1) +
+        (3 * k * t * t * p2) +
+        (t * t * t * p3)
+    );
+}
+
+function cubicBezierDeriv(t, p0, p1, p2, p3) {
+    const k = 1 - t;
+    // prettier-ignore
+    return (
+        (3 * k * k * (p1 - p0)) +
+        (6 * k * t * (p2 - p1)) +
+        (3 * t * t * (p3 - p2))
+    );
+}
+
+class CubicBezierSegment extends BaseSegment {
+
+    constructor(p0, p1, p2, p3, tiltStart = 0, tiltEnd = 0) {
+        super();
+        this.p0 = p0;
+        this.p1 = p1;
+        this.p2 = p2;
+        this.p3 = p3;
+
+        this.tiltStart = tiltStart;
+        this.tiltEnd = tiltEnd;
+
+        this._len = -1;
+    }
+
+    /**
+     * Updates the segment length. You must call this method every time you change the curve's control points.
+     */
+    updateLength() {
+        // from https://github.com/Pomax/bezierjs/blob/d19695f3cc3ce383cf38ce4643f467deca7edb92/src/utils.js#L265
+        const z = 0.5;
+        const len = T_VALUES.length;
+
+        let sum = 0;
+        for (let i = 0, t; i < len; i++) {
+            t = z * T_VALUES[i] + z;
+            sum += C_VALUES[i] * this.getDerivativeAt(t, tempVec3$3).len();
+        }
+
+        this._len = z * sum;
+    }
+
+    /**
+     * Get point at relative position in curve according to segment length.
+     * @param {number} t Distance at time t in range [0 .. 1]
+     * @param {Vec3} out Optional Vec3 to output
+     * @returns {Vec3} Point at relative position
+     */
+    getPointAt(t, out = new Vec3()) {
+        out.x = cubicBezier(t, this.p0.x, this.p1.x, this.p2.x, this.p3.x);
+        out.y = cubicBezier(t, this.p0.y, this.p1.y, this.p2.y, this.p3.y);
+        out.z = cubicBezier(t, this.p0.z, this.p1.z, this.p2.z, this.p3.z);
+        return out;
+    }
+
+    getDerivativeAt(t, out = new Vec3()) {
+        out.x = cubicBezierDeriv(t, this.p0.x, this.p1.x, this.p2.x, this.p3.x);
+        out.y = cubicBezierDeriv(t, this.p0.y, this.p1.y, this.p2.y, this.p3.y);
+        out.z = cubicBezierDeriv(t, this.p0.z, this.p1.z, this.p2.z, this.p3.z);
+        return out;
+    }
+
+    /**
+     * Returns a unit vector tangent at t
+     * @param {number} t Distance at time t in range [0 .. 1]
+     * @param {Vec3} out Optional Vec3 to output
+     * @returns {Vec3} A unit vector
+     */
+    getTangentAt(t, out = new Vec3()) {
+        return this.getDerivativeAt(t, out).normalize();
+    }
+
+    lastPoint() {
+        return this.p3;
+    }
+
+}
+
+const tempVec3$2 = new Vec3();
+
+class LineSegment extends BaseSegment {
+
+    constructor(p0, p1, tiltStart = 0, tiltEnd = 0) {
+        super();
+        this.p0 = p0;
+        this.p1 = p1;
+
+        this.tiltStart = tiltStart;
+        this.tiltEnd = tiltEnd;
+
+        this._len = -1;
+    }
+
+    /**
+     * Updates the segment length. You must call this method every time you change the curve's control points.
+     */
+    updateLength() {
+        this._len = tempVec3$2.sub(this.p1, this.p0).len();
+    }
+
+    /**
+     * Get point at relative position in curve according to segment length.
+     * @param {number} t Distance at time t in range [0 .. 1]
+     * @param {Vec3} out Optional Vec3 to output
+     * @returns {Vec3} Point at relative position
+     */
+    getPointAt(t, out = new Vec3()) {
+        lerp$4(out, this.p0, this.p1, t);
+        return out;
+    }
+
+    /**
+     * Returns a unit vector tangent at t
+     * @param {number} t Distance at time t in range [0 .. 1]
+     * @param {Vec3} out Optional Vec3 to output
+     * @returns {Vec3} A unit vector
+     */
+    getTangentAt(t, out = new Vec3()) {
+        return out.sub(this.p1, this.p0).normalize();
+    }
+
+    lastPoint() {
+        return this.p1;
+    }
+
+}
+
+const tempVec3$1 = new Vec3();
+
+function quadraticBezier(t, p0, p1, p2) {
+    const k = 1 - t;
+    return k * k * p0 + 2 * k * t *p1 + t * t * p2;
+}
+
+function quadraticBezierDeriv(t, p0, p1, p2) {
+    const k = 1 - t;
+    return 2 * k * (p1 - p0) + 2 * t * (p2 - p1);
+}
+
+class QuadraticBezierSegment extends BaseSegment {
+    constructor(p0, p1, p2, tiltStart = 0, tiltEnd = 0) {
+        super();
+        this.p0 = p0;
+        this.p1 = p1;
+        this.p2 = p2;
+
+        this.tiltStart = tiltStart;
+        this.tiltEnd = tiltEnd;
+
+        this._len = -1;
+    }
+
+    /**
+     * Updates the segment length. You must call this method every time you change the curve's control points.
+     */
+    updateLength() {
+        // from https://github.com/Pomax/bezierjs/blob/d19695f3cc3ce383cf38ce4643f467deca7edb92/src/utils.js#L265
+        const z = 0.5;
+        const len = T_VALUES.length;
+
+        let sum = 0;
+        for (let i = 0, t; i < len; i++) {
+            t = z * T_VALUES[i] + z;
+            sum += C_VALUES[i] * this.getDerivativeAt(t, tempVec3$1).len();
+        }
+
+        this._len = z * sum;
+    }
+
+    /**
+     * Get point at relative position in curve according to segment length.
+     * @param {number} t Distance at time t in range [0 .. 1]
+     * @param {Vec3} out Optional Vec3 to output
+     * @returns {Vec3} Point at relative position
+     */
+    getPointAt(t, out = new Vec3()) {
+        out.x = quadraticBezier(t, this.p0.x, this.p1.x, this.p2.x);
+        out.y = quadraticBezier(t, this.p0.y, this.p1.y, this.p2.y);
+        out.z = quadraticBezier(t, this.p0.z, this.p1.z, this.p2.z);
+        return out;
+    }
+
+    getDerivativeAt(t, out = new Vec3()) {
+        out.x = quadraticBezierDeriv(t, this.p0.x, this.p1.x, this.p2.x);
+        out.y = quadraticBezierDeriv(t, this.p0.y, this.p1.y, this.p2.y);
+        out.z = quadraticBezierDeriv(t, this.p0.z, this.p1.z, this.p2.z);
+        return out;
+    }
+
+    /**
+     * Returns a unit vector tangent at t
+     * @param {number} t Distance at time t in range [0 .. 1]
+     * @param {Vec3} out Optional Vec3 to output
+     * @returns {Vec3} A unit vector
+     */
+    getTangentAt(t, out = new Vec3()) {
+        return this.getDerivativeAt(t, out).normalize();
+    }
+
+    lastPoint() {
+        return this.p2;
+    }
+
+}
+
+const tempVec3 = new Vec3();
+const tempMat4 = new Mat4();
+
+function throwIfNullProperty(property, message) {
+    if (this[property] == null) throw new Error(message);
+}
+
+class Path {
+    constructor() {
+        this._segments = [];
+        this._lengthOffsets = null;
+        this._totalLength = -1;
+        this._lastPoint = null;
+        this._lastTilt = 0;
+
+        this._assertLastPoint = throwIfNullProperty.bind(this, '_lastPoint', 'Can`t get previous point of curve. Did you forget moveTo command?');
+
+        this.tiltFunction = null;
+    }
+
+    moveTo(p, tilt = 0) {
+        this._totalLength = -1;
+        this._lastPoint = p;
+        this._lastTilt = tilt;
+    }
+
+    bezierCurveTo(cp1, cp2, p, tilt = 0) {
+        this._assertLastPoint();
+        const seg = new CubicBezierSegment(this._lastPoint, cp1, cp2, p, this._lastTilt, tilt);
+        this.addSegment(seg);
+        return this;
+    }
+
+    quadraticCurveTo(cp, p, tilt = 0) {
+        this._assertLastPoint();
+        const seg = new QuadraticBezierSegment(this._lastPoint, cp, p, this._lastTilt, tilt);
+        this.addSegment(seg);
+        return this;
+    }
+
+    lineTo(p, tilt = 0) {
+        this._assertLastPoint();
+        const seg = new LineSegment(this._lastPoint, p, this._lastTilt, tilt);
+        this.addSegment(seg);
+        return this;
+    }
+
+    addSegment(segment) {
+        this._totalLength = -1;
+        this._lastPoint = segment.lastPoint();
+        this._lastTilt = segment.tiltEnd;
+        this._segments.push(segment);
+        return this;
+    }
+
+    getSegments() {
+        return this._segments;
+    }
+
+    updateLength() {
+        const n = this._segments.length;
+        this._lengthOffsets = new Array(n);
+
+        let offset = 0;
+        for (let i = 0; i < n; i++) {
+            this._lengthOffsets[i] = offset;
+            offset += this._segments[i].getLength();
+        }
+
+        this._totalLength = offset;
+    }
+
+    getLength() {
+        if (this._totalLength < 0) {
+            this.updateLength();
+        }
+
+        return this._totalLength;
+    }
+
+    /**
+     * Finding a path segment at a given absolute length distance
+     * @param {number} len absolute length distance
+     * @returns {[number, number]} [_segment index_, _relative segment distance_]
+     */
+    findSegmentIndexAtLength(len) {
+        const totalLength = this.getLength();
+
+        if (len <= 0) {
+            return [0, 0];
+        }
+
+        if (len >= totalLength) {
+            return [this._segments.length - 1, 1];
+        }
+
+        let start = 0;
+        let end = this._lengthOffsets.length - 1;
+        let index = -1;
+        let mid;
+
+        while (start <= end) {
+            mid = Math.ceil((start + end) / 2);
+
+            if (mid === 0 || mid === this._lengthOffsets.length - 1 || (len >= this._lengthOffsets[mid] && len < this._lengthOffsets[mid + 1])) {
+                index = mid;
+                break;
+            } else if (len < this._lengthOffsets[mid]) {
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        }
+
+        const seg = this._segments[index];
+        const segLen = seg.getLength();
+        const t = (len - this._lengthOffsets[index]) / segLen;
+
+        return [index, t];
+    }
+
+    getPointAtLength(len, out = new Vec3()) {
+        const [i, t] = this.findSegmentIndexAtLength(len);
+        return this._segments[i].getPointAt(t, out);
+    }
+
+    getPointAt(t, out = new Vec3()) {
+        const totalLength = this.getLength();
+        return this.getPointAtLength(t * totalLength, out);
+    }
+
+    getTangentAtLength(len, out = new Vec3()) {
+        const [i, t] = this.findSegmentIndexAtLength(len);
+        return this._segments[i].getTangentAt(t, out);
+    }
+
+    getTangentAt(t, out = new Vec3()) {
+        const totalLength = this.getLength();
+        return this.getTangentAtLength(t * totalLength, out);
+    }
+
+    getTiltAtLength(len) {
+        const [i, t] = this.findSegmentIndexAtLength(len);
+        return this._segments[i].getTiltAt(t);
+    }
+
+    getTiltAt(t) {
+        const totalLength = this.getLength();
+        return this.getTiltAtLength(t * totalLength);
+    }
+
+    /**
+     * Get sequence of points using `getPointAt(t)`
+     * @param {number} divisions number of subdivisions
+     * @returns {Vec3[]} array of points
+     */
+    getPoints(divisions = 64) {
+        const points = new Array(divisions + 1);
+        for (let i = 0; i <= divisions; i++) {
+            points[i] = this.getPointAt(i / divisions);
+        }
+        return points;
+    }
+
+    /**
+     * Generates the Frenet Frames.
+     * See http://www.cs.indiana.edu/pub/techreports/TR425.pdf
+     * @param {number} divisions number of subdivisions
+     * @returns {{tangents: Vec3[], normals: Vec3[], binormals: Vec3[]}} Object with tangents, normals and binormals arrays
+     */
+    computeFrenetFrames(divisions = 64, closed = false) {
+        const tangents = new Array(divisions + 1);
+        const tilts = new Array(divisions + 1);
+
+        const tiltFunction = this.tiltFunction ?? ((a) => a);
+
+        // compute the tangent vectors and tilt for each segment on the curve
+        const totalLength = this.getLength();
+        for (let i = 0; i <= divisions; i++) {
+            const [si, st] = this.findSegmentIndexAtLength((totalLength * i) / divisions);
+            const segment = this._segments[si];
+            tangents[i] = segment.getTangentAt(st);
+            tilts[i] = tiltFunction(segment.getTiltAt(st), i / divisions, this);
+        }
+
+        const tx = Math.abs(tangents[0].x);
+        const ty = Math.abs(tangents[0].y);
+        const tz = Math.abs(tangents[0].z);
+
+        const normal = new Vec3();
+        if (tx < ty && tx < tz) {
+            normal.set(1, 0, 0);
+        } else if (ty < tx && ty < tz) {
+            normal.set(0, 1, 0);
+        } else {
+            normal.set(0, 0, 1);
+        }
+
+        // select an initial normal vector perpendicular to the first tangent vector,
+        // and in the direction of the minimum tangent xyz component
+        const normals = new Array(divisions + 1);
+        const binormals = new Array(divisions + 1);
+        normals[0] = new Vec3();
+        binormals[0] = new Vec3();
+
+        tempVec3.cross(tangents[0], normal).normalize();
+        normals[0].cross(tangents[0], tempVec3);
+        binormals[0].cross(tangents[0], normals[0]);
+
+        // compute the slowly-varying normal vector for each segment on the curve
+        for (let i = 1; i < tangents.length; i++) {
+            normals[i] = normals[i - 1].clone();
+            binormals[i] = new Vec3();
+
+            tempVec3.cross(tangents[i - 1], tangents[i]);
+            const crossLen = tempVec3.len();
+
+            if (crossLen > Number.EPSILON) {
+                tempVec3.scale(1 / crossLen); // nomalize
+                const cosTheta = clamp(tangents[i - 1].dot(tangents[i]), -1, 1); // clamp for floating pt errors
+                const sinTheta = clamp(crossLen, -1, 1);
+
+                mat4fromRotationSinCos(tempMat4, tempVec3, sinTheta, cosTheta);
+                normals[i].applyMatrix4(tempMat4);
+            }
+
+            binormals[i].cross(tangents[i], normals[i]);
+        }
+
+        // add tilt twisting
+        for (let i = 0; i < tilts.length; i++) {
+            rotateNormalBinormal(toRadian(tilts[i]), normals[i], binormals[i]);
+        }
+
+        // if the curve is closed, postprocess the vectors so the first and last normal vectors are the same
+        if (closed === true) {
+            const normalLast = normals[normals.length - 1];
+            let step = Math.acos(clamp(normals[0].dot(normalLast), -1, 1)) / (normals.length - 1);
+
+            if (tangents[0].dot(tempVec3.cross(normals[0], normalLast)) > 0) {
+                step = -step;
+            }
+
+            for (let i = 1; i < normals.length - 1; i++) {
+                const angle = step * i;
+                rotateNormalBinormal(angle, normals[i], binormals[i]);
+                tilts[i] += toDegrees(angle);
+            }
+
+            normals[normals.length - 1] = normals[0].clone();
+            binormals[binormals.length - 1] = binormals[0].clone();
+        }
+
+        return { tangents, normals, binormals, tilts };
+    }
+
+}
+
+let _texture;
+function emptyTexture() {
+    if (!_texture || !_texture.isTexture) _texture = new Texture();
+    return _texture;
+}
+
+class TextureArray extends Program {
+
+    #flatShading = false;
+
+    #mapDiffuse = 0;
+
+    #normalIntensity = 0.0;
+    #opacity = 1.0;
+    #tint = [ 1, 1, 1 ];
+    #tintIntensity = 0.0;
+    #wireIntensity = 0.0;
+
+    constructor({
+        texture = emptyTexture(),
+        textureNormal = emptyTexture(),
+
+        flatShading = false,
+        normalIntensity = 0.0,
+        normalScale = 0.0,
+        opacity = 1.0,
+        tint = [ 1, 1, 1 ],
+        tintIntensity = 0.0,
+        wireIntensity = 0.0,
+        ...programProps
+    } = {}) {
+        super({
+            ...programProps,
+            vertex: defaultVertex,
+            fragment: defaultFragment,
+            uniforms: {
+                tDiffuse: { value: texture },
+                tNormal: { value: textureNormal },
+                uLayer: { value: 0 },
+                uNormalScale: { value: normalScale },
+                uNormalUVScale: { value: 1 },
+                uNormalIntensity: { value: normalIntensity },
+                uOpacity: { value: opacity },
+                uTime: { value: 0 },
+                uTint: { value: tint },
+                uTintIntensity: { value: tintIntensity },
+                uWireIntensity: { value: wireIntensity },
+            },
+            defines: {
+                FLAT_SHADED: flatShading,
+            }
+        });
+
+        this.#flatShading = flatShading;
+        this.#mapDiffuse = texture;
+        this.#normalIntensity = normalIntensity;
+        this.#opacity = opacity;
+        this.#tint = tint;
+        this.#tintIntensity = tintIntensity;
+        this.#wireIntensity = wireIntensity;
+    }
+
+    rebuildProgram() {
+        this.buildProgram({
+            vertex: defaultVertex,
+            fragment: defaultFragment,
+            uniforms: {
+                tDiffuse: { value: this.#mapDiffuse },
+                uNormalIntensity: { value: this.#normalIntensity },
+                uOpacity: { value: this.#opacity },
+                uTint: { value: this.#tint },
+                uTintIntensity: { value: this.#tintIntensity },
+                uWireIntensity: { value: this.#wireIntensity },
+            },
+            defines: {
+                FLAT_SHADED: this.#flatShading,
+            }
+        });
+    }
+
+    get flatShading() { return this.#flatShading; }
+
+    set flatShading(flatShading) {
+        if (this.#flatShading === flatShading) return;
+        this.#flatShading = flatShading;
+        this.rebuildProgram();
+    }
+
+    get normalIntensity() { return this.#normalIntensity; }
+
+    set normalIntensity(normalIntensity) {
+        this.uniforms.uNormalIntensity.value = normalIntensity;
+    }
+
+    get opacity() { return this.#opacity; }
+
+    set opacity(opacity) {
+        this.uniforms.uOpacity.value = opacity;
+    }
+
+    get tint() { return this.#tint; }
+
+    set tint(tint) {
+        this.uniforms.uTint.value = tint;
+    }
+
+    get tintIntensity() { return this.#tintIntensity; }
+
+    set tintIntensity(tintIntensity) {
+        this.uniforms.uTintIntensity.value = tintIntensity;
+    }
+
+    get wireIntensity() { return this.#wireIntensity; }
+
+    set wireIntensity(wireIntensity) {
+        this.uniforms.uWireIntensity.value = wireIntensity;
+    }
+
+}
+
+/******************** INTERNAL ********************/
+
+const defaultVertex = /* glsl */ `#version 300 es
+    in vec2 uv;
+    in vec3 position;
+    in vec3 normal;
+
+    vec3 bary[3] = vec3[](vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 1.0));
+
+    uniform mat3 normalMatrix;
+    uniform mat4 modelMatrix;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    #ifdef FLAT_SHADED
+        flat out vec3 vNormal;
+    #else
+        out vec3 vNormal;
+    #endif
+
+    out vec3 vBary;
+    out vec3 vMPos;
+    out vec2 vUv;
+
+    void main() {
+        vBary = bary[int(mod(float(gl_VertexID), 3.0))];
+        vUv = uv;
+        vNormal = normalize(normalMatrix * normal);
+        vMPos = (modelMatrix * vec4(position, 1.0)).xyz;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+`;
+
+const defaultFragment = /* glsl */ `#version 300 es
+    precision highp float;
+    precision highp int;
+    precision highp sampler2DArray;
+
+    uniform float uNormalIntensity;
+    uniform float uOpacity;
+    uniform vec3 uTint;
+    uniform float uTintIntensity;
+    uniform float uWireIntensity;
+
+    // uniform sampler2D tDiffuse;
+    uniform sampler2DArray tDiffuse;
+
+    uniform sampler2D tNormal;
+    uniform float uNormalScale;
+    uniform float uNormalUVScale;
+
+    uniform mat4 viewMatrix;
+    uniform float uTime;
+
+    uniform int uLayer;
+
+    #ifdef FLAT_SHADED
+        flat in vec3 vNormal;
+    #else
+        in vec3 vNormal;
+    #endif
+
+    in vec3 vBary;
+    in vec3 vMPos;
+    in vec2 vUv;
+
+    layout(location = 0) out highp vec4 pc_fragColor;
+
+    void main() {
+        float alpha = uOpacity;
+
+        // ----- Normal -----
+        vec3 plainNormal = normalize(vNormal);
+        vec3 textNormal = mix(vec3(1.0), texture(tNormal, vUv).rgb * 2.0 - 1.0, uNormalScale);
+        vec3 normal = normalize(plainNormal * textNormal);
+
+        // ----- Diffuse -----
+        // vec4 tex = texture(tDiffuse, vUv);
+        vec4 tex = texture(tDiffuse, vec3(vUv, uLayer));
+        alpha *= tex.a;
+
+        vec3 light = vec3(0.0); // normalize(vec3(sin(uTime), 1.0, cos(uTime)));
+        float shading = dot(normal, light) * 0.25;
+
+        vec3 diffuse = tex.rgb + shading;
+
+        // ----- Color Tint -----
+        diffuse = mix(diffuse, uTint, uTintIntensity);
+
+        // ----- Normal Tint -----
+        diffuse = mix(diffuse, normal, uNormalIntensity);
+
+        // ----- Barycentric -----
+        vec3 baryDiffuse = diffuse;
+        float baryAlpha = 1.0;
+
+        float lineWidth = 5.0; // line thickness - in pixels
+        float lineHalf = lineWidth / 2.0;
+        vec3 d = fwidth(vBary);
+        vec3 s = smoothstep(d * (lineWidth + lineHalf), d * (lineWidth - lineHalf), vBary);
+        baryAlpha *= max(max(s.x, s.y), s.z);
+
+        // // Dashes
+        // baryAlpha *= step(0.0, sin(max(vBary.x, vBary.y) * 3.14 * 5.0));
+
+        // Back face shading
+        baryDiffuse = mix(vec3(0, 0, 0), baryDiffuse, vec3(gl_FrontFacing));
+        baryAlpha = mix(baryAlpha * 0.1 + 0.02, baryAlpha, float(gl_FrontFacing));
+
+        diffuse = mix(diffuse, baryDiffuse, uWireIntensity);
+        alpha = mix(alpha, baryAlpha, uWireIntensity);
+        if (alpha < 0.01) discard;
+        diffuse *= alpha;
+
+        // ----- Output -----
+        pc_fragColor = vec4(diffuse, alpha);
+
+    }
+`;
+
 // https://www.khronos.org/registry/webgl/extensions/
 // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getParameter
 
@@ -10014,15 +11291,15 @@ class Capabilities {
         this.maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
         this.maxVaryings = gl.getParameter(gl.MAX_VARYING_VECTORS);
         this.maxVertexUniforms = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
-	    this.maxFragmentUniforms = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
+        this.maxFragmentUniforms = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
 
-	    this.maxPrecision = 'lowp';
-		if (gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT).precision > 0 &&
-			gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision > 0
+        this.maxPrecision = 'lowp';
+        if (gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT).precision > 0 &&
+            gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision > 0
         ) this.maxPrecision = 'highp';
         else if (
             gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.MEDIUM_FLOAT).precision > 0 &&
-			gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_FLOAT).precision > 0
+            gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_FLOAT).precision > 0
         ) this.maxPrecision = 'mediump';
 
         // Textures
@@ -10117,94 +11394,115 @@ class Capabilities {
 
 }
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 function checkRenderTargetSupport(gl, internalFormat, format, type) {
-	// Create temp framebuffer and texture
-	const framebuffer = gl.createFramebuffer();
-	const texture = gl.createTexture();
+    // Create temp framebuffer and texture
+    const framebuffer = gl.createFramebuffer();
+    const texture = gl.createTexture();
 
-	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 2, 2, 0, format, type, null);
-	gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 2, 2, 0, format, type, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
 
-	// Check framebuffer status
-	const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    // Check framebuffer status
+    const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
 
-	// Clean up
-	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	gl.bindTexture(gl.TEXTURE_2D, null);
-	return (status === gl.FRAMEBUFFER_COMPLETE);
+    // Clean up
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    return (status === gl.FRAMEBUFFER_COMPLETE);
 };
 
 const _timer = (performance == null || typeof performance === 'undefined') ? Date : performance;
 
 class Clock {
 
-	#running = false;
-	#startTime = 0;
-	#elapsedTime = 0;
-	#lastChecked = 0;
-	#deltaCount = 0;
+    #running = false;
+    #startTime = 0;
+    #elapsedTime = 0;
+    #lastChecked = 0;
+    #deltaCount = 0;
 
-	constructor(autoStart = true, msRewind = 0) {
-		if (autoStart) this.start();
-		this.#startTime -= msRewind;
-		this.#lastChecked -= msRewind;
-	}
+    #frameTime = 0;
+    #frameCount = 0;
+    #lastFrameCount = 0;
 
-	start() {
-		this.#startTime = _timer.now();
-		this.#lastChecked = this.#startTime;
-		this.#running = true;
-	}
+    constructor(autoStart = true, msRewind = 0) {
+        if (autoStart) this.start();
+        this.#startTime -= msRewind;
+        this.#lastChecked -= msRewind;
+    }
 
-	stop() {
-		this.getDeltaTime();
-		this.#running = false;
-	}
+    start() {
+        this.#startTime = _timer.now();
+        this.#lastChecked = this.#startTime;
+        this.#running = true;
+    }
 
-	reset() {
-		this.#startTime = _timer.now();
-		this.#lastChecked = this.#startTime;
-		this.#elapsedTime = 0;
-		this.#deltaCount = 0;
-	}
+    stop() {
+        this.getDeltaTime();
+        this.#running = false;
+    }
 
-	/** Time between start() or reset() and now (if running) or stop() (if not running) */
-	getElapsedTime() {
-		this.getDeltaTime();
-		return this.#elapsedTime;
-	}
+    reset() {
+        this.#startTime = _timer.now();
+        this.#lastChecked = this.#startTime;
+        this.#elapsedTime = 0;
+        this.#deltaCount = 0;
+    }
 
-	/** Returns delta time (time since last getDeltaTime() call) */
-	getDeltaTime() {
-		if (! this.#running) return 0;
+    /** Total time elapsed between start() / reset() and last time getDeltaTime() was called */
+    getElapsedTime() {
+        return this.#elapsedTime;
+    }
 
+    /** Returns delta time (time since last getDeltaTime() call) */
+    getDeltaTime() {
+        if (!this.#running) {
+            this.#lastFrameCount = 0;
+            return 0;
+        }
+
+        // Delta
         const newTime = _timer.now();
         const dt = (newTime - this.#lastChecked) / 1000;
         this.#lastChecked = newTime;
         this.#elapsedTime += dt;
+        this.#deltaCount++;
 
-		this.#deltaCount++;
-		return dt;
-	}
+        // Framerate
+        this.#frameTime += dt;
+        this.#frameCount++;
+        if (this.#frameTime > 1) {
+            this.#lastFrameCount = this.#frameCount;
+            this.#frameTime = 0;
+            this.#frameCount = 0;
+        }
 
-	/** Is clock running? */
-	isRunning() {
-		return this.#running;
-	}
+        return dt;
+    }
 
-	/** Total number of times getDeltaTime() has been called since start() or reset() were called */
-	count() {
-		return this.#deltaCount;
-	}
+    /** Is clock running? */
+    isRunning() {
+        return this.#running;
+    }
 
-	/** Average delta time since start (in ms) */
-	averageDelta() {
-		return (this.#elapsedTime * 1000) / this.#deltaCount;
-	}
+    /** Total number of times getDeltaTime() has been called since start() or reset() were called */
+    count() {
+        return this.#deltaCount;
+    }
+
+    /** Average delta time since start (in ms) */
+    averageDelta() {
+        const frameRate = 1 / this.#lastFrameCount;
+        return Math.min(1, frameRate);
+    }
+
+    fps() {
+        return this.#lastFrameCount;
+    }
 
 }
 
@@ -10224,7 +11522,7 @@ class Debug {
                 if (value === 'undefined' || value === 'null' || value === 'false') return false;
                 return true;
             }
-            return Boolean(value);
+            return !!value;
         }
 
         openFrame = openFrame || checkState('DebugFrame');
@@ -10239,22 +11537,24 @@ class Debug {
         const textLight = getVariable('text-light') ?? '225, 225, 225';
 
         const styleSheet = document.createElement('style');
-        styleSheet.innerText = `
+        styleSheet.textContent = `
             #EyeDebug {
                 position: absolute;
                 display: flex;
                 flex-direction: column;
-                justify-contents: left;
+                justify-content: left;
                 text-align: left;
                 left: 0;
                 bottom: 0;
                 margin: 0.25em;
                 padding: 0;
-                z-index: 1000; /* debug info */
+                z-index: 1000; /* Debug Info */
                 background: transparent;
             }
 
             .EyeDiv {
+                user-select: none;
+                pointer-events: none;
                 margin: 0.35em;
                 margin-bottom: 0;
                 padding: 0.25em;
@@ -10283,11 +11583,11 @@ class Debug {
             .EyeDebugButton:hover {
                 filter: brightness(125%) grayscale(100%);
                 box-shadow:
-                    inset -2px 2px 2px -1px rgba(255, 255, 255, 0.2),
+                    inset -1px 1px 1px -1px rgba(255, 255, 255, 0.2),
                     inset 2px -2px 2px -1px rgba(0, 0, 0, 0.75);
             }
 
-            .EyeDebugButton.Selected {
+            .EyeDebugButton.suey-selected {
                 filter: brightness(100%);
                 box-shadow: none;
             }
@@ -10297,12 +11597,12 @@ class Debug {
             #ButtonBuffers { border: solid 2px rgba(${buttonColor}, 0.7); }
             #ButtonSystem { border: solid 2px rgba(${buttonColor}, 0.7); }
 
-            #FrameFrame, #ButtonFrame.Selected { border: solid 2px rgba(0, 180, 175, 0.75); }
-            #SceneFrame, #ButtonScene.Selected { border: solid 2px rgba(255, 113, 0, 0.75); }
-            #BuffersFrame, #ButtonBuffers.Selected { border: solid 2px rgba(255, 93, 0, 0.75); }
-            #SystemFrame, #ButtonSystem.Selected { border: solid 2px rgba(145, 223, 0, 0.75); }
+            #FrameFrame, #ButtonFrame.suey-selected { border: solid 2px rgba(0, 180, 175, 0.75); }
+            #SceneFrame, #ButtonScene.suey-selected { border: solid 2px rgba(255, 113, 0, 0.75); }
+            #BuffersFrame, #ButtonBuffers.suey-selected { border: solid 2px rgba(255, 93, 0, 0.75); }
+            #SystemFrame, #ButtonSystem.suey-selected { border: solid 2px rgba(145, 223, 0, 0.75); }
 
-            .EyeDebugButton.Selected:hover {
+            .EyeDebugButton.suey-selected:hover {
                 filter: brightness(125%);
             }
 
@@ -10373,7 +11673,6 @@ class Debug {
                 margin: auto;
                 max-width: 1.35em;
                 max-height: 1.35em;
-                /* filter: drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.25)); */
             }
 
             .ColorIcon {
@@ -10384,11 +11683,11 @@ class Debug {
                 filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 0deg));
             }
 
-            .RotateColorize1 {
+            .suey-rotate-colorize1 {
                 filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 270deg));
             }
 
-            .RotateColorize2 {
+            .suey-rotate-colorize2 {
                 filter: brightness(65%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 35deg));
             }
         `;
@@ -10431,27 +11730,27 @@ class Debug {
 
             <div class="EyeButtonRow">
                 <button class="EyeDebugButton" id="ButtonFrame">
-                    <div class="EyeImageHolder"><div class="ColorIcon">
-                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M256,31c-123.431,0 -225,101.569 -225,225c0,123.431 101.569,225 225,225c123.431,0 225,-101.569 225,-225c-0.146,-123.376 -101.624,-224.854 -225,-225Zm0,409.091c-100.989,-0 -184.091,-83.102 -184.091,-184.091c0,-100.989 83.102,-184.091 184.091,-184.091c100.989,0 184.091,83.102 184.091,184.091c-0.123,100.943 -83.148,183.968 -184.091,184.091Z" style="fill:#c0c0c0;fill-rule:nonzero;"/><path d="M276.455,247.532l-0,-114.259c-0,-11.221 -9.234,-20.455 -20.455,-20.455c-11.221,0 -20.455,9.234 -20.455,20.455l0,122.727c0.002,5.422 2.159,10.628 5.994,14.461l61.363,61.364c3.812,3.682 8.91,5.742 14.21,5.742c11.221,-0 20.455,-9.234 20.455,-20.455c-0,-5.3 -2.06,-10.398 -5.742,-14.21l-55.37,-55.37Z" style="fill:#c0c0c0;fill-rule:nonzero;"/></svg>
-                    </div></div>
+                    <div class="EyeImageHolder ColorIcon">
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M253.007,34c123.372,0.146 224.847,101.621 224.993,224.993l0,0.007c0,123.431 -101.569,225 -225,225c-123.431,0 -225,-101.569 -225,-225c0,-123.431 101.569,-225 225,-225l0.007,0Zm-0.011,398.23c94.989,-0.118 173.116,-78.245 173.234,-173.234c-0.002,-95.029 -78.2,-173.226 -173.23,-173.226c-95.031,-0 -173.23,78.199 -173.23,173.23c-0,95.03 78.197,173.228 173.226,173.23Z" style="fill:#c0c0c0;"/><path d="M279.881,249.916l51.859,51.858c0.028,0.029 0.057,0.058 0.085,0.087c4.838,5.009 7.546,11.709 7.546,18.674c-0,14.746 -12.135,26.881 -26.881,26.881c-6.966,-0 -13.665,-2.707 -18.675,-7.546c-0.029,-0.028 -0.058,-0.056 -0.086,-0.085l-59.733,-59.733c-5.039,-5.037 -7.874,-11.879 -7.877,-19.004l0,-119.471c0,-14.746 12.135,-26.881 26.881,-26.881c14.746,-0 26.881,12.135 26.881,26.881l-0,108.339Z" style="fill:#c0c0c0;"/></svg>
+                    </div>
                 </button>
 
                 <button class="EyeDebugButton" id="ButtonScene">
-                    <div class="EyeImageHolder"><div class="ColorComplement">
-                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M334.107,33.245c0.002,0.001 0.004,0.003 0.005,0.005c0.01,0.008 0.02,0.018 0.03,0.027c0.045,0.037 0.091,0.077 0.138,0.12l0.325,0.299c0.021,0.019 0.043,0.039 0.064,0.059l0.311,0.298c0.019,0.018 0.038,0.036 0.056,0.054c-0,0 99.995,99.996 100,100c0.034,0.035 0.068,0.071 0.102,0.108c0.023,0.025 0.044,0.049 0.065,0.074l0.269,0.269c0.053,0.053 0.106,0.109 0.157,0.168c0.008,0.009 0.238,0.275 0.238,0.275c0.011,0.012 0.022,0.025 0.033,0.037c1.108,1.231 2.022,2.574 2.77,3.968c1.586,2.939 2.473,6.295 2.473,9.851l-0,303.061c-0,7.983 -3.171,15.639 -8.816,21.284l-1.397,1.396c-6.02,6.02 -14.184,9.402 -22.698,9.402l-305.293,-0c-7.983,-0 -15.639,-3.171 -21.283,-8.816l-1.397,-1.397c-6.02,-6.02 -9.402,-14.184 -9.402,-22.698l0,-391.007c0,-7.983 3.171,-15.639 8.816,-21.284l1.397,-1.396c6.02,-6.02 14.184,-9.402 22.698,-9.402l216.518,-0c3.556,-0 6.912,0.887 9.851,2.473c1.395,0.748 2.739,1.663 3.97,2.772Zm101.336,106.169c0.402,-0.301 0.73,-0.705 0.942,-1.183c0.333,-0.75 0.338,-1.586 0.047,-2.322c0.443,1.224 -0.397,2.318 -1.268,3.069c0.095,0.144 0.188,0.29 0.279,0.436Zm-97.3,-8.414l39.028,-0l-39.028,-39.029l-0,39.029Zm-35.714,5.804l-0,-70.09l-192.858,0l0,378.572l292.858,-0l-0,-278.572l-70.918,0c-7.187,0 -14.08,-2.855 -19.163,-7.937l-1.396,-1.397c-5.458,-5.457 -8.523,-12.859 -8.523,-20.576Z" style="fill:#c0c0c0;"/></svg>
-                    </div></div>
+                    <div class="EyeImageHolder ColorComplement">
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M336.33,61.901c0.054,0.046 87.151,87.14 87.223,87.223c0.015,0.017 0.028,0.032 0.039,0.044c1.231,1.375 2.251,2.87 3.086,4.423c1.775,3.293 2.772,7.051 2.772,11.035l0,258.458c0,8.282 -3.289,16.224 -9.145,22.08l-1.192,1.191c-6.176,6.175 -14.551,9.645 -23.286,9.645l-260.361,0c-8.282,0 -16.225,-3.29 -22.08,-9.146l-1.191,-1.191c-6.176,-6.176 -9.645,-14.551 -9.645,-23.286l0,-333.461c0,-8.282 3.289,-16.224 9.145,-22.08l1.192,-1.191c6.176,-6.175 14.551,-9.645 23.286,-9.645l184.652,0c3.983,0 7.741,0.997 11.034,2.773c1.572,0.843 3.084,1.878 4.471,3.128Zm-51.29,107.446l-0,-69.22l-138.363,0l-0,311.746l238.646,0l-0,-211.463l-69.925,0c-7.603,0 -14.894,-3.02 -20.271,-8.396l-1.19,-1.191c-5.697,-5.696 -8.897,-13.422 -8.897,-21.476Zm42.579,-9.526l44,-0l-44,-44l-0,44Z" style="fill:#c0c0c0;"/></svg>
+                    </div>
                 </button>
 
                 <button class="EyeDebugButton" id="ButtonBuffers">
-                    <div class="EyeImageHolder"><div class="RotateColorize1">
-                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 185 185" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><g><path d="M164.233,130.955c3.418,5.92 3.418,12.99 0,18.911c-3.418,5.92 -9.541,9.456 -16.378,9.456l-111.131,-0c-6.836,-0 -12.958,-3.534 -16.377,-9.455c-3.419,-5.922 -3.419,-12.992 -0,-18.912l55.565,-96.242c3.418,-5.921 9.541,-9.456 16.378,-9.456c6.837,0 12.959,3.534 16.378,9.455l55.565,96.243Zm-126.283,8.748l108.68,0l-54.34,-94.119l-54.34,94.119Z" style="fill:#c0c0c0;"/></g></svg>
-                    </div></div>
+                    <div class="EyeImageHolder suey-rotate-colorize1">
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M449.119,359.79c9.175,15.892 9.175,34.87 -0,50.764c-9.175,15.891 -25.611,25.382 -43.964,25.382l-298.311,0c-18.35,0 -34.783,-9.486 -43.961,-25.38c-9.177,-15.896 -9.177,-34.874 0,-50.766l149.154,-258.344c9.175,-15.893 25.611,-25.382 43.964,-25.382c18.353,-0 34.786,9.486 43.964,25.38l149.154,258.346Zm-338.984,23.483l291.732,-0l-145.866,-252.645l-145.866,252.645Z" style="fill:#c0c0c0;"/></svg>
+                    </div>
                 </button>
 
                 <button class="EyeDebugButton" id="ButtonSystem">
-                    <div class="EyeImageHolder"><div class="RotateColorize2">
-                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><g id="_02"><path d="M416,156l-20,-0l0,-40c0,-10.972 -9.028,-20 -20,-20c-10.972,0 -20,9.028 -20,20l0,40l-80,-0l0,-40c0,-10.972 -9.028,-20 -20,-20c-10.972,0 -20,9.028 -20,20l0,40l-80,-0l-0,-40c-0,-10.972 -9.028,-20 -20,-20c-10.972,0 -20,9.028 -20,20l-0,40l-20,-0c-21.943,-0 -40,18.057 -40,40l-0,120c-0,21.943 18.057,40 40,40l20,-0l-0,40c-0,10.972 9.028,20 20,20c10.972,-0 20,-9.028 20,-20l-0,-40l80,-0l0,40c0,10.972 9.028,20 20,20c10.972,-0 20,-9.028 20,-20l0,-40l80,-0l0,40c0,10.972 9.028,20 20,20c10.972,-0 20,-9.028 20,-20l0,-40l20,-0c21.943,-0 40,-18.057 40,-40l0,-120c0,-21.943 -18.057,-40 -40,-40Zm-320,160l-0,-120l320,0l0,120l-320,0Z" style="fill:#c0c0c0;fill-rule:nonzero;"/></g></svg>
-                    </div></div>
+                    <div class="EyeImageHolder suey-rotate-colorize2">
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M410.964,152.852c24.705,0 45.036,20.331 45.036,45.037l0,116.222c0,24.706 -20.331,45.037 -45.036,45.037l-13.075,-0l-0,32.445c-0,14.081 -11.586,25.666 -25.666,25.666c-14.081,0 -25.666,-11.585 -25.666,-25.666l-0,-32.445l-64.891,-0l-0,32.445c-0,14.081 -11.586,25.666 -25.666,25.666c-14.08,0 -25.666,-11.585 -25.666,-25.666l0,-32.445l-64.891,-0l0,32.445c0,14.081 -11.585,25.666 -25.666,25.666c-14.08,0 -25.666,-11.585 -25.666,-25.666l0,-32.445l-13.075,-0c-24.705,-0 -45.036,-20.331 -45.036,-45.037l0,-116.222c0,-24.706 20.331,-45.037 45.036,-45.037l13.075,0l0,-32.445c0,-14.081 11.586,-25.666 25.666,-25.666c14.081,-0 25.666,11.585 25.666,25.666l0,32.445l64.891,0l0,-32.445c0,-14.081 11.586,-25.666 25.666,-25.666c14.08,-0 25.666,11.585 25.666,25.666l-0,32.445l64.891,0l-0,-32.445c-0,-14.081 11.585,-25.666 25.666,-25.666c14.08,-0 25.666,11.585 25.666,25.666l-0,32.445l13.075,0Zm-303.632,154.964l297.336,-0l0,-103.632l-297.336,0l-0,103.632Z" style="fill:#c0c0c0;"/></svg>
+                    </div>
                 </button>
             </div>
         `;
@@ -10475,31 +11774,31 @@ class Debug {
         function toggleFrame(frame, button, open, storageKey) {
             if (open) {
                 frame.style.display = '';
-                button.classList.add('Selected');
+                button.classList.add('suey-selected');
             } else {
                 frame.style.display = 'none';
-                button.classList.remove('Selected');
+                button.classList.remove('suey-selected');
             }
             localStorage.setItem(storageKey, open);
         }
 
         buttonFrame.addEventListener('click', () => {
-            openFrame = ! openFrame;
+            openFrame = !openFrame;
             toggleFrame(frameFrame, buttonFrame, openFrame, 'DebugFrame');
         });
 
         buttonScene.addEventListener('click', () => {
-            openScene = ! openScene;
+            openScene = !openScene;
             toggleFrame(sceneFrame, buttonScene, openScene, 'DebugScene');
         });
 
         buttonBuffers.addEventListener('click', () => {
-            openBuffers = ! openBuffers;
+            openBuffers = !openBuffers;
             toggleFrame(buffersFrame, buttonBuffers, openBuffers, 'DebugBuffers');
         });
 
         buttonSystem.addEventListener('click', () => {
-            openSystem = ! openSystem;
+            openSystem = !openSystem;
             toggleFrame(systemFrame, buttonSystem, openSystem, 'DebugSystem');
         });
 
@@ -10527,6 +11826,8 @@ class Debug {
         const frameClock = new Clock();
         const elapsedClock = new Clock();
 
+        /***** START / STOP ******/
+
         this.#startInternal = function() {
             frameClock.start();
             renderer.drawCallCount = 0;
@@ -10535,26 +11836,30 @@ class Debug {
         this.#stopInternal = function() {
             frameClock.stop();
 
+            elapsedClock.getDeltaTime();
             const elapsed = elapsedClock.getElapsedTime();
             if (elapsed > 1) {
+                // NOTE: Setting 'firstChild' sets actual 'Text' node itself and does not increase DOM Node count
+                // https://stackoverflow.com/questions/73253005/where-are-these-dom-nodes-coming-from-when-only-changing-innertext
+
                 // Actual fps
                 const fps = elapsedClock.count() / elapsed;
-                if (domFps) domFps.textContent = `${fps.toFixed(1)} fps`;
+                if (domFps) domFps.firstChild.textContent = `${fps.toFixed(1)} fps`;
                 elapsedClock.reset();
 
                 // Average time of actual rendering frames
                 const frameAvg = frameClock.averageDelta();
-                if (domRender) domRender.textContent = `${frameAvg.toFixed(2)} ms`;
-                if (domMax) domMax.textContent = `~ ${Math.floor(1000 / frameAvg)} fps`;
+                if (domRender) domRender.firstChild.textContent = `${frameAvg.toFixed(2)} ms`;
+                if (domMax) domMax.firstChild.textContent = `~ ${Math.floor(1000 / frameAvg)} fps`;
                 frameClock.reset();
 
                 // Draw call count
-                if (domDraws) domDraws.textContent = `${renderer.drawCallCount}`;
+                if (domDraws) domDraws.firstChild.textContent = `${renderer.drawCallCount}`;
 
                 // Memory usage
                 if (domMem && performance.memory) {
                     const memory = performance.memory.usedJSHeapSize / 1048576;
-                    domMem.textContent = `${memory.toFixed(2)} mb`;
+                    domMem.firstChild.textContent = `${memory.toFixed(2)} mb`;
                 }
 
                 // Scene Info
@@ -10573,16 +11878,16 @@ class Debug {
                         }
                     });
                 }
-                domObjects.textContent = `${objects}`;
-                domLights.textContent = `${lights}`;
-                domVertices.textContent = `${vertices}`;
-                domTriangles.textContent = `${triangles.toFixed(0)}`;
 
-                domPrograms.textContent = `${renderer.info.programs}`;
-                domGeometries.textContent = `${renderer.info.geometries}`;
-                domTextures.textContent = `${renderer.info.textures}`;
+                domObjects.firstChild.textContent = `${objects}`;
+                domLights.firstChild.textContent = `${lights}`;
+                domVertices.firstChild.textContent = `${vertices}`;
+                domTriangles.firstChild.textContent = `${triangles.toFixed(0)}`;
+
+                domPrograms.firstChild.textContent = `${renderer.info.programs}`;
+                domGeometries.firstChild.textContent = `${renderer.info.geometries}`;
+                domTextures.firstChild.textContent = `${renderer.info.textures}`;
             }
-
         };
 
         _singleton = this;
@@ -10598,7 +11903,7 @@ class Debug {
 
 }
 
-/***** Internal *****/
+/******************** INTERNAL ********************/
 
 /**
  * Gets a CSS variable, hyphens optional, ex: getVariable('--tooltip-delay') or getVariable('tooltip-delay');
@@ -10608,7 +11913,7 @@ class Debug {
  */
 function getVariable(variable) {
     variable = String(variable);
-    if (! variable.startsWith('--')) variable = '--' + variable;
+    if (!variable.startsWith('--')) variable = '--' + variable;
     const rootElement = document.querySelector(':root');
     const value = getComputedStyle(rootElement).getPropertyValue(variable);
     return ((value === '') ? undefined : value);
@@ -10617,17 +11922,17 @@ function getVariable(variable) {
 /** Sets a CSS variable by name, hyphens optional */
 function setVariable(variable, valueAsString) {
     variable = String(variable);
-    if (! variable.startsWith('--')) variable = '--' + variable;
+    if (!variable.startsWith('--')) variable = '--' + variable;
     const rootElement = document.querySelector(':root');
     rootElement.style.setProperty(variable, valueAsString);
 }
 
 /**
- * @description EyeGL
+ * @description SeaGL
  * @about       WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
- * @license     MIT - Copyright (c) 2023 Stephens Nunnally
- * @source      https://github.com/onsightengine/eyegl
+ * @license     MIT - Copyright (c) 2024 Stephens Nunnally
+ * @source      https://github.com/salinityengine/seagl
  */
 
-export { AssetManager, Box, Camera, Capabilities, Clock, Color, ColorFunc$1 as ColorFunc, Curve, Cylinder, Debug, Euler, EulerFunc$1 as EulerFunc, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, InstancedMesh, KTXTexture, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Plane, Polygon, Polyline, Post, Program, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Sprite, Texture, TextureLoader, Torus, Transform, Triangle, Uber, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };
+export { Assets, Atlas, BaseSegment, Billboard, Box, Camera, Capabilities, Clock, Color, ColorFunc$1 as ColorFunc, CubicBezierSegment, Curve, Cylinder, Debug, Euler, EulerFunc$1 as EulerFunc, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, ImageLoader, InstancedMesh, LineSegment, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Packer, Path, Plane, Polygon, Polyline, Post, Program, QuadraticBezierSegment, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Sprite, Texture, TextureArray, TextureLoader, Torus, Transform, Triangle, Tube, Uber, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };

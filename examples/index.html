@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • WebGL Graphics Library</title>
+        <title>SeaGL • WebGL Graphics Library</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -11,7 +11,7 @@
     <body>
 
         <div class="Side">
-            <a class="Title" href="https://github.com/scidian/eyegl">EyeGL</a>
+            <a class="Title" href="https://github.com/salinityengine/seagl">SeaGL</a>
             <div class="Section">Geometry</div>
             <a class="Example" href="geometry/base-primitives.html" id="defaultExample">Base Primitives</a>
             <a class="Example" href="geometry/curves.html">Curves</a>
@@ -52,7 +52,7 @@
             const toggleLink = document.querySelector('.SideIcon');
             const exampleLinks = document.querySelectorAll('a.Example');
             const iFrame = document.querySelector('.Iframe');
-            const sourcePath = 'https://github.com/scidian/eyegl/tree/master/examples/';
+            const sourcePath = 'https://github.com/salinityengine/seagl/tree/master/examples/';
 
             toggleLink.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -82,7 +82,7 @@
                 if (event.target.href.includes('examples')) {
                     src = event.target.href.split('examples/')[1];
                 } else {
-                    src = event.target.href.split('eyegl/')[1];
+                    src = event.target.href.split('seagl/')[1];
                 }
 
                 // Allow user to cmd/ctrl + click to open in new tab
@@ -109,7 +109,7 @@
                     if (link.href.includes('examples')) {
                         linkSrc = link.href.split('examples/')[1];
                     } else {
-                        linkSrc = link.href.split('eyegl/')[1];
+                        linkSrc = link.href.split('seagl/')[1];
                     }
 
                     if (src === linkSrc) link.classList.add('active');

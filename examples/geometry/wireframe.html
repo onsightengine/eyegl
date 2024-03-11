@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>EyeGL • Wireframe</title>
+        <title>SeaGL • Wireframe</title>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name='viewport' content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'>
@@ -15,8 +15,8 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as EYE from 'eyegl';
-            import { Gooey } from 'osui';
+            import * as SGL from 'seagl';
+            import { Gooey } from 'suey';
 
             // Gui
 
@@ -30,12 +30,12 @@
 
             // Scene
 
-            const renderer = new EYE.Renderer({ dpr: 2 });
+            const renderer = new SGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new EYE.Camera({ fov: 35 });
+            const camera = new SGL.Camera({ fov: 35 });
             camera.position.set(5, 3, 6);
             camera.lookAt([ 0, 0, 0 ]);
 
@@ -59,11 +59,11 @@
             });
             /*****/
 
-            const scene = new EYE.Transform();
+            const scene = new SGL.Transform();
 
-            const texture = EYE.TextureLoader.load({ src: '../../files/models/json/croissant.jpg' });
+            const texture = SGL.TextureLoader.load({ src: '../../files/models/json/croissant.jpg' });
 
-            const program = new EYE.Uber({
+            const program = new SGL.Uber({
                 cullFace: false,
                 depthWrite: false,
                 depthTest: false,
@@ -78,24 +78,24 @@
             async function loadModel() {
                 const data = await (await fetch(`../../files/models/json/croissant.json`)).json();
 
-                const geometry = new EYE.Geometry({
+                const geometry = new SGL.Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
                 });
 
                 // Using gl.LINE_STRIP, LINES, LINE_LOOP
-                lineLoopMesh = new EYE.Mesh({ mode: gl.LINE_STRIP, geometry: geometry, program: program });
+                lineLoopMesh = new SGL.Mesh({ mode: gl.LINE_STRIP, geometry: geometry, program: program });
                 lineLoopMesh.setParent(scene);
                 lineLoopMesh.position.y = 0.75;
 
                 // Using gl.TRIANGLES
-                standardMesh = new EYE.Mesh({ mode: gl.TRIANGLES, geometry: geometry, program: program });
+                standardMesh = new SGL.Mesh({ mode: gl.TRIANGLES, geometry: geometry, program: program });
                 standardMesh.setParent(scene);
                 standardMesh.position.y = -0.75;
             }
 
-            const debug = new EYE.Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
 
             function update(t) {
