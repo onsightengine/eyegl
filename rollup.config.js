@@ -6,8 +6,8 @@ function header() {
  * @description EyeGL
  * @about       Fast WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
- * @license     MIT - Copyright (c) 2021-2023 Stephens Nunnally
- * @source      https://github.com/onsightengine/eyegl
+ * @license     MIT - Copyright (c) 2023 Stephens Nunnally
+ * @source      https://github.com/scidian/eyegl
  * @version     v0.0.8
  */
 ${code}`;

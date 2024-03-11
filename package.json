@@ -26,13 +26,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/onsightengine/eyegl.git"
+    "url": "git+https://github.com/scidian/eyegl.git"
   },
   "author": "Stephens Nunnally <stephens@scidian.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/onsightengine/eyegl/issues"
+    "url": "https://github.com/scidian/eyegl/issues"
   },
-  "homepage": "https://github.com/onsightengine/eyegl",
+  "homepage": "https://github.com/scidian/eyegl",
   "private": false
 }
