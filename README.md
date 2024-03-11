@@ -4,7 +4,7 @@
 
 # SeaGL
 
-WebGL 2 graphics library built for games.
+Graphics library for WebGL 2 experimentation.
 
 <br />
 
