@@ -68,6 +68,7 @@ export { Uber } from './extras/programs/Uber.js';
 export { Capabilities } from './extras/tools/Capabilities.js';
 export { Clock } from './extras/tools/Clock.js';
 export { Debug } from './extras/tools/Debug.js';
+export { Packer } from './extras/tools/Packer.js';
 
 /***** Math *****/
 
@@ -89,7 +90,3 @@ export * as QuatFunc from './math/functions/QuatFunc.js';
 export * as Vec2Func from './math/functions/Vec2Func.js';
 export * as Vec3Func from './math/functions/Vec3Func.js';
 export * as Vec4Func from './math/functions/Vec4Func.js';
-
-/***** External *****/
-
-export { Packer } from './libs/Packer.js';

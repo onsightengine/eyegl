@@ -1,5 +1,5 @@
 import { ImageLoader } from './ImageLoader.js';
-import { Packer } from '../../libs/Packer.js';
+import { Packer } from '../tools/Packer.js';
 import { Texture } from '../../core/Texture.js';
 
 const MAX_SIZE = 4096;
