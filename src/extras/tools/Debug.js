@@ -170,7 +170,7 @@ class Debug {
             }
 
             .ColorIcon {
-                filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 150deg));
+                filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 160deg));
             }
 
             .ColorComplement {

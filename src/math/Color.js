@@ -1,5 +1,3 @@
-// - Color stored as an array of RGB decimal values (between 0 > 1)
-// - Constructor / set method accept following formats:
 // new Color()                 Empty (defaults to black)
 // new Color([0.2, 0.4, 1.0])  Decimal Array (or another Color instance)
 // new Color(0.7, 0.0, 0.1)    Decimal RGB values
@@ -10,6 +8,9 @@
 
 import * as ColorFunc from './functions/ColorFunc.js';
 
+/**
+ * Color stored as an array of RGB decimal values (between 0 > 1)
+ */
 export class Color extends Array {
 
     constructor(color) {
