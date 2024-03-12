@@ -15,15 +15,26 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'seagl';
+            import {
+                Box,
+                Camera,
+                Color,
+                Debug,
+                Mesh,
+                Program,
+                Renderer,
+                RenderTarget,
+                Texture,
+                Uber,
+            } from 'seagl';
             import { Gooey } from 'suey';
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new SGL.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
-            const targetCamera = new SGL.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
+            const camera = new Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
+            const targetCamera = new Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -32,10 +43,10 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const geometry = new SGL.Box();
+            const geometry = new Box();
 
             // 2x2 data texture with 4 colors
-            const texture = new SGL.Texture({
+            const texture = new Texture({
                 image: new Uint8Array([
                     255,   0,   0, 255,
                       0, 255,   0, 255,
@@ -48,16 +59,16 @@
                 magFilter: gl.NEAREST,
             });
 
-            const program = new SGL.Uber({ texture: texture });
+            const program = new Uber({ texture: texture });
 
             // Render target
-            const target = new SGL.RenderTarget({ width: 512, height: 512 });
-            const targetProgram = new SGL.Uber({ texture: target.texture });
+            const target = new RenderTarget({ width: 512, height: 512 });
+            const targetProgram = new Uber({ texture: target.texture });
 
-            const mesh = new SGL.Mesh({ geometry, program });
-            const targetMesh = new SGL.Mesh({ geometry, program: targetProgram });
+            const mesh = new Mesh({ geometry, program });
+            const targetMesh = new Mesh({ geometry, program: targetProgram });
 
-            const debug = new SGL.Debug();
+            const debug = new Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

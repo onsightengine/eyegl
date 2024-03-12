@@ -14,7 +14,14 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'seagl';
+            import {
+                Color,
+                Debug,
+                Mesh,
+                Program,
+                Renderer,
+                Triangle,
+            } from 'seagl';
             import { Gooey } from 'suey';
 
             const vertex = /* glsl */ `
@@ -43,7 +50,7 @@
                 }
             `;
 
-            const renderer = new SGL.Renderer();
+            const renderer = new Renderer();
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
@@ -65,20 +72,20 @@
             //         |__|_\                  |__|_\
             //   (-1, -1)   (3, -1)        (0, 0)   (2, 0)
 
-            const geometry = new SGL.Triangle();
+            const geometry = new Triangle();
 
-            const program = new SGL.Program({
+            const program = new Program({
                 vertex,
                 fragment,
                 uniforms: {
                     uTime: { value: 0 },
-                    uColor: { value: new SGL.Color(0.3, 0.2, 0.5) },
+                    uColor: { value: new Color(0.3, 0.2, 0.5) },
                 },
             });
 
-            const mesh = new SGL.Mesh({ geometry, program });
+            const mesh = new Mesh({ geometry, program });
 
-            const debug = new SGL.Debug();
+            const debug = new Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

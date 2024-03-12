@@ -25,7 +25,7 @@ class Assets {
 
     /********** ACCESS **********/
 
-    add(/* assets, seperated by commas */) {
+    add(/* assets, separated by commas */) {
         for (let i = 0; i < arguments.length; i++) {
             const asset = arguments[i];
             if (!asset || !asset.uuid) continue;
@@ -86,75 +86,23 @@ class Assets {
     /********** JSON **********/
 
     clear() {
-        for (let uuid in _assets) {
-            this.removeAsset(_assets[uuid], true);
+        for (const uuid in this.#assets) {
+            this.removeAsset(this.#assets[uuid], true);
         }
     }
 
     fromJSON(json) {
-
-        // Clear Assets
         this.clear()
-
-        // Add to Assets
-        function addLibraryToAssets(library) {
-            for (const [uuid, asset] of Object.entries(library)) {
-                this.addAsset(asset);
-            }
-        }
-
-        // // Load Assets
-        // const objectLoader = new THREE.ObjectLoader();
-        // const geometries = objectLoader.parseGeometries(json.geometries, {});
-        // const images = objectLoader.parseImages(json.images);
-        // const textures = objectLoader.parseTextures(json.textures, images);
-
-        // addLibraryToAssets(geometries);
-        // addLibraryToAssets(images);
-        // addLibraryToAssets(textures);
-
+        //
+        // TODO
+        //
     }
 
     toJSON(meta) {
-
         const json = {};
-
-        // if (!meta) meta = {};
-        // if (!meta.geometries) meta.geometries = {};
-        // if (!meta.images) meta.images = {};
-        // if (!meta.textures) meta.textures = {};
-
-        // const stopRoot = {
-        //     images: {},
-        //     textures: {},
-        //     materials: {},
-        // };
-
-        // // Geometries
-        // const geometries = Assets.library('geometry');
-        // for (let i = 0; i < geometries.length; i++) {
-        //     const geometry = geometries[i];
-        //     if (!meta.geometries[geometry.uuid]) meta.geometries[geometry.uuid] = geometry.toJSON(meta);
-        // }
-
-        // // Textures
-        // const textures = Assets.library('texture');
-        // for (let i = 0; i < textures.length; i++) {
-        //     const texture = textures[i];
-        //     if (!meta.textures[texture.uuid]) meta.textures[texture.uuid] = texture.toJSON(meta);
-        // }
-
-        // // Add 'meta' caches to 'json' as arrays
-        // for (const library in meta) {
-        //     const valueArray = [];
-        //     for (const key in meta[library]) {
-        //         const data = meta[library][key];
-        //         delete data.metadata;
-        //         valueArray.push(data);
-        //     }
-        //     if (valueArray.length > 0) json[library] = valueArray;
-        // }
-
+        //
+        // TODO
+        //
         return json;
     }
 

@@ -15,7 +15,19 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'seagl';
+            import {
+                Camera,
+                Debug,
+                Color,
+                Mesh,
+                Orbit,
+                Polygon,
+                Program,
+                Renderer,
+                Transform,
+                Vec2,
+                Vec3,
+            } from 'seagl';
             import { Gooey } from 'suey';
 
             const vertex = /* glsl */ `#version 300 es
@@ -67,10 +79,10 @@
                 }
             `;
 
-            // Gui
+            ///// Gui
 
             const params = {
-                radius: 0.01,
+                radius: 1.0,
             };
 
             const gui = new Gooey();
@@ -78,50 +90,53 @@
 
             folder1.add(params, 'radius', -5.0, 5, 0.001, 3).onChange(() => program.uniforms.uRadius.value = params.radius);
 
-            // Setup
+            ///// Setup
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new SGL.Camera({ fov: 35 });
+            const resolution = { value: new Vec2() };
+            const camera = new Camera({ fov: 35 });
             camera.position.set(0, 0, -10);
             camera.lookAt([ 0, 0, 0 ]);
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+                resolution.value.set(gl.canvas.width, gl.canvas.height);
             }
             window.addEventListener('resize', resize);
             resize();
 
-            const scene = new SGL.Transform();
-            const controls = new SGL.Orbit(camera);
+            const scene = new Transform();
+            const controls = new Orbit(camera);
 
-            // Scene
+            ///// Scene
 
-            const program = new SGL.Program({
+            const program = new Program({
                 vertex,
                 fragment,
                 uniforms: {
-                    uColor: { value: new SGL.Color(1.0, 0.0, 0.0) },
-                    uOutline: { value: new SGL.Color(0.0, 1.0, 0.0) },
+                    uColor: { value: new Color(1.0, 0.0, 0.0) },
+                    uOutline: { value: new Color(0.0, 1.0, 0.0) },
                     uAlpha: { value: 0.8 },
                     uRadius: { value: params.radius },
+                    // uResolution: resolution,
                 },
                 transparent: true,
                 // cullFace: false,
             });
 
-            const geometry = SGL.Polygon.FatSegment({ a: new SGL.Vec3(1, 0, 0), b: new SGL.Vec3(-1, 0, 0) });
+            const geometry = Polygon.FatSegment({ a: new Vec3(1, 0, 0), b: new Vec3(-1, 0, 0) });
 
-            const mesh = new SGL.Mesh({ geometry, program });
+            const mesh = new Mesh({ geometry, program });
             scene.addChild(mesh);
 
-            // Render
+            ///// Render
 
-            const debug = new SGL.Debug();
+            const debug = new Debug();
             requestAnimationFrame(update);
 
             function update(t) {

@@ -15,7 +15,16 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'seagl';
+            import {
+                Camera,
+                Debug,
+                Geometry,
+                Mesh,
+                Program,
+                Renderer,
+                TextureLoader,
+                Transform,
+            } from 'seagl';
             import { Gooey } from 'suey';
 
             const vertex = /* glsl */ `
@@ -76,12 +85,12 @@
             `;
 
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new SGL.Camera({ fov: 15 });
+            const camera = new Camera({ fov: 15 });
             camera.position.z = 15;
 
             function resize() {
@@ -93,11 +102,11 @@
 
             //
 
-            const scene = new SGL.Transform();
+            const scene = new Transform();
 
-            const texture = SGL.TextureLoader.load({ src: '../../files/models/json/acorn.jpg' });
+            const texture = TextureLoader.load({ src: '../../files/models/json/acorn.jpg' });
 
-            const program = new SGL.Program({
+            const program = new Program({
                 vertex,
                 fragment,
                 uniforms: {
@@ -123,7 +132,7 @@
                     random.set([Math.random(), Math.random() * 5, Math.random()], i * 3);
                 }
 
-                const geometry = new SGL.Geometry({
+                const geometry = new Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
@@ -134,11 +143,11 @@
                     random: { instanced: 1, size: 3, data: random },
                 });
 
-                mesh = new SGL.Mesh({ geometry, program });
+                mesh = new Mesh({ geometry, program });
                 mesh.setParent(scene);
             }
 
-            const debug = new SGL.Debug();
+            const debug = new Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

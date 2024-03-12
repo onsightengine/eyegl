@@ -15,18 +15,29 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'seagl';
+            import {
+                Camera,
+                Debug,
+                Geometry,
+                Mesh,
+                Orbit,
+                Program,
+                Renderer,
+                TextureLoader,
+                Transform,
+                Uber,
+            } from 'seagl';
             import { Gooey } from 'suey';
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new SGL.Camera({ fov: 45 });
+            const camera = new Camera({ fov: 45 });
             camera.position.set(1.5, 0, 2);
 
-            const controls = new SGL.Orbit(camera);
+            const controls = new Orbit(camera);
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -35,12 +46,12 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const scene = new SGL.Transform();
+            const scene = new Transform();
 
-            const textureDiffuse = SGL.TextureLoader.load({ src: '../../files/textures/granite-diffuse.jpg' });
-            const textureNormal = SGL.TextureLoader.load({ src: '../../files/textures/granite-normal.jpg' });
+            const textureDiffuse = TextureLoader.load({ src: '../../files/textures/granite-diffuse.jpg' });
+            const textureNormal = TextureLoader.load({ src: '../../files/textures/granite-normal.jpg' });
 
-            // const program = new SGL.Program({
+            // const program = new Program({
             //     vertex: vertex300,
             //     fragment: fragment300,
             //     uniforms: {
@@ -52,7 +63,7 @@
             //     },
             // });
 
-            const program = new SGL.Uber({
+            const program = new Uber({
                 texture: textureDiffuse,
                 textureNormal: textureNormal,
                 normalScale: 2.0,
@@ -62,17 +73,17 @@
             async function loadModel() {
                 const data = await (await fetch(`../../files/models/json/rounded-cube.json`)).json();
 
-                const geometry = new SGL.Geometry({
+                const geometry = new Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
                 });
 
-                const mesh = new SGL.Mesh({ geometry, program });
+                const mesh = new Mesh({ geometry, program });
                 mesh.setParent(scene);
             }
 
-            const debug = new SGL.Debug();
+            const debug = new Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

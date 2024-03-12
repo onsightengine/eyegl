@@ -15,7 +15,19 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'seagl';
+            import {
+                Billboard,
+                Camera,
+                Debug,
+                GeomUtils,
+                Mesh,
+                Orbit,
+                Plane,
+                Program,
+                Renderer,
+                TextureLoader,
+                Transform,
+            } from 'seagl';
             import { Gooey } from 'suey';
 
             const defaultVertex = /* glsl */ `#version 300 es
@@ -79,15 +91,15 @@
                 }
             `;
 
-            const renderer = new SGL.Renderer({});
+            const renderer = new Renderer({});
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new SGL.Camera({ fov: 35 });
+            const camera = new Camera({ fov: 35 });
             camera.position.set(25, 25, -50);
             camera.lookAt([0, 0, 0]);
 
-            const controls = new SGL.Orbit(camera);
+            const controls = new Orbit(camera);
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -104,14 +116,14 @@
             const folder1 = gui.addFolder('Parameters');
             folder1.add(params, 'count', 100000, 1000000, 50000, 0).onFinishChange(() => buildScene(params.count));
 
-            const dragon = SGL.TextureLoader.load({ src: '../../files/sprites/dragon.png' });
-            const unicorn = SGL.TextureLoader.load({ src: '../../files/sprites/unicorn.png' });
-            const kraken = SGL.TextureLoader.load({ src: '../../files/sprites/kraken.png' });
+            const dragon = TextureLoader.load({ src: '../../files/sprites/dragon.png' });
+            const unicorn = TextureLoader.load({ src: '../../files/sprites/unicorn.png' });
+            const kraken = TextureLoader.load({ src: '../../files/sprites/kraken.png' });
 
             let scene;
             let sceneChanged = true;
             function buildScene(count) {
-                scene = new SGL.Transform();
+                scene = new Transform();
                 for (let i = 0; i < count; i++) {
                     let texture;
                     const img = Math.floor(Math.random() * 3);
@@ -120,7 +132,7 @@
                         case 1: texture = unicorn; break;
                         case 2: texture = kraken; break;
                     }
-                    const billboard = new SGL.Billboard({ texture });
+                    const billboard = new Billboard({ texture });
                     billboard.position.set(
                         (Math.random() * 20) - 10,
                         (Math.random() * 20) - 10,
@@ -132,7 +144,7 @@
             }
             buildScene(params.count);
 
-            const instanced = new SGL.Program({
+            const instanced = new Program({
                 cullFace: null,
                 transparent: true,
                 vertex: defaultVertex,
@@ -142,8 +154,8 @@
                 },
             });
 
-            const plane = new SGL.Plane();
-            SGL.GeomUtils.toNonIndexed(plane);
+            const plane = new Plane();
+            GeomUtils.toNonIndexed(plane);
 
             // Instance Matrices
             let offset1 = new Float32Array(4); const m1 = { instanced: 1, size: 4, data: offset1 };
@@ -155,13 +167,13 @@
             plane.addAttribute('m3', m3);
             plane.addAttribute('m4', m4);
 
-            const quad = new SGL.Mesh({ geometry: plane, program: instanced });
+            const quad = new Mesh({ geometry: plane, program: instanced });
 
             // console.log(renderer.programs);
             // const renderList = renderer.render({ scene, camera, draw: false });
             // console.log(renderList);
 
-            const debug = new SGL.Debug();
+            const debug = new Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);
