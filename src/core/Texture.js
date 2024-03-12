@@ -1,9 +1,9 @@
-import { uuid } from '../math/MathUtils.js';
-
 // TODO: delete (flush)  texture
 // TODO: use texSubImage2D for updates (video or onLoad)
 // TODO: need? encoding = linearEncoding
 // TODO: support non-compressed mipmaps uploads
+
+import { uuid } from '../math/MathUtils.js';
 
 const _emptyPixel = new Uint8Array(4);
 let _canvas, _ctx;

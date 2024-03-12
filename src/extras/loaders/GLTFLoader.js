@@ -1,16 +1,3 @@
-import { Geometry } from '../../core/Geometry.js';
-import { InstancedMesh } from '../objects/InstancedMesh.js';
-import { Mesh } from '../../core/Mesh.js';
-import { Uber } from '../programs/Uber.js';
-import { Transform } from '../../core/Transform.js';
-import { Texture } from '../../core/Texture.js';
-
-import { Mat4 } from '../../math/Mat4.js';
-import { Vec3 } from '../../math/Vec3.js';
-
-import { GLTFAnimation } from './GLTFAnimation.js';
-import { GLTFSkin } from './GLTFSkin.js';
-
 // Supports
 // [x] glb
 // [x] Geometry
@@ -30,6 +17,19 @@ import { GLTFSkin } from './GLTFSkin.js';
 // TODO: init accessor missing bufferView with 0s
 // TODO: morph target animations
 // TODO: option to turn off GPU instancing
+
+import { Geometry } from '../../core/Geometry.js';
+import { InstancedMesh } from '../objects/InstancedMesh.js';
+import { Mesh } from '../../core/Mesh.js';
+import { Uber } from '../programs/Uber.js';
+import { Transform } from '../../core/Transform.js';
+import { Texture } from '../../core/Texture.js';
+
+import { Mat4 } from '../../math/Mat4.js';
+import { Vec3 } from '../../math/Vec3.js';
+
+import { GLTFAnimation } from './GLTFAnimation.js';
+import { GLTFSkin } from './GLTFSkin.js';
 
 const TYPE_ARRAY = {
     5121: Uint8Array,

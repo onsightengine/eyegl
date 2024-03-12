@@ -1,12 +1,12 @@
-import { Vec3 } from '../../math/Vec3.js';
-import { Vec2 } from '../../math/Vec2.js';
-
 // Based from ThreeJS' OrbitControls class, rewritten using es6 with some additions and subtractions.
 
 // TODO: focus on target
 // TODO: abstract event handlers so can be fed from other sources
 // TODO: make scroll zoom more accurate than just >/< zero
 // TODO: be able to pass in new camera position
+
+import { Vec3 } from '../../math/Vec3.js';
+import { Vec2 } from '../../math/Vec2.js';
 
 const STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, DOLLY_PAN: 3 };
 

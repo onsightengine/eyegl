@@ -1,14 +1,14 @@
-import { Geometry } from '../../core/Geometry.js';
-import { Vec3 } from '../../math/Vec3.js';
-import { calculateNormal } from '../../math/functions/Vec3Func.js';
-import { fuzzyFloat, triangleArea } from '../../math/MathUtils.js';
-
 // cleanAttributes()
 // computeVertexNormals()
 // toIndexed()
 // toNonIndexed()
 
 // TODO: mergeGeometries()
+
+import { Geometry } from '../../core/Geometry.js';
+import { Vec3 } from '../../math/Vec3.js';
+import { calculateNormal } from '../../math/functions/Vec3Func.js';
+import { fuzzyFloat, triangleArea } from '../../math/MathUtils.js';
 
 const EPSILON = 0.000001;
 const POSITION_DECIMALS = 6;

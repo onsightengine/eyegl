@@ -1,9 +1,9 @@
+// TODO: barycentric code shouldn't be here, but where?
+// TODO: SphereCast?
+
 import { Vec2 } from '../math/Vec2.js';
 import { Vec3 } from '../math/Vec3.js';
 import { Mat4 } from '../math/Mat4.js';
-
-// TODO: barycentric code shouldn't be here, but where?
-// TODO: SphereCast?
 
 const tempVec2a = new Vec2();
 const tempVec2b = new Vec2();

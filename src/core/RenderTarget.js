@@ -1,6 +1,6 @@
-import { Texture } from './Texture.js';
-
 // TODO: test stencil and depth
+
+import { Texture } from './Texture.js';
 
 class RenderTarget {
 

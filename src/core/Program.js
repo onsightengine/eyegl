@@ -1,8 +1,8 @@
-import { uuid } from '../math/MathUtils.js';
-
 // TODO: upload empty texture if null ? maybe not
 // TODO: upload identity matrix if null ?
 // TODO: sampler Cube
+
+import { uuid } from '../math/MathUtils.js';
 
 const _arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
 let _idGenerator = 1;

@@ -1,5 +1,3 @@
-import * as ColorFunc from './functions/ColorFunc.js';
-
 // - Color stored as an array of RGB decimal values (between 0 > 1)
 // - Constructor / set method accept following formats:
 // new Color()                 Empty (defaults to black)
@@ -9,6 +7,8 @@ import * as ColorFunc from './functions/ColorFunc.js';
 // new Color('#ccc')           Short-hand Hex string
 // new Color(0x4f27e8)         Number
 // new Color('red')            Color name string (short list in ColorFunc.js)
+
+import * as ColorFunc from './functions/ColorFunc.js';
 
 export class Color extends Array {
 

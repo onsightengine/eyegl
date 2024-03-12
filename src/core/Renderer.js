@@ -1,6 +1,3 @@
-import { Color } from '../math/Color.js';
-import { uuid } from '../math/MathUtils.js';
-import { Vec3 } from '../math/Vec3.js';
 
 // NOTE: Must use these methods manually
 // gl.clearColor( r, g, b, a );
@@ -11,6 +8,10 @@ import { Vec3 } from '../math/Vec3.js';
 // gl.clearStencil( stencil );
 
 // TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
+
+import { Color } from '../math/Color.js';
+import { uuid } from '../math/MathUtils.js';
+import { Vec3 } from '../math/Vec3.js';
 
 const _tempVec3 = new Vec3();
 let _idGenerator = 1;

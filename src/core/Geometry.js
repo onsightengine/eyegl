@@ -1,8 +1,8 @@
+// TODO: fit in transform feedback
+
 import { normalize } from '../math/functions/Vec3Func.js';
 import { uuid } from '../math/MathUtils.js';
 import { Vec3 } from '../math/Vec3.js';
-
-// TODO: fit in transform feedback
 
 const _tempVec3 = new Vec3();
 let _idGenerator = 1;
