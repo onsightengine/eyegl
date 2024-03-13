@@ -15,10 +15,10 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'seagl';
+            import * as SGL from 'eyegl';
             import { Gooey } from 'suey';
 
-            ///// Gui
+            // Gui
 
             const params = {
 
@@ -27,7 +27,7 @@
             // const gui = new Gooey();
             // const folder1 = gui.addFolder('Parameters');
 
-            ///// Setup
+            // Setup
 
             const renderer = new SGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
@@ -48,12 +48,11 @@
             const scene = new SGL.Transform();
             const controls = new SGL.Orbit(camera);
 
-            ///// Scene
+            // Scene
 
             // ...
 
-            ///// Render
-
+            // Render
             const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {

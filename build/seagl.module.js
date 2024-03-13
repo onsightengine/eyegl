@@ -4,7 +4,7 @@
  * @author      Stephens Nunnally <@stevinz>
  * @license     MIT - Copyright (c) 2024 Stephens Nunnally
  * @source      https://github.com/salinityengine/seagl
- * @version     v0.0.9
+ * @version     v0.0.10
  */
 const EPSILON$5 = 0.000001;
 
@@ -489,6 +489,7 @@ var Vec3Func$1 = /*#__PURE__*/Object.freeze({
 // triangleArea()
 // uuid()
 
+
 const _lut = [ '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d', '1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '2a', '2b', '2c', '2d', '2e', '2f', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '3a', '3b', '3c', '3d', '3e', '3f', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '4a', '4b', '4c', '4d', '4e', '4f', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '5a', '5b', '5c', '5d', '5e', '5f', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '6a', '6b', '6c', '6d', '6e', '6f', '70', '71', '72', '73', '74', '75', '76', '77', '78', '79', '7a', '7b', '7c', '7d', '7e', '7f', '80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '8a', '8b', '8c', '8d', '8e', '8f', '90', '91', '92', '93', '94', '95', '96', '97', '98', '99', '9a', '9b', '9c', '9d', '9e', '9f', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af', 'b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'ba', 'bb', 'bc', 'bd', 'be', 'bf', 'c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'ca', 'cb', 'cc', 'cd', 'ce', 'cf', 'd0', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'da', 'db', 'dc', 'dd', 'de', 'df', 'e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8', 'e9', 'ea', 'eb', 'ec', 'ed', 'ee', 'ef', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'fa', 'fb', 'fc', 'fd', 'fe', 'ff' ];
 
 /**
@@ -583,6 +584,7 @@ class ImageLoader {
 // TODO: use texSubImage2D for updates (video or onLoad)
 // TODO: need? encoding = linearEncoding
 // TODO: support non-compressed mipmaps uploads
+
 
 const _emptyPixel = new Uint8Array(4);
 let _canvas$1, _ctx$1;
@@ -974,7 +976,7 @@ class Assets {
 
     /********** ACCESS **********/
 
-    add(/* assets, seperated by commas */) {
+    add(/* assets, separated by commas */) {
         for (let i = 0; i < arguments.length; i++) {
             const asset = arguments[i];
             if (!asset || !asset.uuid) continue;
@@ -1035,75 +1037,23 @@ class Assets {
     /********** JSON **********/
 
     clear() {
-        for (let uuid in _assets) {
-            this.removeAsset(_assets[uuid], true);
+        for (const uuid in this.#assets) {
+            this.removeAsset(this.#assets[uuid], true);
         }
     }
 
     fromJSON(json) {
-
-        // Clear Assets
         this.clear();
-
-        // Add to Assets
-        function addLibraryToAssets(library) {
-            for (const [uuid, asset] of Object.entries(library)) {
-                this.addAsset(asset);
-            }
-        }
-
-        // // Load Assets
-        // const objectLoader = new THREE.ObjectLoader();
-        // const geometries = objectLoader.parseGeometries(json.geometries, {});
-        // const images = objectLoader.parseImages(json.images);
-        // const textures = objectLoader.parseTextures(json.textures, images);
-
-        // addLibraryToAssets(geometries);
-        // addLibraryToAssets(images);
-        // addLibraryToAssets(textures);
-
+        //
+        // TODO
+        //
     }
 
     toJSON(meta) {
-
         const json = {};
-
-        // if (!meta) meta = {};
-        // if (!meta.geometries) meta.geometries = {};
-        // if (!meta.images) meta.images = {};
-        // if (!meta.textures) meta.textures = {};
-
-        // const stopRoot = {
-        //     images: {},
-        //     textures: {},
-        //     materials: {},
-        // };
-
-        // // Geometries
-        // const geometries = Assets.library('geometry');
-        // for (let i = 0; i < geometries.length; i++) {
-        //     const geometry = geometries[i];
-        //     if (!meta.geometries[geometry.uuid]) meta.geometries[geometry.uuid] = geometry.toJSON(meta);
-        // }
-
-        // // Textures
-        // const textures = Assets.library('texture');
-        // for (let i = 0; i < textures.length; i++) {
-        //     const texture = textures[i];
-        //     if (!meta.textures[texture.uuid]) meta.textures[texture.uuid] = texture.toJSON(meta);
-        // }
-
-        // // Add 'meta' caches to 'json' as arrays
-        // for (const library in meta) {
-        //     const valueArray = [];
-        //     for (const key in meta[library]) {
-        //         const data = meta[library][key];
-        //         delete data.metadata;
-        //         valueArray.push(data);
-        //     }
-        //     if (valueArray.length > 0) json[library] = valueArray;
-        // }
-
+        //
+        // TODO
+        //
         return json;
     }
 
@@ -3650,6 +3600,7 @@ class Camera extends Transform {
 
 // TODO: fit in transform feedback
 
+
 const _tempVec3$2 = new Vec3();
 let _idGenerator$2 = 1;
 
@@ -4667,6 +4618,7 @@ class Mesh extends Transform {
 // TODO: upload identity matrix if null ?
 // TODO: sampler Cube
 
+
 const _arrayCacheF32 = {};   // cache of typed arrays used to flatten uniform arrays
 let _idGenerator$1 = 1;
 
@@ -5118,8 +5070,6 @@ var ColorFunc$1 = /*#__PURE__*/Object.freeze({
     parseColor: parseColor
 });
 
-// - Color stored as an array of RGB decimal values (between 0 > 1)
-// - Constructor / set method accept following formats:
 // new Color()                 Empty (defaults to black)
 // new Color([0.2, 0.4, 1.0])  Decimal Array (or another Color instance)
 // new Color(0.7, 0.0, 0.1)    Decimal RGB values
@@ -5128,6 +5078,10 @@ var ColorFunc$1 = /*#__PURE__*/Object.freeze({
 // new Color(0x4f27e8)         Number
 // new Color('red')            Color name string (short list in ColorFunc.js)
 
+
+/**
+ * Color stored as an array of RGB decimal values (between 0 > 1)
+ */
 class Color extends Array {
 
     constructor(color) {
@@ -5172,16 +5126,6 @@ class Color extends Array {
     }
 
 }
-
-// NOTE: Must use these methods manually
-// gl.clearColor( r, g, b, a );
-// gl.colorMask( colorMask, colorMask, colorMask, colorMask );
-// gl.stencilMask( stencilMask );
-// gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
-// gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
-// gl.clearStencil( stencil );
-
-// TODO: Handle context loss https://www.khronos.org/webgl/wiki/HandlingContextLost
 
 const _tempVec3$1 = new Vec3();
 let _idGenerator = 1;
@@ -5570,6 +5514,7 @@ class Renderer {
 
 // TODO: test stencil and depth
 
+
 class RenderTarget {
 
     constructor({
@@ -5739,6 +5684,7 @@ class Triangle extends Geometry {
 }
 
 // TODO: Destroy render targets if size changed and exists
+
 
 class Post {
 
@@ -6330,6 +6276,7 @@ class Vec2 extends Array {
 // TODO: barycentric code shouldn't be here, but where?
 // TODO: SphereCast?
 
+
 const tempVec2a = new Vec2();
 const tempVec2b = new Vec2();
 const tempVec2c = new Vec2();
@@ -6676,10 +6623,6 @@ class Raycast {
 
 // Based from ThreeJS' OrbitControls class, rewritten using es6 with some additions and subtractions.
 
-// TODO: focus on target
-// TODO: abstract event handlers so can be fed from other sources
-// TODO: make scroll zoom more accurate than just >/< zero
-// TODO: be able to pass in new camera position
 
 const STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, DOLLY_PAN: 3 };
 
@@ -7044,7 +6987,6 @@ class Orbit {
 // toIndexed()
 // toNonIndexed()
 
-// TODO: mergeGeometries()
 
 const EPSILON = 0.000001;
 const POSITION_DECIMALS = 6;
@@ -8736,10 +8678,6 @@ class GLTFSkin extends Mesh {
 // [ ] Materials
 // [ ] Cameras
 
-// TODO: Sparse accessor packing? For morph targets basically
-// TODO: init accessor missing bufferView with 0s
-// TODO: morph target animations
-// TODO: option to turn off GPU instancing
 
 const TYPE_ARRAY = {
     5121: Uint8Array,
@@ -11676,7 +11614,7 @@ class Debug {
             }
 
             .ColorIcon {
-                filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 150deg));
+                filter: brightness(50%) sepia(1000%) saturate(350%) hue-rotate(calc(var(--rotate-hue) + 160deg));
             }
 
             .ColorComplement {

@@ -14,20 +14,7 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Box,
-                Camera,
-                Color,
-                Debug,
-                Mesh,
-                Program,
-                Renderer,
-                RenderTarget,
-                Texture,
-                Transform,
-                Uber,
-                Vec3,
-            } from 'seagl';
+            import * as SGL from 'seagl';
             import { Gooey } from 'suey';
 
             const vertex = /* glsl */ `
@@ -98,14 +85,14 @@
                 }
             `;
 
-            ///// Scene
+            // Scene
 
-            const renderer = new Renderer({ dpr: 2 });
+            const renderer = new SGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new Camera({ fov: 15, position: [0, 0, 10] });
-            const target = new RenderTarget();
+            const camera = new SGL.Camera({ fov: 15, position: [0, 0, 10] });
+            const target = new SGL.RenderTarget();
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -115,9 +102,9 @@
             window.addEventListener('resize', resize);
             resize();
 
-            const scene = new Transform();
+            const scene = new SGL.Transform();
 
-            const program = new Program({
+            const program = new SGL.Program({
                 vertex,
                 fragment,
                 uniforms: {
@@ -142,7 +129,7 @@
                 objects.push({ id, offset, random });
             }
 
-            const geometry = new Box({
+            const geometry = new SGL.Box({
                 width: 0.2,
                 height: 0.2,
                 depth: 0.2,
@@ -153,22 +140,22 @@
                 },
             });
 
-            const mesh = new Mesh({ geometry, program });
+            const mesh = new SGL.Mesh({ geometry, program });
             scene.addChild(mesh);
 
             // 2x2 data texture with 4 colors
-            const texture = new Texture({
+            const texture = new SGL.Texture({
                 image: new Uint8Array([ 191, 25, 54, 255, 96, 18, 54, 255, 96, 18, 54, 255, 37, 13, 53, 255 ]),
                 width: 2,
                 height: 2,
                 magFilter: gl.NEAREST,
             });
 
-            const highlight = new Mesh({
-                geometry: new Box({ width: 0.2, height: 0.2, depth: 0.2 }),
-                program: new Uber({
+            const highlight = new SGL.Mesh({
+                geometry: new SGL.Box({ width: 0.2, height: 0.2, depth: 0.2 }),
+                program: new SGL.Uber({
                     normalIntensity: 0,
-                    tint: new Color(1, 0, 0),
+                    tint: new SGL.Color(1, 0, 0),
                     tintIntensity: 1.0,
                     texture: texture,
                 }),
@@ -176,25 +163,25 @@
             scene.addChild(highlight);
             highlight.visible = false;
 
-            ///// Mouse Move
+            // Mouse Move
 
             window.addEventListener('load', () => {
                 document.addEventListener('mousemove', move);
                 document.addEventListener('touchmove', move);
             });
 
-            const mouse = new Vec3();
+            const mouse = new SGL.Vec3();
             function move(event) {
                 const x = (event.x * gl.canvas.width) / gl.canvas.clientWidth;
                 const y = gl.canvas.height - (event.y * gl.canvas.height) / gl.canvas.clientHeight - 1;
                 mouse.set(x, y);
             }
 
-            ///// Render
+            // Render
 
             gl.clearColor(0, 0, 0, 0);
 
-            const debug = new Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

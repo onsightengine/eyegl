@@ -2,6 +2,9 @@
 /*                    TO DO                   */
 /**********************************************/
 
+Check on Debug FPS:
+    - Seems off?
+
 Sprite Shader:
     - Improve ImageLoader / Assets.images:
     - Sprite class:

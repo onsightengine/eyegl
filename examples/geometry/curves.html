@@ -14,20 +14,7 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Camera,
-                Color,
-                Curve,
-                Debug,
-                Mesh,
-                Orbit,
-                Polyline,
-                Renderer,
-                Sphere,
-                Transform,
-                Uber,
-                Vec3,
-            } from 'seagl';
+            import * as SGL from 'seagl';
             import { Gooey } from 'suey';
 
             const params = {
@@ -49,17 +36,17 @@
             folder1.add(params, 'thickness2', 1, 9, 1).onChange(() => polyline2.program.uniforms.uThickness.value = params.thickness2);
             folder1.add(params, 'thickness3', 1, 9, 1).onChange(() => polyline3.program.uniforms.uThickness.value = params.thickness3);
 
-            const renderer = new Renderer({ dpr: 2 });
+            const renderer = new SGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new Camera({ fov: 35 });
+            const camera = new SGL.Camera({ fov: 35 });
             camera.position.set(0, 0, -5);
 
             // Create controls and pass parameters
-            const controls = new Orbit(camera, {
-                target: new Vec3(0, 0, 0),
+            const controls = new SGL.Orbit(camera, {
+                target: new SGL.Vec3(0, 0, 0),
             });
 
             function resize() {
@@ -69,45 +56,45 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const scene = new Transform();
+            const scene = new SGL.Transform();
 
-            const sphereGeometry = new Sphere({ radius: 0.25 });
+            const sphereGeometry = new SGL.Sphere({ radius: 0.25 });
 
-            const sphere = new Mesh({ geometry: sphereGeometry, program: new Uber({ normalIntensity: 1.0 }) });
+            const sphere = new SGL.Mesh({ geometry: sphereGeometry, program: new SGL.Uber({ normalIntensity: 1.0 }) });
             sphere.setParent(scene);
 
-            const cubic = [ new Vec3(0, 0.5, 0), new Vec3(1, 1, 0), new Vec3(1, -1, 0), new Vec3(0, -0.5, 0) ];
-            const quadratic = [ new Vec3(0, 1, 0), new Vec3(2, 0, 0), new Vec3(0, -1, 0) ];
-            const curve1 = new Curve({ points: cubic });
-            const curve2 = new Curve({ points: quadratic });
+            const cubic = [ new SGL.Vec3(0, 0.5, 0), new SGL.Vec3(1, 1, 0), new SGL.Vec3(1, -1, 0), new SGL.Vec3(0, -0.5, 0) ];
+            const quadratic = [ new SGL.Vec3(0, 1, 0), new SGL.Vec3(2, 0, 0), new SGL.Vec3(0, -1, 0) ];
+            const curve1 = new SGL.Curve({ points: cubic });
+            const curve2 = new SGL.Curve({ points: quadratic });
 
-            const points1 = curve1.getPoints({ divisions: 25, type: Curve.CUBICBEZIER });
-            const points2 = curve1.getPoints({ divisions: 25, type: Curve.CATMULLROM });
-            const points3 = curve2.getPoints({ divisions: 25, type: Curve.QUADRATICBEZIER });
+            const points1 = curve1.getPoints({ divisions: 25, type: SGL.Curve.CUBICBEZIER });
+            const points2 = curve1.getPoints({ divisions: 25, type: SGL.Curve.CATMULLROM });
+            const points3 = curve2.getPoints({ divisions: 25, type: SGL.Curve.QUADRATICBEZIER });
 
             // green = cubic bezier
-            const polyline1 = new Polyline({
+            const polyline1 = new SGL.Polyline({
                 points: points1,
                 uniforms: {
-                    uColor: { value: new Color('#a5f300') },
+                    uColor: { value: new SGL.Color('#a5f300') },
                     uThickness: { value: params.thickness1 },
                 },
             });
 
             // aqua = catmull rom
-            const polyline2 = new Polyline({
+            const polyline2 = new SGL.Polyline({
                 points: points2,
                 uniforms: {
-                    uColor: { value: new Color('#00b4af') },
+                    uColor: { value: new SGL.Color('#00b4af') },
                     uThickness: { value: params.thickness2 },
                 },
             });
 
             // pink = quadratic bezier
-            const polyline3 = new Polyline({
+            const polyline3 = new SGL.Polyline({
                 points: points3,
                 uniforms: {
-                    uColor: { value: new Color('#d8007f') },
+                    uColor: { value: new SGL.Color('#d8007f') },
                     uThickness: { value: params.thickness3 },
                 },
             });
@@ -115,7 +102,7 @@
             const lines = [ polyline1, polyline2, polyline3 ];
             for (let i = 0; i <= 60; i++) {
                 const polyline = lines[i % 3];
-                const mesh = new Mesh({
+                const mesh = new SGL.Mesh({
                     geometry: polyline.geometry,
                     program: polyline.program
                 });
@@ -123,7 +110,7 @@
                 mesh.rotation.y = (i * -Math.PI) / 60;
             }
 
-            const debug = new Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

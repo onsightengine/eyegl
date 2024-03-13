@@ -14,19 +14,7 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Box,
-                Camera,
-                Debug,
-                Mesh,
-                Orbit,
-                Post,
-                Renderer,
-                TextureLoader,
-                Transform,
-                Uber,
-                Vec2,
-            } from 'seagl';
+            import * as SGL from 'seagl';
             import { Gooey } from 'suey';
 
             const fragment = /* glsl */ `
@@ -90,20 +78,20 @@
                 }
             `;
 
-            const renderer = new Renderer({ dpr: 1 });
+            const renderer = new SGL.Renderer({ dpr: 1 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new Camera({ fov: 35 });
+            const camera = new SGL.Camera({ fov: 35 });
             camera.position.set(0, 1, -5);
             camera.lookAt([ 0, 0, 0 ]);
 
             // Post copies the current renderer values (width, height, dpr) if none are passed in
-            const post = new Post();
+            const post = new SGL.Post();
 
             // Create uniform for pass
-            const resolution = { value: new Vec2() };
+            const resolution = { value: new SGL.Vec2() };
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -116,20 +104,20 @@
             window.addEventListener('resize', resize);
             resize();
 
-            const texture = TextureLoader.load({ src: '../../files/textures/uv-test-col.png' });
+            const texture = SGL.TextureLoader.load({ src: '../../files/textures/uv-test-col.png' });
 
-            const scene = new Transform();
-            const controls = new Orbit(camera);
+            const scene = new SGL.Transform();
+            const controls = new SGL.Orbit(camera);
 
-            const program = new Uber({
+            const program = new SGL.Uber({
                 normalIntensity: 1.0,
                 opacity: 1.0,
                 texture: texture,
                 transparent: true
             });
 
-            const geometry = new Box();
-            const mesh = new Mesh({ geometry, program });
+            const geometry = new SGL.Box();
+            const mesh = new SGL.Mesh({ geometry, program });
 
             // Add pass like you're creating a Program.
             // Then use the 'enabled' property to toggle the pass.
@@ -141,7 +129,7 @@
                 },
             });
 
-            const debug = new Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

@@ -1,6 +1,6 @@
 {
   "name": "seagl",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "WebGL 2 graphics library built for games.",
   "module": "src/SeaGL.js",
   "main": "build/seagl.module.js",

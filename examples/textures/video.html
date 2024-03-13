@@ -15,24 +15,15 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Box,
-                Camera,
-                Debug,
-                Mesh,
-                Renderer,
-                Texture,
-                Transform,
-                Uber,
-            } from 'seagl';
+            import * as SGL from 'seagl';
             import { Gooey } from 'suey';
 
-            const renderer = new Renderer({ dpr: 2 });
+            const renderer = new SGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
+            const camera = new SGL.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -41,8 +32,8 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const geometry = new Box({ width: 1.78, height: 1, depth: 1.78 });
-            const texture = new Texture();
+            const geometry = new SGL.Box({ width: 1.78, height: 1, depth: 1.78 });
+            const texture = new SGL.Texture();
 
             // Create video, check update loop to see when video is attached to texture
             const video = document.createElement('video');
@@ -52,14 +43,14 @@
             video.setAttribute('playsinline', 'playsinline');
             video.play();
 
-            const program = new Uber({ texture });
-            const mesh = new Mesh({ geometry, program });
+            const program = new SGL.Uber({ texture });
+            const mesh = new SGL.Mesh({ geometry, program });
 
-            const scene = new Transform();
+            const scene = new SGL.Transform();
             mesh.setParent(scene);
 
             // Render
-            const debug = new Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

@@ -15,31 +15,18 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import {
-                Assets,
-                Atlas,
-                Box,
-                Camera,
-                Debug,
-                ImageLoader,
-                Mesh,
-                Orbit,
-                Renderer,
-                Sprite,
-                TextureArray,
-                Transform,
-            } from 'seagl';
+            import * as SGL from 'seagl';
             import { Gooey } from 'suey';
 
-            const renderer = new Renderer({});
+            const renderer = new SGL.Renderer({});
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
 
-            const camera = new Camera({ fov: 35 });
+            const camera = new SGL.Camera({ fov: 35 });
             camera.position.set(25, 25, -50);
             camera.lookAt([0, 0, 0]);
 
-            const controls = new Orbit(camera);
+            const controls = new SGL.Orbit(camera);
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -56,14 +43,64 @@
             const folder1 = gui.addFolder('Parameters');
             folder1.add(params, 'count', 100, 500, 10, 0).onFinishChange(() => buildScene(params.count));
 
-            const assets = new Assets();
+//
+
+            // FROM ATLAS.HTML
+
+            // // Meshes
+            // const sceneProgram = new SGL.TextureArray();
+            // const sceneBox = new SGL.Mesh({ geometry: new SGL.Box(), program: sceneProgram });
+
+            // // Atlas
+            // const atlas = new SGL.Atlas();
+            // const dragon = SGL.ImageLoader.load('../../files/sprites/dragon.png', () => atlas.add(dragon));
+            // const unicorn = SGL.ImageLoader.load('../../files/sprites/unicorn.png', () => atlas.add(unicorn));
+            // const kraken = SGL.ImageLoader.load('../../files/sprites/kraken.png', () => atlas.add(kraken));
+            // const physics = SGL.ImageLoader.load('../../files/sprites/physics.svg', () => atlas.add(physics));
+            // const shapes = SGL.ImageLoader.load('../../files/sprites/shapes.png', () => {
+            //     setTimeout(() => atlas.add(shapes), 1000);
+            // });
+            // sceneProgram.uniforms.tDiffuse.value = atlas.texture;
+
+            // // Timer
+            // let timer = performance.now();
+
+            // // Render
+            // const debug = new SGL.Debug();
+            // requestAnimationFrame(update);
+            // function update(t) {
+            //     requestAnimationFrame(update);
+            //     debug.startFrame();
+
+            //     // Layer
+            //     if (performance.now() - timer > 1000) {
+            //         sceneProgram.uniforms.uLayer.value++;
+            //         if (sceneProgram.uniforms.uLayer.value > atlas.length() - 1) {
+            //             sceneProgram.uniforms.uLayer.value = 0;
+            //         }
+            //         timer = performance.now();
+            //     }
+
+            //     // Render Scene
+            //     gl.clearColor(0, 0, 0, 0);
+            //     sceneBox.rotation.y -= 0.004;
+            //     sceneBox.rotation.x -= 0.004;
+            //     renderer.render({ scene: sceneBox, camera: sceneCamera });
+
+            //     // End Frame
+            //     debug.endFrame();
+            // }
+
+//
+
+            const assets = new SGL.Assets();
             const dragon = assets.load('../../files/sprites/dragon.png');
             const unicorn = assets.load('../../files/sprites/unicorn.png');
             const kraken = assets.load('../../files/sprites/kraken.png');
 
             let scene;
             function buildScene(count) {
-                scene = new Transform();
+                scene = new SGL.Transform();
                 for (let i = 0; i < count; i++) {
                     let texture;
                     const img = Math.floor(Math.random() * 3);
@@ -72,7 +109,7 @@
                         case 1: texture = unicorn; break;
                         case 2: texture = kraken; break;
                     }
-                    const sprite = new Sprite({ texture });
+                    const sprite = new SGL.Sprite({ texture });
                     sprite.position.set(
                         (Math.random() * 20) - 10,
                         (Math.random() * 20) - 10,
@@ -83,7 +120,7 @@
             }
             buildScene(params.count);
 
-            const debug = new Debug();
+            const debug = new SGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);
