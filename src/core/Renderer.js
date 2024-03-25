@@ -306,7 +306,7 @@ class Renderer {
             const ui = [];              // depthTest false
 
             renderList.forEach((node) => {
-                // Split into the 3 render groups
+                // Split into the 3 render categories
                 if (!node.program.transparent) {
                     opaque.push(node);
                 } else if (node.program.depthTest) {
@@ -330,7 +330,7 @@ class Renderer {
             transparent.sort(this.sortTransparent);
             ui.sort(this.sortUI);
 
-            renderList = opaque.concat(transparent, ui);
+            renderList = [ ...opaque, ...transparent, ...ui ];
         }
 
         return renderList;
