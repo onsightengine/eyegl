@@ -4,7 +4,7 @@
 @font-face { font-family: 'Roboto';  src: url('../files/fonts/Roboto-Regular.ttf'); }
 
 :root {
-    --scroll-size:  0.75em;
+    --scroll-size:  0.5em;
 
     overflow-x: hidden;
 }
@@ -220,4 +220,10 @@ summary {
     font-size: 14px;
     color: #ff7100;
     margin-left: -2em;
+}
+
+canvas {
+    position: absolute;
+    right: 0;
+    top: 0;
 }
