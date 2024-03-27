@@ -65,10 +65,10 @@ class Debug {
             .EyeDebugButton {
                 filter: grayscale(100%);
                 flex: 1 1 auto;
-                border-radius: 100%;
+                border-radius: 1000px;
                 background-color: rgba(${backgroundColor}, ${backgroundAlpha});
-                min-height: 2em;
-                min-width: 2em;
+                height: 2.5em;
+                width: 2.5em;
                 margin-left: 0.2em;
                 margin-right: 0.2em;
                 padding-bottom: 0.05em;
@@ -160,13 +160,14 @@ class Debug {
             }
 
             .EyeImageHolder {
+                position: absolute;
                 left: 0;
                 right: 0;
                 top: 0;
                 bottom: 0;
-                margin: auto;
-                max-width: 1.35em;
-                max-height: 1.35em;
+                margin: 0.4em;
+                /* max-width: 1.35em; */
+                /* max-height: 1.35em; */
             }
 
             .ColorIcon {

@@ -1,25 +1,58 @@
-/***** Base *****/
+/***** ROOT *****/
+
+@font-face { font-family: 'Aileron'; src: url('../files/fonts/Aileron-Regular.ttf'); }
+@font-face { font-family: 'Roboto';  src: url('../files/fonts/Roboto-Regular.ttf'); }
+
+:root {
+    --scroll-size:  0.75em;
+
+    overflow-x: hidden;
+}
+
+/***** SCROLL *****/
+
+*::-webkit-scrollbar {
+    height: var(--scroll-size);
+    width: var(--scroll-size);
+    background: #202020;
+    border-radius: calc(var(--scroll-size) / 2.0);
+}
+*::-webkit-scrollbar-thumb:horizontal {
+    background: linear-gradient(to left, #808080, #404040);
+    border-radius: calc(var(--scroll-size) / 2.0);
+}
+*::-webkit-scrollbar-thumb:vertical {
+    background: linear-gradient(to bottom, #808080, #404040);
+    border-radius: calc(var(--scroll-size) / 2.0);
+}
+*::-webkit-scrollbar-corner {
+    background: #202020;
+}
+
+/***** HTML *****/
 
 * {
-    box-sizing: border-box;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    font-weight: 700;
 }
 
-body,
 html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    box-sizing: border-box;
     height: 100%;
-    overscroll-behavior-y: contain;
-    background: #202428;
+    width: 100%;
 }
 
-body,
-button,
-p,
-ul {
+html *, html *::before, html *::after {
+    box-sizing: inherit;
+}
+
+body {
+    position: fixed;
+    height: 100%;
+    width: 100%;
     margin: 0;
-    padding: 0;
+    color: #b0b0b0;
+    background: #202428;
 }
 
 button,
@@ -30,43 +63,9 @@ select {
     font-family: inherit;
 }
 
-a,
-button,
-input,
-select,
-textarea {
-    -webkit-tap-highlight-color: transparent;
-}
-
 a {
     color: inherit; /* blue colors for links too */
     text-decoration: inherit; /* no underline */
-}
-
-:root {
-    overflow-x: hidden;
-    height: 100%;
-}
-
-@font-face {
-    font-family: 'Aileron';
-    src: url('../fonts/Aileron-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    src: url('../fonts/Roboto-Regular.ttf');
-}
-
-body {
-    font-family: 'Roboto', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: #b0b0b0;
-}
-
-div {
-    --scroll-size:  0.75em;
 }
 
 /***** Sections *****/
@@ -77,24 +76,6 @@ div {
     height: 100%;
     overflow: auto;
     padding-bottom: 100px;
-    background: #202020;
-}
-
-.Side::-webkit-scrollbar {
-    height: var(--scroll-size);
-    width: var(--scroll-size);
-    background: #202020;
-    border-radius: calc(var(--scroll-size) / 2.0);
-}
-.Side::-webkit-scrollbar-thumb:horizontal {
-    background: linear-gradient(to left, #808080, #404040);
-    border-radius: calc(var(--scroll-size) / 2.0);
-}
-.Side::-webkit-scrollbar-thumb:vertical {
-    background: linear-gradient(to bottom, #808080, #404040);
-    border-radius: calc(var(--scroll-size) / 2.0);
-}
-.Side::-webkit-scrollbar-corner {
     background: #202020;
 }
 
@@ -227,14 +208,6 @@ div {
 .Credits a {
     font-size: 12px;
     color: #75b300;
-}
-
-canvas:not(.Texture) {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
 }
 
 details {
