@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./files/logo/seagl256.png" alt="SeaGL Library"/>
+<img src="./files/logo/seagl256.png" alt="SeaGL"/>
 </div>
 
 # SeaGL
