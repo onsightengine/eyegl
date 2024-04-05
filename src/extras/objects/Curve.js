@@ -29,7 +29,7 @@ class Curve {
     static getQuadraticBezierPoints(points = [], divisions = 12) {
         const count = points.length;
         if (count < 3) {
-            console.warn('Curve.getQuadraticBezierPoints: Not enough points provided');
+            console.warn('Curve.getQuadraticBezierPoints(): Not enough points provided');
             return [];
         }
 
@@ -62,7 +62,7 @@ class Curve {
     static getCubicBezierPoints(points = [], divisions = 12) {
         const count = points.length;
         if (count < 4) {
-            console.warn('Curve.getCubicBezierPoints: Not enough points provided');
+            console.warn('Curve.getCubicBezierPoints(): Not enough points provided');
             return [];
         }
 
@@ -97,7 +97,7 @@ class Curve {
     static getCatmullRomPoints(points = [], divisions = 12, a = 0.168, b = 0.168) {
         const count = points.length;
         if (count <= 2) {
-            console.warn('Curve.getCatmullRomPoints: Not enough points provided');
+            console.warn('Curve.getCatmullRomPoints(): Not enough points provided');
             return [];
         }
 

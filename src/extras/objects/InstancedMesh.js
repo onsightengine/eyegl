@@ -22,7 +22,7 @@ class InstancedMesh extends Mesh {
         // Get instanced mesh
         if (!this.geometry.attributes.instanceMatrix) {
             const name = this.name ?? '';
-            console.error(`InstanceMesh.addFrustumCull: Mesh "${name}" missing instanceMatrix attribute, unable to frustum cull`);
+            console.error(`InstanceMesh.addFrustumCull(): Mesh '${name}' missing instanceMatrix attribute, unable to frustum cull`);
         }
 
         // Make list of transforms from instanceMatrix

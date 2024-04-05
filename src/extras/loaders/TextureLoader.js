@@ -22,7 +22,7 @@ class TextureLoader {
         onLoad, /* on load callback */
     } = {}) {
         if (!src || src === '') {
-            console.warn(`TextureLoader: No source provided`);
+            console.warn(`TextureLoader.load(): No source provided`);
             return new Texture();
         }
 
@@ -71,7 +71,7 @@ class TextureLoader {
                 });
                 break;
             default:
-                console.warn(`TextureLoader: Format not supported - '.${ext}'`);
+                console.warn(`TextureLoader.load(): Format not supported - '.${ext}'`);
                 texture = new Texture();
         }
 

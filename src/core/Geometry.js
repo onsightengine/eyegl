@@ -10,7 +10,7 @@ let _idGenerator = 1;
 class Geometry {
 
     constructor(attributes = {}) {
-        if (!renderer) console.error(`Geometry: Renderer not found`);
+        if (!renderer) console.error(`Geometry.constructor(): Renderer not found`);
 
         this.isGeometry = true;
 
@@ -49,8 +49,8 @@ class Geometry {
     // }
 
     addAttribute(key, attr) {
-        if (!attr) return console.warn(`Geometry.addAttribute: Attribute for '${key}' missing`);
-        if (!attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
+        if (!attr) return console.warn(`Geometry.addAttribute(): Attribute for '${key}' missing`);
+        if (!attr.data) return console.warn(`Geometry.addAttribute(): Attribute '${key}' missing data`);
         const gl = renderer.gl;
 
         // Unbind current VAO so that new buffers don't get added to active mesh
@@ -89,7 +89,7 @@ class Geometry {
         if (attr.divisor) {
             this.isInstanced = true;
             if (this.instancedCount && this.instancedCount !== attr.count * attr.divisor) {
-                console.warn('Geometry.addAttribute: Geometry has multiple instanced buffers of different length');
+                console.warn('Geometry.addAttribute(): Geometry has multiple instanced buffers of different length');
                 return (this.instancedCount = Math.min(this.instancedCount, attr.count * attr.divisor));
             }
             this.instancedCount = attr.count * attr.divisor;
@@ -131,7 +131,7 @@ class Geometry {
         program.attributeLocations.forEach((location, { name, type }) => {
             // Missing a required shader attribute
             if (!this.attributes[name]) {
-                console.warn(`Geometry.bindAttributes: Active attribute '${name}' not being supplied`);
+                console.warn(`Geometry.bindAttributes(): Active attribute '${name}' not being supplied`);
                 return;
             }
 
@@ -168,7 +168,7 @@ class Geometry {
     getPosition() {
         const positionAttribute = this.attributes.position;
         if (positionAttribute && positionAttribute.data) return positionAttribute;
-        console.warn('Geometry.getPosition: No position attribute found');
+        console.warn('Geometry.getPosition(): No position attribute found');
         return null;
     }
 

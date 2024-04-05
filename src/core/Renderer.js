@@ -71,7 +71,7 @@ class Renderer {
 
         // WebGL2 Context
         gl = canvas.getContext('webgl2', attributes);
-        if (!gl) console.error('Renderer: Unable to create WebGL 2 context');
+        if (!gl) console.error('Renderer.constructor(): Unable to create WebGL 2 context');
         this.gl = gl;
 
         // GLOBAL: So all classes have access to internal state functions
@@ -138,7 +138,7 @@ class Renderer {
     getExtension(name, logWarning = false) {
         if (!this.extensions[name]) this.extensions[name] = this.gl.getExtension(name);
         if (!this.extensions[name] && logWarning) {
-            console.warn(`Renderer.getExtension: ${name} extension not supported.`);
+            console.warn(`Renderer.getExtension(): ${name} extension not supported`);
         }
         return this.extensions[name];
     }

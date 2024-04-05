@@ -42,7 +42,7 @@ class Assets {
 
     load(src, options = {}) {
         if (typeof src !== 'string') {
-            console.warn('Assets.load: Source not provided');
+            console.warn('Assets.load(): Source not provided');
             return;
         }
 
