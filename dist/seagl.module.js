@@ -4,7 +4,7 @@
  * @author      Stephens Nunnally <@stevinz>
  * @license     MIT - Copyright (c) 2024 Stephens Nunnally
  * @source      https://github.com/salinityengine/seagl
- * @version     v0.0.10
+ * @version     v0.0.11
  */
 const EPSILON$5 = 0.000001;
 
@@ -613,7 +613,7 @@ class Texture {
         width, // used for RenderTargets or Data Textures
         height = width,
     } = {}) {
-        if (!renderer) console.error(`Texture: Renderer not found`);
+        if (!renderer) console.error(`Texture.constructor(): Renderer not found`);
         const gl = renderer.gl;
 
         this.isTexture = true;
@@ -883,7 +883,7 @@ class TextureLoader {
         onLoad, /* on load callback */
     } = {}) {
         if (!src || src === '') {
-            console.warn(`TextureLoader: No source provided`);
+            console.warn(`TextureLoader.load(): No source provided`);
             return new Texture();
         }
 
@@ -932,7 +932,7 @@ class TextureLoader {
                 });
                 break;
             default:
-                console.warn(`TextureLoader: Format not supported - '.${ext}'`);
+                console.warn(`TextureLoader.load(): Format not supported - '.${ext}'`);
                 texture = new Texture();
         }
 
@@ -993,7 +993,7 @@ class Assets {
 
     load(src, options = {}) {
         if (typeof src !== 'string') {
-            console.warn('Assets.load: Source not provided');
+            console.warn('Assets.load(): Source not provided');
             return;
         }
 
@@ -3607,7 +3607,7 @@ let _idGenerator$2 = 1;
 class Geometry {
 
     constructor(attributes = {}) {
-        if (!renderer) console.error(`Geometry: Renderer not found`);
+        if (!renderer) console.error(`Geometry.constructor(): Renderer not found`);
 
         this.isGeometry = true;
 
@@ -3646,8 +3646,8 @@ class Geometry {
     // }
 
     addAttribute(key, attr) {
-        if (!attr) return console.warn(`Geometry.addAttribute: Attribute for '${key}' missing`);
-        if (!attr.data) return console.warn(`Geometry.addAttribute: Attribute '${key}' missing data`);
+        if (!attr) return console.warn(`Geometry.addAttribute(): Attribute for '${key}' missing`);
+        if (!attr.data) return console.warn(`Geometry.addAttribute(): Attribute '${key}' missing data`);
         const gl = renderer.gl;
 
         // Unbind current VAO so that new buffers don't get added to active mesh
@@ -3686,7 +3686,7 @@ class Geometry {
         if (attr.divisor) {
             this.isInstanced = true;
             if (this.instancedCount && this.instancedCount !== attr.count * attr.divisor) {
-                console.warn('Geometry.addAttribute: Geometry has multiple instanced buffers of different length');
+                console.warn('Geometry.addAttribute(): Geometry has multiple instanced buffers of different length');
                 return (this.instancedCount = Math.min(this.instancedCount, attr.count * attr.divisor));
             }
             this.instancedCount = attr.count * attr.divisor;
@@ -3728,7 +3728,7 @@ class Geometry {
         program.attributeLocations.forEach((location, { name, type }) => {
             // Missing a required shader attribute
             if (!this.attributes[name]) {
-                console.warn(`Geometry.bindAttributes: Active attribute '${name}' not being supplied`);
+                console.warn(`Geometry.bindAttributes(): Active attribute '${name}' not being supplied`);
                 return;
             }
 
@@ -3765,7 +3765,7 @@ class Geometry {
     getPosition() {
         const positionAttribute = this.attributes.position;
         if (positionAttribute && positionAttribute.data) return positionAttribute;
-        console.warn('Geometry.getPosition: No position attribute found');
+        console.warn('Geometry.getPosition(): No position attribute found');
         return null;
     }
 
@@ -4543,7 +4543,7 @@ class Mesh extends Transform {
         frustumCulled = true,
         renderOrder = 0
     } = {}) {
-        if (!renderer) console.error(`Mesh: Renderer not found`);
+        if (!renderer) console.error(`Mesh.constructor(): Renderer not found`);
 
         super();
         this.isMesh = true;
@@ -4637,9 +4637,9 @@ class Program {
         depthWrite = true,
         depthFunc = renderer.gl.LESS,
     } = {}) {
-        if (!renderer) console.error(`Program: Renderer not found`);
-        if (!vertex) console.warn('Program: Vertex shader not supplied');
-        if (!fragment) console.warn('Program: Fragment shader not supplied');
+        if (!renderer) console.error(`Program.constructor(): Renderer not found`);
+        if (!vertex) console.warn('Program.constructor(): Vertex shader not supplied');
+        if (!fragment) console.warn('Program.constructor(): Fragment shader not supplied');
         const gl = renderer.gl;
 
         this.uuid = uuid();
@@ -5014,7 +5014,7 @@ const NAMES = {
 function hexToRGB(hex) {
     if (hex.length === 4) hex = hex[0] + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
     const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!rgb) console.warn(`ColorFunc.hexToRGB: Unable to convert hex string ${hex} to rgb values`);
+    if (!rgb) console.warn(`ColorFunc.hexToRGB(): Unable to convert hex string ${hex} to rgb values`);
     return [ parseInt(rgb[1], 16) / 255, parseInt(rgb[2], 16) / 255, parseInt(rgb[3], 16) / 255 ];
 }
 
@@ -5059,7 +5059,7 @@ function parseColor(color) {
     if (NAMES[color.toLowerCase()]) return hexToRGB(NAMES[color.toLowerCase()]);
 
     // Unknown
-    console.warn(`ColorFunc.parseColor: Format not recognized, color: ${color}`);
+    console.warn(`ColorFunc.parseColor(): Format not recognized, color - ${color}`);
     return [ 0, 0, 0 ];
 }
 
@@ -5185,7 +5185,7 @@ class Renderer {
 
         // WebGL2 Context
         gl = canvas.getContext('webgl2', attributes);
-        if (!gl) console.error('Renderer: Unable to create WebGL 2 context');
+        if (!gl) console.error('Renderer.constructor(): Unable to create WebGL 2 context');
         this.gl = gl;
 
         // GLOBAL: So all classes have access to internal state functions
@@ -5252,7 +5252,7 @@ class Renderer {
     getExtension(name, logWarning = false) {
         if (!this.extensions[name]) this.extensions[name] = this.gl.getExtension(name);
         if (!this.extensions[name] && logWarning) {
-            console.warn(`Renderer.getExtension: ${name} extension not supported.`);
+            console.warn(`Renderer.getExtension(): ${name} extension not supported`);
         }
         return this.extensions[name];
     }
@@ -5420,7 +5420,7 @@ class Renderer {
             const ui = [];              // depthTest false
 
             renderList.forEach((node) => {
-                // Split into the 3 render groups
+                // Split into the 3 render categories
                 if (!node.program.transparent) {
                     opaque.push(node);
                 } else if (node.program.depthTest) {
@@ -5444,7 +5444,7 @@ class Renderer {
             transparent.sort(this.sortTransparent);
             ui.sort(this.sortUI);
 
-            renderList = opaque.concat(transparent, ui);
+            renderList = [ ...opaque, ...transparent, ...ui ];
         }
 
         return renderList;
@@ -8277,7 +8277,7 @@ class InstancedMesh extends Mesh {
         // Get instanced mesh
         if (!this.geometry.attributes.instanceMatrix) {
             const name = this.name ?? '';
-            console.error(`InstanceMesh.addFrustumCull: Mesh "${name}" missing instanceMatrix attribute, unable to frustum cull`);
+            console.error(`InstanceMesh.addFrustumCull(): Mesh '${name}' missing instanceMatrix attribute, unable to frustum cull`);
         }
 
         // Make list of transforms from instanceMatrix
@@ -8732,11 +8732,11 @@ class GLTFLoader {
 
     static async parse(desc, dir) {
         if (desc.asset === undefined || desc.asset.version[0] < 2) {
-            console.warn('GLTFLoader.parse: Only GLTF >=2.0 supported. Attempting to parse.');
+            console.warn('GLTFLoader.parse(): Only GLTF >=2.0 supported. Attempting to parse');
         }
 
         if (desc.extensionsRequired?.includes('KHR_texture_basisu') && !this.basisManager)
-            console.warn('GLTFLoader.parse:  KHR_texture_basisu extension required but no manager supplied. Use .setBasisManager()');
+            console.warn('GLTFLoader.parse(): KHR_texture_basisu extension required but no manager supplied. Use .setBasisManager()');
 
         // Load buffers async
         const buffers = await this.loadBuffers(desc, dir);
@@ -9738,7 +9738,7 @@ class Curve {
     static getQuadraticBezierPoints(points = [], divisions = 12) {
         const count = points.length;
         if (count < 3) {
-            console.warn('Curve.getQuadraticBezierPoints: Not enough points provided');
+            console.warn('Curve.getQuadraticBezierPoints(): Not enough points provided');
             return [];
         }
 
@@ -9771,7 +9771,7 @@ class Curve {
     static getCubicBezierPoints(points = [], divisions = 12) {
         const count = points.length;
         if (count < 4) {
-            console.warn('Curve.getCubicBezierPoints: Not enough points provided');
+            console.warn('Curve.getCubicBezierPoints(): Not enough points provided');
             return [];
         }
 
@@ -9806,7 +9806,7 @@ class Curve {
     static getCatmullRomPoints(points = [], divisions = 12, a = 0.168, b = 0.168) {
         const count = points.length;
         if (count <= 2) {
-            console.warn('Curve.getCatmullRomPoints: Not enough points provided');
+            console.warn('Curve.getCatmullRomPoints(): Not enough points provided');
             return [];
         }
 
@@ -11509,10 +11509,10 @@ class Debug {
             .EyeDebugButton {
                 filter: grayscale(100%);
                 flex: 1 1 auto;
-                border-radius: 100%;
+                border-radius: 1000px;
                 background-color: rgba(${backgroundColor}, ${backgroundAlpha});
-                min-height: 2em;
-                min-width: 2em;
+                height: 2.5em;
+                width: 2.5em;
                 margin-left: 0.2em;
                 margin-right: 0.2em;
                 padding-bottom: 0.05em;
@@ -11604,13 +11604,14 @@ class Debug {
             }
 
             .EyeImageHolder {
+                position: absolute;
                 left: 0;
                 right: 0;
                 top: 0;
                 bottom: 0;
-                margin: auto;
-                max-width: 1.35em;
-                max-height: 1.35em;
+                margin: 0.4em;
+                /* max-width: 1.35em; */
+                /* max-height: 1.35em; */
             }
 
             .ColorIcon {

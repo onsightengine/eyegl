@@ -29,7 +29,7 @@ const builds = [
 
         output: [{
             format: 'esm',
-            file: './build/seagl.module.js',
+            file: './dist/seagl.module.js',
             sourcemap: false,
         }],
     },

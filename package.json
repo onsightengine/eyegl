@@ -1,16 +1,18 @@
 {
-  "name": "seagl",
-  "version": "0.0.10",
+  "name": "@salinity/seagl",
+  "version": "0.0.11",
   "description": "WebGL 2 graphics library built for games.",
   "module": "src/SeaGL.js",
-  "main": "build/seagl.module.js",
+  "main": "dist/seagl.module.js",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "npm run build"
   },
   "files": [
-    "build/*",
+    "dist/*",
+    "examples/*",
+    "files/*",
     "src/*"
   ],
   "keywords": [
