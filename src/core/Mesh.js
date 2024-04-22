@@ -11,7 +11,7 @@ class Mesh extends Transform {
         frustumCulled = true,
         renderOrder = 0
     } = {}) {
-        if (!renderer) console.error(`Mesh.constructor(): Renderer not found`);
+        if (!renderer) console.error(`Mesh: Renderer not found`);
 
         super();
         this.isMesh = true;
