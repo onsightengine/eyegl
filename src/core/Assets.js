@@ -6,7 +6,7 @@ class Assets {
 
     constructor() {}
 
-    /********** LIBRARY **********/
+    /******************** LIBRARY */
 
     library(type) {
         function checkAssetType(asset) {
@@ -23,7 +23,7 @@ class Assets {
         return library;
     }
 
-    /********** ACCESS **********/
+    /******************** ACCESS */
 
     add(/* assets, separated by commas */) {
         for (let i = 0; i < arguments.length; i++) {
@@ -83,7 +83,7 @@ class Assets {
         }
     }
 
-    /********** JSON **********/
+    /******************** SERIALIZE */
 
     clear() {
         for (const uuid in this.#assets) {
@@ -91,19 +91,19 @@ class Assets {
         }
     }
 
-    fromJSON(json) {
+    serialize(meta) {
+        const data = {};
+        //
+        // TODO
+        //
+        return data;
+    }
+
+    parse(data) {
         this.clear()
         //
         // TODO
         //
-    }
-
-    toJSON(meta) {
-        const json = {};
-        //
-        // TODO
-        //
-        return json;
     }
 
 }
