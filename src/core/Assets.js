@@ -83,7 +83,7 @@ class Assets {
         }
     }
 
-    /******************** SERIALIZE */
+    /******************** JSON */
 
     clear() {
         for (const uuid in this.#assets) {
@@ -91,7 +91,7 @@ class Assets {
         }
     }
 
-    serialize(meta) {
+    toJSON(meta) {
         const data = {};
         //
         // TODO
@@ -99,7 +99,7 @@ class Assets {
         return data;
     }
 
-    parse(data) {
+    fromJSON(data) {
         this.clear()
         //
         // TODO
