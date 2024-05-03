@@ -130,10 +130,7 @@ class Geometry {
         // Link all attributes to program using gl.vertexAttribPointer
         program.attributeLocations.forEach((location, { name, type }) => {
             // Missing a required shader attribute
-            if (!this.attributes[name]) {
-                console.warn(`Geometry.bindAttributes(): Active attribute '${name}' not being supplied`);
-                return;
-            }
+            if (!this.attributes[name]) return console.warn(`Geometry.bindAttributes(): Active attribute '${name}' not being supplied`);
 
             const attr = this.attributes[name];
             gl.bindBuffer(attr.target, attr.buffer);
@@ -168,8 +165,7 @@ class Geometry {
     getPosition() {
         const positionAttribute = this.attributes.position;
         if (positionAttribute && positionAttribute.data) return positionAttribute;
-        console.warn('Geometry.getPosition(): No position attribute found');
-        return null;
+        return console.warn('Geometry.getPosition(): No position attribute found');
     }
 
     /***** Draw *****/
