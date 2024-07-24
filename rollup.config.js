@@ -4,11 +4,11 @@ function header() {
     return {
         renderChunk(code) {
             return `/**
- * @description SeaGL
- * @about       Fast WebGL 2 graphics library built for games.
+ * @description EyeGL
+ * @about       WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
  * @license     MIT - Copyright (c) 2024 Stephens Nunnally
- * @source      https://github.com/salinityengine/seagl
+ * @source      https://github.com/onsightengine/eyegl
  * @version     v${pkg.version}
  */
 ${code}`;
@@ -20,7 +20,7 @@ ${code}`;
 const builds = [
 
     { // Standard Build
-        input: './src/SeaGL.js',
+        input: './src/EyeGL.js',
         treeshake: false,
 
         plugins: [
@@ -29,7 +29,7 @@ const builds = [
 
         output: [{
             format: 'esm',
-            file: './dist/seagl.module.js',
+            file: './dist/eyegl.module.js',
             sourcemap: false,
         }],
     },

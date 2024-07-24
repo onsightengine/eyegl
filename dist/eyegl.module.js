@@ -1,10 +1,10 @@
 /**
- * @description SeaGL
- * @about       Fast WebGL 2 graphics library built for games.
+ * @description EyeGL
+ * @about       WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
  * @license     MIT - Copyright (c) 2024 Stephens Nunnally
- * @source      https://github.com/salinityengine/seagl
- * @version     v0.0.11
+ * @source      https://github.com/onsightengine/eyegl
+ * @version     v0.0.12
  */
 const EPSILON$5 = 0.000001;
 
@@ -613,7 +613,7 @@ class Texture {
         width, // used for RenderTargets or Data Textures
         height = width,
     } = {}) {
-        if (!renderer) console.error(`Texture.constructor(): Renderer not found`);
+        if (!renderer) console.error(`Texture: Renderer not found`);
         const gl = renderer.gl;
 
         this.isTexture = true;
@@ -957,7 +957,7 @@ class Assets {
 
     constructor() {}
 
-    /********** LIBRARY **********/
+    /******************** LIBRARY */
 
     library(type) {
         function checkAssetType(asset) {
@@ -974,7 +974,7 @@ class Assets {
         return library;
     }
 
-    /********** ACCESS **********/
+    /******************** ACCESS */
 
     add(/* assets, separated by commas */) {
         for (let i = 0; i < arguments.length; i++) {
@@ -1034,7 +1034,7 @@ class Assets {
         }
     }
 
-    /********** JSON **********/
+    /******************** JSON */
 
     clear() {
         for (const uuid in this.#assets) {
@@ -1042,19 +1042,19 @@ class Assets {
         }
     }
 
-    fromJSON(json) {
+    toJSON(meta) {
+        const data = {};
+        //
+        // TODO
+        //
+        return data;
+    }
+
+    fromJSON(data) {
         this.clear();
         //
         // TODO
         //
-    }
-
-    toJSON(meta) {
-        const json = {};
-        //
-        // TODO
-        //
-        return json;
     }
 
 }
@@ -3607,7 +3607,7 @@ let _idGenerator$2 = 1;
 class Geometry {
 
     constructor(attributes = {}) {
-        if (!renderer) console.error(`Geometry.constructor(): Renderer not found`);
+        if (!renderer) console.error(`Geometry: Renderer not found`);
 
         this.isGeometry = true;
 
@@ -3727,10 +3727,7 @@ class Geometry {
         // Link all attributes to program using gl.vertexAttribPointer
         program.attributeLocations.forEach((location, { name, type }) => {
             // Missing a required shader attribute
-            if (!this.attributes[name]) {
-                console.warn(`Geometry.bindAttributes(): Active attribute '${name}' not being supplied`);
-                return;
-            }
+            if (!this.attributes[name]) return console.warn(`Geometry.bindAttributes(): Active attribute '${name}' not being supplied`);
 
             const attr = this.attributes[name];
             gl.bindBuffer(attr.target, attr.buffer);
@@ -3765,8 +3762,7 @@ class Geometry {
     getPosition() {
         const positionAttribute = this.attributes.position;
         if (positionAttribute && positionAttribute.data) return positionAttribute;
-        console.warn('Geometry.getPosition(): No position attribute found');
-        return null;
+        return console.warn('Geometry.getPosition(): No position attribute found');
     }
 
     /***** Draw *****/
@@ -4543,7 +4539,7 @@ class Mesh extends Transform {
         frustumCulled = true,
         renderOrder = 0
     } = {}) {
-        if (!renderer) console.error(`Mesh.constructor(): Renderer not found`);
+        if (!renderer) console.error(`Mesh: Renderer not found`);
 
         super();
         this.isMesh = true;
@@ -4637,9 +4633,9 @@ class Program {
         depthWrite = true,
         depthFunc = renderer.gl.LESS,
     } = {}) {
-        if (!renderer) console.error(`Program.constructor(): Renderer not found`);
-        if (!vertex) console.warn('Program.constructor(): Vertex shader not supplied');
-        if (!fragment) console.warn('Program.constructor(): Fragment shader not supplied');
+        if (!renderer) console.error(`Program: Renderer not found`);
+        if (!vertex) console.warn('Program: Vertex shader not supplied');
+        if (!fragment) console.warn('Program: Fragment shader not supplied');
         const gl = renderer.gl;
 
         this.uuid = uuid();
@@ -5185,7 +5181,7 @@ class Renderer {
 
         // WebGL2 Context
         gl = canvas.getContext('webgl2', attributes);
-        if (!gl) console.error('Renderer.constructor(): Unable to create WebGL 2 context');
+        if (!gl) console.error('Renderer: Unable to create WebGL 2 context');
         this.gl = gl;
 
         // GLOBAL: So all classes have access to internal state functions
@@ -11867,11 +11863,11 @@ function setVariable(variable, valueAsString) {
 }
 
 /**
- * @description SeaGL
+ * @description EyeGL
  * @about       WebGL 2 graphics library built for games.
  * @author      Stephens Nunnally <@stevinz>
  * @license     MIT - Copyright (c) 2024 Stephens Nunnally
- * @source      https://github.com/salinityengine/seagl
+ * @source      https://github.com/onsightengine/eyegl
  */
 
 export { Assets, Atlas, BaseSegment, Billboard, Box, Camera, Capabilities, Clock, Color, ColorFunc$1 as ColorFunc, CubicBezierSegment, Curve, Cylinder, Debug, Euler, EulerFunc$1 as EulerFunc, GLTFAnimation, GLTFLoader, GLTFSkin, GeomUtils$1 as GeomUtils, Geometry, ImageLoader, InstancedMesh, LineSegment, Mat3, Mat3Func$1 as Mat3Func, Mat4, Mat4Func$1 as Mat4Func, MathUtils$1 as MathUtils, Mesh, Orbit, Packer, Path, Plane, Polygon, Polyline, Post, Program, QuadraticBezierSegment, Quat, QuatFunc$1 as QuatFunc, Raycast, RenderTarget, Renderer, Sphere, Sprite, Texture, TextureArray, TextureLoader, Torus, Transform, Triangle, Tube, Uber, Vec2, Vec2Func$1 as Vec2Func, Vec3, Vec3Func$1 as Vec3Func, Vec4, Vec4Func$1 as Vec4Func, WireMesh };

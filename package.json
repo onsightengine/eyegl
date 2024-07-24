@@ -1,9 +1,9 @@
 {
-  "name": "@salinity/seagl",
-  "version": "0.0.11",
+  "name": "eyegl",
+  "version": "0.0.12",
   "description": "WebGL 2 graphics library built for games.",
-  "module": "src/SeaGL.js",
-  "main": "dist/seagl.module.js",
+  "module": "src/EyeGL.js",
+  "main": "dist/eyegl.module.js",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
@@ -16,8 +16,8 @@
     "src/*"
   ],
   "keywords": [
-    "seagl",
-    "salinity",
+    "eyegl",
+    "onsight",
     "engine",
     "webgl",
     "webgl2",
@@ -28,13 +28,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/salinityengine/seagl.git"
+    "url": "git+https://github.com/onsightengine/eyegl.git"
   },
   "author": "Stephens Nunnally <stephens@scidian.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/salinityengine/seagl/issues"
+    "url": "https://github.com/onsightengine/eyegl/issues"
   },
-  "homepage": "https://github.com/salinityengine/seagl",
+  "homepage": "https://github.com/onsightengine/eyegl",
   "private": false
 }

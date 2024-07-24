@@ -1,8 +1,8 @@
 <div align="center">
-<img src="./files/logo/seagl256.png" alt="SeaGL"/>
+<img src="./files/logo/eye256.png" alt="EyeGL"/>
 </div>
 
-# SeaGL
+# EyeGL
 
 Graphics library for WebGL 2 experimentation.
 
