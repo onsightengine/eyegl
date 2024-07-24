@@ -14,7 +14,7 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'eyegl';
+            import * as IGL from 'eyegl';
             import { Gooey } from 'suey';
 
             const vertex = /* glsl */ `
@@ -70,12 +70,12 @@
                 }
             `;
 
-            const renderer = new SGL.Renderer({ depth: false });
+            const renderer = new IGL.Renderer({ depth: false });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new SGL.Camera({ fov: 15 });
+            const camera = new IGL.Camera({ fov: 15 });
             camera.position.z = 15;
 
             function resize() {
@@ -94,12 +94,12 @@
                 random.set([Math.random(), Math.random(), Math.random(), Math.random()], i * 4);
             }
 
-            const geometry = new SGL.Geometry({
+            const geometry = new IGL.Geometry({
                 position: { size: 3, data: position },
                 random: { size: 4, data: random },
             });
 
-            const program = new SGL.Program({
+            const program = new IGL.Program({
                 vertex,
                 fragment,
                 uniforms: {
@@ -110,9 +110,9 @@
             });
 
             // Make sure mode is gl.POINTS
-            const particles = new SGL.Mesh({ mode: gl.POINTS, geometry, program });
+            const particles = new IGL.Mesh({ mode: gl.POINTS, geometry, program });
 
-            const debug = new SGL.Debug();
+            const debug = new IGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

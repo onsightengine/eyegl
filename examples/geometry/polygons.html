@@ -15,7 +15,7 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'eyegl';
+            import * as IGL from 'eyegl';
             import { Gooey } from 'suey';
 
             const vertex = /* glsl */ `#version 300 es
@@ -80,13 +80,13 @@
 
             // Setup
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new IGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const resolution = { value: new SGL.Vec2() };
-            const camera = new SGL.Camera({ fov: 35 });
+            const resolution = { value: new IGL.Vec2() };
+            const camera = new IGL.Camera({ fov: 35 });
             camera.position.set(0, 0, -10);
             camera.lookAt([ 0, 0, 0 ]);
 
@@ -98,17 +98,17 @@
             window.addEventListener('resize', resize);
             resize();
 
-            const scene = new SGL.Transform();
-            const controls = new SGL.Orbit(camera);
+            const scene = new IGL.Transform();
+            const controls = new IGL.Orbit(camera);
 
             // Scene
 
-            const program = new SGL.Program({
+            const program = new IGL.Program({
                 vertex,
                 fragment,
                 uniforms: {
-                    uColor: { value: new SGL.Color(1.0, 0.0, 0.0) },
-                    uOutline: { value: new SGL.Color(0.0, 1.0, 0.0) },
+                    uColor: { value: new IGL.Color(1.0, 0.0, 0.0) },
+                    uOutline: { value: new IGL.Color(0.0, 1.0, 0.0) },
                     uAlpha: { value: 0.8 },
                     uRadius: { value: params.radius },
                     // uResolution: resolution,
@@ -117,14 +117,14 @@
                 // cullFace: false,
             });
 
-            const geometry = SGL.Polygon.FatSegment({ a: new SGL.Vec3(1, 0, 0), b: new SGL.Vec3(-1, 0, 0) });
+            const geometry = IGL.Polygon.FatSegment({ a: new IGL.Vec3(1, 0, 0), b: new IGL.Vec3(-1, 0, 0) });
 
-            const mesh = new SGL.Mesh({ geometry, program });
+            const mesh = new IGL.Mesh({ geometry, program });
             scene.addChild(mesh);
 
             // Render
 
-            const debug = new SGL.Debug();
+            const debug = new IGL.Debug();
             requestAnimationFrame(update);
 
             function update(t) {

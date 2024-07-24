@@ -15,7 +15,7 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'eyegl';
+            import * as IGL from 'eyegl';
             import { Gooey } from 'suey';
 
             const vertex = /* glsl */ `
@@ -58,12 +58,12 @@
                 }
             `;
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new IGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new SGL.Camera({ fov: 35 });
+            const camera = new IGL.Camera({ fov: 35 });
             camera.position.set(8, 5, 15);
             camera.lookAt([0, 1.5, 0]);
 
@@ -74,11 +74,11 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const scene = new SGL.Transform();
+            const scene = new IGL.Transform();
 
-            const texture = SGL.TextureLoader.load({ src: '../../files/models/json/fox.jpg' });
+            const texture = IGL.TextureLoader.load({ src: '../../files/models/json/fox.jpg' });
 
-            const program = new SGL.Program({
+            const program = new IGL.Program({
                 vertex,
                 fragment,
                 uniforms: {
@@ -91,17 +91,17 @@
             async function loadModel() {
                 const data = await (await fetch(`../../files/models/json/fox.json`)).json();
 
-                const geometry = new SGL.Geometry({
+                const geometry = new IGL.Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
                 });
 
-                mesh = new SGL.Mesh({ geometry, program });
+                mesh = new IGL.Mesh({ geometry, program });
                 mesh.setParent(scene);
             }
 
-            const debug = new SGL.Debug();
+            const debug = new IGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

@@ -15,11 +15,11 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'eyegl';
+            import * as IGL from 'eyegl';
             import { Gooey } from 'suey';
 
-            const renderer = new SGL.Renderer({});
-            const capabilities = new SGL.Capabilities(renderer);
+            const renderer = new IGL.Renderer({});
+            const capabilities = new IGL.Capabilities(renderer);
 
             document.querySelector('#Debug').innerHTML = capabilities.toHtml();
 

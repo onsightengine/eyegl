@@ -15,15 +15,15 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'eyegl';
+            import * as IGL from 'eyegl';
             import { Gooey } from 'suey';
 
             // Init
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new IGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
-            const atlasCamera = new SGL.Camera({ near: -1, far: 1, left: -1, right: 1 });
-            const sceneCamera = new SGL.Camera({ fov: 35, position: [0, 0, 5], lookAt: [0, 0, 0] });
+            const atlasCamera = new IGL.Camera({ near: -1, far: 1, left: -1, right: 1 });
+            const sceneCamera = new IGL.Camera({ fov: 35, position: [0, 0, 5], lookAt: [0, 0, 0] });
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 sceneCamera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
@@ -32,11 +32,11 @@
             resize();
 
             // Meshes
-            const sceneProgram = new SGL.TextureArray();
-            const sceneBox = new SGL.Mesh({ geometry: new SGL.Box(), program: sceneProgram });
+            const sceneProgram = new IGL.TextureArray();
+            const sceneBox = new IGL.Mesh({ geometry: new IGL.Box(), program: sceneProgram });
 
             // Atlas
-            const atlas = new SGL.Atlas();
+            const atlas = new IGL.Atlas();
             atlas.add('../../files/sprites/dragon.png');
             atlas.add('../../files/sprites/unicorn.png');
             atlas.add('../../files/sprites/kraken.png');
@@ -48,7 +48,7 @@
             let timer = performance.now();
 
             // Render
-            const debug = new SGL.Debug();
+            const debug = new IGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

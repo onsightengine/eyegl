@@ -15,7 +15,7 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'eyegl';
+            import * as IGL from 'eyegl';
             import { Gooey } from 'suey';
 
             // Gui
@@ -29,12 +29,12 @@
 
             // Setup
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new IGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new SGL.Camera({ fov: 35 });
+            const camera = new IGL.Camera({ fov: 35 });
             camera.position.set(0, 0, -10);
             camera.lookAt([ 0, 0, 0 ]);
 
@@ -45,15 +45,15 @@
             window.addEventListener('resize', resize);
             resize();
 
-            const scene = new SGL.Transform();
-            const controls = new SGL.Orbit(camera);
+            const scene = new IGL.Transform();
+            const controls = new IGL.Orbit(camera);
 
             // Scene
 
             // ...
 
             // Render
-            const debug = new SGL.Debug();
+            const debug = new IGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

@@ -14,15 +14,15 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'eyegl';
+            import * as IGL from 'eyegl';
             import { Gooey } from 'suey';
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new IGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new SGL.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
+            const camera = new IGL.Camera({ fov: 35, position: [0, 1, 5], lookAt: [0, 0, 0] });
 
             function resize() {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -96,16 +96,16 @@
             }
             canvas.addEventListener('pointerdown', canvasPointerDown);
 
-            const geometry = new SGL.Box();
-            const texture = new SGL.Texture({ image: canvas });
-            const program = new SGL.Uber({ texture });
-            const mesh = new SGL.Mesh({ geometry, program });
+            const geometry = new IGL.Box();
+            const texture = new IGL.Texture({ image: canvas });
+            const program = new IGL.Uber({ texture });
+            const mesh = new IGL.Mesh({ geometry, program });
 
-            const scene = new SGL.Transform();
+            const scene = new IGL.Transform();
             mesh.setParent(scene);
 
             // Render
-            const debug = new SGL.Debug();
+            const debug = new IGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);

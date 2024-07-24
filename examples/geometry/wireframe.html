@@ -15,7 +15,7 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'eyegl';
+            import * as IGL from 'eyegl';
             import { Gooey } from 'suey';
 
             // Gui
@@ -30,12 +30,12 @@
 
             // Scene
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new IGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0, 0, 0, 0);
 
-            const camera = new SGL.Camera({ fov: 35 });
+            const camera = new IGL.Camera({ fov: 35 });
             camera.position.set(5, 3, 6);
             camera.lookAt([ 0, 0, 0 ]);
 
@@ -59,11 +59,11 @@
             });
             /*****/
 
-            const scene = new SGL.Transform();
+            const scene = new IGL.Transform();
 
-            const texture = SGL.TextureLoader.load({ src: '../../files/models/json/croissant.jpg' });
+            const texture = IGL.TextureLoader.load({ src: '../../files/models/json/croissant.jpg' });
 
-            const program = new SGL.Uber({
+            const program = new IGL.Uber({
                 cullFace: false,
                 depthWrite: false,
                 depthTest: false,
@@ -78,24 +78,24 @@
             async function loadModel() {
                 const data = await (await fetch(`../../files/models/json/croissant.json`)).json();
 
-                const geometry = new SGL.Geometry({
+                const geometry = new IGL.Geometry({
                     position: { size: 3, data: new Float32Array(data.position) },
                     uv: { size: 2, data: new Float32Array(data.uv) },
                     normal: { size: 3, data: new Float32Array(data.normal) },
                 });
 
                 // Using gl.LINE_STRIP, LINES, LINE_LOOP
-                lineLoopMesh = new SGL.Mesh({ mode: gl.LINE_STRIP, geometry: geometry, program: program });
+                lineLoopMesh = new IGL.Mesh({ mode: gl.LINE_STRIP, geometry: geometry, program: program });
                 lineLoopMesh.setParent(scene);
                 lineLoopMesh.position.y = 0.75;
 
                 // Using gl.TRIANGLES
-                standardMesh = new SGL.Mesh({ mode: gl.TRIANGLES, geometry: geometry, program: program });
+                standardMesh = new IGL.Mesh({ mode: gl.TRIANGLES, geometry: geometry, program: program });
                 standardMesh.setParent(scene);
                 standardMesh.position.y = -0.75;
             }
 
-            const debug = new SGL.Debug();
+            const debug = new IGL.Debug();
             requestAnimationFrame(update);
 
             function update(t) {

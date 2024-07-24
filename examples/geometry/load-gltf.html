@@ -15,7 +15,7 @@
         <script src="../imports.js"></script>
 
         <script type="module">
-            import * as SGL from 'eyegl';
+            import * as IGL from 'eyegl';
             import { Gooey } from 'suey';
 
             const shader = {
@@ -354,15 +354,15 @@
                 `,
             };
 
-            const renderer = new SGL.Renderer({ dpr: 2 });
+            const renderer = new IGL.Renderer({ dpr: 2 });
             const gl = renderer.gl;
             document.body.appendChild(gl.canvas);
             gl.clearColor(0.1, 0.1, 0.1, 1);
 
-            const camera = new SGL.Camera({ near: 1, far: 1000 });
+            const camera = new IGL.Camera({ near: 1, far: 1000 });
             // camera.position.set(60, 25, -60);
             camera.position.set(30, 15, -30);
-            const controls = new SGL.Orbit(camera);
+            const controls = new IGL.Orbit(camera);
             // controls.target.y = 25;
 
             function resize() {
@@ -372,20 +372,20 @@
             window.addEventListener('resize', resize, false);
             resize();
 
-            const scene = new SGL.Transform();
+            const scene = new IGL.Transform();
 
             let gltf;
 
             // Common textures for uber shader
-            const lutTexture = SGL.TextureLoader.load({ src: '../../files/pbr/lut.png' });
-            const envDiffuseTexture = SGL.TextureLoader.load({ src: '../../files/textures/sunset-diffuse-RGBM.png' });
-            const envSpecularTexture = SGL.TextureLoader.load({ src: '../../files/textures/sunset-specular-RGBM.png' });
+            const lutTexture = IGL.TextureLoader.load({ src: '../../files/pbr/lut.png' });
+            const envDiffuseTexture = IGL.TextureLoader.load({ src: '../../files/textures/sunset-diffuse-RGBM.png' });
+            const envSpecularTexture = IGL.TextureLoader.load({ src: '../../files/textures/sunset-specular-RGBM.png' });
 
             loadInitial();
             handlers();
 
             async function loadInitial() {
-                gltf = await SGL.GLTFLoader.load(`../../files/models/gltf/hershel.glb`);
+                gltf = await IGL.GLTFLoader.load(`../../files/models/gltf/hershel.glb`);
                 addGLTF(gltf);
             }
 
@@ -413,12 +413,12 @@
                 reader.onload = async function (e) {
                     let desc;
                     if (isGLB) {
-                        desc = SGL.GLTFLoader.unpackGLB(e.target.result);
+                        desc = IGL.GLTFLoader.unpackGLB(e.target.result);
                     } else {
                         desc = JSON.parse(e.target.result);
                     }
                     const dir = '';
-                    gltf = await SGL.GLTFLoader.parse(desc, dir);
+                    gltf = await IGL.GLTFLoader.parse(desc, dir);
                     addGLTF(gltf);
                 };
             }
@@ -441,15 +441,15 @@
                 scene.updateMatrixWorld();
 
                 // Calculate rough world bounds to update camera
-                const min = new SGL.Vec3(+Infinity);
-                const max = new SGL.Vec3(-Infinity);
-                const center = new SGL.Vec3();
-                const scale = new SGL.Vec3();
+                const min = new IGL.Vec3(+Infinity);
+                const max = new IGL.Vec3(-Infinity);
+                const center = new IGL.Vec3();
+                const scale = new IGL.Vec3();
 
-                const boundsMin = new SGL.Vec3();
-                const boundsMax = new SGL.Vec3();
-                const boundsCenter = new SGL.Vec3();
-                const boundsScale = new SGL.Vec3();
+                const boundsMin = new IGL.Vec3();
+                const boundsMax = new IGL.Vec3();
+                const boundsCenter = new IGL.Vec3();
+                const boundsScale = new IGL.Vec3();
 
                 gltf.meshes.forEach((group) => {
                     group.primitives.forEach((mesh) => {
@@ -526,7 +526,7 @@
                 vertex = vertexPrefix + defines + vertex;
                 fragment = fragmentPrefix + defines + fragment;
 
-                const program = new SGL.Program({
+                const program = new IGL.Program({
                     vertex,
                     fragment,
                     uniforms: {
@@ -551,8 +551,8 @@
                         uEnvDiffuse: { value: 0.5 },
                         uEnvSpecular: { value: 0.5 },
 
-                        uLightDirection: { value: new SGL.Vec3(0, 1, 1) },
-                        uLightColor: { value: new SGL.Vec3(2.5) },
+                        uLightDirection: { value: new IGL.Vec3(0, 1, 1) },
+                        uLightColor: { value: new IGL.Vec3(2.5) },
 
                         uAlpha: { value: 1 },
                         uAlphaCutoff: { value: gltf.alphaCutoff },
@@ -564,7 +564,7 @@
                 return program;
             }
 
-            const debug = new SGL.Debug();
+            const debug = new IGL.Debug();
             requestAnimationFrame(update);
             function update(t) {
                 requestAnimationFrame(update);
