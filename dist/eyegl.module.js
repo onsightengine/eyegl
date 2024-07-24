@@ -4,7 +4,7 @@
  * @author      Stephens Nunnally <@stevinz>
  * @license     MIT - Copyright (c) 2024 Stephens Nunnally
  * @source      https://github.com/onsightengine/eyegl
- * @version     v0.0.12
+ * @version     v0.0.13
  */
 const EPSILON$5 = 0.000001;
 
